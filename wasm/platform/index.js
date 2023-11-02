@@ -54,8 +54,8 @@ function attachListeners() {
     const gamepadMapping = {
       0: () => Navigation.accept(),
       1: () => Navigation.back(),
-      // 2: () => Navigation.up(), /* For unsupported controllers, enable this mapping to navigate up with 'Y' button, otherwise disable it */
-      // 3: () => Navigation.down(), /* For unsupported controllers, enable this mapping to navigate down with 'X' button, otherwise disable it */
+      2: () => Navigation.up(), /* For unsupported controllers, enable this mapping to navigate up with 'Y' button, otherwise disable it */
+      3: () => Navigation.down(), /* For unsupported controllers, enable this mapping to navigate down with 'X' button, otherwise disable it */
       4: () => Navigation.left(),
       5: () => Navigation.right(),
       12: () => Navigation.up(),

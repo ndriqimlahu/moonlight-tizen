@@ -22,7 +22,7 @@ enum GamepadAxis {
 
 // Enumeration for gamepad buttons
 enum GamepadButton {
-  A, B, X, Y, /* For unsupported controllers, change buttons to 'Y, X,' to prevent button swapping, otherwise leave as default */
+  A, B, Y, X, /* For unsupported controllers, change buttons to 'Y, X,' to prevent button swapping, otherwise leave as default */
   LeftBumper, RightBumper,
   LeftTrigger, RightTrigger,
   Back, Play,
