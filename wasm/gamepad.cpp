@@ -49,7 +49,7 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
 
   // Define button mappings
   static const int buttonMasks[] {
-    A_FLAG, B_FLAG, X_FLAG, Y_FLAG, /* For unsupported controllers, change buttons to 'Y_FLAG, X_FLAG,' to prevent button swapping, otherwise leave as default */
+    A_FLAG, B_FLAG, Y_FLAG, X_FLAG, /* For unsupported controllers, change buttons to 'Y_FLAG, X_FLAG,' to prevent button swapping, otherwise leave as default */
     LB_FLAG, RB_FLAG,
     0 /* LT_FLAG */, 0 /* RT_FLAG */,
     BACK_FLAG, PLAY_FLAG,
