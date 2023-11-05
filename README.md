@@ -117,7 +117,7 @@ Also, you should run "Docker Desktop" before proceeding further and it is also r
 
 ## Changelogs
 
-See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-chrome-tizen/blob/samsung_wasm/CHANGELOG.md) file for more information about the changes for each version of this project.
+See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-chrome-tizen/blob/main/CHANGELOG.md) file for more information about the changes for each version of this project.
 
 ## Contributing
 
@@ -129,7 +129,7 @@ Also, if you liked the project or found it useful, don't forget to give the proj
 
 ## License
 
-This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-chrome-tizen/blob/samsung_wasm/LICENSE) file for more information.
+This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-chrome-tizen/blob/main/LICENSE) file for more information.
 
 ## Credits
 - Moonlight for Chrome OS is developed and maintained by [Moonlight Developers](https://github.com/moonlight-stream/moonlight-chrome)
