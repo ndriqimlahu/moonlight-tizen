@@ -9,8 +9,10 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Updated video codecs to a newer version
-- Fixed garbled audio playback issue at the start of the stream
 - Updated core implementation files
+
+### Fixed
+- Fixed garbled audio playback issue at the start of the stream
 
 ## v1.0.11
 
@@ -92,9 +94,6 @@ All notable changes to this project will be documented in this file.
 - Updated '480p' resolution setting
 - Updated default bitrate setting to '20 Mbps'
 - Reordered 'STOP_STREAM_BUTTONS_FLAGS' buttons
-
-### Fixed
-- Fixed gamepad button mapping issue: Swapped 'Y' and 'X' buttons
 
 ## v1.0.3
 
