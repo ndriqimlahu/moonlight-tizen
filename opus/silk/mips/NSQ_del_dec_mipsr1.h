@@ -61,8 +61,9 @@ static inline void silk_noise_shape_quantizer_del_dec(
     opus_int            predictLPCOrder,        /* I    Prediction filter order             */
     opus_int            warping_Q16,            /* I                                        */
     opus_int            nStatesDelayedDecision, /* I    Number of states in decision tree   */
-    opus_int            *smpl_buf_idx,          /* I    Index to newest samples in buffers  */
-    opus_int            decisionDelay           /* I                                        */
+    opus_int            *smpl_buf_idx,          /* I/O  Index to newest samples in buffers  */
+    opus_int            decisionDelay,          /* I                                        */
+    int                 arch                    /* I                                        */
 )
 {
     opus_int     i, j, k, Winner_ind, RDmin_ind, RDmax_ind, last_smple_idx;
@@ -81,6 +82,9 @@ static inline void silk_noise_shape_quantizer_del_dec(
     opus_int16 a_Q12_14, a_Q12_15;
 
     opus_int32 cur, prev, next;
+
+    /*Unused.*/
+    (void)arch;
 
     //Intialize b_Q14 variables
     b_Q14_0 = b_Q14[ 0 ];
@@ -319,8 +323,9 @@ static inline void silk_noise_shape_quantizer_del_dec(
             psSS[ 1 ].xq_Q14       = xq_Q14;
         }
 
-        *smpl_buf_idx  = ( *smpl_buf_idx - 1 ) & DECISION_DELAY_MASK;                   /* Index to newest samples              */
-        last_smple_idx = ( *smpl_buf_idx + decisionDelay ) & DECISION_DELAY_MASK;       /* Index to decisionDelay old samples   */
+        *smpl_buf_idx  = ( *smpl_buf_idx - 1 ) % DECISION_DELAY;
+        if( *smpl_buf_idx < 0 ) *smpl_buf_idx += DECISION_DELAY;
+        last_smple_idx = ( *smpl_buf_idx + decisionDelay ) % DECISION_DELAY;
 
         /* Find winner */
         RDmin_Q10 = psSampleState[ 0 ][ 0 ].RD_Q10;

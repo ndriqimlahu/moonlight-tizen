@@ -12,7 +12,7 @@ CFLAGS := -DUSE_ALLOCA $(CFLAGS)
 
 # These options affect performance
 # HAVE_LRINTF: Use C99 intrinsics to speed up float-to-int conversion
-#CFLAGS := -DHAVE_LRINTF $(CFLAGS)
+CFLAGS := -DHAVE_LRINTF $(CFLAGS)
 
 ###################### END OF OPTIONS ######################
 
@@ -99,7 +99,7 @@ TESTOPUSAPI_OBJS := $(patsubst %.c,%$(OBJSUFFIX),$(TESTOPUSAPI_SRCS_C))
 TESTOPUSDECODE_SRCS_C = tests/test_opus_decode.c
 TESTOPUSDECODE_OBJS := $(patsubst %.c,%$(OBJSUFFIX),$(TESTOPUSDECODE_SRCS_C))
 
-TESTOPUSENCODE_SRCS_C = tests/test_opus_encode.c
+TESTOPUSENCODE_SRCS_C = tests/test_opus_encode.c tests/opus_encode_regressions.c
 TESTOPUSENCODE_OBJS := $(patsubst %.c,%$(OBJSUFFIX),$(TESTOPUSENCODE_SRCS_C))
 
 TESTOPUSPADDING_SRCS_C = tests/test_opus_padding.c

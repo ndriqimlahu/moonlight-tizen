@@ -74,7 +74,7 @@ int log2_frac(opus_uint32 val, int frac)
 /*Although derived separately, the pulse vector coding scheme is equivalent to
    a Pyramid Vector Quantizer \cite{Fis86}.
   Some additional notes about an early version appear at
-   http://people.xiph.org/~tterribe/notes/cwrs.html, but the codebook ordering
+   https://people.xiph.org/~tterribe/notes/cwrs.html, but the codebook ordering
    and the definitions of some terms have evolved since that was written.
 
   The conversion from a pulse vector to an integer index (encoding) and back
@@ -482,7 +482,7 @@ static opus_val32 cwrsi(int _n,int _k,opus_uint32 _i,int *_y){
       k0=_k;
       q=row[_n];
       if(q>_i){
-        celt_assert(p>q);
+        celt_sig_assert(p>q);
         _k=_n;
         do p=CELT_PVQ_U_ROW[--_k][_n];
         while(p>_i);

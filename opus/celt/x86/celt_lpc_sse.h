@@ -33,7 +33,6 @@
 #endif
 
 #if defined(OPUS_X86_MAY_HAVE_SSE4_1) && defined(FIXED_POINT)
-#define OVERRIDE_CELT_FIR
 
 void celt_fir_sse4_1(
          const opus_val16 *x,
@@ -41,14 +40,14 @@ void celt_fir_sse4_1(
          opus_val16 *y,
          int N,
          int ord,
-         opus_val16 *mem,
          int arch);
 
 #if defined(OPUS_X86_PRESUME_SSE4_1)
-#define celt_fir(x, num, y, N, ord, mem, arch) \
-    ((void)arch, celt_fir_sse4_1(x, num, y, N, ord, mem, arch))
+#define OVERRIDE_CELT_FIR
+#define celt_fir(x, num, y, N, ord, arch) \
+    ((void)arch, celt_fir_sse4_1(x, num, y, N, ord, arch))
 
-#else
+#elif defined(OPUS_HAVE_RTCD)
 
 extern void (*const CELT_FIR_IMPL[OPUS_ARCHMASK + 1])(
          const opus_val16 *x,
@@ -56,11 +55,11 @@ extern void (*const CELT_FIR_IMPL[OPUS_ARCHMASK + 1])(
          opus_val16 *y,
          int N,
          int ord,
-         opus_val16 *mem,
          int arch);
 
-#  define celt_fir(x, num, y, N, ord, mem, arch) \
-    ((*CELT_FIR_IMPL[(arch) & OPUS_ARCHMASK])(x, num, y, N, ord, mem, arch))
+#define OVERRIDE_CELT_FIR
+#  define celt_fir(x, num, y, N, ord, arch) \
+    ((*CELT_FIR_IMPL[(arch) & OPUS_ARCHMASK])(x, num, y, N, ord, arch))
 
 #endif
 #endif

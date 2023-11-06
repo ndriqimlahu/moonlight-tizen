@@ -21,6 +21,9 @@ SILK_SOURCES += $(SILK_SOURCES_FIXED)
 if HAVE_SSE4_1
 SILK_SOURCES += $(SILK_SOURCES_SSE4_1) $(SILK_SOURCES_FIXED_SSE4_1)
 endif
+if HAVE_ARM_NEON_INTR
+SILK_SOURCES += $(SILK_SOURCES_FIXED_ARM_NEON_INTR)
+endif
 else
 SILK_SOURCES += $(SILK_SOURCES_FLOAT)
 if HAVE_SSE4_1
@@ -33,6 +36,11 @@ else
 OPUS_SOURCES += $(OPUS_SOURCES_FLOAT)
 endif
 
+if CPU_X86
+if HAVE_RTCD
+CELT_SOURCES += $(CELT_SOURCES_X86_RTCD)
+SILK_SOURCES += $(SILK_SOURCES_X86_RTCD)
+endif
 if HAVE_SSE
 CELT_SOURCES += $(CELT_SOURCES_SSE)
 endif
@@ -42,13 +50,17 @@ endif
 if HAVE_SSE4_1
 CELT_SOURCES += $(CELT_SOURCES_SSE4_1)
 endif
+endif
 
 if CPU_ARM
-CELT_SOURCES += $(CELT_SOURCES_ARM)
-SILK_SOURCES += $(SILK_SOURCES_ARM)
+if HAVE_RTCD
+CELT_SOURCES += $(CELT_SOURCES_ARM_RTCD)
+SILK_SOURCES += $(SILK_SOURCES_ARM_RTCD)
+endif
 
-if OPUS_ARM_NEON_INTR
+if HAVE_ARM_NEON_INTR
 CELT_SOURCES += $(CELT_SOURCES_ARM_NEON_INTR)
+SILK_SOURCES += $(SILK_SOURCES_ARM_NEON_INTR)
 endif
 
 if HAVE_ARM_NE10
@@ -78,14 +90,44 @@ if OPUS_ARM_EXTERNAL_ASM
 libopus_la_LIBADD += libarmasm.la
 endif
 
-pkginclude_HEADERS = include/opus.h include/opus_multistream.h include/opus_types.h include/opus_defines.h
+pkginclude_HEADERS = include/opus.h include/opus_multistream.h include/opus_types.h include/opus_defines.h include/opus_projection.h
 
 noinst_HEADERS = $(OPUS_HEAD) $(SILK_HEAD) $(CELT_HEAD)
 
 if EXTRA_PROGRAMS
-noinst_PROGRAMS = opus_demo repacketizer_demo opus_compare tests/test_opus_api tests/test_opus_encode tests/test_opus_decode tests/test_opus_padding celt/tests/test_unit_cwrs32 celt/tests/test_unit_dft celt/tests/test_unit_entropy celt/tests/test_unit_laplace celt/tests/test_unit_mathops celt/tests/test_unit_mdct celt/tests/test_unit_rotation celt/tests/test_unit_types
+noinst_PROGRAMS = celt/tests/test_unit_cwrs32 \
+                  celt/tests/test_unit_dft \
+                  celt/tests/test_unit_entropy \
+                  celt/tests/test_unit_laplace \
+                  celt/tests/test_unit_mathops \
+                  celt/tests/test_unit_mdct \
+                  celt/tests/test_unit_rotation \
+                  celt/tests/test_unit_types \
+                  opus_compare \
+                  opus_demo \
+                  repacketizer_demo \
+                  silk/tests/test_unit_LPC_inv_pred_gain \
+                  tests/test_opus_api \
+                  tests/test_opus_decode \
+                  tests/test_opus_encode \
+                  tests/test_opus_padding \
+                  tests/test_opus_projection \
+                  trivial_example
 
-TESTS = celt/tests/test_unit_types celt/tests/test_unit_mathops celt/tests/test_unit_entropy celt/tests/test_unit_laplace celt/tests/test_unit_dft celt/tests/test_unit_mdct celt/tests/test_unit_rotation celt/tests/test_unit_cwrs32 tests/test_opus_api tests/test_opus_decode tests/test_opus_encode tests/test_opus_padding
+TESTS = celt/tests/test_unit_cwrs32 \
+        celt/tests/test_unit_dft \
+        celt/tests/test_unit_entropy \
+        celt/tests/test_unit_laplace \
+        celt/tests/test_unit_mathops \
+        celt/tests/test_unit_mdct \
+        celt/tests/test_unit_rotation \
+        celt/tests/test_unit_types \
+        silk/tests/test_unit_LPC_inv_pred_gain \
+        tests/test_opus_api \
+        tests/test_opus_decode \
+        tests/test_opus_encode \
+        tests/test_opus_padding \
+        tests/test_opus_projection
 
 opus_demo_SOURCES = src/opus_demo.c
 
@@ -98,10 +140,13 @@ repacketizer_demo_LDADD = libopus.la $(NE10_LIBS) $(LIBM)
 opus_compare_SOURCES = src/opus_compare.c
 opus_compare_LDADD = $(LIBM)
 
+trivial_example_SOURCES = doc/trivial_example.c
+trivial_example_LDADD = libopus.la $(LIBM)
+
 tests_test_opus_api_SOURCES = tests/test_opus_api.c tests/test_opus_common.h
 tests_test_opus_api_LDADD = libopus.la $(NE10_LIBS) $(LIBM)
 
-tests_test_opus_encode_SOURCES = tests/test_opus_encode.c tests/test_opus_common.h
+tests_test_opus_encode_SOURCES = tests/test_opus_encode.c tests/opus_encode_regressions.c tests/test_opus_common.h
 tests_test_opus_encode_LDADD = libopus.la $(NE10_LIBS) $(LIBM)
 
 tests_test_opus_decode_SOURCES = tests/test_opus_decode.c tests/test_opus_common.h
@@ -110,11 +155,27 @@ tests_test_opus_decode_LDADD = libopus.la $(NE10_LIBS) $(LIBM)
 tests_test_opus_padding_SOURCES = tests/test_opus_padding.c tests/test_opus_common.h
 tests_test_opus_padding_LDADD = libopus.la $(NE10_LIBS) $(LIBM)
 
+CELT_OBJ = $(CELT_SOURCES:.c=.lo)
+SILK_OBJ = $(SILK_SOURCES:.c=.lo)
+OPUS_OBJ = $(OPUS_SOURCES:.c=.lo)
+
+tests_test_opus_projection_SOURCES = tests/test_opus_projection.c tests/test_opus_common.h
+tests_test_opus_projection_LDADD = $(OPUS_OBJ) $(SILK_OBJ) $(CELT_OBJ) $(NE10_LIBS) $(LIBM)
+if OPUS_ARM_EXTERNAL_ASM
+tests_test_opus_projection_LDADD += libarmasm.la
+endif
+
+silk_tests_test_unit_LPC_inv_pred_gain_SOURCES = silk/tests/test_unit_LPC_inv_pred_gain.c
+silk_tests_test_unit_LPC_inv_pred_gain_LDADD = $(SILK_OBJ) $(CELT_OBJ) $(NE10_LIBS) $(LIBM)
+if OPUS_ARM_EXTERNAL_ASM
+silk_tests_test_unit_LPC_inv_pred_gain_LDADD += libarmasm.la
+endif
+
 celt_tests_test_unit_cwrs32_SOURCES = celt/tests/test_unit_cwrs32.c
 celt_tests_test_unit_cwrs32_LDADD = $(LIBM)
 
 celt_tests_test_unit_dft_SOURCES = celt/tests/test_unit_dft.c
-celt_tests_test_unit_dft_LDADD = $(NE10_LIBS) $(LIBM)
+celt_tests_test_unit_dft_LDADD = $(CELT_OBJ) $(NE10_LIBS) $(LIBM)
 if OPUS_ARM_EXTERNAL_ASM
 celt_tests_test_unit_dft_LDADD += libarmasm.la
 endif
@@ -126,19 +187,19 @@ celt_tests_test_unit_laplace_SOURCES = celt/tests/test_unit_laplace.c
 celt_tests_test_unit_laplace_LDADD = $(LIBM)
 
 celt_tests_test_unit_mathops_SOURCES = celt/tests/test_unit_mathops.c
-celt_tests_test_unit_mathops_LDADD = $(NE10_LIBS) $(LIBM)
+celt_tests_test_unit_mathops_LDADD = $(CELT_OBJ) $(NE10_LIBS) $(LIBM)
 if OPUS_ARM_EXTERNAL_ASM
 celt_tests_test_unit_mathops_LDADD += libarmasm.la
 endif
 
 celt_tests_test_unit_mdct_SOURCES = celt/tests/test_unit_mdct.c
-celt_tests_test_unit_mdct_LDADD = $(NE10_LIBS) $(LIBM)
+celt_tests_test_unit_mdct_LDADD = $(CELT_OBJ) $(NE10_LIBS) $(LIBM)
 if OPUS_ARM_EXTERNAL_ASM
 celt_tests_test_unit_mdct_LDADD += libarmasm.la
 endif
 
 celt_tests_test_unit_rotation_SOURCES = celt/tests/test_unit_rotation.c
-celt_tests_test_unit_rotation_LDADD = $(NE10_LIBS) $(LIBM)
+celt_tests_test_unit_rotation_LDADD = $(CELT_OBJ) $(NE10_LIBS) $(LIBM)
 if OPUS_ARM_EXTERNAL_ASM
 celt_tests_test_unit_rotation_LDADD += libarmasm.la
 endif
@@ -156,34 +217,51 @@ opus_custom_demo_LDADD = libopus.la $(LIBM)
 endif
 endif
 
-EXTRA_DIST = version.mk \
-             opus.pc.in \
+EXTRA_DIST = opus.pc.in \
              opus-uninstalled.pc.in \
              opus.m4 \
              Makefile.mips \
              Makefile.unix \
+             CMakeLists.txt \
+             cmake/CFeatureCheck.cmake \
+             cmake/OpusBuildtype.cmake \
+             cmake/OpusConfig.cmake \
+             cmake/OpusConfig.cmake.in \
+             cmake/OpusFunctions.cmake \
+             cmake/OpusPackageVersion.cmake \
+             cmake/OpusSources.cmake \
+             cmake/RunTest.cmake \
+             cmake/config.h.cmake.in \
+             cmake/vla.c \
+             cmake/cpu_info_by_asm.c \
+             cmake/cpu_info_by_c.c \
+             meson/get-version.py \
+             meson/read-sources-list.py \
+             meson.build \
+             meson_options.txt \
+             include/meson.build \
+             celt/meson.build \
+             celt/tests/meson.build \
+             silk/meson.build \
+             silk/tests/meson.build \
+             src/meson.build \
+             tests/meson.build \
+             doc/meson.build \
              tests/run_vectors.sh \
              celt/arm/arm2gnu.pl \
              celt/arm/celt_pitch_xcorr_arm.s \
-             win32/VS2015/silk_float.vcxproj \
-             win32/VS2015/celt.vcxproj.filters \
              win32/VS2015/opus.vcxproj \
-             win32/VS2015/silk_common.vcxproj.filters \
-             win32/VS2015/silk_float.vcxproj.filters \
              win32/VS2015/test_opus_encode.vcxproj.filters \
-             win32/VS2015/silk_common.vcxproj \
              win32/VS2015/test_opus_encode.vcxproj \
              win32/VS2015/opus_demo.vcxproj \
              win32/VS2015/test_opus_api.vcxproj.filters \
              win32/VS2015/test_opus_api.vcxproj \
              win32/VS2015/test_opus_decode.vcxproj.filters \
-             win32/VS2015/silk_fixed.vcxproj.filters \
              win32/VS2015/opus_demo.vcxproj.filters \
-             win32/VS2015/silk_fixed.vcxproj \
              win32/VS2015/opus.vcxproj.filters \
              win32/VS2015/test_opus_decode.vcxproj \
-             win32/VS2015/celt.vcxproj \
              win32/VS2015/opus.sln \
+             win32/VS2015/common.props \
              win32/genversion.bat \
              win32/config.h
 
@@ -275,27 +353,30 @@ $(CELT_SOURCES_ARM_ASM:%.s=%-gnu.S): $(top_srcdir)/celt/arm/arm2gnu.pl
 OPT_UNIT_TEST_OBJ = $(celt_tests_test_unit_mathops_SOURCES:.c=.o) \
                     $(celt_tests_test_unit_rotation_SOURCES:.c=.o) \
                     $(celt_tests_test_unit_mdct_SOURCES:.c=.o) \
-                    $(celt_tests_test_unit_dft_SOURCES:.c=.o)
+                    $(celt_tests_test_unit_dft_SOURCES:.c=.o) \
+                    $(silk_tests_test_unit_LPC_inv_pred_gain_SOURCES:.c=.o)
 
 if HAVE_SSE
 SSE_OBJ = $(CELT_SOURCES_SSE:.c=.lo)
-$(SSE_OBJ) $(OPT_UNIT_TEST_OBJ): CFLAGS += $(OPUS_X86_SSE_CFLAGS)
+$(SSE_OBJ): CFLAGS += $(OPUS_X86_SSE_CFLAGS)
 endif
 
 if HAVE_SSE2
 SSE2_OBJ = $(CELT_SOURCES_SSE2:.c=.lo)
-$(SSE2_OBJ) $(OPT_UNIT_TEST_OBJ): CFLAGS += $(OPUS_X86_SSE2_CFLAGS)
+$(SSE2_OBJ): CFLAGS += $(OPUS_X86_SSE2_CFLAGS)
 endif
 
 if HAVE_SSE4_1
 SSE4_1_OBJ = $(CELT_SOURCES_SSE4_1:.c=.lo) \
              $(SILK_SOURCES_SSE4_1:.c=.lo) \
              $(SILK_SOURCES_FIXED_SSE4_1:.c=.lo)
-$(SSE4_1_OBJ) $(OPT_UNIT_TEST_OBJ): CFLAGS += $(OPUS_X86_SSE4_1_CFLAGS)
+$(SSE4_1_OBJ): CFLAGS += $(OPUS_X86_SSE4_1_CFLAGS)
 endif
 
-if OPUS_ARM_NEON_INTR
-CELT_ARM_NEON_INTR_OBJ = $(CELT_SOURCES_ARM_NEON_INTR:.c=.lo)
-$(CELT_ARM_NEON_INTR_OBJ) $(OPT_UNIT_TEST_OBJ): CFLAGS += \
+if HAVE_ARM_NEON_INTR
+ARM_NEON_INTR_OBJ = $(CELT_SOURCES_ARM_NEON_INTR:.c=.lo) \
+                    $(SILK_SOURCES_ARM_NEON_INTR:.c=.lo) \
+                    $(SILK_SOURCES_FIXED_ARM_NEON_INTR:.c=.lo)
+$(ARM_NEON_INTR_OBJ): CFLAGS += \
  $(OPUS_ARM_NEON_INTR_CFLAGS)  $(NE10_CFLAGS)
 endif

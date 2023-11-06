@@ -28,40 +28,28 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef SILK_DEBUG_H
 #define SILK_DEBUG_H
 
+/* Set to 1 to enable DEBUG_STORE_DATA() macros for dumping
+ * intermediate signals from the codec.
+ */
+#define SILK_DEBUG 0
+
+/* Flag for using timers */
+#define SILK_TIC_TOC 0
+
+#if SILK_DEBUG || SILK_TIC_TOC
 #include "typedef.h"
-#include <stdio.h>      /* file writing */
 #include <string.h>     /* strcpy, strcmp */
+#include <stdio.h>      /* file writing */
+#endif
 
 #ifdef  __cplusplus
 extern "C"
 {
 #endif
 
-unsigned long GetHighResolutionTime(void); /* O  time in usec*/
-
-/* make SILK_DEBUG dependent on compiler's _DEBUG */
-#if defined _WIN32
-    #ifdef _DEBUG
-        #define SILK_DEBUG  1
-    #else
-        #define SILK_DEBUG  0
-    #endif
-
-    /* overrule the above */
-    #if 0
-    /*  #define NO_ASSERTS*/
-    #undef  SILK_DEBUG
-    #define SILK_DEBUG  1
-    #endif
-#else
-    #define SILK_DEBUG  0
-#endif
-
-/* Flag for using timers */
-#define SILK_TIC_TOC    0
-
-
 #if SILK_TIC_TOC
+
+unsigned long GetHighResolutionTime(void); /* O  time in usec*/
 
 #if (defined(_WIN32) || defined(_WINCE))
 #include <windows.h>    /* timer */

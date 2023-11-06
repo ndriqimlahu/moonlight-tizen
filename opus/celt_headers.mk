@@ -36,6 +36,7 @@ celt/static_modes_fixed_arm_ne10.h \
 celt/arm/armcpu.h \
 celt/arm/fixed_armv4.h \
 celt/arm/fixed_armv5e.h \
+celt/arm/fixed_arm64.h \
 celt/arm/kiss_fft_armv4.h \
 celt/arm/kiss_fft_armv5e.h \
 celt/arm/pitch_arm.h \
@@ -48,4 +49,5 @@ celt/mips/mdct_mipsr1.h \
 celt/mips/pitch_mipsr1.h \
 celt/mips/vq_mipsr1.h \
 celt/x86/pitch_sse.h \
+celt/x86/vq_sse.h \
 celt/x86/x86cpu.h

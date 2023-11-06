@@ -34,48 +34,10 @@
 #define CUSTOM_MODES
 #endif
 
-#define CELT_C
-
 #include <stdio.h>
 #include <math.h>
-#include "mathops.c"
-#include "entenc.c"
-#include "entdec.c"
-#include "entcode.c"
-#include "bands.c"
-#include "quant_bands.c"
-#include "laplace.c"
-#include "vq.c"
-#include "cwrs.c"
-#include "pitch.c"
-#include "celt_lpc.c"
-#include "celt.c"
-
-#if defined(OPUS_X86_MAY_HAVE_SSE) || defined(OPUS_X86_MAY_HAVE_SSE2) || defined(OPUS_X86_MAY_HAVE_SSE4_1)
-# if defined(OPUS_X86_MAY_HAVE_SSE)
-#  include "x86/pitch_sse.c"
-# endif
-# if defined(OPUS_X86_MAY_HAVE_SSE2)
-#  include "x86/pitch_sse2.c"
-# endif
-# if defined(OPUS_X86_MAY_HAVE_SSE4_1)
-#  include "x86/pitch_sse4_1.c"
-#  include "x86/celt_lpc_sse.c"
-# endif
-# include "x86/x86_celt_map.c"
-#elif defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-# include "arm/armcpu.c"
-# if defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-#  include "arm/celt_neon_intr.c"
-#  if defined(HAVE_ARM_NE10)
-#   include "kiss_fft.c"
-#   include "mdct.c"
-#   include "arm/celt_ne10_fft.c"
-#   include "arm/celt_ne10_mdct.c"
-#  endif
-# endif
-# include "arm/arm_celt_map.c"
-#endif
+#include "mathops.h"
+#include "bands.h"
 
 #ifdef FIXED_POINT
 #define WORD "%d"
@@ -181,7 +143,7 @@ void testbitexactlog2tan(void)
 void testlog2(void)
 {
    float x;
-   for (x=0.001;x<1677700.0;x+=(x/8.0))
+   for (x=0.001f;x<1677700.0;x+=(x/8.0))
    {
       float error = fabs((1.442695040888963387*log(x))-celt_log2(x));
       if (error>0.0009)
@@ -195,7 +157,7 @@ void testlog2(void)
 void testexp2(void)
 {
    float x;
-   for (x=-11.0;x<24.0;x+=0.0007)
+   for (x=-11.0;x<24.0;x+=0.0007f)
    {
       float error = fabs(x-(1.442695040888963387*log(celt_exp2(x))));
       if (error>0.0002)
@@ -209,7 +171,7 @@ void testexp2(void)
 void testexp2log2(void)
 {
    float x;
-   for (x=-11.0;x<24.0;x+=0.0007)
+   for (x=-11.0;x<24.0;x+=0.0007f)
    {
       float error = fabs(x-(celt_log2(celt_exp2(x))));
       if (error>0.001)
