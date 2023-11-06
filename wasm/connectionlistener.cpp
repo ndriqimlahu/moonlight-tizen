@@ -44,14 +44,15 @@ void onConnectionStopped(int errorCode) {
 
 void MoonlightInstance::ClLogMessage(const char* format, ...) {
   va_list va;
+  char message[1024];
+
   va_start(va, format);
-  char buf[1000];
-  vsnprintf(buf, sizeof(buf), format, va);
+  vsnprintf(message, sizeof(message), format, va);
   va_end(va);
 
   // fprintf(stderr, ...) processes message in parts, so logs from different
   // threads may interleave. Send whole message at once to minimize this.
-  emscripten_log(EM_LOG_CONSOLE, "%s", buf);
+  emscripten_log(EM_LOG_CONSOLE, "%s", message);
 }
 
 CONNECTION_LISTENER_CALLBACKS MoonlightInstance::s_ClCallbacks = {

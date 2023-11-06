@@ -14,9 +14,9 @@
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 
-#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 
 // Requests the NaCl module to connection to the server specified after the:
 #define MSG_START_REQUEST "startRequest"
@@ -30,8 +30,7 @@
 MoonlightInstance* g_Instance;
 
 MoonlightInstance::MoonlightInstance()
-    : m_RequestIdrFrame(false),
-      m_OpusDecoder(NULL),
+    : m_OpusDecoder(NULL),
       m_MouseLocked(false),
       m_MouseLastPosX(-1),
       m_MouseLastPosY(-1),
@@ -63,7 +62,9 @@ MoonlightInstance::MoonlightInstance()
   m_Source.SetListener(&m_SourceListener);
 }
 
-MoonlightInstance::~MoonlightInstance() { m_Dispatcher.stop(); }
+MoonlightInstance::~MoonlightInstance() { 
+  m_Dispatcher.stop();
+}
 
 void MoonlightInstance::OnConnectionStarted(uint32_t unused) {
   // Tell the front end
@@ -146,6 +147,9 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
   serverInfo.address = me->m_Host.c_str();
   serverInfo.serverInfoAppVersion = me->m_AppVersion.c_str();
   serverInfo.serverInfoGfeVersion = me->m_GfeVersion.c_str();
+  serverInfo.rtspSessionUrl = me->m_RtspUrl.c_str();
+  // Enable 'serverCodecModeSupport' only if the latest version of 'moonlight-common-c' is implemented
+  // serverInfo.serverCodecModeSupport = SCM_HEVC;
 
   err = LiStartConnection(&serverInfo, &me->m_StreamConfig,
   &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks,
@@ -172,11 +176,9 @@ static void HexStringToBytes(const char* str, char* output) {
   }
 }
 
-MessageResult MoonlightInstance::StartStream(
-std::string host, std::string width, std::string height, std::string fps,
-std::string bitrate, std::string rikey, std::string rikeyid,
-std::string appversion, std::string gfeversion, bool framePacing,
-bool audioSync) {
+MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height,
+std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
+std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
   PostToJs("Setting stream width to: " + width);
   PostToJs("Setting stream height to: " + height);
   PostToJs("Setting stream fps to: " + fps);
@@ -186,6 +188,7 @@ bool audioSync) {
   PostToJs("Setting rikeyid to: " + rikeyid);
   PostToJs("Setting appversion to: " + appversion);
   PostToJs("Setting gfeversion to: " + gfeversion);
+  PostToJs("Setting RTSP URL to: " + rtspurl);
   PostToJs("Setting frame pacing to: " + std::to_string(framePacing));
   PostToJs("Setting audio syncing to: " + std::to_string(audioSync));
 
@@ -198,8 +201,16 @@ bool audioSync) {
   m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
   m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
   m_StreamConfig.packetSize = 1392;
+  // Enable 'supportedVideoFormats' only if the latest version of 'moonlight-common-c' is implemented
+  // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265;
+
+  // Enable 'supportsHevc' and 'enableHdr' only if the current stable version of 'moonlight-common-c' is implemented
   m_StreamConfig.supportsHevc = true;
-  //m_StreamConfig.enableHdr = true;
+  m_StreamConfig.enableHdr = true;
+
+  // TODO: If/when video encryption is added, we'll probably want to
+  // limit that to devices that support AES instructions.
+  m_StreamConfig.encryptionFlags = ENCFLG_AUDIO;
 
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);
@@ -210,6 +221,7 @@ bool audioSync) {
   m_Host = host;
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
+  m_RtspUrl = rtspurl;
   m_FramePacingEnabled = framePacing;
   m_AudioSyncEnabled = audioSync;
 
@@ -246,15 +258,13 @@ void MoonlightInstance::STUN_private(int callbackId) {
 }
 
 void MoonlightInstance::STUN(int callbackId) {
-  m_Dispatcher.post_job(
-      std::bind(&MoonlightInstance::STUN_private, this, callbackId), false);
+  m_Dispatcher.post_job(std::bind(&MoonlightInstance::STUN_private, this, callbackId), false);
 }
 
 void MoonlightInstance::Pair_private(int callbackId, std::string serverMajorVersion,
 std::string address, std::string randomNumber) {
   char* ppkstr;
-  int err = gs_pair(atoi(serverMajorVersion.c_str()), address.c_str(),
-                    randomNumber.c_str(), &ppkstr);
+  int err = gs_pair(atoi(serverMajorVersion.c_str()), address.c_str(), randomNumber.c_str(), &ppkstr);
 
   printf("pair address: %s result: %d\n", address.c_str(), err);
   if (err == 0) {
@@ -268,10 +278,7 @@ std::string address, std::string randomNumber) {
 void MoonlightInstance::Pair(int callbackId, std::string serverMajorVersion,
 std::string address, std::string randomNumber) {
   printf("%s address: %s\n", __func__, address.c_str());
-  m_Dispatcher.post_job(
-      std::bind(&MoonlightInstance::Pair_private, this, callbackId,
-                serverMajorVersion, address, randomNumber),
-      false);
+  m_Dispatcher.post_job(std::bind(&MoonlightInstance::Pair_private, this, callbackId, serverMajorVersion, address, randomNumber), false);
 }
 
 bool MoonlightInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
@@ -284,11 +291,9 @@ int main(int argc, char** argv) {
 
   emscripten_set_keyup_callback(kCanvasName, NULL, EM_TRUE, handleKeyUp);
   emscripten_set_keydown_callback(kCanvasName, NULL, EM_TRUE, handleKeyDown);
-  emscripten_set_mousedown_callback(kCanvasName, NULL, EM_TRUE,
-                                    handleMouseDown);
+  emscripten_set_mousedown_callback(kCanvasName, NULL, EM_TRUE, handleMouseDown);
   emscripten_set_mouseup_callback(kCanvasName, NULL, EM_TRUE, handleMouseUp);
-  emscripten_set_mousemove_callback(kCanvasName, NULL, EM_TRUE,
-                                    handleMouseMove);
+  emscripten_set_mousemove_callback(kCanvasName, NULL, EM_TRUE, handleMouseMove);
   emscripten_set_wheel_callback(kCanvasName, NULL, EM_TRUE, handleWheel);
 
   // As we want to setup callbacks on DOM document and
@@ -307,13 +312,12 @@ int main(int argc, char** argv) {
   }
   RAND_seed(buffer, 128);
 }
-MessageResult startStream(std::string host, std::string width,
-std::string height, std::string fps, std::string bitrate, std::string rikey,
-std::string rikeyid, std::string appversion, std::string gfeversion, bool framePacing,
-bool audioSync) {
+MessageResult startStream(std::string host, std::string width, std::string height,
+std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
+std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey,
-  rikeyid, appversion, gfeversion, framePacing, audioSync);
+  rikeyid, appversion, gfeversion, rtspurl, framePacing, audioSync);
 }
 
 MessageResult stopStream() { return g_Instance->StopStream(); }
@@ -337,7 +341,6 @@ void PostPromiseMessage(int callbackId, const std::string& type, const std::stri
       {
         const type = UTF8ToString($1);
         const response = UTF8ToString($2);
-
         handlePromiseMessage($0, type, response);
       },
       callbackId, type.c_str(), response.c_str());
@@ -347,7 +350,6 @@ void PostPromiseMessage(int callbackId, const std::string& type, const std::vect
       {
         const type = UTF8ToString($1);
         const response = HEAPU8.slice($2, $2 + $3);
-
         handlePromiseMessage($0, type, response);
       },
       callbackId, type.c_str(), response.data(), response.size());

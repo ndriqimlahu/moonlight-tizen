@@ -446,6 +446,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
   }
 }
 
+// Show a confirmation with Delete Host dialog before removing specific host
 function removeClicked(host) {
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
   var deleteHostDialog = document.querySelector('#deleteHostDialog');
@@ -874,15 +875,7 @@ function startGame(host, appID) {
       var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
       const framePacingEnabled = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSyncEnabled = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      console.log('%c[index.js, startGame]', 'color:green;',
-                  'startRequest:' + host.address +
-                  ":" + streamWidth +
-                  ":" + streamHeight +
-                  ":" + frameRate +
-                  ":" + bitrate +
-                  ":" + optimize +
-                  ":" + framePacingEnabled,
-                  ":" + audioSyncEnabled);
+      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + optimize + ":" + framePacingEnabled, ":" + audioSyncEnabled);
 
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
@@ -905,8 +898,8 @@ function startGame(host, appID) {
           }
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
-            bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, /* host.gfeVersion */"",
-            framePacingEnabled, audioSyncEnabled
+            bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
+            $root.find('sessionUrl0').text().trim(), framePacingEnabled, audioSyncEnabled
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color:green;', 'Failed to resume the app! Returned error was' + failedResumeApp);
@@ -935,8 +928,8 @@ function startGame(host, appID) {
         }
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
-          bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, /* host.gfeVersion */"",
-          framePacingEnabled, audioSyncEnabled
+          bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
+          $root.find('sessionUrl0').text().trim(), framePacingEnabled, audioSyncEnabled
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Failed to launch app width id: ' + appID + '\nReturned error was: ' + failedLaunchApp);
@@ -1092,8 +1085,7 @@ function openIndexDB(callback) {
   }
 
   if (!indexedDB) {
-    indexedDB = self.indexedDB || self.webkitIndexedDB ||
-        self.mozIndexedDB || self.OIndexedDB || self.msIndexedDB;
+    indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.OIndexedDB || self.msIndexedDB;
   }
 
   // Create/open database
@@ -1147,13 +1139,11 @@ function getData(key, callbackFunction) {
     try {
       // Open a transaction to the database
       const transaction = db.transaction(storeName, 'readonly');
-
       const readRequest = transaction.objectStore(storeName).get(key);
 
       // Retrieve the data that was stored
       readRequest.onsuccess = function(event) {
-        console.log('Read data from the DB key: ' +
-                    key + ' value: '+ readRequest.result);
+        console.log('Read data from the DB key: ' + key + ' value: '+ readRequest.result);
         let value = null;
         if (readRequest.result) {
           value = JSON.parse(readRequest.result);
@@ -1165,8 +1155,7 @@ function getData(key, callbackFunction) {
       };
 
       transaction.onerror = function(e) {
-        console.error('Error reading data at key: "' + key +
-                      '" from IndexDB: ' + e);
+        console.error('Error reading data at key: "' + key + '" from IndexDB: ' + e);
         callCb(key, value, callbackFunction);
       };
     } catch (e) {
@@ -1197,10 +1186,8 @@ function storeData(key, data, callbackFunction) {
     try {
       // Open a transaction to the database
       const transaction = db.transaction(storeName, 'readwrite');
-
       // Put the text into the database
-      const put = transaction.objectStore(storeName).put(
-                  JSON.stringify(data), key);
+      const put = transaction.objectStore(storeName).put(JSON.stringify(data), key);
 
       transaction.oncomplete = function(e) {
         console.log('Data at key: ' + key + ' stored as: ' + JSON.stringify(data));
@@ -1290,7 +1277,9 @@ function updateDefaultBitrate() {
   var res = $('#selectResolution').data('value');
   var frameRate = $('#selectFramerate').data('value').toString();
 
-  // These quality presets include video resolution like 480p, 720p, 1080p, 1440p, 2160p (4K) and video frame rate like 30 FPS and 60 FPS
+  // These quality presets include
+  // video resolution: 480p, 720p, 1080p, 1440p, 2160p (4K) and
+  // video framerate: 30 FPS and 60 FPS
   if (res === "858:480") {
     if (frameRate === "30") { // 480p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('2');
@@ -1517,16 +1506,12 @@ function onWindowLoad() {
 
 window.onload = onWindowLoad;
 
-// Required on Tizen TV, to get gamepad events.
+// Required on Samsung Tizen TV, to get gamepad connected events
 window.addEventListener('gamepadconnected', function(event) {
-  console.log('%c[index.js, gamepadconnected] gamepad connected: ' +
-              JSON.stringify(event.gamepad),
-              event.gamepad);
+  console.log('%c[index.js, gamepadconnected] gamepad connected: ' + JSON.stringify(event.gamepad), event.gamepad);
 });
 
-// Required on Tizen TV, to get gamepad events.
+// Required on Samsung Tizen TV, to get gamepad disconnected events
 window.addEventListener('gamepaddisconnected', function(event) {
-  console.log('%c[index.js, gamepaddisconnected] gamepad disconnected: ' +
-              JSON.stringify(event.gamepad),
-              event.gamepad);
+  console.log('%c[index.js, gamepaddisconnected] gamepad disconnected: ' + JSON.stringify(event.gamepad), event.gamepad);
 });

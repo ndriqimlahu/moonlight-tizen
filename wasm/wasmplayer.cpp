@@ -104,7 +104,6 @@ void MoonlightInstance::VideoTrackListener::OnTrackOpen() {
   ClLogMessage("VIDEO ElementaryMediaTrack::OnTrackOpen\n");
   std::unique_lock<std::mutex> lock(m_Instance->m_Mutex);
   m_Instance->m_VideoStarted = true;
-  m_Instance->m_RequestIdrFrame = true;
   m_Instance->m_EmssVideoStateChanged.notify_all();
 }
 
@@ -126,7 +125,7 @@ void MoonlightInstance::DidChangeFocus(bool got_focus) {
   // Request an IDR frame to dump the frame queue that may have
   // built up from the GL pipeline being stalled.
   if (got_focus) {
-    g_Instance->m_RequestIdrFrame = true;
+    LiRequestIdrFrame();
   }
 }
 
@@ -146,11 +145,11 @@ int height, int redrawRate, void* context, int drFlags) {
   {
     auto add_track_result = g_Instance->m_Source.AddTrack(
       samsung::wasm::ElementaryAudioTrackConfig {
-        "audio/webm; codecs=\"pcm\"",  // mimeType
-        {},  // extradata (empty?)
-        samsung::wasm::SampleFormat::kS16,
-        samsung::wasm::ChannelLayout::kStereo,
-        kSampleRate
+        "audio/webm; codecs=\"pcm\"",                            // mime type
+        {},                                                      // extradata (empty?)
+        samsung::wasm::SampleFormat::kS16,                       // sample format
+        samsung::wasm::ChannelLayout::kStereo,                   // channel layout
+        kSampleRate,                                             // sample rate
       });
     if (add_track_result) {
       g_Instance->m_AudioTrack = std::move(*add_track_result);
@@ -159,14 +158,27 @@ int height, int redrawRate, void* context, int drFlags) {
   }
 
   {
+    const char *mimetype = "video/mp4";
+    if (videoFormat & VIDEO_FORMAT_H264) {
+      mimetype = "video/mp4; codecs=\"avc1.64002A\"";            // H.264 High Profile
+    } else if (videoFormat & VIDEO_FORMAT_H265) {
+      mimetype = "video/mp4; codecs=\"hev1.1.6.L150.B0\"";       // HEVC Main Profile
+    } else if (videoFormat & VIDEO_FORMAT_H265_MAIN10) {
+      mimetype = "video/mp4; codecs=\"hev1.2.4.L153.B0\"";       // HEVC Main10 Profile
+    } else {
+      ClLogMessage("Cannot select mime type for videoFormat=0x%x\n", videoFormat);
+      return -1;
+    }
+
+    ClLogMessage("Using mimeType %s\n", mimetype);
     auto add_track_result = g_Instance->m_Source.AddTrack(
-      samsung::wasm::ElementaryVideoTrackConfig{
-        "video/mp4; codecs=\"hev1.2.4.L153.B0\"",  // h265 mimeType
-        {},                                   // extradata (empty?)
-        static_cast<uint32_t>(width),
-        static_cast<uint32_t>(height),
-        static_cast<uint32_t>(redrawRate),  // framerateNum
-        1,                                  // framerateDen
+      samsung::wasm::ElementaryVideoTrackConfig {
+        mimetype,                                                // mime type
+        {},                                                      // extradata (empty?)
+        static_cast<uint32_t>(width),                            // width of video in pixels
+        static_cast<uint32_t>(height),                           // height of video in pixels
+        static_cast<uint32_t>(redrawRate),                       // framerate numerator
+        1,                                                       // framerate denominator
       });
     if (add_track_result) {
       g_Instance->m_VideoTrack = std::move(*add_track_result);
@@ -236,13 +248,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
   unsigned int offset;
   unsigned int totalLength;
   // ClLogMessage("Video packet append at: %f\n", s_pktPts);
-
-  // Request an IDR frame if needed
-  if (g_Instance->m_RequestIdrFrame) {
-    g_Instance->m_RequestIdrFrame = false;
-    return DR_NEED_IDR;
-  }
-
+  
   totalLength = decodeUnit->fullLength;
   // Resize the decode buffer if needed
   if (totalLength > s_DecodeBuffer.size()) {

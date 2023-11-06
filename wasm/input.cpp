@@ -180,10 +180,12 @@ void MoonlightInstance::UnlockMouse() {
 }
 
 void MoonlightInstance::DidLockMouse(int32_t result) {
-  if (result != 0) {
-    ClLogMessage("Error locking mouse, event type: %d\n", result);
-  }
   m_MouseLocked = (result == 0);
+  if (m_MouseLocked) {
+    // Request an IDR frame to dump the frame queue that may have
+    // built up from the GL pipeline being stalled.
+    LiRequestIdrFrame();
+  }
 }
 
 void MoonlightInstance::MouseLockLost() {

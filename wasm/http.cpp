@@ -1,7 +1,7 @@
 #include "moonlight_wasm.hpp"
 
-#include <errors.h>
 #include <http.h>
+#include <errors.h>
 #include <string.h>
 
 #include <mkcert.h>
