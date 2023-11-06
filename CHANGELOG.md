@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.13
+
+### Changed
+- Updated 'opus' module to v1.4
+- Updated wasm core implementation files
+
 ## v1.0.12
 
 ### Added
