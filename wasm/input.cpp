@@ -84,7 +84,8 @@ EM_BOOL MoonlightInstance::HandleKeyDown(const EmscriptenKeyboardEvent &event) {
   char modifiers = GetModifierFlags(event);
   uint32_t keyCode = event.keyCode;
 
-  if (modifiers == (MODIFIER_ALT | MODIFIER_CTRL | MODIFIER_SHIFT)) {
+  // Define a combination of keys on the keyboard to stop streaming session
+  if (modifiers == (MODIFIER_CTRL | MODIFIER_ALT | MODIFIER_SHIFT)) {
     if (keyCode == 0x51) {  // Q key
       // Terminate the connection
       StopConnection();
