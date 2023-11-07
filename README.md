@@ -99,7 +99,7 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 - Once you install the Moonlight app, hover over the app icon and long press the "OK" button on your TV remote. Then select `Add to Home`. Use the cursor to move the icon where you want it to be in the app launcher row on the home screen.
 
 3. What is the highest streaming quality and performance in Moonlight?
-- Currently, Moonlight can push up to 4K 60 FPS HDR streaming with surround sound. We recommend that you tune the streaming resolution, frame rate, and bandwidth for the best experience on your setup.
+- Moonlight can push up to 4K 120 FPS HDR streaming with surround sound. We recommend that you adjust the streaming resolution, frame rate, and bandwidth for the best experience on your setup.
 
 4. Are keyboard and mouse inputs supported in Moonlight?
 - Yes, Moonlight can support any Bluetooth or USB-wired keyboard and mouse input.
@@ -120,7 +120,8 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 - To test the functionality of the controller on Samsung Smart TV, you can use the [GamepadChecker](https://developer.samsung.com/smarttv/accessory/gamepad.html) application, please visit the above link and follow all the instructions in the "Testing Gamepad Functionality" section to download and install the app on your Samsung Smart TV.
 
 10. How can I stop the streaming session in Moonlight?
-- To stop streaming, simply press the combination of buttons: `LB` + `RB` + `BACK` + `PLAY`. Pressing these four buttons together will end the streaming session.
+- If you are using a keyboard, simply press the key combination simultaneously: `CTRL` + `ALT` + `SHIFT` + `Q`. Pressing these four keys together will end the streaming session.
+- But if you are using a controller, just press the button combination at the same time: `BACK` + `PLAY` + `LB` + `RB`. Pressing these four buttons together will end the streaming session.
 
 ## Changelogs
 
