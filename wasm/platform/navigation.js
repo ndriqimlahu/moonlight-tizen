@@ -127,6 +127,8 @@ const Views = {
       'supportCenter']),
     up: function() {},
     down: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
       Navigation.change(Views.Hosts);
     },
     left: function() {
@@ -150,6 +152,8 @@ const Views = {
       }
     },
     back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
       Navigation.change(Views.Hosts);
     },
     enter: function() {
@@ -493,6 +497,7 @@ const Navigation = (function() {
       Stack.get().enter();
     }
   }
+
   function runOp(name) {
     return () => {
       if (!State.isRunning()) {
