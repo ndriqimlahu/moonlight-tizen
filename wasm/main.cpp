@@ -149,7 +149,7 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
   serverInfo.serverInfoGfeVersion = me->m_GfeVersion.c_str();
   serverInfo.rtspSessionUrl = me->m_RtspUrl.c_str();
   // Enable 'serverCodecModeSupport' only if the latest version of 'moonlight-common-c' is implemented
-  // serverInfo.serverCodecModeSupport = SCM_HEVC;
+  // serverInfo.serverCodecModeSupport = SCM_HEVC_MAIN10;
 
   err = LiStartConnection(&serverInfo, &me->m_StreamConfig,
   &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks,
@@ -202,7 +202,7 @@ std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
   m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
   m_StreamConfig.packetSize = 1392;
   // Enable 'supportedVideoFormats' only if the latest version of 'moonlight-common-c' is implemented
-  // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265;
+  // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265_MAIN10;
 
   // Enable 'supportsHevc' and 'enableHdr' only if the current stable version of 'moonlight-common-c' is implemented
   m_StreamConfig.supportsHevc = true;
