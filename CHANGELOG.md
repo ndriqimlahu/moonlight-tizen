@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.14
+
+### Added
+- Expanded settings: Introduced '90 FPS' and '120 FPS' framerate options
+
+### Changed
+- Increased the bitrate slider for the bandwidth menu from '100' to '150'
+- Updated server codec mode to 'SCM_HEVC_MAIN10' and changed supported video format to 'VIDEO_FORMAT_H265_MAIN10'
+
+### Fixed
+- Fixed focus navigation issue for settings items
+- Fixed bitrate presets for '90 FPS' and '120 FPS' framerate options
+- Fixed order of combination keys on the keyboard and buttons on the gamepad to stop streaming session
+
 ## v1.0.13
 
 ### Changed
@@ -105,12 +119,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Expanded settings: Introduced '480p' resolution option
+- Added bitrate presets for '480p' resolution option
 
 ### Changed
-- Updated default bitrate and resolution settings from '720p' to '1080p'
-
-### Fixed
-- Fixed bitrate presets for '480p' resolution option
+- Changed default bitrate and resolution settings from '720p' to '1080p'
 
 ## v1.0.2
 
