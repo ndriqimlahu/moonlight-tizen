@@ -43,29 +43,36 @@ function attachListeners() {
   }
 
   Controller.startWatching();
-  window.addEventListener('gamepadbuttonpressed', (e) => {
-    const pressed = e.detail.pressed;
-    const key = e.detail.key;
+  window.addEventListener('gamepadinputchanged', (e) => {
+    const changes = e.detail.changes;
 
-    if (!pressed) {
-      return;
-    }
+    changes.forEach((change) => {
+      const { type, index, pressed, value } = change;
 
-    const gamepadMapping = {
-      0: () => Navigation.accept(),
-      1: () => Navigation.back(),
-      2: () => Navigation.up(), /* For unsupported controllers, enable this mapping to navigate up with 'Y' button, otherwise disable it */
-      3: () => Navigation.down(), /* For unsupported controllers, enable this mapping to navigate down with 'X' button, otherwise disable it */
-      4: () => Navigation.left(),
-      5: () => Navigation.right(),
-      12: () => Navigation.up(),
-      13: () => Navigation.down(),
-      14: () => Navigation.left(),
-      15: () => Navigation.right(),
-    };
-    if (gamepadMapping[key]) {
-      gamepadMapping[key]();
-    }
+      if (type === 'button' && pressed) {
+        // Handle button press
+        const buttonMapping = {
+          0: () => Navigation.accept(),
+          1: () => Navigation.back(),
+          12: () => Navigation.up(),
+          13: () => Navigation.down(),
+          14: () => Navigation.left(),
+          15: () => Navigation.right(),
+        };
+        if (buttonMapping[index]) {
+          buttonMapping[index]();
+        }
+      } else if (type === 'axis') {
+        // Handle axis change
+        const axisMapping = {
+          0: () => value < -0.5 ? Navigation.left() : value > 0.5 ? Navigation.right() : null,
+          1: () => value < -0.5 ? Navigation.up() : value > 0.5 ? Navigation.down() : null,
+        };
+        if (axisMapping[index]) {
+          axisMapping[index]();
+        }
+      }
+    });
   });
 }
 
