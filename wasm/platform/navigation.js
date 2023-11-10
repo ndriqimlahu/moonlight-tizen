@@ -1,4 +1,6 @@
 const hoveredClassName = 'hovered';
+let navigationTimer = null;
+const delayBetweenNavigation = 125;
 
 function unmarkElementById(id) {
   unmarkElement(document.getElementById(id));
@@ -46,6 +48,7 @@ function isPopupActive(id) {
       .classList
       .contains('is-visible');
 }
+
 class ListView {
   constructor(func) {
     this.index = 0;
@@ -79,21 +82,33 @@ const Views = {
   Hosts: {
     view: new ListView(() => document.getElementById('host-grid').children),
     up: function() {
-      Navigation.change(Views.HostsNav);
-      // Set focus on the first navigation item in HostsNav view when transitioning from Hosts view
-      const navItem = document.getElementById(Views.HostsNav.view.current());
-      if (navItem) {
-        navItem.focus();
-      }
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        Navigation.change(Views.HostsNav);
+        // Set focus on the first navigation item in HostsNav view when transitioning from Hosts view
+        const navItem = document.getElementById(Views.HostsNav.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
+      }, delayBetweenNavigation);
     },
     down: function() {
-      Navigation.change(Views.Hosts);
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        Navigation.change(Views.Hosts);
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       const element = this.view.current();
@@ -127,17 +142,26 @@ const Views = {
       'supportCenter']),
     up: function() {},
     down: function() {
-      // Remove focus from the current element before changing the view
-      document.getElementById(this.view.current()).blur();
-      Navigation.change(Views.Hosts);
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        // Remove focus from the current element before changing the view
+        document.getElementById(this.view.current()).blur();
+        Navigation.change(Views.Hosts);
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
-      document.getElementById(this.view.current()).focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
-      document.getElementById(this.view.current()).focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       const currentItem = document.getElementById(this.view.current());
@@ -169,18 +193,30 @@ const Views = {
       'continueAddHost',
       'cancelAddHost']),
     up: function() {
-      document.getElementById('dialogInputHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('dialogInputHost').focus();
+      }, delayBetweenNavigation);
     },
     down: function() {
-      document.getElementById('continueAddHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('continueAddHost').focus();
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
-      document.getElementById('continueAddHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueAddHost').focus();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
-      document.getElementById('cancelAddHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelAddHost').focus();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -201,15 +237,24 @@ const Views = {
       'cancelDeleteHost']),
     up: function() {},
     down: function() {
-      document.getElementById('continueDeleteHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('continueDeleteHost').focus();
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
-      document.getElementById('continueDeleteHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueDeleteHost').focus();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
-      document.getElementById('cancelDeleteHost').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelDeleteHost').focus();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -234,10 +279,16 @@ const Views = {
             .children[1]
             .children),
     up: function() {
-      this.view.prev();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+      }, delayBetweenNavigation);
     },
     down: function() {
-      this.view.next();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+      }, delayBetweenNavigation);
     },
     left: function() {},
     right: function() {},
@@ -266,10 +317,16 @@ const Views = {
             .children[1]
             .children),
     up: function() {
-      this.view.prev();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+      }, delayBetweenNavigation);
     },
     down: function() {
-      this.view.next();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+      }, delayBetweenNavigation);
     },
     left: function() {},
     right: function() {},
@@ -319,7 +376,10 @@ const Views = {
     view: new ListView(() => ['cancelPairingDialog']),
     up: function() {},
     down: function() {
-      document.getElementById('cancelPairingDialog').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('cancelPairingDialog').focus();
+      }, delayBetweenNavigation);
     },
     left: function() {},
     right: function() {},
@@ -339,21 +399,33 @@ const Views = {
   Apps: {
     view: new ListView(() => document.getElementById('game-grid').children),
     up: function() {
-      Navigation.change(Views.AppsNav);
-      // Set focus on the first navigation item in AppsNav view when transitioning from Apps view
-      const navItem = document.getElementById(Views.AppsNav.view.current());
-      if (navItem) {
-        navItem.focus();
-      }
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        Navigation.change(Views.AppsNav);
+        // Set focus on the first navigation item in AppsNav view when transitioning from Apps view
+        const navItem = document.getElementById(Views.AppsNav.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
+      }, delayBetweenNavigation);
     },
     down: function() {
-      Navigation.change(Views.Apps);
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        Navigation.change(Views.Apps);
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       this.view.current().click();
@@ -374,15 +446,24 @@ const Views = {
       'quitCurrentApp']),
     up: function() {},
     down: function() {
-      Navigation.change(Views.Apps);
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        Navigation.change(Views.Apps);
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
-      document.getElementById(this.view.current()).focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
-      document.getElementById(this.view.current()).focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       this.view.current().click();
@@ -404,15 +485,24 @@ const Views = {
       'cancelQuitApp']),
     up: function() {},
     down: function() {
-      document.getElementById('continueQuitApp').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('continueQuitApp').focus();
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
-      document.getElementById('continueQuitApp').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueQuitApp').focus();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
-      document.getElementById('cancelQuitApp').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelQuitApp').focus();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -431,7 +521,10 @@ const Views = {
     view: new ListView(() => ['closeSupportDialog']),
     up: function() {},
     down: function() {
-      document.getElementById('closeSupportDialog').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('closeSupportDialog').focus();
+      }, delayBetweenNavigation);
     },
     left: function() {},
     right: function() {},
@@ -456,15 +549,24 @@ const Views = {
       'cancelTerminateMoonlight']),
     up: function() {},
     down: function() {
-      document.getElementById('continueTerminateMoonlight').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('continueTerminateMoonlight').focus();
+      }, delayBetweenNavigation);
     },
     left: function() {
-      this.view.prev();
-      document.getElementById('continueTerminateMoonlight').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueTerminateMoonlight').focus();
+      }, delayBetweenNavigation);
     },
     right: function() {
-      this.view.next();
-      document.getElementById('cancelTerminateMoonlight').focus();
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelTerminateMoonlight').focus();
+      }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -544,7 +646,12 @@ const Navigation = (function() {
       return viewStack[viewStack.length - 1];
     }
 
-    return {get, push, change, pop};
+    return {
+      get,
+      push,
+      change,
+      pop
+    };
   })();
 
   const State = (function() {
@@ -568,7 +675,11 @@ const Navigation = (function() {
       return running;
     }
 
-    return {start, stop, isRunning};
+    return {
+      start,
+      stop,
+      isRunning
+    };
   })();
 
   return {
