@@ -210,7 +210,7 @@ function moduleDidLoad() {
 // Pair to the given NvHTTP host object. Returns whether pairing was successful
 function pairTo(nvhttpHost, onSuccess, onFailure) {
   if (!pairingCert) {
-    snackbarLog('ERROR: cert has not been generated yet. Is NaCl initialized?');
+    snackbarLog('ERROR: Cert has not been generated yet. Is NaCl initialized?');
     console.warn('%c[index.js]', 'color: green;', 'User wants to pair, and we still have no cert. Problem = very yes.');
     onFailure();
     return;
@@ -262,7 +262,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
       if (nvhttpHost.currentGame != 0) {
         $('#pairingDialogText').html('Error: ' + nvhttpHost.hostname + ' is busy.  Stop streaming to pair.');
       } else {
-        $('#pairingDialogText').html('Error: failed to pair with ' + nvhttpHost.hostname + '.');
+        $('#pairingDialogText').html('Error: Failed to pair with ' + nvhttpHost.hostname + '.');
       }
       console.log('%c[index.js]', 'color: green;', 'Failed API object:', nvhttpHost, nvhttpHost.toString()); // Logging both the object and the toString version for text logs
       onFailure();
@@ -803,7 +803,6 @@ function startGame(host, appID) {
       var optimize = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
       var streamWidth = $('#selectResolution').data('value').split(':')[0];
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
-      // We told the user it was in Mbps. We're dirty liars and use Kbps behind their back.
       var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
       var mouse_lock_enabled = $("#mouseLockEnabledSwitch").parent().hasClass('is-checked') ? "1" : "0";
       console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + optimize + ":" + mouse_lock_enabled);
