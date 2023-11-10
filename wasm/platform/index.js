@@ -315,6 +315,8 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
 
 function hostChosen(host) {
   if (!host.online) {
+    // If the host is offline, then return to the previous view
+    snackbarLog('Connection to host failed or host is offline! Make sure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
     return;
   }
 
