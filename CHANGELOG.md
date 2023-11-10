@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.15
+
+### Added
+- Added a snackbar notification for offline hosts
+- Implemented 'Left Analog Stick' axis handling logic to navigate application-wide
+- Implemented a delay for smoother in-app navigation
+
+### Changed
+- Changed bitrate to custom presets for more options
+- Updated tooltip text for all 'Settings' options
+
+### Fixed
+- Fixed spelling errors in the code
+
 ## v1.0.14
 
 ### Added
