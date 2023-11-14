@@ -82,6 +82,12 @@ function restoreUiAfterNaClLoad() {
   });
 }
 
+function playNotificationAlertSound() {
+  const notificationAlert = new Audio();
+  notificationAlert.src = '../sounds/notification_message_alert.mp3';
+  notificationAlert.play();
+}
+
 function beginBackgroundPollingOfHost(host) {
   var el = document.querySelector('#hostgrid-' + host.serverUid)
   if (host.online) {
@@ -135,6 +141,7 @@ function snackbarLog(givenMessage) {
     timeout: 2000
   };
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
+  playNotificationAlertSound();
 }
 
 function snackbarLogLong(givenMessage) {
@@ -144,6 +151,7 @@ function snackbarLogLong(givenMessage) {
     timeout: 5000
   };
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
+  playNotificationAlertSound();
 }
 
 function updateBitrateField() {

@@ -49,6 +49,29 @@ function isPopupActive(id) {
       .contains('is-visible');
 }
 
+function playSound(src, callback) {
+  const audio = new Audio();
+  audio.src = src;
+  audio.addEventListener('loadeddata', () => {
+    audio.play();
+    if (callback) {
+      callback();
+    }
+  });
+}
+
+function playNavigationMoveSound() {
+  playSound('../static/sounds/navigation_move_direction.mp3');
+}
+
+function playNavigationSelectSound() {
+  playSound('../static/sounds/navigation_select_action.mp3');
+}
+
+function playNavigationReturnSound() {
+  playSound('../static/sounds/navigation_return_action.mp3');
+}
+
 class ListView {
   constructor(func) {
     this.index = 0;
@@ -85,6 +108,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.HostsNav);
+        playNavigationMoveSound();
         // Set focus on the first navigation item in HostsNav view when transitioning from Hosts view
         const navItem = document.getElementById(Views.HostsNav.view.current());
         if (navItem) {
@@ -96,29 +120,35 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.Hosts);
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     accept: function() {
       const element = this.view.current();
       if (element.id === 'addHostCell') {
         element.click();
+        playNavigationSelectSound();
       } else {
         element.children[0].click();
+        playNavigationSelectSound();
       }
     },
     back: function() {
+      playNavigationReturnSound();
       // Show the dialog and push the view
       showTerminateMoonlightDialog();
     },
@@ -147,12 +177,14 @@ const Views = {
         // Remove focus from the current element before changing the view
         document.getElementById(this.view.current()).blur();
         Navigation.change(Views.Hosts);
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -160,6 +192,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -168,17 +201,21 @@ const Views = {
       if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
           currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
         currentItem.click();
+        playNavigationSelectSound();
       } else if (currentItem.id === 'removeAllHosts' || currentItem.id === 'supportCenter') {
         this.view.current().click();
+        playNavigationSelectSound();
       } else {
         // For other elements like 'selectResolution', 'selectFramerate' and 'bitrateField'
         currentItem.click();
+        playNavigationSelectSound();
       }
     },
     back: function() {
       // Remove focus from the current element before changing the view
       document.getElementById(this.view.current()).blur();
       Navigation.change(Views.Hosts);
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -195,12 +232,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('dialogInputHost').focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('continueAddHost').focus();
       }, delayBetweenNavigation);
     },
@@ -208,6 +247,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
         document.getElementById('continueAddHost').focus();
       }, delayBetweenNavigation);
     },
@@ -215,14 +255,17 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
         document.getElementById('cancelAddHost').focus();
       }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('cancelAddHost').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -239,6 +282,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('continueDeleteHost').focus();
       }, delayBetweenNavigation);
     },
@@ -246,6 +290,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
         document.getElementById('continueDeleteHost').focus();
       }, delayBetweenNavigation);
     },
@@ -253,14 +298,17 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
         document.getElementById('cancelDeleteHost').focus();
       }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('cancelDeleteHost').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -282,22 +330,26 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     left: function() {},
     right: function() {},
     accept: function() {
       this.view.current().click();
+      playNavigationSelectSound();
       document.getElementById('selectResolution').focus();
     },
     back: function() {
       document.getElementById('selectResolution').click();
+      playNavigationReturnSound();
       document.getElementById('selectResolution').focus();
     },
     enter: function() {
@@ -320,22 +372,26 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     left: function() {},
     right: function() {},
     accept: function() {
       this.view.current().click();
+      playNavigationSelectSound();
       document.getElementById('selectFramerate').focus();
     },
     back: function() {
       document.getElementById('selectFramerate').click();
+      playNavigationReturnSound();
       document.getElementById('selectFramerate').focus();
     },
     enter: function() {
@@ -352,17 +408,21 @@ const Views = {
     left: function() {
       bitrateSlider.stepDown();
       bitrateSlider.dispatchEvent(new Event('input'));
+      playNavigationMoveSound();
     },
     right: function() {
       bitrateSlider.stepUp();
       bitrateSlider.dispatchEvent(new Event('input'));
+      playNavigationMoveSound();
     },
     accept: function() {
       this.view.current().click();
+      playNavigationSelectSound();
       document.getElementById('bitrateField').focus();
     },
     back: function() {
       document.getElementById('bitrateField').click();
+      playNavigationReturnSound();
       document.getElementById('bitrateField').focus();
     },
     enter: function() {
@@ -378,6 +438,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('cancelPairingDialog').focus();
       }, delayBetweenNavigation);
     },
@@ -385,9 +446,11 @@ const Views = {
     right: function() {},
     accept: function() {
       document.getElementById(this.view.current()).click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('cancelPairingDialog').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -402,6 +465,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.AppsNav);
+        playNavigationReturnSound();
         // Set focus on the first navigation item in AppsNav view when transitioning from Apps view
         const navItem = document.getElementById(Views.AppsNav.view.current());
         if (navItem) {
@@ -413,25 +477,30 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.Apps);
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     accept: function() {
       this.view.current().click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('backIcon').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -449,12 +518,14 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.Apps);
+        playNavigationMoveSound();
       }, delayBetweenNavigation);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -462,14 +533,17 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     accept: function() {
       this.view.current().click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('backIcon').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -487,6 +561,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('continueQuitApp').focus();
       }, delayBetweenNavigation);
     },
@@ -494,6 +569,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
         document.getElementById('continueQuitApp').focus();
       }, delayBetweenNavigation);
     },
@@ -501,14 +577,17 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
         document.getElementById('cancelQuitApp').focus();
       }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('cancelQuitApp').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
@@ -523,6 +602,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('closeSupportDialog').focus();
       }, delayBetweenNavigation);
     },
@@ -530,10 +610,12 @@ const Views = {
     right: function() {},
     accept: function() {
       this.view.current().click();
+      playNavigationSelectSound();
       document.getElementById('supportCenter').focus();
     },
     back: function() {
       document.getElementById('closeSupportDialog').click();
+      playNavigationReturnSound();
       document.getElementById('supportCenter').focus();
     },
     enter: function() {
@@ -551,6 +633,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        playNavigationMoveSound();
         document.getElementById('continueTerminateMoonlight').focus();
       }, delayBetweenNavigation);
     },
@@ -558,6 +641,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        playNavigationMoveSound();
         document.getElementById('continueTerminateMoonlight').focus();
       }, delayBetweenNavigation);
     },
@@ -565,14 +649,17 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        playNavigationMoveSound();
         document.getElementById('cancelTerminateMoonlight').focus();
       }, delayBetweenNavigation);
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
+      playNavigationSelectSound();
     },
     back: function() {
       document.getElementById('cancelTerminateMoonlight').click();
+      playNavigationReturnSound();
     },
     enter: function() {
       mark(this.view.current());
