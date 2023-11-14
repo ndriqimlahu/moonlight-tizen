@@ -5,7 +5,7 @@
     <content src="index.html"/>
     <description>Moonlight Game Streaming</description>
     <feature name="http://tizen.org/feature/screen.size.all"/>
-    <icon src="./icons/icon128.png"/>
+    <icon src="../icons/icon.png"/>
     <name>Moonlight</name>
     <tizen:privilege name="http://tizen.org/privilege/unlimitedstorage"/>
     <tizen:privilege name="http://tizen.org/privilege/filesystem.write"/>
