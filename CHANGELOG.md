@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.16
+
+### Added
+- Added additional app icon sizes
+- Introduced sound effects to enhance the app experience
+
+### Changed
+- Minor enhancements in visual stylization
+
+### Fixed
+- Refactored code for improved structure and readability
+
 ## v1.0.15
 
 ### Added
