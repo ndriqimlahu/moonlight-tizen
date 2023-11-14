@@ -2,6 +2,7 @@ body {
     background-color: #282C38;
     color: #fff;
     font-family: 'Roboto', sans-serif;
+    scroll-behavior: smooth;
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
@@ -115,9 +116,9 @@ main {
     height: 50%;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 12px;
     margin: 5px 25% 5px 25%;
-    box-shadow: rgba(0, 163, 198, 1) 0px 0px 2px 8px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px 3px;
 }
 #backIcon {
     position: fixed;
@@ -132,7 +133,7 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
     display: none;
     justify-content: center;
     align-items: center;
@@ -144,7 +145,7 @@ main {
     color: white;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: rgba(0, 163, 198, 1) 0px 0px 10px 5px;
 }
 .mdl-dialog__title {
     padding: 24px 24px 14px;
