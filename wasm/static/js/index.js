@@ -13,7 +13,7 @@ function attachListeners() {
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', updateBitrateField); // Input occurs every notch you slide
-  //$('#bitrateSlider').on('change', saveBitrate); //FIXME: It seems not working
+  // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It seems not working
   $("#remoteAudioEnabledSwitch").on('click', saveRemoteAudio);
   $("#mouseLockEnabledSwitch").on('click', saveMouseLock);
   $('#optimizeGamesSwitch').on('click', saveOptimize);
@@ -138,7 +138,7 @@ function snackbarLog(givenMessage) {
   console.log('%c[index.js, snackbarLog]', 'color: green;', givenMessage);
   var data = {
     message: givenMessage,
-    timeout: 2000
+    timeout: 2500
   };
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
   playNotificationAlertSound();
@@ -641,7 +641,7 @@ function showApps(host) {
       var img = new Image()
       img.src = 'static/res/applist_empty.svg'
       $('#game-grid').html(img)
-      snackbarLog('Your game list is empty')
+      snackbarLog('Your game list is empty');
       return; // We stop the function right here
     }
     // If game grid is populated, empty it
@@ -663,27 +663,29 @@ function showApps(host) {
 
         gameCard.addEventListener('click', e => {
           startGame(host, app.id)
-        })
+        });
         gameCard.addEventListener('mouseover', e => {
           gameCard.focus();
         });
         gameCard.addEventListener('keydown', e => {
-          if(e.key == "Enter") {
+          if (e.key == "Enter") {
             startGame(host, app.id);
           }
-          if(e.key == "ArrowLeft") {
+          if (e.key == "ArrowLeft") {
             let prev = gameCard.previousSibling
-            if(prev !== null)
+            if (prev !== null) {
               gameCard.previousSibling.focus()
+            }
             // TODO: Add a sound when limit reached
           }
-          if(e.key == "ArrowRight") {
+          if (e.key == "ArrowRight") {
             let next = gameCard.nextSibling
-            if(next !== null)
+            if (next !== null) {
               gameCard.nextSibling.focus()
+            }
             // TODO: Add a sound when limit reached
           }
-        })
+        });
         document.querySelector('#game-grid').appendChild(gameCard);
         // Apply CSS stylization to indicate whether the app is active
         stylizeBoxArt(host, app.id);
@@ -703,7 +705,7 @@ function showApps(host) {
     var img = new Image();
     img.src = 'static/res/applist_error.svg'
     $("#game-grid").html(img)
-    snackbarLog('Unable to retrieve your games')
+    snackbarLog('Unable to retrieve your games');
     console.error('%c[index.js, showApps]', 'Failed to get applist from host: ' + host.hostname, '\n Host object:', host, host.toString());
   });
 

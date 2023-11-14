@@ -1,6 +1,5 @@
 const Controller = (function () {
   let pollingInterval = null;
-
   const gamepads = {};
 
   class Button {
@@ -9,6 +8,7 @@ const Controller = (function () {
       this.pressed = button.pressed;
     }
   }
+
   class Gamepad {
     constructor(gamepad) {
       this.buttons = gamepad.buttons.map((button) => new Button(button));
@@ -106,6 +106,7 @@ const Controller = (function () {
   }
 
   return {
-    startWatching, stopWatching 
+    startWatching,
+    stopWatching 
   };
 })();

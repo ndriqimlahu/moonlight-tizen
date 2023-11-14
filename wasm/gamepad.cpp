@@ -20,6 +20,7 @@ enum GamepadAxis {
   RightY = 3,
 };
 
+// For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
 // Enumeration for gamepad buttons
 enum GamepadButton {
   A, B, Y, X, /* For unsupported controllers, change buttons to 'Y, X,' to prevent button swapping, otherwise leave as default */
@@ -94,6 +95,7 @@ void MoonlightInstance::PollGamepads() {
       continue; /* Skip disconnected gamepads */
     }
 
+    // Process input for active gamepad
     const auto buttonFlags = GetButtonFlags(gamepad);
     const auto leftTrigger = gamepad.analogButton[GamepadButton::LeftTrigger]
       * std::numeric_limits<unsigned char>::max();
@@ -108,6 +110,9 @@ void MoonlightInstance::PollGamepads() {
     const auto rightStickY = -gamepad.axis[GamepadAxis::RightY]
       * std::numeric_limits<short>::max();
 
+    // Check if the current gamepad button configuration matches the predefined combination
+    // for stopping the streaming session (STOP_STREAM_BUTTONS_FLAGS). If true, invoke the 
+    // stopStream function to stop the streaming session.
     if (buttonFlags == STOP_STREAM_BUTTONS_FLAGS) {
       PostToJs(std::string("stopping stream, button flags is ") + std::to_string(buttonFlags));
       stopStream();
@@ -120,7 +125,8 @@ void MoonlightInstance::PollGamepads() {
       rightTrigger, leftStickX, leftStickY, rightStickX, rightStickY);
   }
 }
-// Send gamepad rumble
+
+// Send gamepad rumble for active gamepad
 void MoonlightInstance::ClControllerRumble(unsigned short controllerNumber, unsigned short lowFreqMotor, unsigned short highFreqMotor) {
   const float weakMagnitude = static_cast<float>(highFreqMotor) / static_cast<float>(UINT16_MAX);
   const float strongMagnitude = static_cast<float>(lowFreqMotor) / static_cast<float>(UINT16_MAX);
