@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.17
+
+### Added
+- Added a new 'Tizen' privilege: 'IME' which allows entering characters and symbols into text field
+- Implemented navigation to go to the previous or next row in 'Apps' view
+
+### Changed
+- Improved error handling for missing audio capture device
+
+### Fixed
+- Fixed navigation blockage caused by bitrate slider sticking issue in 'Hosts' navigation bar
+
 ## v1.0.16
 
 ### Added
