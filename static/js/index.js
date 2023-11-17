@@ -12,8 +12,8 @@ function attachListeners() {
 
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
-  $('#bitrateSlider').on('input', updateBitrateField); // Input occurs every notch you slide
-  // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It seems not working
+  $('#bitrateSlider').on('input', updateBitrateField); // NOTE: Input occurs every notch you slide
+  // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It doesn't seem to work and needs to be fixed
   $("#remoteAudioEnabledSwitch").on('click', saveRemoteAudio);
   $("#mouseLockEnabledSwitch").on('click', saveMouseLock);
   $('#optimizeGamesSwitch').on('click', saveOptimize);
@@ -155,7 +155,7 @@ function snackbarLogLong(givenMessage) {
 }
 
 function updateBitrateField() {
-  $('#bitrateField').html($('#bitrateSlider').val() + " Mbps");
+  $('#selectBitrate').html($('#bitrateSlider').val() + " MB/S");
   saveBitrate();
 }
 

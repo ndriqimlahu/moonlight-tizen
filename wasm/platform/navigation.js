@@ -163,7 +163,7 @@ const Views = {
     view: new ListView(() => [
       'selectResolution',
       'selectFramerate',
-      'bitrateField',
+      'selectBitrate',
       'externalAudioBtn',
       'optimizeGamesBtn',
       'framePacingBtn',
@@ -206,7 +206,7 @@ const Views = {
         this.view.current().click();
         playNavigationSelectSound();
       } else {
-        // For other elements like 'selectResolution', 'selectFramerate' and 'bitrateField'
+        // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
         currentItem.click();
         playNavigationSelectSound();
       }
@@ -402,7 +402,14 @@ const Views = {
     },
   },
   SelectBitrateMenu: {
-    isActive: () => isPopupActive('bandwidthMenu'),
+    isActive: () => isPopupActive('bitrateMenu'),
+    view: new ListView(
+        () => document
+            .getElementById('bitrateMenu')
+            .parentNode
+            .children[1]
+            .children[1]
+            .children),
     up: function() {},
     down: function() {},
     left: function() {
@@ -418,12 +425,12 @@ const Views = {
     accept: function() {
       this.view.current().click();
       playNavigationSelectSound();
-      document.getElementById('bitrateField').focus();
+      document.getElementById('selectBitrate').focus();
     },
     back: function() {
-      document.getElementById('bitrateField').click();
+      document.getElementById('selectBitrate').click();
       playNavigationReturnSound();
-      document.getElementById('bitrateField').focus();
+      document.getElementById('selectBitrate').focus();
     },
     enter: function() {
       mark(this.view.current());

@@ -399,7 +399,7 @@ main {
     box-shadow: rgba(244, 67, 54, 1) 0px 0px 2px 4px;
 }
 #selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus,
-#bitrateField:hover, #bitrateField:focus, #externalAudioBtn:hover, #externalAudioBtn:focus,
+#selectBitrate:hover, #selectBitrate:focus, #externalAudioBtn:hover, #externalAudioBtn:focus,
 #mouseLockBtn:hover, #mouseLockBtn:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus,
 #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
 #removeAllHosts:hover, #removeAllHosts:focus, #supportCenter:hover, #supportCenter:focus,

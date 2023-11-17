@@ -13,8 +13,8 @@ function attachListeners() {
 
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
-  $('#bitrateSlider').on('input', updateBitrateField); // Input occurs every notch you slide
-  // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It seems not working
+  $('#bitrateSlider').on('input', updateBitrateField); // NOTE: Input occurs every notch you slide
+  // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It doesn't seem to work and needs to be fixed
   $("#remoteAudioEnabledSwitch").on('click', saveRemoteAudio);
   $('#optimizeGamesSwitch').on('click', saveOptimize);
   $('#framePacingSwitch').on('click', saveFramePacing);
@@ -35,7 +35,7 @@ function attachListeners() {
   }
   registerMenu('selectResolution', Views.SelectResolutionMenu);
   registerMenu('selectFramerate', Views.SelectFramerateMenu);
-  registerMenu('bandwidthMenu', Views.SelectBitrateMenu);
+  registerMenu('selectBitrate', Views.SelectBitrateMenu);
 
   $(window).resize(fullscreenNaclModule);
   if (runningOnChrome()) {
@@ -250,7 +250,7 @@ function snackbarLogLong(givenMessage) {
 }
 
 function updateBitrateField() {
-  $('#bitrateField').html($('#bitrateSlider').val() + " Mbps");
+  $('#selectBitrate').html($('#bitrateSlider').val() + " MB/S");
   saveBitrate();
 }
 
