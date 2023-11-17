@@ -13,5 +13,6 @@
     <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <tizen:privilege name="http://tizen.org/privilege/tv.audio"/>
+    <tizen:privilege name="http://tizen.org/privilege/ime"/>
     <tizen:setting screen-orientation="landscape" context-menu="enable" pointing-device-support="enable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>
 </widget>
