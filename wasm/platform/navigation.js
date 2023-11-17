@@ -73,13 +73,14 @@ function playNavigationReturnSound() {
 }
 
 class ListView {
-  constructor(func) {
+  constructor (func, itemsPerRow) {
     this.index = 0;
+    this.itemsPerRow = itemsPerRow || 6;
     this.func = func;
   }
 
   prev() {
-    if (this.index > 0 ) {
+    if (this.index > 0) {
       const array = this.func();
       unmark(array[this.index]);
       --this.index;
@@ -93,6 +94,50 @@ class ListView {
       unmark(array[this.index]);
       ++this.index;
       mark(array[this.index]);
+    }
+  }
+
+  prevRow() {
+    const array = this.func();
+    const currentRow = Math.floor(this.index / this.itemsPerRow);
+    if (currentRow > 0) {
+      unmark(array[this.index]);
+      this.index -= this.itemsPerRow;
+      mark(array[this.index]);
+      this.scrollToRow(currentRow - 1);
+      // Indicate that there are more rows
+      return true;
+    } else {
+      // Indicate that there are no more rows
+      return false;
+    }
+  }
+
+  nextRow() {
+    const array = this.func();
+    const rows = Math.ceil(array.length / this.itemsPerRow);
+    const currentRow = Math.floor(this.index / this.itemsPerRow);
+    if (currentRow < rows - 1) {
+      unmark(array[this.index]);
+      this.index += this.itemsPerRow;
+      mark(array[this.index]);
+      this.scrollToRow(currentRow + 1);
+      // Indicate that there are more rows
+      return true;
+    } else {
+      // Indicate that there are no more rows
+      return false;
+    }
+  }
+  
+  scrollToRow(row) {
+    const array = this.func();
+    const targetItem = array[row * this.itemsPerRow];
+    if (targetItem) {
+      targetItem.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
     }
   }
 
@@ -471,20 +516,28 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        Navigation.change(Views.AppsNav);
-        playNavigationReturnSound();
-        // Set focus on the first navigation item in AppsNav view when transitioning from Apps view
-        const navItem = document.getElementById(Views.AppsNav.view.current());
-        if (navItem) {
-          navItem.focus();
+        // If there are more rows behind, then go to the previous row
+        if (this.view.prevRow()) {
+          playNavigationMoveSound();
+        } else {
+          // If there are no more rows, navigate to the AppsNav view
+          Navigation.change(Views.AppsNav);
+          playNavigationMoveSound();
+          // Set focus on the first navigation item in AppsNav view when transitioning from Apps view
+          const navItem = document.getElementById(Views.AppsNav.view.current());
+          if (navItem) {
+            navItem.focus();
+          }
         }
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        Navigation.change(Views.Apps);
-        playNavigationMoveSound();
+        // If there are more rows after, then go to the next row
+        if (this.view.nextRow()) {
+          playNavigationMoveSound();
+        }
       }, delayBetweenNavigation);
     },
     left: function() {
