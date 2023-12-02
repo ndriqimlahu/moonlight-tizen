@@ -1409,21 +1409,20 @@ function initSamsungKeys() {
 
   var handler = {
     initRemoteController: true,
+    // For explanation on ordering, see: https://developer.samsung.com/smarttv/develop/guides/user-interaction/keyboardime.html
     buttonsToRegister: [
-      // For explanation on ordering, see: https://developer.samsung.com/smarttv/develop/guides/user-interaction/keyboardime.html
-      'ColorF0Red',    // F1
-      'ColorF1Green',  // F2
-      'ColorF2Yellow', // F3
-      'ColorF3Blue',   // F4
-      // Not working...
+      'ColorF0Red',      // F1
+      'ColorF1Green',    // F2
+      'ColorF2Yellow',   // F3
+      'ColorF3Blue',     // F4
       //'SmartHub',      // F5
-      'Source',        // F6
-      'ChannelList',   // F7
-      'VolumeMute',    // F8
-      'VolumeDown',    // F9
-      'VolumeUp',      // F10
-      'ChannelDown',   // F11
-      'ChannelUp',     // F12
+      'Source',          // F6
+      'ChannelList',     // F7
+      //'VolumeMute',    // F8
+      //'VolumeDown',    // F9
+      //'VolumeUp',      // F10
+      'ChannelDown',     // F11
+      'ChannelUp',       // F12
     ],
     onKeydownListener: remoteControllerHandler
   };
