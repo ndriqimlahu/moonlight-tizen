@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.18
+
+### Added
+- Added a validation for 'IP Address' input field which allows only a maximum of 15 numerical characters
+- Implemented the action of clearing the 'IP Address' input field after successful processing
+
+### Changed
+- Minor enhancements in visual stylization
+
+### Fixed
+- Fixed the gamepad disconnection issue
+- Fixed the 'Volume UI' issue where it would not appear when changing the volume on the TV
+- Refactored code for improved structure and readability
+
 ## v1.0.17
 
 ### Added
@@ -47,7 +61,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increased the bitrate slider for the bandwidth menu from '100' to '150'
-- Updated server codec mode to 'SCM_HEVC_MAIN10' and changed supported video format to 'VIDEO_FORMAT_H265_MAIN10'
+- Updated server codec mode and supported video format
 
 ### Fixed
 - Fixed focus navigation issue for settings items
@@ -57,8 +71,10 @@ All notable changes to this project will be documented in this file.
 ## v1.0.13
 
 ### Changed
-- Updated 'opus' module to v1.4
 - Updated wasm core implementation files
+
+### Dependencies
+- Updated 'opus' module to the latest version
 
 ## v1.0.12
 
