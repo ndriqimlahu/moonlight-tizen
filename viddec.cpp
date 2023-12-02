@@ -49,14 +49,14 @@ static const char k_FragmentShaderRectangle[] =
     "}";
     
 static const char k_FragmentShaderExternal[] =
-      "#extension GL_OES_EGL_image_external : require\n"
-      "precision mediump float;            \n"
-      "varying vec2 v_texCoord;            \n"
-      "uniform samplerExternalOES s_texture; \n"
-      "void main()                         \n"
-      "{"
-      "    gl_FragColor = texture2D(s_texture, v_texCoord); \n"
-      "}";
+    "#extension GL_OES_EGL_image_external : require\n"
+    "precision mediump float;            \n"
+    "varying vec2 v_texCoord;            \n"
+    "uniform samplerExternalOES s_texture; \n"
+    "void main()                         \n"
+    "{"
+    "    gl_FragColor = texture2D(s_texture, v_texCoord); \n"
+    "}";
 
 void MoonlightInstance::DidChangeFocus(bool got_focus) {
     // Request an IDR frame to dump the frame queue that may have
@@ -88,6 +88,7 @@ bool MoonlightInstance::InitializeRenderingSurface(int width, int height) {
         PP_GRAPHICS3DATTRIB_HEIGHT,         height,
         PP_GRAPHICS3DATTRIB_NONE
     };
+
     g_Instance->m_Graphics3D = pp::Graphics3D(this, contextAttributes);
     if (g_Instance->m_Graphics3D.is_null()) {
         ClDisplayMessage("Unable to create OpenGL context");
@@ -101,10 +102,10 @@ bool MoonlightInstance::InitializeRenderingSurface(int width, int height) {
     g_Instance->m_Graphics3D.SetAttribs(swapBehaviorAttribute);
     
     if (!BindGraphics(m_Graphics3D)) {
-      ClDisplayMessage("Unable to bind OpenGL context");
-      m_Graphics3D = pp::Graphics3D();
-      glSetCurrentContextPPAPI(0);
-      return false;
+        ClDisplayMessage("Unable to bind OpenGL context");
+        m_Graphics3D = pp::Graphics3D();
+        glSetCurrentContextPPAPI(0);
+        return false;
     }
     
     glSetCurrentContextPPAPI(m_Graphics3D.pp_resource());
@@ -127,10 +128,7 @@ bool MoonlightInstance::InitializeRenderingSurface(int width, int height) {
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-    glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(k_Vertices),
-                 k_Vertices,
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(k_Vertices), k_Vertices, GL_STATIC_DRAW);
     assertNoGLError();
     
     g_Instance->m_Graphics3D.SwapBuffers(pp::BlockUntilComplete());
@@ -150,48 +148,34 @@ int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int r
 
     if (!(drFlags & DR_FLAG_FORCE_SW_DECODE)) {
         // Try to initialize hardware decoding only
-        err = g_Instance->m_VideoDecoder->Initialize(
-           g_Instance->m_Graphics3D,
-           PP_VIDEOPROFILE_H264HIGH,
-           PP_HARDWAREACCELERATION_ONLY,
-           0,
-           pp::BlockUntilComplete());
-    }
-    else {
+        err = g_Instance->m_VideoDecoder->Initialize(g_Instance->m_Graphics3D, PP_VIDEOPROFILE_H264HIGH, PP_HARDWAREACCELERATION_ONLY, 0, pp::BlockUntilComplete());
+    } else {
         err = PP_ERROR_NOTSUPPORTED;
     }
 
     if (err == PP_ERROR_NOTSUPPORTED) {
         // Fallback to software decoding
-        err = g_Instance->m_VideoDecoder->Initialize(
-           g_Instance->m_Graphics3D,
-           PP_VIDEOPROFILE_H264HIGH,
-           PP_HARDWAREACCELERATION_NONE,
-           0,
-           pp::BlockUntilComplete());
+        err = g_Instance->m_VideoDecoder->Initialize(g_Instance->m_Graphics3D, PP_VIDEOPROFILE_H264HIGH, PP_HARDWAREACCELERATION_NONE, 0, pp::BlockUntilComplete());
 
         if (err == PP_ERROR_NOTSUPPORTED) {
             // No decoders available at all. We can't continue.
             ClDisplayMessage("No hardware or software H.264 decoders available!");
             g_Instance->StopConnection();
             return -1;
-        }
-        else if (!(drFlags & DR_FLAG_FORCE_SW_DECODE)) {
+        } else if (!(drFlags & DR_FLAG_FORCE_SW_DECODE)) {
             // Tell the user we had to fall back
             ClDisplayTransientMessage("Hardware decoding is unavailable. Falling back to CPU decoding");
         }
     }
     
-    pp::Module::Get()->core()->CallOnMainThread(0,
-        g_Instance->m_CallbackFactory.NewCallback(&MoonlightInstance::DispatchGetPicture));
+    pp::Module::Get()->core()->CallOnMainThread(0, g_Instance->m_CallbackFactory.NewCallback(&MoonlightInstance::DispatchGetPicture));
     
     return 0;
 }
 
 void MoonlightInstance::DispatchGetPicture(uint32_t unused) {
     // Queue the initial GetPicture callback on the main thread
-    g_Instance->m_VideoDecoder->GetPicture(
-        g_Instance->m_CallbackFactory.NewCallbackWithOutput(&MoonlightInstance::PictureReady));
+    g_Instance->m_VideoDecoder->GetPicture(g_Instance->m_CallbackFactory.NewCallbackWithOutput(&MoonlightInstance::PictureReady));
 }
 
 void MoonlightInstance::VidDecCleanup(void) {
@@ -225,9 +209,7 @@ static void WriteSpsNalu(PLENTRY nalu, unsigned char* outBuffer, unsigned int* o
     h264_stream_t* stream = h264_new();
     
     // Read the old NALU
-    read_nal_unit(stream,
-                  (unsigned char *)&nalu->data[start_len],
-                  nalu->length - start_len);
+    read_nal_unit(stream, (unsigned char *)&nalu->data[start_len], nalu->length - start_len);
     
     // Fixup the SPS to what OS X needs to use hardware acceleration
     stream->sps->num_ref_frames = 1;
@@ -267,8 +249,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
         if (entry->bufferType == BUFFER_TYPE_SPS) {
             // Write the SPS with required fixups and update offset
             WriteSpsNalu(entry, s_DecodeBuffer, &offset);
-        }
-        else {
+        } else {
             memcpy(&s_DecodeBuffer[offset], entry->data, entry->length);
             offset += entry->length;
         }
@@ -284,8 +265,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
     return DR_OK;
 }
 
-void MoonlightInstance::CreateShader(GLuint program, GLenum type,
-                                     const char* source, int size) {
+void MoonlightInstance::CreateShader(GLuint program, GLenum type, const char* source, int size) {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, &size);
     glCompileShader(shader);
@@ -381,8 +361,7 @@ void MoonlightInstance::PaintPicture(void) {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     
     // Swap buffers
-    m_Graphics3D.SwapBuffers(
-        m_CallbackFactory.NewCallback(&MoonlightInstance::PaintFinished));
+    m_Graphics3D.SwapBuffers(m_CallbackFactory.NewCallback(&MoonlightInstance::PaintFinished));
 }
 
 void MoonlightInstance::PaintFinished(int32_t result) {
@@ -429,8 +408,7 @@ void MoonlightInstance::PictureReady(int32_t result, PP_VideoPicture picture) {
     m_HasNextPicture = true;
     
     // Queue another call to get another picture
-    g_Instance->m_VideoDecoder->GetPicture(
-        g_Instance->m_CallbackFactory.NewCallbackWithOutput(&MoonlightInstance::PictureReady));
+    g_Instance->m_VideoDecoder->GetPicture(g_Instance->m_CallbackFactory.NewCallbackWithOutput(&MoonlightInstance::PictureReady));
     
     // Start painting if we aren't now
     if (!m_IsPainting) {
@@ -442,5 +420,5 @@ DECODER_RENDERER_CALLBACKS MoonlightInstance::s_DrCallbacks = {
     .setup = MoonlightInstance::VidDecSetup,
     .cleanup = MoonlightInstance::VidDecCleanup,
     .submitDecodeUnit = MoonlightInstance::VidDecSubmitDecodeUnit,
-    .capabilities = CAPABILITY_SLICES_PER_FRAME(4)
+    .capabilities = CAPABILITY_SLICES_PER_FRAME(4),
 };

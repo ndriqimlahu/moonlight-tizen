@@ -11,26 +11,19 @@ void MoonlightInstance::ClStageStarting(int stage) {
 }
 
 void MoonlightInstance::ClStageFailed(int stage, int errorCode) {
-    pp::Var response(
-        std::string("DialogMsg: ") +
-        std::string(LiGetStageName(stage)) +
-        std::string(" failed (error ") +
-        std::to_string(errorCode) +
-        std::string(")"));
+    pp::Var response(std::string("DialogMsg: ") + std::string(LiGetStageName(stage)) + std::string(" failed (error ") + std::to_string(errorCode) + std::string(")"));
     g_Instance->PostMessage(response);
 }
 
 void MoonlightInstance::ClConnectionStarted(void) {
-    pp::Module::Get()->core()->CallOnMainThread(0,
-        g_Instance->m_CallbackFactory.NewCallback(&MoonlightInstance::OnConnectionStarted));
+    pp::Module::Get()->core()->CallOnMainThread(0, g_Instance->m_CallbackFactory.NewCallback(&MoonlightInstance::OnConnectionStarted));
 }
 
 void MoonlightInstance::ClConnectionTerminated(int errorCode) {
     // Teardown the connection
     LiStopConnection();
     
-    pp::Module::Get()->core()->CallOnMainThread(0,
-        g_Instance->m_CallbackFactory.NewCallback(&MoonlightInstance::OnConnectionStopped), (uint32_t)errorCode);
+    pp::Module::Get()->core()->CallOnMainThread(0, g_Instance->m_CallbackFactory.NewCallback(&MoonlightInstance::OnConnectionStopped), (uint32_t)errorCode);
 }
 
 void MoonlightInstance::ClDisplayMessage(const char* message) {

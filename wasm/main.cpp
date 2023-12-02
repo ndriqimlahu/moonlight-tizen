@@ -149,7 +149,7 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
   serverInfo.serverInfoGfeVersion = me->m_GfeVersion.c_str();
   serverInfo.rtspSessionUrl = me->m_RtspUrl.c_str();
   // Enable 'serverCodecModeSupport' only if the latest version of 'moonlight-common-c' is implemented
-  // serverInfo.serverCodecModeSupport = SCM_HEVC_MAIN10;
+  // serverInfo.serverCodecModeSupport = SCM_HEVC;
 
   err = LiStartConnection(&serverInfo, &me->m_StreamConfig,
   &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks,
@@ -177,8 +177,8 @@ static void HexStringToBytes(const char* str, char* output) {
 }
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height,
-std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
+  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
+  std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
   PostToJs("Setting stream width to: " + width);
   PostToJs("Setting stream height to: " + height);
   PostToJs("Setting stream fps to: " + fps);
@@ -202,11 +202,11 @@ std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
   m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
   m_StreamConfig.packetSize = 1392;
   // Enable 'supportedVideoFormats' only if the latest version of 'moonlight-common-c' is implemented
-  // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265_MAIN10;
+  // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265;
 
-  // Enable 'supportsHevc' and 'enableHdr' only if the current stable version of 'moonlight-common-c' is implemented
+  // Enable 'supportsHevc' and optionally include 'enableHdr' only if the current stable version of 'moonlight-common-c' is implemented
   m_StreamConfig.supportsHevc = true;
-  m_StreamConfig.enableHdr = true;
+  // m_StreamConfig.enableHdr = true;
 
   // TODO: If/when video encryption is added, we'll probably want to
   // limit that to devices that support AES instructions.
@@ -248,8 +248,7 @@ void MoonlightInstance::STUN_private(int callbackId) {
   unsigned int wanAddr;
   char addrStr[128] = {};
 
-  if (LiFindExternalAddressIP4("stun.moonlight-stream.org", 3478, &wanAddr) ==
-      0) {
+  if (LiFindExternalAddressIP4("stun.moonlight-stream.org", 3478, &wanAddr) == 0) {
     inet_ntop(AF_INET, &wanAddr, addrStr, sizeof(addrStr));
     PostPromiseMessage(callbackId, "resolve", std::string(addrStr, strlen(addrStr)));
   } else {
@@ -261,8 +260,7 @@ void MoonlightInstance::STUN(int callbackId) {
   m_Dispatcher.post_job(std::bind(&MoonlightInstance::STUN_private, this, callbackId), false);
 }
 
-void MoonlightInstance::Pair_private(int callbackId, std::string serverMajorVersion,
-std::string address, std::string randomNumber) {
+void MoonlightInstance::Pair_private(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber) {
   char* ppkstr;
   int err = gs_pair(atoi(serverMajorVersion.c_str()), address.c_str(), randomNumber.c_str(), &ppkstr);
 
@@ -275,8 +273,7 @@ std::string address, std::string randomNumber) {
   }
 }
 
-void MoonlightInstance::Pair(int callbackId, std::string serverMajorVersion,
-std::string address, std::string randomNumber) {
+void MoonlightInstance::Pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber) {
   printf("%s address: %s\n", __func__, address.c_str());
   m_Dispatcher.post_job(std::bind(&MoonlightInstance::Pair_private, this, callbackId, serverMajorVersion, address, randomNumber), false);
 }
@@ -313,15 +310,20 @@ int main(int argc, char** argv) {
   RAND_seed(buffer, 128);
 }
 MessageResult startStream(std::string host, std::string width, std::string height,
-std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
+  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
+  std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey,
   rikeyid, appversion, gfeversion, rtspurl, framePacing, audioSync);
 }
 
-MessageResult stopStream() { return g_Instance->StopStream(); }
-void stun(int callbackId) { g_Instance->STUN(callbackId); }
+MessageResult stopStream() {
+  return g_Instance->StopStream();
+}
+
+void stun(int callbackId) {
+  g_Instance->STUN(callbackId);
+}
 
 void pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber) {
   g_Instance->Pair(callbackId, serverMajorVersion, address, randomNumber);

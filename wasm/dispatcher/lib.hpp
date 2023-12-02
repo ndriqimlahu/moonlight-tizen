@@ -10,7 +10,7 @@
 static void no_op() {}
 
 class Entry {
- public:
+  public:
   Entry() : end(false), notify(true) {}
   ~Entry() = default;
 
@@ -22,7 +22,7 @@ class Entry {
 };
 
 class DispatcherQueue {
- public:
+  public:
   DispatcherQueue() = default;
   ~DispatcherQueue() = default;
 
@@ -52,14 +52,14 @@ class DispatcherQueue {
     return false;
   }
 
- private:
+  private:
   std::queue<Entry> queue_;
   std::recursive_mutex mutex_;
   std::condition_variable_any cv_;
 };
 
 class Dispatcher {
- public:
+  public:
   Dispatcher(const std::string& name) : name_(name) {}
   ~Dispatcher() { stop(); }
 
@@ -76,9 +76,7 @@ class Dispatcher {
   }
 
   template <typename R, typename... Ts>
-  R dispatch_method(std::recursive_mutex& thread_mutex,
-                    std::condition_variable_any& thread_cv, R (*method)(Ts...),
-                    bool end, Ts... ts) {
+  R dispatch_method(std::recursive_mutex& thread_mutex, std::condition_variable_any& thread_cv, R (*method)(Ts...), bool end, Ts... ts) {
     if constexpr (std::is_same<R, void>::value) {
       Entry entry;
       int* err = &errno;
@@ -136,7 +134,7 @@ class Dispatcher {
     return;
   }
 
- private:
+  private:
   void dispatcher_func() {
     bool running = true;
     while (running) {
@@ -163,7 +161,7 @@ class Dispatcher {
 };
 
 class ThreadStorage {
- public:
+  public:
   ThreadStorage() = default;
   ~ThreadStorage() = default;
   std::recursive_mutex mutex;

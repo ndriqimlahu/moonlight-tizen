@@ -19,8 +19,7 @@ char *g_UniqueId;
 char *g_CertHex;
 pthread_mutex_t *g_OSSLMutexes;
 
-void MoonlightInstance::MakeCert(int32_t callbackId, pp::VarArray args)
-{
+void MoonlightInstance::MakeCert(int32_t callbackId, pp::VarArray args) {
     pp::VarDictionary ret;
     ret.Set("callbackId", pp::Var(callbackId));
     ret.Set("type", pp::Var("resolve"));
@@ -54,8 +53,7 @@ void MoonlightInstance::MakeCert(int32_t callbackId, pp::VarArray args)
     PostMessage(ret);
 }
 
-void MoonlightInstance::LoadCert(const char* certStr, const char* keyStr)
-{
+void MoonlightInstance::LoadCert(const char* certStr, const char* keyStr) {
     char* _certStr = strdup(certStr);
     char* _keyStr = strdup(keyStr);
     
@@ -81,23 +79,19 @@ void MoonlightInstance::LoadCert(const char* certStr, const char* keyStr)
     free(_keyStr);
 }
 
-void MoonlightInstance::OSSLThreadLock(int mode, int n, const char *, int)
-{
+void MoonlightInstance::OSSLThreadLock(int mode, int n, const char *, int) {
     if (mode & CRYPTO_LOCK) {
         pthread_mutex_lock(&g_OSSLMutexes[n]);
-    }
-    else {
+    } else {
         pthread_mutex_unlock(&g_OSSLMutexes[n]);
     }
 }
 
-unsigned long MoonlightInstance::OSSLThreadId(void)
-{
+unsigned long MoonlightInstance::OSSLThreadId(void) {
     return (unsigned long)pthread_self();
 }
 
-void MoonlightInstance::NvHTTPInit(int32_t callbackId, pp::VarArray args)
-{
+void MoonlightInstance::NvHTTPInit(int32_t callbackId, pp::VarArray args) {
     std::string _cert = args.Get(0).AsString();
     std::string _key = args.Get(1).AsString();
     std::string _uniqueId = args.Get(2).AsString();
@@ -126,8 +120,7 @@ void MoonlightInstance::NvHTTPInit(int32_t callbackId, pp::VarArray args)
     PostMessage(ret);
 }
 
-void MoonlightInstance::NvHTTPRequest(int32_t /*result*/, int32_t callbackId, pp::VarArray args)
-{
+void MoonlightInstance::NvHTTPRequest(int32_t /*result*/, int32_t callbackId, pp::VarArray args) {
     std::string url = args.Get(0).AsString();
     std::string ppkstr = args.Get(1).AsString();
     bool binaryResponse = args.Get(2).AsBool();

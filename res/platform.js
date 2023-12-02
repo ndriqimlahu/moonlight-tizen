@@ -50,9 +50,7 @@
 // <body onload="platformOnLoad(handler)">
 
 // Names used to register buttons used by widget. Useable in buttonsToRegister
-// argument of platformOnLoad.
-//
-// When handling button input, use values from tvKey.
+// argument of platformOnLoad. When handling button input, use values from tvKey.
 var buttonsNames = {
   KEY_0: '0',
   KEY_1: '1',
@@ -94,7 +92,7 @@ var buttonsNames = {
 // Dictionary containing key names for usage in input handler function. This
 // variable is set by platformOnLoad.
 var tvKey;
-
+// For explanation on ordering, see: https://developer.samsung.com/smarttv/develop/guides/user-interaction/remote-control.html
 function platformOnLoad(handler) {
   var tvKeyButtons = {
     KEY_0: 48,
@@ -131,8 +129,9 @@ function platformOnLoad(handler) {
   };
   tvKey = tvKeyButtons;
 
-  if (!handler)
+  if (!handler) {
     return;
+  }
 
   if (handler.initFn) {
     handler.initFn();
@@ -140,12 +139,14 @@ function platformOnLoad(handler) {
 
   if (handler.initRemoteController) {
     var event_anchor;
-    if (handler.focusId)
+    if (handler.focusId) {
       event_anchor = document.getElementById(handler.focusId);
-    else
+    } else {
       event_anchor = document.getElementById("eventAnchor");
-    if (event_anchor)
+    }
+    if (event_anchor) {
       event_anchor.focus();
+    }
   }
   if (handler.onKeydownListener) {
     document.addEventListener("keydown", handler.onKeydownListener);

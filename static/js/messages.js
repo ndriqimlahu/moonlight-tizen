@@ -45,15 +45,12 @@ function handleMessage(msg) {
       switch (errorCode) {
         case 0: // ML_ERROR_GRACEFUL_TERMINATION
           break;
-
         case -100: // ML_ERROR_NO_VIDEO_TRAFFIC
           snackbarLogLong("No video received from host. Check the host PC's firewall and port forwarding rules.");
           break;
-
         case -101: // ML_ERROR_NO_VIDEO_FRAME
           snackbarLogLong("Your network connection isn't performing well. Reduce your video bitrate setting or try a faster connection.");
           break;
-
         default:
           snackbarLogLong("Connection terminated");
           break;

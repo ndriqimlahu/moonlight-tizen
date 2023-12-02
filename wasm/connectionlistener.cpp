@@ -56,10 +56,10 @@ void MoonlightInstance::ClLogMessage(const char* format, ...) {
 }
 
 CONNECTION_LISTENER_CALLBACKS MoonlightInstance::s_ClCallbacks = {
-    .stageStarting = MoonlightInstance::ClStageStarting,
-    .stageFailed = MoonlightInstance::ClStageFailed,
-    .connectionStarted = MoonlightInstance::ClConnectionStarted,
-    .connectionTerminated = MoonlightInstance::ClConnectionTerminated,
-    .logMessage = MoonlightInstance::ClLogMessage,
-    .rumble = MoonlightInstance::ClControllerRumble,
+  .stageStarting = MoonlightInstance::ClStageStarting,
+  .stageFailed = MoonlightInstance::ClStageFailed,
+  .connectionStarted = MoonlightInstance::ClConnectionStarted,
+  .connectionTerminated = MoonlightInstance::ClConnectionTerminated,
+  .logMessage = MoonlightInstance::ClLogMessage,
+  .rumble = MoonlightInstance::ClControllerRumble,
 };

@@ -17,11 +17,11 @@ function attachListeners() {
   $("#remoteAudioEnabledSwitch").on('click', saveRemoteAudio);
   $("#mouseLockEnabledSwitch").on('click', saveMouseLock);
   $('#optimizeGamesSwitch').on('click', saveOptimize);
+  $('#removeAllHosts').on('click', removeAllHostsWithConfirmation);
+  $('#supportCenter').on('click', showSupportDialog);
   $('#addHostCell').on('click', addHost);
   $('#backIcon').on('click', showHostsAndSettingsMode);
   $('#quitCurrentApp').on('click', stopGameWithConfirmation);
-  $('#removeAllHosts').on('click', removeAllHostsWithConfirmation);
-  $('#supportCenter').on('click', showSupportDialog);
   $(window).resize(fullscreenNaclModule);
 }
 
@@ -89,28 +89,28 @@ function playNotificationAlertSound() {
 }
 
 function beginBackgroundPollingOfHost(host) {
-  var el = document.querySelector('#hostgrid-' + host.serverUid)
+  var el = document.querySelector('#hostgrid-' + host.serverUid);
   if (host.online) {
-    el.classList.remove('host-cell-inactive')
+    el.classList.remove('host-cell-inactive');
     // The host was already online, just start polling in the background now
     activePolls[host.serverUid] = window.setInterval(function() {
       // Every 5 seconds, poll at the address we know it was live at
       host.pollServer(function() {
         if (host.online) {
-          el.classList.remove('host-cell-inactive')
+          el.classList.remove('host-cell-inactive');
         } else {
-          el.classList.add('host-cell-inactive')
+          el.classList.add('host-cell-inactive');
         }
       });
     }, 5000);
   } else {
-    el.classList.add('host-cell-inactive')
+    el.classList.add('host-cell-inactive');
     // The host was offline, so poll immediately
     host.pollServer(function() {
       if (host.online) {
-        el.classList.remove('host-cell-inactive')
+        el.classList.remove('host-cell-inactive');
       } else {
-        el.classList.add('host-cell-inactive')
+        el.classList.add('host-cell-inactive');
       }
 
       // Now start background polling
@@ -118,9 +118,9 @@ function beginBackgroundPollingOfHost(host) {
         // Every 5 seconds, poll at the address we know it was live at
         host.pollServer(function() {
           if (host.online) {
-            el.classList.remove('host-cell-inactive')
+            el.classList.remove('host-cell-inactive');
           } else {
-            el.classList.add('host-cell-inactive')
+            el.classList.add('host-cell-inactive');
           }
         });
       }, 5000);
@@ -175,7 +175,7 @@ function moduleDidLoad() {
         storeData('uniqueid', myUniqueid, null);
       }*/
 
-      if (!pairingCert) { // We couldn't load a cert. Make one
+      if (!pairingCert) { // We couldn't load a cert. Make one.
         console.warn('%c[index.js, moduleDidLoad]', 'color: green;', 'Failed to load local cert. Generating new one');
         sendMessage('makeCert', []).then(function(cert) {
           storeData('cert', cert, null);
@@ -246,7 +246,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     var randomNumber = String("0000" + cryptoRand(10000)).slice(-4);
     var pairingOverlay = document.querySelector('#pairingDialogOverlay');
     var pairingDialog = document.querySelector('#pairingDialog');
-    $('#pairingDialogText').html('Please enter the following PIN on the target PC:  ' + randomNumber + '<br><br>If your host PC is running Sunshine, navigate to the Sunshine web UI to enter the PIN.<br>Alternatively, navigate to the GeForce Experience (NVIDIA GPUs only) to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
+    $('#pairingDialogText').html('Please enter the following PIN on the target PC:  ' + randomNumber + '<br><br>If your host PC is running Sunshine, navigate to the Sunshine Web UI to enter the PIN.<br>Alternatively, navigate to the GeForce Experience (NVIDIA GPUs only) to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
     pairingOverlay.style.display = 'flex';
     pairingDialog.showModal();
     isDialogOpen = true;
@@ -292,12 +292,12 @@ function hostChosen(host) {
   if (!host.paired) {
     // Still not paired, go to the pairing flow
     pairTo(host, function() {
-        showApps(host);
-        saveHosts();
-      },
-      function() {
-        startPollingHosts();
-      });
+      showApps(host);
+      saveHosts();
+    },
+    function() {
+      startPollingHosts();
+    });
   } else {
     // When we queried again, it was paired, so show apps
     showApps(host);
@@ -343,8 +343,7 @@ function addHost() {
         pairTo(hosts[_nvhttpHost.serverUid], function() {
           saveHosts();
         });
-      }
-      else {
+      } else {
         pairTo(_nvhttpHost, function() {
           // Host must be in the grid before starting background polling
           addHostToGrid(_nvhttpHost);
@@ -352,7 +351,7 @@ function addHost() {
           saveHosts();
         });
       }
-
+      
       // Clear the input field after successful processing
       $('#dialogInputHost').val('');
     }.bind(this),
@@ -411,6 +410,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
   }
 }
 
+// Show a confirmation with Delete Host dialog before removing specific host
 function removeClicked(host) {
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
   var deleteHostDialog = document.querySelector('#deleteHostDialog');
@@ -514,7 +514,7 @@ function showTerminateMoonlightDialog() {
   var terminateMoonlightDialog = document.querySelector('#terminateMoonlightDialog');
 
   if (!terminateMoonlightOverlay && !terminateMoonlightDialog) {
-    // If the dialog element doesn't exist, create it
+    // Check if the dialog element doesn't exist, create it
     var terminateMoonlightDialog = document.createElement('dialog');
     terminateMoonlightDialog.id = 'terminateMoonlightDialog';
     terminateMoonlightDialog.classList.add('mdl-dialog');
@@ -581,21 +581,22 @@ function showTerminateMoonlightDialog() {
 function stylizeBoxArt(freshApi, appIdToStylize) {
   // If the running game is the good one then style it
   var el = document.querySelector("#game-" + appIdToStylize);
-  if(freshApi.currentGame === appIdToStylize) {
-    el.classList.add('current-game')
-    el.title += ' (Running)'
+  if (freshApi.currentGame === appIdToStylize) {
+    el.classList.add('current-game');
+    el.title += ' (Running)';
   } else {
-    el.classList.remove('current-game')
-    el.title.replace(' (Running)', '') // TODO: Replace with localized string so make it e.title = game_title
+    el.classList.remove('current-game');
+    el.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
   }
 }
 
+// Sort the app titles
 function sortTitles(list, sortOrder) {
   return list.sort((a, b) => {
     const titleA = a.title.toLowerCase();
     const titleB = b.title.toLowerCase();
 
-    // A - Z
+    // Alphabetically (A - Z)
     if (sortOrder === 'ASC') {
       if (titleA < titleB) {
         return -1;
@@ -606,7 +607,7 @@ function sortTitles(list, sortOrder) {
       return 0;
     }
 
-    // Z - A
+    // Alphabetically (Z - A)
     if (sortOrder === 'DESC') {
       if (titleA < titleB) {
         return 1;
@@ -639,11 +640,11 @@ function showApps(host) {
     $('#naclSpinner').hide();
     $("#game-grid").show();
 
-    if(appList.length == 0) {
-      console.error('%c[index.js, showApps]', 'User\'s applist is empty')
-      var img = new Image()
-      img.src = 'static/res/applist_empty.svg'
-      $('#game-grid').html(img)
+    if (appList.length == 0) {
+      console.error('%c[index.js, showApps]', 'User\'s applist is empty');
+      var img = new Image();
+      img.src = 'static/res/applist_empty.svg';
+      $('#game-grid').html(img);
       snackbarLog('Your game list is empty');
       return; // We stop the function right here
     }
@@ -655,17 +656,17 @@ function showApps(host) {
         // Double clicking the button will cause multiple box arts to appear
         // To mitigate this we ensure we don't add a duplicate
         // This isn't perfect: there's lots of RTTs before the logic prevents anything
-        var gameCard = document.createElement('div')
-        gameCard.id = 'game-' + app.id
-        gameCard.className = 'game-container mdl-card mdl-shadow--4dp'
-        gameCard.setAttribute('role', 'link')
-        gameCard.tabIndex = 0
-        gameCard.title = app.title
+        var gameCard = document.createElement('div');
+        gameCard.id = 'game-' + app.id;
+        gameCard.className = 'game-container mdl-card mdl-shadow--4dp';
+        gameCard.setAttribute('role', 'link');
+        gameCard.tabIndex = 0;
+        gameCard.title = app.title;
 
-        gameCard.innerHTML = `<div class="game-title">${app.title}</div>`
+        gameCard.innerHTML = `<div class="game-title">${app.title}</div>`;
 
         gameCard.addEventListener('click', e => {
-          startGame(host, app.id)
+          startGame(host, app.id);
         });
         gameCard.addEventListener('mouseover', e => {
           gameCard.focus();
@@ -675,16 +676,16 @@ function showApps(host) {
             startGame(host, app.id);
           }
           if (e.key == "ArrowLeft") {
-            let prev = gameCard.previousSibling
+            let prev = gameCard.previousSibling;
             if (prev !== null) {
-              gameCard.previousSibling.focus()
+              gameCard.previousSibling.focus();
             }
             // TODO: Add a sound when limit reached
           }
           if (e.key == "ArrowRight") {
-            let next = gameCard.nextSibling
+            let next = gameCard.nextSibling;
             if (next !== null) {
-              gameCard.nextSibling.focus()
+              gameCard.nextSibling.focus();
             }
             // TODO: Add a sound when limit reached
           }
@@ -698,7 +699,7 @@ function showApps(host) {
         img.src = resolvedPromise;
       }, function(failedPromise) {
         console.log('%c[index.js, showApps]', 'color: green;', 'Error! Failed to retrieve box art for app ID: ' + app.id + '. Returned value was: ' + failedPromise, '\n Host object:', host, host.toString());
-        img.src = 'static/res/placeholder_error.svg'
+        img.src = 'static/res/placeholder_error.svg';
       });
       img.onload = e => img.classList.add('fade-in');
       $(gameCard).append(img);
@@ -706,8 +707,8 @@ function showApps(host) {
   }, function(failedAppList) {
     $('#naclSpinner').hide();
     var img = new Image();
-    img.src = 'static/res/applist_error.svg'
-    $("#game-grid").html(img)
+    img.src = 'static/res/applist_error.svg';
+    $("#game-grid").html(img);
     snackbarLog('Unable to retrieve your games');
     console.error('%c[index.js, showApps]', 'Failed to get applist from host: ' + host.hostname, '\n Host object:', host, host.toString());
   });
@@ -715,27 +716,28 @@ function showApps(host) {
   showAppsMode();
 }
 
-// Set the layout to the initial mode you see when you open Moonlight
+// Set the layout to the initial mode when you open Hosts & Settings view
 function showHostsAndSettingsMode() {
-  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and hosts" mode');
+  console.log('%c[index.js]', 'color: green;', 'Entering "Show hosts and settings" mode');
   $("#main-navigation").show();
   $(".nav-menu-parent").show();
   $("#externalAudioBtn").show();
   $("#mouseLockBtn").show();
+  $('#removeAllHosts').show();
+  $('#supportCenter').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #naclSpinner").show();
   $('#game-grid').hide();
   $('#backIcon').hide();
   $('#quitCurrentApp').hide();
-  $('#removeAllHosts').show();
-  $('#supportCenter').show();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
 
   startPollingHosts();
 }
 
+// Set the layout to the initial mode when you open Apps & Games view
 function showAppsMode() {
-  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps" mode');
+  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and games" mode');
   $('#backIcon').show();
   $("#main-navigation").show();
   $("#main-content").children().not("#listener, #loadingSpinner, #naclSpinner").show();
@@ -743,10 +745,10 @@ function showAppsMode() {
   $(".nav-menu-parent").hide();
   $("#externalAudioBtn").hide();
   $("#mouseLockBtn").hide();
-  $("#host-grid").hide();
-  $("#settings").hide();
   $('#removeAllHosts').hide();
   $('#supportCenter').hide();
+  $("#host-grid").hide();
+  $("#settings").hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
   $('#loadingSpinner').css('display', 'none');
@@ -759,7 +761,6 @@ function showAppsMode() {
   stopPollingHosts();
 }
 
-
 // Start the given appID. If another app is running, offer to quit it.
 // If the given app is already running, just resume it.
 function startGame(host, appID) {
@@ -771,7 +772,6 @@ function startGame(host, appID) {
   // Refresh the server info, because the user might have quit the game
   host.refreshServerInfo().then(function(ret) {
     host.getAppById(appID).then(function(appToStart) {
-
       if (host.currentGame != 0 && host.currentGame != appID) {
         host.getAppById(host.currentGame).then(function(currentApp) {
           var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
@@ -864,14 +864,14 @@ function startGame(host, appID) {
         $xml = $($.parseXML(launchResult.toString()));
         $root = $xml.find('root');
 
-        var status_code = $root.attr('status_code')
+        var status_code = $root.attr('status_code');
         if (status_code != 200) {
-          var status_message = $root.attr('status_message')
+          var status_message = $root.attr('status_message');
           if (status_code == 4294967295 && status_message == 'Invalid') {
             // Special case handling an audio capture error which GFE doesn't
             // provide any useful status message for
             status_code = 418;
-            status_message = 'Missing audio capture device. Reinstall GeForce Experience.';
+            status_message = 'Audio capture device is missing. Please reinstall Sunshine or GeForce Experience.';
           }
           snackbarLog('Error ' + status_code + ': ' + status_message);
           showApps(host);

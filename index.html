@@ -5,7 +5,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moonlight</title>
+  <title>Moonlight Game Streaming</title>
   <link rel="stylesheet" href="static/css/roboto.css">
   <link rel="stylesheet" href="static/css/material.min.css">
   <link rel="stylesheet" href="static/css/style.css">
@@ -15,7 +15,7 @@
   <div class="mdl-layout mdl-js-layout">
     <header id="main-navigation" class="mdl-layout__header mdl-layout__header--transparent">
       <div class="mdl-layout__header-row">
-        <button type="button" id="backIcon" class="mdl-button mdl-js-button mdl-button--icon" role="link" aria-label="Host selection">
+        <button type="button" id="backIcon" class="mdl-button mdl-js-button mdl-button--icon" role="link" aria-label="Go back">
           <i class="material-icons">keyboard_arrow_left</i>
         </button>
         <div id="backIconTooltip" class="mdl-tooltip" for="backIcon">Back</div>
@@ -40,7 +40,7 @@
           </div>
           <div class="nav-menu-parent">
             <div id="framerateMenu">
-              <button type="button" id="selectFramerate" data-value="60" class="mdl-button mdl-js-button">60 FPS</button>
+              <button type="button" id="selectFramerate" class="mdl-button mdl-js-button" data-value="60">60 FPS</button>
             </div>
             <ul class="framerateMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="selectFramerate">
               <li class="mdl-menu__item" data-value="30">30 FPS</li>
@@ -128,7 +128,7 @@
       <div class="mdl-dialog__content">
         <p id="pairingDialogText">
           Please enter the following PIN on the target PC: XXXX<br><br>
-          If your host PC is running Sunshine, navigate to the Sunshine web UI to enter the PIN.<br>
+          If your host PC is running Sunshine, navigate to the Sunshine Web UI to enter the PIN.<br>
           Alternatively, navigate to the GeForce Experience (NVIDIA GPUs only) to enter the PIN.<br><br>
           This dialog will close once the pairing is complete.
         </p>
@@ -188,7 +188,7 @@
         <p id="supportDialogText">
           If you're facing any problems with Moonlight, visit our comprehensive guide.<br><br>
           Scan the QR code below to access an in-depth setup guide, troubleshooting tips, frequently asked questions, and much more.<br><br>
-          <img src="./static/res/support_qr_code.svg" class="qr-code" /><br>
+          <img src="static/res/support_qr_code.svg" class="qr-code" /><br>
         </p>
       </div>
       <div class="mdl-dialog__actions">

@@ -44,11 +44,11 @@
 #define HTTP_HANDLER_THREADS 8
 
 struct Shader {
-  Shader() : program(0), texcoord_scale_location(0) {}
-  ~Shader() {}
+    Shader() : program(0), texcoord_scale_location(0) {}
+    ~Shader() {}
 
-  GLuint program;
-  GLint texcoord_scale_location;
+    GLuint program;
+    GLint texcoord_scale_location;
 };
 
 class MoonlightInstance : public pp::Instance, public pp::MouseLock {

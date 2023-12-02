@@ -138,7 +138,7 @@ int height, int redrawRate, void* context, int drFlags) {
   g_Instance->m_MediaElement.SetSrc(&g_Instance->m_Source);
   ClLogMessage("Waiting for closed\n");
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
-      return g_Instance->m_EmssReadyState == EmssReadyState::kClosed;
+    return g_Instance->m_EmssReadyState == EmssReadyState::kClosed;
   });
   ClLogMessage("closed done\n");
 
@@ -189,7 +189,7 @@ int height, int redrawRate, void* context, int drFlags) {
   ClLogMessage("Inb4 source open\n");
   g_Instance->m_Source.Open([](EmssOperationResult){});
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
-      return g_Instance->m_EmssReadyState == EmssReadyState::kOpenPending;
+    return g_Instance->m_EmssReadyState == EmssReadyState::kOpenPending;
   });
   ClLogMessage("Source ready to open\n");
   g_Instance->m_MediaElement.Play([](EmssOperationResult err) {
@@ -201,11 +201,13 @@ int height, int redrawRate, void* context, int drFlags) {
   });
 
   ClLogMessage("Waiting for start\n");
-  g_Instance->WaitFor(&g_Instance->m_EmssAudioStateChanged,
-                      [] { return g_Instance->m_AudioStarted.load(); });
+  g_Instance->WaitFor(&g_Instance->m_EmssAudioStateChanged, [] {
+    return g_Instance->m_AudioStarted.load();
+  });
 
-  g_Instance->WaitFor(&g_Instance->m_EmssVideoStateChanged,
-                      [] { return g_Instance->m_VideoStarted.load(); });
+  g_Instance->WaitFor(&g_Instance->m_EmssVideoStateChanged, [] {
+    return g_Instance->m_VideoStarted.load();
+  });
   ClLogMessage("started\n");
   return 0;
 }
@@ -283,7 +285,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
   s_lastTime = now;
 
   // Start the decoding
-  samsung::wasm::ElementaryMediaPacket pkt{
+  samsung::wasm::ElementaryMediaPacket pkt {
     s_pktPts,
     s_pktPts,
     s_frameDuration,
@@ -307,8 +309,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
   return DR_OK;
 }
 
-void MoonlightInstance::WaitFor(std::condition_variable* variable,
-std::function<bool()> condition) {
+void MoonlightInstance::WaitFor(std::condition_variable* variable, std::function<bool()> condition) {
   std::unique_lock<std::mutex> lock(m_Mutex);
   variable->wait(lock, condition);
 }
@@ -317,5 +318,5 @@ DECODER_RENDERER_CALLBACKS MoonlightInstance::s_DrCallbacks = {
   .setup = MoonlightInstance::VidDecSetup,
   .cleanup = MoonlightInstance::VidDecCleanup,
   .submitDecodeUnit = MoonlightInstance::VidDecSubmitDecodeUnit,
-  .capabilities = CAPABILITY_SLICES_PER_FRAME(4)
+  .capabilities = CAPABILITY_SLICES_PER_FRAME(4),
 };

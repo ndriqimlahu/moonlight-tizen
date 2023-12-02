@@ -9,7 +9,7 @@
 static const unsigned short k_StandardGamepadButtonMapping[] = {
     A_FLAG, B_FLAG, X_FLAG, Y_FLAG,
     LB_FLAG, RB_FLAG,
-    0, 0, // Triggers
+    0 /* LT_FLAG */, 0 /* RT_FLAG */,
     BACK_FLAG, PLAY_FLAG,
     LS_CLK_FLAG, RS_CLK_FLAG,
     UP_FLAG, DOWN_FLAG, LEFT_FLAG, RIGHT_FLAG,
@@ -101,12 +101,10 @@ void MoonlightInstance::PollGamepads() {
             // Handle triggers first
             if (i == k_StandardGamepadTriggerButtonIndexes[0]) {
                 leftTrigger = padData.buttons[i] * 0xFF;
-            }
-            else if (i == k_StandardGamepadTriggerButtonIndexes[1]) {
+            } else if (i == k_StandardGamepadTriggerButtonIndexes[1]) {
                 rightTrigger = padData.buttons[i] * 0xFF;
-            }
-            // Now normal buttons
-            else if (padData.buttons[i] > 0.5f) {
+            } else if (padData.buttons[i] > 0.5f) {
+                // Now normal buttons
                 buttonFlags |= k_StandardGamepadButtonMapping[i];
             }
         }
@@ -123,9 +121,9 @@ void MoonlightInstance::PollGamepads() {
             rightStickY = -padData.axes[3] * 0x7FFF;
         }
         
-        LiSendMultiControllerEvent(controllerIndex, activeGamepadMask,
-                                   buttonFlags, leftTrigger, rightTrigger,
-                                   leftStickX, leftStickY, rightStickX, rightStickY);
+        LiSendMultiControllerEvent(
+            controllerIndex, activeGamepadMask, buttonFlags, leftTrigger,
+            rightTrigger, leftStickX, leftStickY, rightStickX, rightStickY);
         controllerIndex++;
     }
 }

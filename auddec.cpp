@@ -28,8 +28,7 @@ static void AudioPlayerSampleCallback(void* samples, uint32_t buffer_size, void*
         // This can race with the reader in the AudDecDecodeAndPlaySample function. This is
         // not a problem because at worst, it just won't see that we've consumed this sample yet.
         s_ReadIndex = (s_ReadIndex + 1) % CIRCULAR_BUFFER_SIZE;
-    }
-    else {
+    } else {
         memset(samples, 0, buffer_size);
     }
 }
@@ -40,15 +39,9 @@ int MoonlightInstance::AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONF
     // Reset the ring buffer to empty
     s_ReadIndex = s_WriteIndex = 0;
     
-    g_Instance->m_OpusDecoder = opus_multistream_decoder_create(opusConfig->sampleRate,
-                                                                opusConfig->channelCount,
-                                                                opusConfig->streams,
-                                                                opusConfig->coupledStreams,
-                                                                opusConfig->mapping,
-                                                                &rc);
+    g_Instance->m_OpusDecoder = opus_multistream_decoder_create(opusConfig->sampleRate, opusConfig->channelCount, opusConfig->streams, opusConfig->coupledStreams, opusConfig->mapping, &rc);
     
-    g_Instance->m_AudioPlayer = pp::Audio(g_Instance, pp::AudioConfig(g_Instance, PP_AUDIOSAMPLERATE_48000, FRAME_SIZE),
-                                          AudioPlayerSampleCallback, NULL);
+    g_Instance->m_AudioPlayer = pp::Audio(g_Instance, pp::AudioConfig(g_Instance, PP_AUDIOSAMPLERATE_48000, FRAME_SIZE), AudioPlayerSampleCallback, NULL);
     
     // Start playback now
     g_Instance->m_AudioPlayer.StartPlayback();
@@ -74,8 +67,7 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
         return;
     }
     
-    decodeLen = opus_multistream_decode(g_Instance->m_OpusDecoder, (unsigned char *)sampleData, sampleLength,
-                                        s_CircularBuffer[s_WriteIndex], FRAME_SIZE, 0);
+    decodeLen = opus_multistream_decode(g_Instance->m_OpusDecoder, (unsigned char *)sampleData, sampleLength, s_CircularBuffer[s_WriteIndex], FRAME_SIZE, 0);
     if (decodeLen > 0) {
         // Use a full memory barrier to ensure the circular buffer is written before incrementing the index
         __sync_synchronize();
@@ -91,5 +83,5 @@ AUDIO_RENDERER_CALLBACKS MoonlightInstance::s_ArCallbacks = {
     .init = MoonlightInstance::AudDecInit,
     .cleanup = MoonlightInstance::AudDecCleanup,
     .decodeAndPlaySample = MoonlightInstance::AudDecDecodeAndPlaySample,
-    .capabilities = CAPABILITY_DIRECT_SUBMIT
+    .capabilities = CAPABILITY_DIRECT_SUBMIT,
 };

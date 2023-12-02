@@ -75,19 +75,15 @@ MessageResult MoonlightInstance::HttpInit(std::string cert, std::string privateK
   LoadResult res = LoadResult::Success;
   res = LoadCert(cert.c_str(), privateKey.c_str());
   if (res == LoadResult::CertErr) {
-    return MessageResult::Reject(
-        emscripten::val(std::string("Error loading cert into memory")));
+    return MessageResult::Reject(emscripten::val(std::string("Error loading cert into memory")));
   } else if (res == LoadResult::PrivateKeyErr) {
-    return MessageResult::Reject(
-        emscripten::val(std::string("Error loading private key into memory")));
+    return MessageResult::Reject(emscripten::val(std::string("Error loading private key into memory")));
   }
   res = LoadCert(cert.c_str(), privateKey.c_str());
   if (res == LoadResult::CertErr) {
-    return MessageResult::Reject(
-        emscripten::val(std::string("Error loading cert into memory")));
+    return MessageResult::Reject(emscripten::val(std::string("Error loading cert into memory")));
   } else if (res == LoadResult::PrivateKeyErr) {
-    return MessageResult::Reject(
-        emscripten::val(std::string("Error loading private key into memory")));
+    return MessageResult::Reject(emscripten::val(std::string("Error loading private key into memory")));
   }
 
   g_UniqueId = strdup(myUniqueId.c_str());
@@ -134,7 +130,9 @@ void MoonlightInstance::OpenUrl(int callbackId, std::string url, std::string ppk
   m_Dispatcher.post_job(std::bind(&MoonlightInstance::OpenUrl_private, this, callbackId, url, ppk, binaryResponse), false);
 }
 
-MessageResult makeCert() { return g_Instance->MakeCert(); }
+MessageResult makeCert() {
+  return g_Instance->MakeCert();
+}
 
 MessageResult httpInit(std::string cert, std::string privateKey, std::string myUniqueId) {
   return g_Instance->HttpInit(cert, privateKey, myUniqueId);

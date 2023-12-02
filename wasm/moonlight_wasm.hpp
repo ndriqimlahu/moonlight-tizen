@@ -50,17 +50,19 @@ struct MessageResult {
   }
 };
 
-enum class LoadResult { Success, CertErr, PrivateKeyErr };
+enum class LoadResult {
+  Success, CertErr, PrivateKeyErr
+};
 
 constexpr const char* kCanvasName = "#nacl_module";
 
 class MoonlightInstance {
-public:
+  public:
   explicit MoonlightInstance();
 
   MessageResult StartStream(std::string host, std::string width, std::string height,
-  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-  std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync);
+    std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
+    std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -132,7 +134,6 @@ public:
   private:
     using EmssReadyState = samsung::wasm::ElementaryMediaStreamSource::ReadyState;
     using EmssTrackCloseReason = samsung::wasm::ElementaryMediaTrack::CloseReason;
-
   class SourceListener
       : public samsung::wasm::ElementaryMediaStreamSourceListener {
   public:
@@ -140,11 +141,9 @@ public:
     void OnSourceClosed() override;
     void OnSourceOpenPending() override;
     void OnSourceOpen() override;
-
   private:
     MoonlightInstance* m_Instance;
   };
-
   class AudioTrackListener
       : public samsung::wasm::ElementaryMediaTrackListener {
   public:
@@ -152,11 +151,9 @@ public:
     void OnTrackOpen() override;
     void OnTrackClosed(EmssTrackCloseReason) override;
     void OnSessionIdChanged(samsung::wasm::SessionId new_session_id) override;
-
   private:
     MoonlightInstance* m_Instance;
   };
-
   class VideoTrackListener
       : public samsung::wasm::ElementaryMediaTrackListener {
   public:
@@ -164,7 +161,6 @@ public:
     void OnTrackOpen() override;
     void OnTrackClosed(EmssTrackCloseReason) override;
     void OnSessionIdChanged(samsung::wasm::SessionId new_session_id) override;
-
   private:
     MoonlightInstance* m_Instance;
   };
@@ -239,8 +235,8 @@ MessageResult httpInit(std::string cert, std::string privateKey, std::string myU
 void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryResponse);
 
 MessageResult startStream(std::string host, std::string width, std::string height,
-std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync);
+  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
+  std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync);
 MessageResult stopStream();
 
 void stun(int callbackId);

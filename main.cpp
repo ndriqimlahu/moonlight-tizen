@@ -53,10 +53,7 @@ void MoonlightInstance::OnConnectionStopped(uint32_t error) {
     m_Running = false;
     
     // Stop receiving input events
-    ClearInputEventRequest(PP_INPUTEVENT_CLASS_MOUSE |
-                           PP_INPUTEVENT_CLASS_WHEEL |
-                           PP_INPUTEVENT_CLASS_KEYBOARD |
-                           PP_INPUTEVENT_CLASS_TOUCH);
+    ClearInputEventRequest(PP_INPUTEVENT_CLASS_MOUSE | PP_INPUTEVENT_CLASS_WHEEL | PP_INPUTEVENT_CLASS_KEYBOARD | PP_INPUTEVENT_CLASS_TOUCH);
     
     // Unlock the mouse
     UnlockMouseOrJustReleaseInput();
@@ -131,15 +128,10 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
     serverInfo.serverInfoAppVersion = me->m_AppVersion.c_str();
     serverInfo.serverInfoGfeVersion = me->m_GfeVersion.c_str();
     serverInfo.rtspSessionUrl = me->m_RtspUrl.c_str();
-    serverInfo.serverCodecModeSupport = SCM_HEVC_MAIN10;
+    // Enable 'serverCodecModeSupport' only if the latest version of 'moonlight-common-c' is implemented
+    // serverInfo.serverCodecModeSupport = SCM_HEVC;
     
-    err = LiStartConnection(&serverInfo,
-                            &me->m_StreamConfig,
-                            &MoonlightInstance::s_ClCallbacks,
-                            &MoonlightInstance::s_DrCallbacks,
-                            &MoonlightInstance::s_ArCallbacks,
-                            NULL, 0,
-                            NULL, 0);
+    err = LiStartConnection(&serverInfo, &me->m_StreamConfig, &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks, &MoonlightInstance::s_ArCallbacks, NULL, 0, NULL, 0);
     if (err != 0) {
         // Notify the JS code that the stream has ended
         // NB: We pass error code 0 here to avoid triggering a "Connection terminated"
@@ -160,8 +152,9 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
 // hook from javascript into the CPP code.
 void MoonlightInstance::HandleMessage(const pp::Var& var_message) {
      // Ignore the message if it is not a string.
-    if (!var_message.is_dictionary())
+    if (!var_message.is_dictionary()) {
         return;
+    }
     
     pp::VarDictionary msg(var_message);
     int32_t callbackId = msg.Get("callbackId").AsInt();
@@ -239,7 +232,8 @@ void MoonlightInstance::HandleStartStream(int32_t callbackId, pp::VarArray args)
     m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
     m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
     m_StreamConfig.packetSize = 1392;
-    m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265_MAIN10;
+    // Enable 'supportedVideoFormats' only if the latest version of 'moonlight-common-c' is implemented
+    // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265;
 
     // TODO: If/when video encryption is added, we'll probably want to
     // limit that to devices that support AES instructions.
@@ -285,13 +279,11 @@ void MoonlightInstance::HandleStopStream(int32_t callbackId, pp::VarArray args) 
 }
 
 void MoonlightInstance::HandleOpenURL(int32_t callbackId, pp::VarArray args) {
-    m_HttpThreadPool[m_HttpThreadPoolSequence++ % HTTP_HANDLER_THREADS]->message_loop().PostWork(
-        m_CallbackFactory.NewCallback(&MoonlightInstance::NvHTTPRequest, callbackId, args));
+    m_HttpThreadPool[m_HttpThreadPoolSequence++ % HTTP_HANDLER_THREADS]->message_loop().PostWork(m_CallbackFactory.NewCallback(&MoonlightInstance::NvHTTPRequest, callbackId, args));
 }
 
 void MoonlightInstance::HandlePair(int32_t callbackId, pp::VarArray args) {
-     m_HttpThreadPool[m_HttpThreadPoolSequence++ % HTTP_HANDLER_THREADS]->message_loop().PostWork(
-         m_CallbackFactory.NewCallback(&MoonlightInstance::PairCallback, callbackId, args));
+    m_HttpThreadPool[m_HttpThreadPoolSequence++ % HTTP_HANDLER_THREADS]->message_loop().PostWork(m_CallbackFactory.NewCallback(&MoonlightInstance::PairCallback, callbackId, args));
 }
 
 void MoonlightInstance::PairCallback(int32_t /*result*/, int32_t callbackId, pp::VarArray args) {
@@ -304,8 +296,7 @@ void MoonlightInstance::PairCallback(int32_t /*result*/, int32_t callbackId, pp:
         ret.Set("type", pp::Var("resolve"));
         ret.Set("ret", pp::Var(ppkstr));
         free(ppkstr);
-    }
-    else {
+    } else {
         ret.Set("type", pp::Var("reject"));
         ret.Set("ret", pp::Var(err));
     }
@@ -314,8 +305,7 @@ void MoonlightInstance::PairCallback(int32_t /*result*/, int32_t callbackId, pp:
 }
 
 void MoonlightInstance::HandleSTUN(int32_t callbackId, pp::VarArray args) {
-     m_HttpThreadPool[m_HttpThreadPoolSequence++ % HTTP_HANDLER_THREADS]->message_loop().PostWork(
-         m_CallbackFactory.NewCallback(&MoonlightInstance::STUNCallback, callbackId, args));
+    m_HttpThreadPool[m_HttpThreadPoolSequence++ % HTTP_HANDLER_THREADS]->message_loop().PostWork(m_CallbackFactory.NewCallback(&MoonlightInstance::STUNCallback, callbackId, args));
 }
 
 void MoonlightInstance::STUNCallback(int32_t /*result*/, int32_t callbackId, pp::VarArray args) {
@@ -336,15 +326,13 @@ void MoonlightInstance::STUNCallback(int32_t /*result*/, int32_t callbackId, pp:
     PostMessage(ret);
 }
 
-bool MoonlightInstance::Init(uint32_t argc,
-                             const char* argn[],
-                             const char* argv[]) {
+bool MoonlightInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
     g_Instance = this;
     return true;
 }
 
 namespace pp {
-Module* CreateModule() {
-    return new MoonlightModule();
-}
+    Module* CreateModule() {
+        return new MoonlightModule();
+    }
 }  // namespace pp

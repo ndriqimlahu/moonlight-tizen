@@ -115,6 +115,7 @@ void MoonlightInstance::PollGamepads() {
     // stopStream function to stop the streaming session.
     if (buttonFlags == STOP_STREAM_BUTTONS_FLAGS) {
       PostToJs(std::string("stopping stream, button flags is ") + std::to_string(buttonFlags));
+      // Terminate the connection
       stopStream();
       return;
     }

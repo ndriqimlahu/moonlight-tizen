@@ -33,8 +33,7 @@ static int ConvertPPButtonToLiButton(PP_InputEvent_MouseButton ppButton) {
 void MoonlightInstance::LockMouseOrJustCaptureInput() {
     if (m_MouseLockingFeatureEnabled) {
         LockMouse(m_CallbackFactory.NewCallback(&MoonlightInstance::DidLockMouse));
-    }
-    else {
+    } else {
         pp::MouseCursor::SetCursor(this, PP_MOUSECURSOR_TYPE_NONE);
     }
 
@@ -84,7 +83,6 @@ static char GetModifierFlags(const pp::InputEvent& event) {
 }
 
 static uint32_t GetTranslatedKeyCode(const pp::KeyboardInputEvent& event) {
-
     // For some reason, NaCl won't give us the real left and right
     // VK codes for modifiers and instead gives us modifier flags
     // to indicate whether the key is left or right. We have to
@@ -102,7 +100,6 @@ static uint32_t GetTranslatedKeyCode(const pp::KeyboardInputEvent& event) {
                 return 0xA1;
             }
             break;
-
         // VK_CONTROL
         case 0x11:
             if (event.GetModifiers() & PP_INPUTEVENT_MODIFIER_ISLEFT) {
@@ -114,7 +111,6 @@ static uint32_t GetTranslatedKeyCode(const pp::KeyboardInputEvent& event) {
                 return 0xA3;
             }
             break;
-
         // VK_MENU (Alt)
         case 0x12:
             if (event.GetModifiers() & PP_INPUTEVENT_MODIFIER_ISLEFT) {
@@ -126,7 +122,6 @@ static uint32_t GetTranslatedKeyCode(const pp::KeyboardInputEvent& event) {
                 return 0xA5;
             }
             break;
-
         default:
             break;
     }
@@ -134,8 +129,7 @@ static uint32_t GetTranslatedKeyCode(const pp::KeyboardInputEvent& event) {
     // We have to handle the ISKEYPAD modifier on macOS, and convert them
     // to the correct numpad keycodes for Windows.
     int32_t num = event.GetKeyCode() - 0x30;
-    if ((event.GetModifiers() & PP_INPUTEVENT_MODIFIER_ISKEYPAD) &&
-        num >= 0 && num <= 9) {
+    if ((event.GetModifiers() & PP_INPUTEVENT_MODIFIER_ISKEYPAD) && num >= 0 && num <= 9) {
         // Offset with numpad 0's virtual keycode
         return num + 0x60;
     }
@@ -193,12 +187,8 @@ bool MoonlightInstance::TryHandleNativeTouchEvent(const pp::InputEvent& event) {
     for (uint32_t i = 0; i < count; i++) {
         pp::TouchPoint touchPoint = touchEvent.GetTouchByIndex(PP_TOUCHLIST_TYPE_CHANGEDTOUCHES, i);
         pp::FloatPoint touchPos = touchPoint.position();
-        LiSendTouchEvent(eventType, touchPoint.id(),
-                         MIN(MAX(touchPos.x(), 0), m_PluginRect.width()) / m_PluginRect.width(),
-                         MIN(MAX(touchPos.y(), 0), m_PluginRect.height()) / m_PluginRect.height(),
-                         touchPoint.pressure(),
-                         0.0f, 0.0f,
-                         touchPoint.rotation_angle());
+        LiSendTouchEvent(eventType, touchPoint.id(), MIN(MAX(touchPos.x(), 0), m_PluginRect.width()) / m_PluginRect.width(),
+            MIN(MAX(touchPos.y(), 0), m_PluginRect.height()) / m_PluginRect.height(), touchPoint.pressure(), 0.0f, 0.0f, touchPoint.rotation_angle());
     }
 
     return true;
@@ -223,7 +213,6 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, ConvertPPButtonToLiButton(mouseEvent.GetButton()));
             return true;
         }
-        
         case PP_INPUTEVENT_TYPE_MOUSEMOVE: {
             if (!m_MouseLocked) {
                 return false;
@@ -247,7 +236,6 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             
             return true;
         }
-        
         case PP_INPUTEVENT_TYPE_MOUSEUP: {
             if (!m_MouseLocked) {
                 return false;
@@ -258,7 +246,6 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, ConvertPPButtonToLiButton(mouseEvent.GetButton()));
             return true;
         }
-        
         case PP_INPUTEVENT_TYPE_WHEEL: {
             if (!m_MouseLocked) {
                 return false;
@@ -270,7 +257,6 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             m_AccumulatedTicks += wheelEvent.GetTicks().y();
             return true;
         }
-        
         case PP_INPUTEVENT_TYPE_KEYDOWN: {
             if (!m_MouseLocked) {
                 return false;
@@ -286,8 +272,7 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
                     // Terminate the connection
                     StopConnection();
                     return true;
-                }
-                else {
+                } else {
                     // Wait until these keys come up to unlock the mouse
                     m_WaitingForAllModifiersUp = true;
                 }
@@ -297,11 +282,9 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
                 return true;
             }
 
-            LiSendKeyboardEvent(KEY_PREFIX << 8 | keyCode,
-                                KEY_ACTION_DOWN, modifiers);
+            LiSendKeyboardEvent(KEY_PREFIX << 8 | keyCode, KEY_ACTION_DOWN, modifiers);
             return true;
         }
-        
         case PP_INPUTEVENT_TYPE_KEYUP: {
             if (!m_MouseLocked) {
                 return false;
@@ -310,17 +293,15 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             pp::KeyboardInputEvent keyboardEvent(event);
             char modifiers = GetModifierFlags(event);
             uint32_t keyCode = GetTranslatedKeyCode(keyboardEvent);
-             
+
             // Check if all modifiers are up now
             if (m_WaitingForAllModifiersUp && modifiers == 0) {
                 UnlockMouseOrJustReleaseInput();
             }
             
-            LiSendKeyboardEvent(KEY_PREFIX << 8 | keyCode,
-                                KEY_ACTION_UP, modifiers);
+            LiSendKeyboardEvent(KEY_PREFIX << 8 | keyCode, KEY_ACTION_UP, modifiers);
             return true;
         }
-
         case PP_INPUTEVENT_TYPE_TOUCHMOVE:
         case PP_INPUTEVENT_TYPE_TOUCHSTART: {
             pp::TouchInputEvent touchEvent(event);
@@ -330,23 +311,21 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             // Create a small deadzone for touch downs to allow more precise double-clicks
             if (event.GetType() == PP_INPUTEVENT_TYPE_TOUCHMOVE ||
                 event.GetTimeStamp() - m_LastTouchUpTime > TOUCH_DEAD_ZONE_DELAY ||
-                sqrt(pow(m_LastTouchUpPoint.x() - touchPoint.x(), 2) +
-                     pow(m_LastTouchUpPoint.y() - touchPoint.y(), 2)) > TOUCH_DEAD_ZONE_RADIUS) {
-                // Scale the touch coordinates to the video rect
-                short x = MIN(MAX(touchPoint.x(), 0), m_PluginRect.width());
-                short y = MIN(MAX(touchPoint.y(), 0), m_PluginRect.height());
+                sqrt(pow(m_LastTouchUpPoint.x() - touchPoint.x(), 2) + pow(m_LastTouchUpPoint.y() - touchPoint.y(), 2)) > TOUCH_DEAD_ZONE_RADIUS) {
+                    // Scale the touch coordinates to the video rect
+                    short x = MIN(MAX(touchPoint.x(), 0), m_PluginRect.width());
+                    short y = MIN(MAX(touchPoint.y(), 0), m_PluginRect.height());
 
-                // Update the mouse position prior to sending the button down
-                LiSendMousePositionEvent(x, y, m_PluginRect.width(), m_PluginRect.height());
+                    // Update the mouse position prior to sending the button down
+                    LiSendMousePositionEvent(x, y, m_PluginRect.width(), m_PluginRect.height()
+                );
             }
 
-            if (event.GetType() == PP_INPUTEVENT_TYPE_TOUCHSTART &&
-                    touchEvent.GetTouchCount(PP_TOUCHLIST_TYPE_TARGETTOUCHES) == 1) {
+            if (event.GetType() == PP_INPUTEVENT_TYPE_TOUCHSTART && touchEvent.GetTouchCount(PP_TOUCHLIST_TYPE_TARGETTOUCHES) == 1) {
                 LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_LEFT);
             }
             return true;
         }
-
         case PP_INPUTEVENT_TYPE_TOUCHCANCEL:
         case PP_INPUTEVENT_TYPE_TOUCHEND: {
             pp::TouchInputEvent touchEvent(event);
@@ -358,7 +337,6 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             }
             return true;
         }
-        
         default: {
             return false;
         }
