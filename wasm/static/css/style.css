@@ -80,6 +80,7 @@ main {
 .mdl-menu__item {
     color: white;
     font-size: 14px;
+    text-align: center;
 }
 .mdl-menu__item:hover {
     background-color: #00A3C6;
@@ -87,14 +88,19 @@ main {
 .mdl-tooltip {
     font-size: 14px;
 }
-#bitrateField {
-    width: 100px;
-    height: 36px;
-    overflow: hidden;
-    text-transform: none;
-}
 .bitrateMenu {
-    width: 170px;
+    width: 285px;
+    display: flex;
+    align-items: center;
+}
+#bitrateSlider {
+    width: 180px;
+}
+#bitrateLowestValue {
+    margin: 0 0 0 20px;
+}
+#bitrateHighestValue {
+    margin: 0 20px 0 0;
 }
 .mdl-button {
     color: #fff !important;
