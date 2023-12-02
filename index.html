@@ -55,7 +55,9 @@
               <button type="button" id="selectBitrate" class="mdl-button mdl-js-button">20 MB/S</button>
             </div>
             <div class="bitrateMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="selectBitrate">
+              <span id="bitrateLowestValue">0</span>
               <input type="range" id="bitrateSlider" class="mdl-slider mdl-js-slider" min="0" max="150" step="0.5" value="20">
+              <span id="bitrateHighestValue">150</span>
             </div>
             <div id="bitrateTooltip" class="mdl-tooltip" for="bitrateMenu">Video bitrate</div>
           </div>
@@ -169,7 +171,7 @@
       <h3 class="mdl-dialog__title">Add Host Manually</h3>
       <div class="mdl-dialog__content">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input type="text" id="dialogInputHost" class="mdl-textfield__input" />
+          <input type="text" id="dialogInputHost" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
           <label class="mdl-textfield__label" for="dialogInputHost">IP Address of Host PC</label>
         </div>
       </div>
