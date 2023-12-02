@@ -352,6 +352,9 @@ function addHost() {
           saveHosts();
         });
       }
+
+      // Clear the input field after successful processing
+      $('#dialogInputHost').val('');
     }.bind(this),
     function(failure) {
       snackbarLog('Failed to connect to ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
