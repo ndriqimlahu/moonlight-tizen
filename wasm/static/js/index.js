@@ -311,6 +311,8 @@ function addHost() {
     addHostOverlay.style.display = 'none';
     addHostDialog.close();
     isDialogOpen = false;
+    // Clear the input field after unsuccessful processing
+    $('#dialogInputHost').val('');
   });
 
   // Try to pair if they continue
@@ -417,6 +419,7 @@ function removeClicked(host) {
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
+    document.getElementById('removeAllHosts').focus();
   });
 
   // locally remove the hostname/ip from the saved `hosts` array
@@ -431,6 +434,7 @@ function removeClicked(host) {
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
+    document.getElementById('removeAllHosts').focus();
   });
 }
 
@@ -496,6 +500,7 @@ function showSupportDialog() {
       supportDialogOverlay.style.display = 'none';
       supportDialog.close();
       isDialogOpen = false;
+      document.getElementById('supportCenter').focus();
   });
 }
 
@@ -942,6 +947,7 @@ function stopGameWithConfirmation() {
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
+        document.getElementById('quitCurrentApp').focus();
       });
 
       $('#continueQuitApp').off('click');
@@ -951,6 +957,7 @@ function stopGameWithConfirmation() {
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
+        document.getElementById('quitCurrentApp').focus();
       });
     });
   }

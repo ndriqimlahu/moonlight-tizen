@@ -363,6 +363,8 @@ function addHost() {
     addHostDialog.close();
     isDialogOpen = false;
     Navigation.pop();
+    // Clear the input field after unsuccessful processing
+    $('#dialogInputHost').val('');
   });
 
   // Try to pair if they continue
@@ -514,6 +516,7 @@ function removeAllHostsWithConfirmation() {
       deleteHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
+      document.getElementById('removeAllHosts').focus();
     });
   
     $('#continueDeleteHost').off('click');
@@ -534,6 +537,7 @@ function removeAllHostsWithConfirmation() {
       deleteHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
+      document.getElementById('removeAllHosts').focus();
     });
   }
 }
@@ -557,6 +561,7 @@ function showSupportDialog() {
       supportDialog.close();
       isDialogOpen = false;
       Navigation.pop();
+      document.getElementById('supportCenter').focus();
   });
 }
 
@@ -1021,6 +1026,7 @@ function stopGameWithConfirmation() {
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
+        document.getElementById('quitCurrentApp').focus();
       });
 
       $('#continueQuitApp').off('click');
@@ -1031,6 +1037,7 @@ function stopGameWithConfirmation() {
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
+        document.getElementById('quitCurrentApp').focus();
       });
     });
   }

@@ -15,7 +15,7 @@ function remoteControllerHandler(e) {
     break;
   case tvKey.KEY_ENTER:
   case tvKey.KEY_REMOTE_ENTER:
-    Navigation.accept();
+    Navigation.select();
     break;
   case tvKey.KEY_RETURN:
     Navigation.back();

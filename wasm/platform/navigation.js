@@ -1,6 +1,6 @@
 const hoveredClassName = 'hovered';
 let navigationTimer = null;
-const delayBetweenNavigation = 125;
+const delayBetweenNavigation = 120;
 
 function unmarkElementById(id) {
   unmarkElement(document.getElementById(id));
@@ -42,11 +42,11 @@ function unmark(value) {
 
 function isPopupActive(id) {
   return document
-      .getElementById(id)
-      .parentNode
-      .children[1]
-      .classList
-      .contains('is-visible');
+    .getElementById(id)
+    .parentNode
+    .children[1]
+    .classList
+    .contains('is-visible');
 }
 
 class ListView {
@@ -57,12 +57,13 @@ class ListView {
   }
 
   prev() {
+    const array = this.func();
     if (this.index > 0) {
-      const array = this.func();
       unmark(array[this.index]);
       --this.index;
       mark(array[this.index]);
     }
+    return array[this.index];
   }
 
   next() {
@@ -72,6 +73,7 @@ class ListView {
       ++this.index;
       mark(array[this.index]);
     }
+    return array[this.index];
   }
 
   prevRow() {
@@ -141,26 +143,41 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.Hosts);
+        // Set focus on the first navigation item in Hosts view
+        const navItem = document.getElementById(Views.Hosts.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
       }, delayBetweenNavigation);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
-    accept: function() {
-      const element = this.view.current();
-      if (element.id === 'addHostCell') {
-        element.click();
+    select: function() {
+      const currentCell = this.view.current();
+      if (currentCell.id === 'addHostCell') {
+        currentCell.click();
       } else {
-        element.children[0].click();
+        currentCell.children[0].click();
+      }
+    },
+    accept: function() {
+      const currentCell = this.view.current();
+      if (currentCell.id === 'addHostCell') {
+        currentCell.click();
+      } else {
+        currentCell.children[0].click();
       }
     },
     back: function() {
@@ -174,56 +191,34 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  HostsNav: {
+  TerminateMoonlightDialog: {
     view: new ListView(() => [
-      'selectResolution',
-      'selectFramerate',
-      'selectBitrate',
-      'externalAudioBtn',
-      'optimizeGamesBtn',
-      'framePacingBtn',
-      'audioSyncBtn',
-      'removeAllHosts',
-      'supportCenter']),
+      'continueTerminateMoonlight',
+      'cancelTerminateMoonlight']),
     up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        // Remove focus from the current element before changing the view
-        document.getElementById(this.view.current()).blur();
-        Navigation.change(Views.Hosts);
-      }, delayBetweenNavigation);
-    },
+    down: function() {},
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
-        document.getElementById(this.view.current()).focus();
+        document.getElementById('continueTerminateMoonlight').focus();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
-        document.getElementById(this.view.current()).focus();
+        document.getElementById('cancelTerminateMoonlight').focus();
       }, delayBetweenNavigation);
     },
+    select: function() {
+      this.view.current().click();
+    },
     accept: function() {
-      const currentItem = document.getElementById(this.view.current());
-      if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
-          currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
-        currentItem.click();
-      } else if (currentItem.id === 'removeAllHosts' || currentItem.id === 'supportCenter') {
-        this.view.current().click();
-      } else {
-        // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
-        currentItem.click();
-      }
+      document.getElementById(this.view.current()).click();
     },
     back: function() {
-      // Remove focus from the current element before changing the view
-      document.getElementById(this.view.current()).blur();
-      Navigation.change(Views.Hosts);
+      document.getElementById('cancelTerminateMoonlight').click();
     },
     enter: function() {
       mark(this.view.current());
@@ -263,159 +258,14 @@ const Views = {
         document.getElementById('cancelAddHost').focus();
       }, delayBetweenNavigation);
     },
+    select: function() {
+      this.view.current().click();
+    },
     accept: function() {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
       document.getElementById('cancelAddHost').click();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  DeleteHostDialog: {
-    view: new ListView(() => [
-      'continueDeleteHost',
-      'cancelDeleteHost']),
-    up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById('continueDeleteHost').focus();
-      }, delayBetweenNavigation);
-    },
-    left: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.prev();
-        document.getElementById('continueDeleteHost').focus();
-      }, delayBetweenNavigation);
-    },
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.next();
-        document.getElementById('cancelDeleteHost').focus();
-      }, delayBetweenNavigation);
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('cancelDeleteHost').click();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  SelectResolutionMenu: {
-    isActive: () => isPopupActive('resolutionMenu'),
-    view: new ListView(
-        () => document
-            .getElementById('resolutionMenu')
-            .parentNode
-            .children[1]
-            .children[1]
-            .children),
-    up: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.prev();
-      }, delayBetweenNavigation);
-    },
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.next();
-      }, delayBetweenNavigation);
-    },
-    left: function() {},
-    right: function() {},
-    accept: function() {
-      this.view.current().click();
-      document.getElementById('selectResolution').focus();
-    },
-    back: function() {
-      document.getElementById('selectResolution').click();
-      document.getElementById('selectResolution').focus();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  SelectFramerateMenu: {
-    isActive: () => isPopupActive('framerateMenu'),
-    view: new ListView(
-        () => document
-            .getElementById('framerateMenu')
-            .parentNode
-            .children[1]
-            .children[1]
-            .children),
-    up: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.prev();
-      }, delayBetweenNavigation);
-    },
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.next();
-      }, delayBetweenNavigation);
-    },
-    left: function() {},
-    right: function() {},
-    accept: function() {
-      this.view.current().click();
-      document.getElementById('selectFramerate').focus();
-    },
-    back: function() {
-      document.getElementById('selectFramerate').click();
-      document.getElementById('selectFramerate').focus();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  SelectBitrateMenu: {
-    isActive: () => isPopupActive('bitrateMenu'),
-    view: new ListView(
-        () => document
-            .getElementById('bitrateMenu')
-            .parentNode
-            .children[1]
-            .children[1]
-            .children),
-    up: function() {},
-    down: function() {},
-    left: function() {
-      bitrateSlider.stepDown();
-      bitrateSlider.dispatchEvent(new Event('input'));
-    },
-    right: function() {
-      bitrateSlider.stepUp();
-      bitrateSlider.dispatchEvent(new Event('input'));
-    },
-    accept: function() {
-      this.view.current().click();
-      document.getElementById('selectBitrate').focus();
-    },
-    back: function() {
-      document.getElementById('selectBitrate').click();
-      document.getElementById('selectBitrate').focus();
     },
     enter: function() {
       mark(this.view.current());
@@ -435,11 +285,257 @@ const Views = {
     },
     left: function() {},
     right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
     accept: function() {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
       document.getElementById('cancelPairingDialog').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  DeleteHostDialog: {
+    view: new ListView(() => [
+      'continueDeleteHost',
+      'cancelDeleteHost']),
+    up: function() {},
+    down: function() {},
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueDeleteHost').focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelDeleteHost').focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('cancelDeleteHost').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  HostsNav: {
+    view: new ListView(() => [
+      'selectResolution',
+      'selectFramerate',
+      'selectBitrate',
+      'externalAudioBtn',
+      'optimizeGamesBtn',
+      'framePacingBtn',
+      'audioSyncBtn',
+      'removeAllHosts',
+      'supportCenter']),
+    up: function() {},
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        // Remove focus from the current element before changing the view
+        document.getElementById(this.view.current()).blur();
+        Navigation.change(Views.Hosts);
+        // Set focus on the first navigation item in Hosts view when transitioning from HostsNav view
+        const navItem = document.getElementById(Views.Hosts.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
+      }, delayBetweenNavigation);
+    },
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      const currentItem = document.getElementById(this.view.current());
+      if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
+          currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
+        currentItem.click();
+      } else if (currentItem.id === 'removeAllHosts' || currentItem.id === 'supportCenter') {
+        this.view.current().click();
+      } else {
+        // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
+        currentItem.click();
+      }
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      Navigation.change(Views.Hosts);
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SelectResolutionMenu: {
+    isActive: () => isPopupActive('resolutionMenu'),
+    view: new ListView(() => 
+      document.getElementById('resolutionMenu')
+      .parentNode.children[1].children[1].children),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+      document.getElementById('selectResolution').focus();
+    },
+    accept: function() {
+      this.view.current().click();
+      document.getElementById('selectResolution').focus();
+    },
+    back: function() {
+      document.getElementById('selectResolution').click();
+      document.getElementById('selectResolution').focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SelectFramerateMenu: {
+    isActive: () => isPopupActive('framerateMenu'),
+    view: new ListView(() => 
+      document.getElementById('framerateMenu')
+      .parentNode.children[1].children[1].children),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+      document.getElementById('selectFramerate').focus();
+    },
+    accept: function() {
+      this.view.current().click();
+      document.getElementById('selectFramerate').focus();
+    },
+    back: function() {
+      document.getElementById('selectFramerate').click();
+      document.getElementById('selectFramerate').focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SelectBitrateMenu: {
+    isActive: () => isPopupActive('bitrateMenu'),
+    view: new ListView(() => 
+      document.getElementById('bitrateMenu')
+      .parentNode.children[1].children[1].children),
+    up: function() {},
+    down: function() {},
+    left: function() {
+      bitrateSlider.stepDown();
+      bitrateSlider.dispatchEvent(new Event('input'));
+    },
+    right: function() {
+      bitrateSlider.stepUp();
+      bitrateSlider.dispatchEvent(new Event('input'));
+    },
+    select: function() {
+      this.view.current().click();
+      document.getElementById('selectBitrate').focus();
+    },
+    accept: function() {
+      document.getElementById('selectBitrate').click();
+      document.getElementById('selectBitrate').focus();
+    },
+    back: function() {
+      document.getElementById('selectBitrate').click();
+      document.getElementById('selectBitrate').focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SupportDialog: {
+    view: new ListView(() => ['closeSupportDialog']),
+    up: function() {},
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('closeSupportDialog').focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeSupportDialog').click();
     },
     enter: function() {
       mark(this.view.current());
@@ -455,6 +551,7 @@ const Views = {
       navigationTimer = setTimeout(() => {
         // If there are more rows behind, then go to the previous row
         if (this.view.prevRow()) {
+          document.getElementById(this.view.current()).focus();
         } else {
           // If there are no more rows, navigate to the AppsNav view
           Navigation.change(Views.AppsNav);
@@ -471,6 +568,7 @@ const Views = {
       navigationTimer = setTimeout(() => {
         // If there are more rows after, then go to the next row
         if (this.view.nextRow()) {
+          document.getElementById(this.view.current()).focus();
         }
       }, delayBetweenNavigation);
     },
@@ -478,13 +576,18 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
+        document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
+        document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
     },
     accept: function() {
       this.view.current().click();
@@ -508,6 +611,11 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         Navigation.change(Views.Apps);
+        // Set focus on the first navigation item in Apps view when transitioning from AppsNav view
+        const navItem = document.getElementById(Views.Apps.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
       }, delayBetweenNavigation);
     },
     left: function() {
@@ -524,8 +632,11 @@ const Views = {
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
-    accept: function() {
+    select: function() {
       this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
     },
     back: function() {
       document.getElementById('backIcon').click();
@@ -543,12 +654,7 @@ const Views = {
       'continueQuitApp',
       'cancelQuitApp']),
     up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById('continueQuitApp').focus();
-      }, delayBetweenNavigation);
-    },
+    down: function() {},
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
@@ -563,75 +669,14 @@ const Views = {
         document.getElementById('cancelQuitApp').focus();
       }, delayBetweenNavigation);
     },
+    select: function() {
+      this.view.current().click();
+    },
     accept: function() {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
       document.getElementById('cancelQuitApp').click();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  SupportDialog: {
-    view: new ListView(() => ['closeSupportDialog']),
-    up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById('closeSupportDialog').focus();
-      }, delayBetweenNavigation);
-    },
-    left: function() {},
-    right: function() {},
-    accept: function() {
-      this.view.current().click();
-      document.getElementById('supportCenter').focus();
-    },
-    back: function() {
-      document.getElementById('closeSupportDialog').click();
-      document.getElementById('supportCenter').focus();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  TerminateMoonlightDialog: {
-    view: new ListView(() => [
-      'continueTerminateMoonlight',
-      'cancelTerminateMoonlight']),
-    up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById('continueTerminateMoonlight').focus();
-      }, delayBetweenNavigation);
-    },
-    left: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.prev();
-        document.getElementById('continueTerminateMoonlight').focus();
-      }, delayBetweenNavigation);
-    },
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.next();
-        document.getElementById('cancelTerminateMoonlight').focus();
-      }, delayBetweenNavigation);
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('cancelTerminateMoonlight').click();
     },
     enter: function() {
       mark(this.view.current());
@@ -669,6 +714,7 @@ const Navigation = (function() {
         focus();
         return;
       }
+
       const view = Stack.get();
       if (view[name]) {
         view[name]();
@@ -742,12 +788,13 @@ const Navigation = (function() {
   })();
 
   return {
-    accept: runOp('accept'),
-    back: runOp('back'),
-    left: runOp('left'),
-    right: runOp('right'),
     up: runOp('up'),
     down: runOp('down'),
+    left: runOp('left'),
+    right: runOp('right'),
+    select: runOp('select'),
+    accept: runOp('accept'),
+    back: runOp('back'),
     push: Stack.push,
     change: Stack.change,
     pop: Stack.pop,
