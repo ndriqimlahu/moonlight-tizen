@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.19
+
+### Added
+- Added additional TV key buttons and associated key codes
+- Added and included a favicon specifically designed for the main page
+- Added snackbar notifications for gamepad connection and disconnection events
+
+### Changed
+- Improved navigation functionality for both remote control and gamepad input methods
+
+### Removed
+- Removed the sound effects to resolve a black screen issue occurring during stream startup
+
 ## v1.0.18
 
 ### Added
@@ -184,11 +197,11 @@ All notable changes to this project will be documented in this file.
 - Updated the 'Frame Pacing' icon for better appearance in the Settings menu
 - Enhanced dialog and error messages application-wide
 
-### Fixed
-- Fixed spelling errors in the code
-
 ### Removed
 - Removed extra white spaces and code formatting
+
+### Fixed
+- Fixed spelling errors in the code
 
 ## v1.0.1
 
