@@ -1590,9 +1590,11 @@ window.onload = onWindowLoad;
 // Required on Samsung TV, to get gamepad connected events
 window.addEventListener('gamepadconnected', function(event) {
   console.log('%c[index.js, gamepadconnected] gamepad connected: ' + JSON.stringify(event.gamepad), event.gamepad);
+  snackbarLog('Gamepad connected');
 });
 
 // Required on Samsung TV, to get gamepad disconnected events
 window.addEventListener('gamepaddisconnected', function(event) {
   console.log('%c[index.js, gamepaddisconnected] gamepad disconnected: ' + JSON.stringify(event.gamepad), event.gamepad);
+  snackbarLog('Gamepad disconnected');
 });
