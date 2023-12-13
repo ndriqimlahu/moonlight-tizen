@@ -120,7 +120,7 @@ class MoonlightInstance {
   static void VidDecCleanup(void);
   static int VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit);
 
-  static int AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int flags);
+  static int AudDecInit(int audioConfiguration, const POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags);
   static void AudDecCleanup(void);
   static void AudDecDecodeAndPlaySample(char* sampleData, int sampleLength);
 
@@ -138,9 +138,9 @@ class MoonlightInstance {
       : public samsung::wasm::ElementaryMediaStreamSourceListener {
   public:
     SourceListener(MoonlightInstance* instance);
-    void OnSourceClosed() override;
-    void OnSourceOpenPending() override;
     void OnSourceOpen() override;
+    void OnSourceOpenPending() override;
+    void OnSourceClosed() override;
   private:
     MoonlightInstance* m_Instance;
   };
@@ -219,8 +219,8 @@ class MoonlightInstance {
   SourceListener m_SourceListener;
   AudioTrackListener m_AudioTrackListener;
   VideoTrackListener m_VideoTrackListener;
-  samsung::wasm::ElementaryMediaTrack m_VideoTrack;
   samsung::wasm::ElementaryMediaTrack m_AudioTrack;
+  samsung::wasm::ElementaryMediaTrack m_VideoTrack;
 };
 
 extern MoonlightInstance* g_Instance;

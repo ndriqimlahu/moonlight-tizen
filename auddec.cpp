@@ -33,13 +33,14 @@ static void AudioPlayerSampleCallback(void* samples, uint32_t buffer_size, void*
     }
 }
 
-int MoonlightInstance::AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int flags) {
-    int rc;
+int MoonlightInstance::AudDecInit(int audioConfiguration, const POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags) {
+    int error;
 
     // Reset the ring buffer to empty
     s_ReadIndex = s_WriteIndex = 0;
     
-    g_Instance->m_OpusDecoder = opus_multistream_decoder_create(opusConfig->sampleRate, opusConfig->channelCount, opusConfig->streams, opusConfig->coupledStreams, opusConfig->mapping, &rc);
+    g_Instance->m_OpusDecoder = opus_multistream_decoder_create(opusConfig->sampleRate, opusConfig->channelCount,
+        opusConfig->streams, opusConfig->coupledStreams, opusConfig->mapping, &error);
     
     g_Instance->m_AudioPlayer = pp::Audio(g_Instance, pp::AudioConfig(g_Instance, PP_AUDIOSAMPLERATE_48000, FRAME_SIZE), AudioPlayerSampleCallback, NULL);
     

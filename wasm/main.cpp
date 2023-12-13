@@ -56,8 +56,8 @@ MoonlightInstance::MoonlightInstance()
       m_SourceListener(this),
       m_AudioTrackListener(this),
       m_VideoTrackListener(this),
-      m_VideoTrack(),
-      m_AudioTrack() {
+      m_AudioTrack(),
+      m_VideoTrack() {
   m_Dispatcher.start();
   m_Source.SetListener(&m_SourceListener);
 }

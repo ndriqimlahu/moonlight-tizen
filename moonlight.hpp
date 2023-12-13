@@ -35,7 +35,6 @@
 // which a profiling message is printed
 #define PROFILING_MESSAGE_THRESHOLD 1
 
-
 #define DR_FLAG_FORCE_SW_DECODE     0x01
 
 // These will mostly be I/O bound so we'll create
@@ -155,7 +154,7 @@ class MoonlightInstance : public pp::Instance, public pp::MouseLock {
         static void VidDecCleanup(void);
         static int VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit);
         
-        static int AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int flags);
+        static int AudDecInit(int audioConfiguration, const POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags);
         static void AudDecCleanup(void);
         static void AudDecDecodeAndPlaySample(char* sampleData, int sampleLength);
         
