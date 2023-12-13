@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.20
+
+### Changed
+- Improved audio synchronization for a better streaming experience
+- Reverted the order of combination keys for keyboard to the previous configuration for stopping streaming sessions
+- Adjusted the bitrate presets for each resolution and framerate options
+- Improved the structure of the 'WASM Player' and added comments to improve code clarity and understanding
+
+### Removed
+- Removed the '90 FPS' and '120 FPS' framerate options due to functionality issues causing screen freezes
+
 ## v1.0.19
 
 ### Added
@@ -32,7 +43,7 @@ All notable changes to this project will be documented in this file.
 ## v1.0.17
 
 ### Added
-- Added a new 'Tizen' privilege: 'IME' which allows entering characters and symbols into text field
+- Introduced a new 'Tizen' privilege: 'IME' which allows entering characters and symbols into text field
 - Implemented navigation to go to the previous or next row in 'Apps' view
 
 ### Changed
@@ -74,12 +85,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increased the bitrate slider for the bandwidth menu from '100' to '150'
-- Updated server codec mode and supported video format
+- Updated server codec and video format
 
 ### Fixed
 - Fixed focus navigation issue for settings items
 - Fixed bitrate presets for '90 FPS' and '120 FPS' framerate options
-- Fixed order of combination keys on the keyboard and buttons on the gamepad to stop streaming session
+- Fixed the order of combination keys for both keyboard and gamepad buttons to stop streaming sessions
 
 ## v1.0.13
 
@@ -98,8 +109,8 @@ All notable changes to this project will be documented in this file.
 - Updated video codecs to a newer version
 - Updated core implementation files
 
-### Fixed
-- Fixed garbled audio playback issue at the start of the stream
+### Removed
+- Removed the 'SLOW_AUDIO_DECODER' condition to resolve a garbled audio playback issue occurring at the beginning of the stream
 
 ## v1.0.11
 
@@ -209,3 +220,12 @@ All notable changes to this project will be documented in this file.
 - Dockerfile has been updated for the build process
 - Updated widget name and description
 - Improved app logo icons for enhanced appearance in the Smart Hub
+
+## v1.0.0
+
+### Added
+- Expanded settings: Introduced '1440p' resolution option
+- Added bitrate presets for '1440p' resolution option
+- Introduced a new 'Tizen' privilege: 'TV.AUDIO' which allows the application to change the volume
+- Expanded TV key functionality to allow changing the volume from the remote control
+- Implemented 'STOP_STREAM_BUTTONS_FLAGS' condition to specify a combination of buttons on the gamepad for stopping streaming sessions
