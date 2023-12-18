@@ -1,5 +1,5 @@
-*** Version of submodules currently in use ***
+* Submodules Version *
 
-- moonlight-common-c @ 50c0a51
-- enet @ 4cde9cc
-- opus @ 82ac57d
+moonlight-common-c @ 3ed3ba6
+enet @ c07aa74
+opus @ c854997
