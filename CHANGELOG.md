@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.0
+
+### Changed
+- Updated stream configurations to align with the latest versions of modules
+
+### Dependencies
+- Updated 'moonlight-common-c' module to the latest version
+- Updated 'enet' module to the latest version
+- Updated 'opus' module to the latest version
+
 ## v1.0.20
 
 ### Changed
