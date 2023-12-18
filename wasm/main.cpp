@@ -148,12 +148,9 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
   serverInfo.serverInfoAppVersion = me->m_AppVersion.c_str();
   serverInfo.serverInfoGfeVersion = me->m_GfeVersion.c_str();
   serverInfo.rtspSessionUrl = me->m_RtspUrl.c_str();
-  // Enable 'serverCodecModeSupport' only if the latest version of 'moonlight-common-c' is implemented
-  // serverInfo.serverCodecModeSupport = SCM_HEVC;
+  serverInfo.serverCodecModeSupport = SCM_HEVC_MAIN10;
 
-  err = LiStartConnection(&serverInfo, &me->m_StreamConfig,
-  &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks,
-  &MoonlightInstance::s_ArCallbacks, NULL, 0, NULL, 0);
+  err = LiStartConnection(&serverInfo, &me->m_StreamConfig, &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks, &MoonlightInstance::s_ArCallbacks, NULL, 0, NULL, 0);
   if (err != 0) {
     // Notify the JS code that the stream has ended
     // NB: We pass error code 0 here to avoid triggering a "Connection
@@ -197,19 +194,11 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_StreamConfig.width = stoi(width);
   m_StreamConfig.height = stoi(height);
   m_StreamConfig.fps = stoi(fps);
-  m_StreamConfig.bitrate = stoi(bitrate);  // kilobits per second
-  m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
-  m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
+  m_StreamConfig.bitrate = stoi(bitrate); // kilobits per second
   m_StreamConfig.packetSize = 1392;
-  // Enable 'supportedVideoFormats' only if the latest version of 'moonlight-common-c' is implemented
-  // m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265;
-
-  // Enable 'supportsHevc' and optionally include 'enableHdr' only if the current stable version of 'moonlight-common-c' is implemented
-  m_StreamConfig.supportsHevc = true;
-  // m_StreamConfig.enableHdr = true;
-
-  // TODO: If/when video encryption is added, we'll probably want to
-  // limit that to devices that support AES instructions.
+  m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
+  m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
+  m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265_MAIN10;
   m_StreamConfig.encryptionFlags = ENCFLG_AUDIO;
 
   // Load the rikey and rikeyid into the stream configuration
@@ -309,6 +298,7 @@ int main(int argc, char** argv) {
   }
   RAND_seed(buffer, 128);
 }
+
 MessageResult startStream(std::string host, std::string width, std::string height,
   std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
   std::string gfeversion, std::string rtspurl, bool framePacing, bool audioSync) {
