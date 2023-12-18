@@ -19,6 +19,7 @@ add_library(moonlight-enet STATIC
     moonlight-common-c/enet/peer.c
     moonlight-common-c/enet/protocol.c
     moonlight-common-c/enet/unix.c
+    moonlight-common-c/enet/win32.c
 )
 target_compile_definitions(moonlight-enet PUBLIC
     LC_CHROME
@@ -33,6 +34,7 @@ add_library(moonlight-common-c STATIC
     moonlight-common-c/src/AudioStream.c
     moonlight-common-c/src/ByteBuffer.c
     moonlight-common-c/src/Connection.c
+    moonlight-common-c/src/ConnectionTester.c
     moonlight-common-c/src/ControlStream.c
     moonlight-common-c/src/FakeCallbacks.c
     moonlight-common-c/src/InputStream.c
@@ -41,6 +43,7 @@ add_library(moonlight-common-c STATIC
     moonlight-common-c/src/Platform.c
     moonlight-common-c/src/PlatformCrypto.c
     moonlight-common-c/src/PlatformSockets.c
+    moonlight-common-c/src/RecorderCallbacks.c
     moonlight-common-c/src/RtpAudioQueue.c
     moonlight-common-c/src/RtpVideoQueue.c
     moonlight-common-c/src/RtspConnection.c
