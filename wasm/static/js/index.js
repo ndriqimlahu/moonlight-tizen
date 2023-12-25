@@ -14,14 +14,14 @@ function attachListeners() {
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', updateBitrateField); // NOTE: Input occurs every notch you slide
   // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It doesn't seem to work and needs to be fixed
-  $("#remoteAudioEnabledSwitch").on('click', saveRemoteAudio);
-  $("#mouseLockEnabledSwitch").on('click', saveMouseLock);
-  $('#optimizeGamesSwitch').on('click', saveOptimize);
-  $('#removeAllHosts').on('click', removeAllHostsWithConfirmation);
-  $('#supportCenter').on('click', showSupportDialog);
+  $("#externalAudioSwitch").on('click', saveExternalAudio);
+  $("#mouseLockSwitch").on('click', saveMouseLock);
+  $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
+  $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
+  $('#supportCenterBtn').on('click', showSupportDialog);
   $('#addHostCell').on('click', addHost);
-  $('#backIcon').on('click', showHostsAndSettingsMode);
-  $('#quitCurrentApp').on('click', stopGameWithConfirmation);
+  $('#goBackBtn').on('click', showHostsAndSettingsMode);
+  $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
   $(window).resize(fullscreenNaclModule);
 }
 
@@ -45,7 +45,7 @@ function stopPollingHosts() {
 }
 
 function restoreUiAfterNaClLoad() {
-  $('#main-navigation').children().not("#quitCurrentApp").show();
+  $('#main-navigation').children().not("#quitRunningAppBtn").show();
   $("#main-content").children().not("#listener, #naclSpinner, #game-grid").show();
   $('#naclSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
@@ -419,7 +419,6 @@ function removeClicked(host) {
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
-    document.getElementById('removeAllHosts').focus();
   });
 
   // locally remove the hostname/ip from the saved `hosts` array
@@ -434,7 +433,6 @@ function removeClicked(host) {
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
-    document.getElementById('removeAllHosts').focus();
   });
 }
 
@@ -460,6 +458,7 @@ function removeAllHostsWithConfirmation() {
       deleteHostOverlay.style.display = 'none';
       deleteHostDialog.close();
       isDialogOpen = false;
+      document.getElementById('removeAllHostsBtn').focus();
     });
   
     $('#continueDeleteHost').off('click');
@@ -479,6 +478,7 @@ function removeAllHostsWithConfirmation() {
       deleteHostOverlay.style.display = 'none';
       deleteHostDialog.close();
       isDialogOpen = false;
+      document.getElementById('removeAllHostsBtn').focus();
     });
   }
 }
@@ -500,7 +500,7 @@ function showSupportDialog() {
       supportDialogOverlay.style.display = 'none';
       supportDialog.close();
       isDialogOpen = false;
-      document.getElementById('supportCenter').focus();
+      document.getElementById('supportCenterBtn').focus();
   });
 }
 
@@ -624,7 +624,7 @@ function showApps(host) {
     return;
   }
   console.log('%c[index.js, showApps]', 'color: green;', 'Current host object:', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  $('#quitCurrentApp').show();
+  $('#quitRunningAppBtn').show();
   $("#gameList .game-container").remove();
 
   // Show a spinner while the app list loads
@@ -720,12 +720,12 @@ function showHostsAndSettingsMode() {
   $(".nav-menu-parent").show();
   $("#externalAudioBtn").show();
   $("#mouseLockBtn").show();
-  $('#removeAllHosts').show();
-  $('#supportCenter').show();
+  $('#removeAllHostsBtn').show();
+  $('#supportCenterBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #naclSpinner").show();
   $('#game-grid').hide();
-  $('#backIcon').hide();
-  $('#quitCurrentApp').hide();
+  $('#goBackBtn').hide();
+  $('#quitRunningAppBtn').hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
 
@@ -735,15 +735,15 @@ function showHostsAndSettingsMode() {
 // Set the layout to the initial mode when you open Apps & Games view
 function showAppsMode() {
   console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and games" mode');
-  $('#backIcon').show();
+  $('#goBackBtn').show();
   $("#main-navigation").show();
   $("#main-content").children().not("#listener, #loadingSpinner, #naclSpinner").show();
   $("#streamSettings").hide();
   $(".nav-menu-parent").hide();
   $("#externalAudioBtn").hide();
   $("#mouseLockBtn").hide();
-  $('#removeAllHosts').hide();
-  $('#supportCenter').hide();
+  $('#removeAllHostsBtn').hide();
+  $('#supportCenterBtn').hide();
   $("#host-grid").hide();
   $("#settings").hide();
   $("#main-content").removeClass("fullscreen");
@@ -809,13 +809,14 @@ function startGame(host, appID) {
         return;
       }
 
-      var frameRate = $('#selectFramerate').data('value').toString();
-      var optimize = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
       var streamWidth = $('#selectResolution').data('value').split(':')[0];
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
+      var frameRate = $('#selectFramerate').data('value').toString();
       var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
-      var mouse_lock_enabled = $("#mouseLockEnabledSwitch").parent().hasClass('is-checked') ? "1" : "0";
-      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + optimize + ":" + mouse_lock_enabled);
+      const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      const mouseLock = $("#mouseLockSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      const optimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + externalAudio + ":" + mouseLock + ":" + optimizeGames + ":");
 
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
@@ -824,9 +825,11 @@ function startGame(host, appID) {
       $('#loadingMessage').text('Starting ' + appToStart.title + '...');
       playGameMode();
 
-      if (host.currentGame == appID) { // If user wants to launch the already-running app, then we resume it
+      // If user wants to launch the already-running app, then we resume it
+      if (host.currentGame == appID) {
         return host.resumeApp(
-          rikey, rikeyid, 0x030002 // Surround channel mask << 16 | Surround channel count
+          rikey, rikeyid, // Remote input key and key ID
+          0x030002 // Surround channel mask << 16 | Surround channel count
         ).then(function(launchResult) {
           $xml = $($.parseXML(launchResult.toString()));
           $root = $xml.find('root');
@@ -838,8 +841,8 @@ function startGame(host, appID) {
           }
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
-            bitrate.toString(), rikey, rikeyid.toString(), mouse_lock_enabled, host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim()
+            bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
+            $root.find('sessionUrl0').text().trim(), mouseLock
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color:green;', 'Failed to resume the app! Returned error was' + failedResumeApp);
@@ -848,15 +851,14 @@ function startGame(host, appID) {
         });
       }
 
-      var remote_audio_enabled = $("#remoteAudioEnabledSwitch").parent().hasClass('is-checked') ? 1 : 0;
-
+      // If user wants to launch the app, then we launch it
       host.launchApp(appID,
         streamWidth + "x" + streamHeight + "x" + frameRate,
-        optimize, // DON'T ALLOW GFE (0) to optimize game settings, or ALLOW (1) to optimize game settings
-        rikey, rikeyid,
-        remote_audio_enabled, // Play audio locally too?
+        optimizeGames, // Optimize game settings
+        rikey, rikeyid, // Remote input key and key ID
+        externalAudio, // Play audio on PC
         0x030002, // Surround channel mask << 16 | Surround channel count
-        gamepadMask
+        gamepadMask // Connect gamepad mask
       ).then(function(launchResult) {
         $xml = $($.parseXML(launchResult.toString()));
         $root = $xml.find('root');
@@ -876,8 +878,8 @@ function startGame(host, appID) {
         }
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
-          bitrate.toString(), rikey, rikeyid.toString(), mouse_lock_enabled, host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim()
+          bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
+          $root.find('sessionUrl0').text().trim(), mouseLock
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Failed to launch app width id: ' + appID + '\nReturned error was: ' + failedLaunchApp);
@@ -947,7 +949,7 @@ function stopGameWithConfirmation() {
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
-        document.getElementById('quitCurrentApp').focus();
+        document.getElementById('quitRunningAppBtn').focus();
       });
 
       $('#continueQuitApp').off('click');
@@ -957,7 +959,7 @@ function stopGameWithConfirmation() {
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
-        document.getElementById('quitCurrentApp').focus();
+        document.getElementById('quitRunningAppBtn').focus();
       });
     });
   }
@@ -999,31 +1001,9 @@ function stopGame(host, callbackFunction) {
 function storeData(key, data, callbackFunction) {
   var obj = {};
   obj[key] = data;
-  if (chrome.storage)
+  if (chrome.storage) {
     chrome.storage.sync.set(obj, callbackFunction);
-}
-
-function saveResolution() {
-  var chosenResolution = $(this).data('value');
-  $('#selectResolution').text($(this).text()).data('value', chosenResolution);
-  storeData('resolution', chosenResolution, null);
-  updateDefaultBitrate();
-}
-
-function saveOptimize() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
-  setTimeout(function() {
-    var chosenOptimize = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveOptimize]', 'color: green;', 'Saving optimize state : ' + chosenOptimize);
-    storeData('optimize', chosenOptimize, null);
-  }, 100);
-}
-
-function saveFramerate() {
-  var chosenFramerate = $(this).data('value');
-  $('#selectFramerate').text($(this).text()).data('value', chosenFramerate);
-  storeData('frameRate', chosenFramerate, null);
-  updateDefaultBitrate();
+  }
 }
 
 // Storing data in chrome.storage takes the data as an object, and shoves it into JSON to store
@@ -1033,25 +1013,48 @@ function saveHosts() {
   storeData('hosts', hosts, null);
 }
 
+function saveResolution() {
+  var chosenResolution = $(this).data('value');
+  $('#selectResolution').text($(this).text()).data('value', chosenResolution);
+  storeData('resolution', chosenResolution, null);
+  updateDefaultBitrate();
+}
+
+function saveFramerate() {
+  var chosenFramerate = $(this).data('value');
+  $('#selectFramerate').text($(this).text()).data('value', chosenFramerate);
+  storeData('frameRate', chosenFramerate, null);
+  updateDefaultBitrate();
+}
+
 function saveBitrate() {
   storeData('bitrate', $('#bitrateSlider').val(), null);
 }
 
-function saveRemoteAudio() {
+function saveExternalAudio() {
   // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
-    var remoteAudioState = $("#remoteAudioEnabledSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveRemoteAudio]', 'color: green;', 'Saving remote audio state : ' + remoteAudioState);
-    storeData('remoteAudio', remoteAudioState, null);
+    const chosenExternalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state : ' + chosenExternalAudio);
+    storeData('externalAudio', chosenExternalAudio, null);
   }, 100);
 }
 
 function saveMouseLock() {
   // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
-    var mouseLockState = $("#mouseLockEnabledSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveMouseLock]', 'color: green;', 'Saving mouse lock state : ' + mouseLockState);
-    storeData('mouseLock', mouseLockState, null);
+    const chosenMouseLock = $("#mouseLockSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveMouseLock]', 'color: green;', 'Saving mouse lock state : ' + chosenMouseLock);
+    storeData('mouseLock', chosenMouseLock, null);
+  }, 100);
+}
+
+function saveOptimizeGames() {
+  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
+  setTimeout(function() {
+    const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state : ' + chosenOptimizeGames);
+    storeData('optimizeGames', chosenOptimizeGames, null);
   }, 100);
 }
 
@@ -1114,29 +1117,7 @@ function onWindowLoad() {
       }
     });
 
-    // Load stored remote audio prefs
-    chrome.storage.sync.get('remoteAudio', function(previousValue) {
-      if (previousValue.remoteAudio == null) {
-        document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
-      } else if (previousValue.remoteAudio == false) {
-        document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
-      } else {
-        document.querySelector('#externalAudioBtn').MaterialIconToggle.check();
-      }
-    });
-
-    // Load stored mouse lock prefs
-    chrome.storage.sync.get('mouseLock', function(previousValue) {
-      if (previousValue.mouseLock == null) {
-        document.querySelector('#mouseLockBtn').MaterialIconToggle.check();
-      } else if (previousValue.mouseLock == false) {
-        document.querySelector('#mouseLockBtn').MaterialIconToggle.uncheck();
-      } else {
-        document.querySelector('#mouseLockBtn').MaterialIconToggle.check();
-      }
-    });
-
-    // load stored framerate prefs
+    // load stored frameRate prefs
     chrome.storage.sync.get('frameRate', function(previousValue) {
       if (previousValue.frameRate != null) {
         $('.framerateMenu li').each(function() {
@@ -1147,21 +1128,43 @@ function onWindowLoad() {
       }
     });
 
-    // load stored optimization prefs
-    chrome.storage.sync.get('optimize', function(previousValue) {
-      if (previousValue.optimize == null) {
-        document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
-      } else if (previousValue.optimize == false) {
-        document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
-      } else {
-        document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
-      }
-    });
-
     // load stored bitrate prefs
     chrome.storage.sync.get('bitrate', function(previousValue) {
       $('#bitrateSlider')[0].MaterialSlider.change(previousValue.bitrate != null ? previousValue.bitrate : '20');
       updateBitrateField();
+    });
+
+    // Load stored externalAudio prefs
+    chrome.storage.sync.get('externalAudio', function(previousValue) {
+      if (previousValue.externalAudio == null) {
+        document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
+      } else if (previousValue.externalAudio == false) {
+        document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
+      } else {
+        document.querySelector('#externalAudioBtn').MaterialIconToggle.check();
+      }
+    });
+
+    // Load stored mouseLock prefs
+    chrome.storage.sync.get('mouseLock', function(previousValue) {
+      if (previousValue.mouseLock == null) {
+        document.querySelector('#mouseLockBtn').MaterialIconToggle.check();
+      } else if (previousValue.mouseLock == false) {
+        document.querySelector('#mouseLockBtn').MaterialIconToggle.uncheck();
+      } else {
+        document.querySelector('#mouseLockBtn').MaterialIconToggle.check();
+      }
+    });
+
+    // load stored optimizeGames prefs
+    chrome.storage.sync.get('optimizeGames', function(previousValue) {
+      if (previousValue.optimizeGames == null) {
+        document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
+      } else if (previousValue.optimizeGames == false) {
+        document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
+      } else {
+        document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
+      }
     });
   }
 }

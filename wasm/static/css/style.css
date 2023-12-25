@@ -114,7 +114,7 @@ main {
     color:#fff;
     padding:25px;
 }
-#supportCenter {
+#supportCenterBtn {
     margin: 0 10px;
 }
 .qr-code {
@@ -126,11 +126,11 @@ main {
     margin: 5px 25% 5px 25%;
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px 3px;
 }
-#backIcon {
+#goBackBtn {
     position: fixed;
     left: 30px;
 }
-#supportCenter:hover, #backIcon:hover {
+#supportCenterBtn:hover, #goBackBtn:hover {
     cursor: pointer;
 }
 .dialog-overlay {
@@ -376,11 +376,11 @@ main {
 .cancel-current .game-title {
     color: #fff;
 }
-#supportCenter, #backIcon, #externalAudioBtn, #mouseLockBtn,
+#supportCenterBtn, #goBackBtn, #externalAudioBtn, #mouseLockBtn,
 #optimizeGamesBtn, #framePacingBtn, #audioSyncBtn {
     border-radius: 25%;
 }
-#removeAllHosts, #quitCurrentApp {
+#removeAllHostsBtn, #quitRunningAppBtn {
     margin: 0 10px;
     border-radius: 6px;
 }
@@ -408,8 +408,8 @@ main {
 #selectBitrate:hover, #selectBitrate:focus, #externalAudioBtn:hover, #externalAudioBtn:focus,
 #mouseLockBtn:hover, #mouseLockBtn:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus,
 #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
-#removeAllHosts:hover, #removeAllHosts:focus, #supportCenter:hover, #supportCenter:focus,
-#backIcon:hover, #backIcon:focus, #quitCurrentApp:hover, #quitCurrentApp:focus,
+#removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #supportCenterBtn:hover, #supportCenterBtn:focus,
+#goBackBtn:hover, #goBackBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus,
 #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus,
 #cancelPairingDialog:hover, #cancelPairingDialog:focus, #continueQuitApp:hover, #continueQuitApp:focus,
 #cancelQuitApp:hover, #cancelQuitApp:focus, #continueDeleteHost:hover, #continueDeleteHost:focus,

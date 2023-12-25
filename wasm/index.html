@@ -17,10 +17,10 @@
   <div class="mdl-layout mdl-js-layout">
     <header id="main-navigation" class="mdl-layout__header mdl-layout__header--transparent">
       <div class="mdl-layout__header-row">
-        <button type="button" id="backIcon" class="mdl-button mdl-js-button mdl-button--icon" role="link" aria-label="Go back">
+        <button type="button" id="goBackBtn" class="mdl-button mdl-js-button mdl-button--icon" role="link" aria-label="Go back">
           <i class="material-icons">keyboard_arrow_left</i>
         </button>
-        <div id="backIconTooltip" class="mdl-tooltip" for="backIcon">Back</div>
+        <div id="goBackTooltip" class="mdl-tooltip" for="goBackBtn">Back</div>
         <!-- Title -->
         <span class="mdl-layout-title">MOON<span>LIGHT</span></span>
         <!-- Add spacer, to align navigation to the right -->
@@ -62,8 +62,8 @@
             <div id="bitrateTooltip" class="mdl-tooltip" for="bitrateMenu">Video bitrate</div>
           </div>
           <div class="nav-menu-parent">
-            <label id="externalAudioBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="remoteAudioEnabledSwitch">
-              <input type="checkbox" id="remoteAudioEnabledSwitch" class="mdl-icon-toggle__input">
+            <label id="externalAudioBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="externalAudioSwitch">
+              <input type="checkbox" id="externalAudioSwitch" class="mdl-icon-toggle__input">
               <i class="mdl-icon-toggle__label material-icons">volume_up</i>
             </label>
             <div id="externalAudioTooltip" class="mdl-tooltip" for="externalAudioBtn">Play audio on PC</div>
@@ -89,16 +89,16 @@
             </label>
             <div id="audioSyncTooltip" class="mdl-tooltip" for="audioSyncBtn">Audio syncing</div>
           </div>
-          <button type="button" id="removeAllHosts" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Remove all hosts">
+          <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Remove All Hosts">
             <i class="material-icons">delete</i> Remove All Hosts
           </button>
-          <button type="button" id="quitCurrentApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Quit current app">
-            <i class="material-icons">remove_circle_outline</i> Quit Current App
+          <button type="button" id="quitRunningAppBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Quit Running App">
+            <i class="material-icons">remove_circle_outline</i> Quit Running App
           </button>
-          <button type="button" id="supportCenter" class="mdl-button mdl-js-button mdl-button--icon" aria-label="Support center">
+          <button type="button" id="supportCenterBtn" class="mdl-button mdl-js-button mdl-button--icon" aria-label="Support Center">
             <i class="material-icons">live_help</i>
           </button>
-          <div id="supportCenterTooltip" class="mdl-tooltip" for="supportCenter">Support</div>
+          <div id="supportCenterTooltip" class="mdl-tooltip" for="supportCenterBtn">Support</div>
         </nav>
       </div>
     </header>

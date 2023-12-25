@@ -31,7 +31,7 @@ static int ConvertPPButtonToLiButton(PP_InputEvent_MouseButton ppButton) {
 }
 
 void MoonlightInstance::LockMouseOrJustCaptureInput() {
-    if (m_MouseLockingFeatureEnabled) {
+    if (m_MouseLockingEnabled) {
         LockMouse(m_CallbackFactory.NewCallback(&MoonlightInstance::DidLockMouse));
     } else {
         pp::MouseCursor::SetCursor(this, PP_MOUSECURSOR_TYPE_NONE);
@@ -43,7 +43,7 @@ void MoonlightInstance::LockMouseOrJustCaptureInput() {
 }
 
 void MoonlightInstance::UnlockMouseOrJustReleaseInput() {
-    if (m_MouseLockingFeatureEnabled) {
+    if (m_MouseLockingEnabled) {
         UnlockMouse();
     } else {
         pp::MouseCursor::SetCursor(this, PP_MOUSECURSOR_TYPE_POINTER);
@@ -225,7 +225,7 @@ bool MoonlightInstance::HandleInputEvent(const pp::InputEvent& event) {
             // Wait to report mouse movement until the next input polling window
             // to allow batching to occur which reduces overall input lag.
             if (m_MouseLocked) {
-                if (m_MouseLockingFeatureEnabled) {
+                if (m_MouseLockingEnabled) {
                     m_MouseDeltaX += posDelta.x();
                     m_MouseDeltaY += posDelta.y();
                 } else {

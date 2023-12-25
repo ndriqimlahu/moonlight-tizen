@@ -1,6 +1,6 @@
 const hoveredClassName = 'hovered';
 let navigationTimer = null;
-const delayBetweenNavigation = 120;
+const delayBetweenNavigation = 120; // 120ms (milliseconds)
 
 function unmarkElementById(id) {
   unmarkElement(document.getElementById(id));
@@ -346,8 +346,8 @@ const Views = {
       'optimizeGamesBtn',
       'framePacingBtn',
       'audioSyncBtn',
-      'removeAllHosts',
-      'supportCenter']),
+      'removeAllHostsBtn',
+      'supportCenterBtn']),
     up: function() {},
     down: function() {
       clearTimeout(navigationTimer);
@@ -381,7 +381,7 @@ const Views = {
       if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
           currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
         currentItem.click();
-      } else if (currentItem.id === 'removeAllHosts' || currentItem.id === 'supportCenter') {
+      } else if (currentItem.id === 'removeAllHostsBtn' || currentItem.id === 'supportCenterBtn') {
         this.view.current().click();
       } else {
         // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
@@ -593,7 +593,7 @@ const Views = {
       this.view.current().click();
     },
     back: function() {
-      document.getElementById('backIcon').click();
+      document.getElementById('goBackBtn').click();
     },
     enter: function() {
       mark(this.view.current());
@@ -604,8 +604,8 @@ const Views = {
   },
   AppsNav: {
     view: new ListView(() => [
-      'backIcon',
-      'quitCurrentApp']),
+      'goBackBtn',
+      'quitRunningAppBtn']),
     up: function() {},
     down: function() {
       clearTimeout(navigationTimer);
@@ -639,7 +639,7 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('backIcon').click();
+      document.getElementById('goBackBtn').click();
     },
     enter: function() {
       mark(this.view.current());
