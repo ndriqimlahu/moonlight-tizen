@@ -238,7 +238,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     var randomNumber = String("0000" + cryptoRand(10000)).slice(-4);
     var pairingOverlay = document.querySelector('#pairingDialogOverlay');
     var pairingDialog = document.querySelector('#pairingDialog');
-    $('#pairingDialogText').html('Please enter the following PIN on the target PC:  ' + randomNumber + '<br><br>If your host PC is running Sunshine, navigate to the Sunshine Web UI to enter the PIN.<br>Alternatively, navigate to the GeForce Experience (NVIDIA GPUs only) to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
+    $('#pairingDialogText').html('Please enter the following PIN on the target PC:  ' + randomNumber + '<br><br>If your host PC is running Sunshine (all GPUs), navigate to the Sunshine Web UI to enter the PIN.<br><br>Alternatively, if your host PC has NVIDIA GameStream (NVIDIA-only), navigate to the GeForce Experience to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
     pairingOverlay.style.display = 'flex';
     pairingDialog.showModal();
     isDialogOpen = true;
