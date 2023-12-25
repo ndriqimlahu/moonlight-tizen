@@ -22,10 +22,10 @@ USER moonlight
 WORKDIR /home/moonlight
 
 # Install Tizen Studio
-# get file: web-cli_Tizen_Studio_5.1_ubuntu-64.bin
-RUN wget -nv -O web-cli_Tizen_Studio_5.1_ubuntu-64.bin 'https://download.tizen.org/sdk/Installer/tizen-studio_5.1/web-cli_Tizen_Studio_5.1_ubuntu-64.bin'
-RUN chmod a+x web-cli_Tizen_Studio_5.1_ubuntu-64.bin
-RUN ./web-cli_Tizen_Studio_5.1_ubuntu-64.bin --accept-license /home/moonlight/tizen-studio
+# get file: web-cli_Tizen_Studio_5.5_ubuntu-64.bin
+RUN wget -nv -O web-cli_Tizen_Studio_5.5_ubuntu-64.bin 'https://download.tizen.org/sdk/Installer/tizen-studio_5.5/web-cli_Tizen_Studio_5.5_ubuntu-64.bin'
+RUN chmod a+x web-cli_Tizen_Studio_5.5_ubuntu-64.bin
+RUN ./web-cli_Tizen_Studio_5.5_ubuntu-64.bin --accept-license /home/moonlight/tizen-studio
 ENV PATH=/home/moonlight/tizen-studio/tools/ide/bin:/home/moonlight/tizen-studio/tools:${PATH}
 
 # Prepare Tizen signing cerficates
@@ -90,7 +90,7 @@ RUN mv build/widget/Moonlight.wgt .
 #	emscripten-release-bundle \
 #	moonlight-chrome-tizen \
 #	tizen-package-expect.sh \
-#	web-cli_Tizen_Studio_5.1_ubuntu-64.bin \
+#	web-cli_Tizen_Studio_5.5_ubuntu-64.bin \
 #	.emscripten \
 #	.emscripten_cache \
 #	.emscripten_cache.lock \ 
