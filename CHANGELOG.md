@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.1
+
+### Changed
+- Decreased the bitrate slider for the bandwidth menu from '150' to '100'
+- Improved text readability of the 'Pairing' and 'Support' dialogs
+- Improved the stream settings structure for better clarity
+
+### Dependencies
+- Updated 'tizen-studio' tool to the latest version
+
 ## v1.1.0
 
 ### Changed
