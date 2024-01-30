@@ -53,21 +53,21 @@ RUN ./emsdk activate latest-fastcomp
 WORKDIR ../.. 
 
 # Build the Moonlight from GitHub repository
-#RUN git clone --recurse-submodules --depth 1 https://github.com/ndriqimlahu/moonlight-chrome-tizen
-#RUN git clone https://github.com/ndriqimlahu/moonlight-chrome-tizen
+#RUN git clone --recurse-submodules --depth 1 https://github.com/ndriqimlahu/moonlight-tizen
+#RUN git clone https://github.com/ndriqimlahu/moonlight-tizen
 
 # Build the Moonlight locally
-COPY . ./moonlight-chrome-tizen
+COPY . ./moonlight-tizen
 
 RUN cmake \
 	-DCMAKE_TOOLCHAIN_FILE=/home/moonlight/emscripten-release-bundle/emsdk/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake \
 	-G Ninja \
-	-S moonlight-chrome-tizen \
+	-S moonlight-tizen \
 	-B build
 RUN cmake --build build
 RUN cmake --install build --prefix build
 
-RUN cp moonlight-chrome-tizen/icons/icon.png build/widget/
+RUN cp moonlight-tizen/icons/icon.png build/widget/
 
 # Package and sign application 
 # Effectively runs `tizen package -t wgt -- build/widget`,
@@ -88,7 +88,7 @@ RUN mv build/widget/Moonlight.wgt .
 #	build \
 #	emscripten-1.39.4.7-linux64.zip \
 #	emscripten-release-bundle \
-#	moonlight-chrome-tizen \
+#	moonlight-tizen \
 #	tizen-package-expect.sh \
 #	web-cli_Tizen_Studio_5.5_ubuntu-64.bin \
 #	.emscripten \
