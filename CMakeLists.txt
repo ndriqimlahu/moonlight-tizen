@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(MoonlightWasm VERSION 1.0)
+project(MoonlightWasm VERSION 1.1)
 
 add_compile_options(-w -s WASM=1 -fno-ident -Os -flto -DSAMSUNG_WRT -DOS_WASM -DNDEBUG)
 
@@ -230,14 +230,14 @@ target_compile_definitions(opus PUBLIC
      OPUS_BUILD)
 
 add_executable(moonlight-wasm
-    libchelper.c
-    profiling.cpp
+    wasm/libchelper.c
     wasm/auddec.cpp
     wasm/connectionlistener.cpp
     wasm/gamepad.cpp
     wasm/http.cpp
     wasm/input.cpp
     wasm/main.cpp
+    wasm/profiling.cpp
     wasm/wasmplayer.cpp
 )
 target_include_directories(moonlight-wasm PUBLIC
@@ -294,7 +294,7 @@ set(EMSCRIPTEN_OUTPUT_FILES
 
 install(TARGETS moonlight-wasm RUNTIME DESTINATION widget)
 install(FILES ${EMSCRIPTEN_OUTPUT_FILES} DESTINATION widget OPTIONAL)
-install(DIRECTORY static DESTINATION widget)
+install(DIRECTORY wasm/static DESTINATION widget)
 install(DIRECTORY wasm/platform DESTINATION widget)
 install(FILES wasm/index.html DESTINATION widget)
 install(FILES res/config.xml DESTINATION widget)
