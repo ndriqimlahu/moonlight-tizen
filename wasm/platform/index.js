@@ -5,11 +5,10 @@ var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clie
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
 var isInGame = false; // Flag indicating whether the game stream started
 var isDialogOpen = false; // Flag indicating whether the dialog is opened
-var windowState = 'normal'; // Chrome's windowState, possible values: 'normal' or 'fullscreen'
 
 // Called by the common.js module
 function attachListeners() {
-  changeUiModeForNaClLoad();
+  changeUiModeForWasmLoad();
 
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
@@ -37,10 +36,7 @@ function attachListeners() {
   registerMenu('selectFramerate', Views.SelectFramerateMenu);
   registerMenu('selectBitrate', Views.SelectBitrateMenu);
 
-  $(window).resize(fullscreenNaclModule);
-  if (runningOnChrome()) {
-    chrome.app.window.current().onMaximized.addListener(fullscreenChromeWindow);
-  }
+  $(window).resize(fullscreenWasmModule);
 
   Controller.startWatching();
   window.addEventListener('gamepadinputchanged', (e) => {
@@ -76,52 +72,11 @@ function attachListeners() {
   });
 }
 
-function fullscreenChromeWindow() {
-  // When the user clicks the maximize button on the window,
-  // first restore it to the previous size, then fullscreen it to the whole screen,
-  // this prevents the previous window size from being 'maximized',
-  // and allows us to functionally retain two window sizes,
-  // so that when the user hits `esc`, they go back to the "restored" size,
-  // instead of 'maximized', which would immediately go to fullscreen
-  chrome.app.window.current().restore();
-  chrome.app.window.current().fullscreen();
-}
-
-function loadWindowState() {
-  if (!runningOnChrome()) {
-    return;
-  }
-
-  console.log('restoring the window state');
-  chrome.storage.sync.get('windowState', function(item) {
-    // load stored window state
-    windowState = (item && item.windowState) ? item.windowState : windowState;
-
-    // Subscribe to chrome's windowState events
-    chrome.app.window.current().onFullscreen.addListener(onFullscreen);
-    chrome.app.window.current().onBoundsChanged.addListener(onBoundsChanged);
-  });
-}
-
-function onFullscreen() {
-  if (!isInGame && windowState == 'normal') {
-    storeData('windowState', 'fullscreen', null);
-    windowState = 'fullscreen';
-  }
-}
-
-function onBoundsChanged() {
-  if (!isInGame && windowState == 'fullscreen') {
-    storeData('windowState', 'normal', null);
-    windowState = 'normal';
-  }
-}
-
-function changeUiModeForNaClLoad() {
+function changeUiModeForWasmLoad() {
   $('#main-navigation').children().hide();
-  $("#main-content").children().not("#listener, #naclSpinner").hide();
-  $('#naclSpinnerMessage').text('Loading Moonlight plugin...');
-  $('#naclSpinner').css('display', 'inline-block');
+  $("#main-content").children().not("#listener, #wasmSpinner").hide();
+  $('#wasmSpinnerMessage').text('Loading Moonlight plugins...');
+  $('#wasmSpinner').css('display', 'inline-block');
 }
 
 function startPollingHosts() {
@@ -136,10 +91,10 @@ function stopPollingHosts() {
   }
 }
 
-function restoreUiAfterNaClLoad() {
+function restoreUiAfterWasmLoad() {
   $('#main-navigation').children().not("#quitRunningAppBtn").show();
-  $("#main-content").children().not("#listener, #naclSpinner, #game-grid").show();
-  $('#naclSpinner').hide();
+  $("#main-content").children().not("#listener, #wasmSpinner, #game-grid").show();
+  $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
   Navigation.push(Views.Hosts);
   showHostsAndSettingsMode();
@@ -255,7 +210,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
   }
 
   if (!pairingCert) {
-    snackbarLog('ERROR: Cert has not been generated yet. Is NaCl initialized?');
+    snackbarLog('ERROR: Cert has not been generated yet. Is Wasm initialized?');
     console.warn('%c[index.js]', 'color: green;', 'User wants to pair, and we still have no cert. Problem = very yes.');
     onFailure();
     return;
@@ -693,13 +648,13 @@ function showApps(host) {
   $("#gameList .game-container").remove();
 
   // Show a spinner while the app list loads
-  $('#naclSpinnerMessage').text('Loading apps...');
-  $('#naclSpinner').css('display', 'inline-block');
+  $('#wasmSpinnerMessage').text('Loading apps...');
+  $('#wasmSpinner').css('display', 'inline-block');
 
   $("div.game-container").remove();
 
   host.getAppList().then(function(appList) {
-    $('#naclSpinner').hide();
+    $('#wasmSpinner').hide();
     $("#game-grid").show();
 
     if (appList.length == 0) {
@@ -767,7 +722,7 @@ function showApps(host) {
       $(gameCard).append(img);
     });
   }, function(failedAppList) {
-    $('#naclSpinner').hide();
+    $('#wasmSpinner').hide();
     var img = new Image();
     img.src = 'static/res/applist_error.svg';
     $("#game-grid").html(img);
@@ -786,7 +741,7 @@ function showHostsAndSettingsMode() {
   $("#externalAudioBtn").show();
   $('#removeAllHostsBtn').show();
   $('#supportCenterBtn').show();
-  $("#main-content").children().not("#listener, #loadingSpinner, #naclSpinner").show();
+  $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
   $('#game-grid').hide();
   $('#goBackBtn').hide();
   $('#quitRunningAppBtn').hide();
@@ -803,7 +758,7 @@ function showAppsMode() {
   console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and games" mode');
   $('#goBackBtn').show();
   $("#main-navigation").show();
-  $("#main-content").children().not("#listener, #loadingSpinner, #naclSpinner").show();
+  $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
   $("#streamSettings").hide();
   $(".nav-menu-parent").hide();
   $("#externalAudioBtn").hide();
@@ -815,12 +770,7 @@ function showAppsMode() {
   $("#listener").removeClass("fullscreen");
   $('#loadingSpinner').css('display', 'none');
   $('body').css('backgroundColor', '#282C38');
-  $('#nacl_module').css('display', 'none');
-
-  // Restore back to a window
-  if (runningOnChrome() && windowState == 'normal') {
-    chrome.app.window.current().restore();
-  }
+  $('#wasm_module').css('display', 'none');
 
   isInGame = false;
 
@@ -976,16 +926,13 @@ function playGameMode() {
   $("#main-content").addClass("fullscreen");
   $("#listener").addClass("fullscreen");
 
-  if (runningOnChrome()) {
-    chrome.app.window.current().fullscreen();
-  }
-  fullscreenNaclModule();
+  fullscreenWasmModule();
   $('#loadingSpinner').css('display', 'inline-block');
   Navigation.stop();
 }
 
-// Maximize the size of the nacl module by scaling and resizing appropriately
-function fullscreenNaclModule() {
+// Maximize the size of the Wasm module by scaling and resizing appropriately
+function fullscreenWasmModule() {
   var streamWidth = $('#selectResolution').data('value').split(':')[0];
   var streamHeight = $('#selectResolution').data('value').split(':')[1];
   var screenWidth = window.innerWidth;
@@ -996,7 +943,7 @@ function fullscreenNaclModule() {
 
   var zoom = Math.min(xRatio, yRatio);
 
-  var module = $("#nacl_module")[0];
+  var module = $("#wasm_module")[0];
   module.width = zoom * streamWidth;
   module.height = zoom * streamHeight;
   module.style.marginTop = ((screenHeight - module.height) / 2) + "px";
@@ -1129,8 +1076,7 @@ function openIndexDB(callback) {
       console.log('Error creating/accessing IndexedDB database');
     };
 
-    // Interim solution for Google Chrome to create an objectStore
-    // Will be deprecated
+    // Interim solution to create an objectStore
     if (db.setVersion && db.version != dbVersion) {
       const setVersion = db.setVersion(dbVersion);
       setVersion.onsuccess = function() {
@@ -1142,7 +1088,6 @@ function openIndexDB(callback) {
     }
   };
 
-  // For future use. Currently only in latest Firefox versions
   request.onupgradeneeded = function(event) {
     createObjectStore(event.target.result);
   };
@@ -1155,12 +1100,6 @@ function callCb(key, value, callbackFunction) {
 }
 
 function getData(key, callbackFunction) {
-  if (runningOnChrome()) {
-    chrome.storage.sync.get(key, callbackFunction);
-    return;
-  }
-
-  // Non Chrome path
   let cb = function() {
     try {
       // Open a transaction to the database
@@ -1200,14 +1139,6 @@ function getData(key, callbackFunction) {
 }
 
 function storeData(key, data, callbackFunction) {
-  if (runningOnChrome()) {
-    var obj = {};
-    obj[key] = data;
-    chrome.storage.sync.set(obj, callbackFunction);
-    return;
-  }
-
-  // Non-Chrome path
   let cb = function() {
     try {
       // Open a transaction to the database
@@ -1238,7 +1169,7 @@ function storeData(key, data, callbackFunction) {
   }
 }
 
-// Storing data in chrome.storage takes the data as an object, and shoves it into JSON to store
+// Storing data takes the data as an object, and shoves it into JSON to store.
 // Unfortunately, objects with function instances (classes) are stripped of their function instances when converted to a raw object,
 // so we cannot forget to revive the object after we load it.
 function saveHosts() {
@@ -1372,11 +1303,7 @@ function initSamsungKeys() {
 
 function loadUserData() {
   console.log('loading stored user data');
-  if (runningOnChrome()) {
-    loadUserDataCb();
-  } else {
-    openIndexDB(loadUserDataCb);
-  }
+  openIndexDB(loadUserDataCb);
 }
 
 function loadUserDataCb() {
@@ -1454,11 +1381,8 @@ function loadUserDataCb() {
 }
 
 function loadHTTPCerts() {
-  if (runningOnChrome()) {
-    loadHTTPCertsCb();
-  } else {
-    openIndexDB(loadHTTPCertsCb);
-  }
+  console.log('loading stored HTTP certs');
+  openIndexDB(loadHTTPCertsCb);
 }
 
 function loadHTTPCertsCb() {
@@ -1487,14 +1411,14 @@ function loadHTTPCertsCb() {
           console.error('%c[index.js, moduleDidLoad]', 'color: green;', 'Failed to generate new cert! Returned error was: \n', failedCert);
         }).then(function(ret) {
           sendMessage('httpInit', [pairingCert.cert, pairingCert.privateKey, myUniqueid]).then(function(ret) {
-            restoreUiAfterNaClLoad();
+            restoreUiAfterWasmLoad();
           }, function(failedInit) {
             console.error('%c[index.js, moduleDidLoad]', 'color: green;', 'Failed httpInit! Returned error was: ', failedInit);
           });
         });
       } else {
         sendMessage('httpInit', [pairingCert.cert, pairingCert.privateKey, myUniqueid]).then(function(ret) {
-          restoreUiAfterNaClLoad();
+          restoreUiAfterWasmLoad();
         }, function(failedInit) {
           console.error('%c[index.js, moduleDidLoad]', 'color: green;', 'Failed httpInit! Returned error was: ', failedInit);
         });
@@ -1524,7 +1448,6 @@ function onWindowLoad() {
   $('#gameSelection').css('display', 'none');
 
   initSamsungKeys();
-  loadWindowState();
   loadUserData();
 }
 

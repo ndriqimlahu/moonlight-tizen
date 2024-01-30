@@ -1,13 +1,3 @@
-function runningOnChrome() {
-  try {
-      if (chrome) {
-          return true;
-      }
-  } catch (e) {}
-
-  return false;
-}
-
 function guuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0,
@@ -67,7 +57,7 @@ function getConnectedGamepadMask() {
       }
 
       if (gamepad.timestamp == 0) {
-        // On some platforms, Chrome returns "connected" pads that
+        // On some devices, Tizen returns "connected" pads that
         // really aren't, so timestamp stays at zero. To work around this,
         // we'll only count gamepads that have a non-zero timestamp in our
         // controller index.
@@ -416,50 +406,9 @@ NvHTTP.prototype = {
   },
 
   // returns the box art of the given appID.
-  // three layers of response time are possible: memory cached (in javascript), storage cached (in chrome.storage.local), and streamed (host sends binary over the network)
+  // three layers of response time are possible: memory cached (in javascript), storage cached, and streamed (host sends binary over the network)
   getBoxArt: function(appId) {
-    if (runningOnChrome()) {
-      // This may be bad practice to push/pull this much data through local storage?
-      return new Promise(function(resolve, reject) {
-        chrome.storage.local.get('boxart-' + appId, function(storageData) {
-          // if we already have it, load it.
-          if (storageData !== undefined && Object.keys(storageData).length !== 0 && storageData['boxart-' + appId].constructor !== Object) {
-            console.log('%c[utils.js, getBoxArt]', 'color: gray;', 'Returning storage-cached box art for app: ', appId);
-            resolve(storageData['boxart-' + appId]);
-            return;
-          }
-
-          // otherwise, put it in our cache, then return it
-          sendMessage('openUrl', [
-            this._baseUrlHttps +
-            '/appasset?' + this._buildUidStr() +
-            '&appid=' + appId +
-            '&AssetType=2&AssetIdx=0',
-            this.ppkstr,
-            true
-          ]).then(function(boxArtBuffer) {
-            var reader = new FileReader();
-            reader.onloadend = function() {
-              var obj = {};
-              obj['boxart-' + appId] = this.result;
-              chrome.storage.local.set(obj, function(onSuccess) {});
-              console.log('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'Returning network-fetched box art');
-              resolve(this.result);
-            }
-            reader.readAsDataURL(new Blob([boxArtBuffer], {
-              type: "image/png"
-            }));
-          }.bind(this), function(error) {
-            console.error('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'Box-art request failed!', error);
-            reject(error);
-            return;
-          }.bind(this));
-        }.bind(this));
-      }.bind(this));
-
-    } else { // shouldn't run because we always have chrome.storage, but I'm not going to antagonize other browsers
-      console.warn('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'chrome.storage not detected! Box art will not be saved!');
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         sendMessage('openUrl', [
           this._baseUrlHttps +
           '/appasset?' + this._buildUidStr() +
@@ -483,8 +432,7 @@ NvHTTP.prototype = {
           reject(error);
           return;
         });
-      });
-    }
+    });
   },
 
   launchApp: function(appId, mode, sops, rikey, rikeyid, localAudio, surroundAudioInfo, gamepadMask) {

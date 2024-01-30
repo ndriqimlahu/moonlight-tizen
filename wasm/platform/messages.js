@@ -66,12 +66,7 @@ var handlePromiseMessage = function(callbackId, type, msg) {
  */
 function handleMessage(msg) {
   console.log('%c[messages.js, handleMessage]', 'color:gray;', 'Message data: ', msg);
-  if (msg.indexOf('streamTerminated: ') === 0) { // if it's a recognized event, notify the appropriate function
-    // Release our keep awake request
-    if (runningOnChrome()) {
-      chrome.power.releaseKeepAwake();
-    }
-
+  if (msg.indexOf('streamTerminated: ') === 0) { // If it's a recognized event, notify the appropriate function
     // Show a termination snackbar message if the termination was unexpected
     var errorCode = parseInt(msg.replace('streamTerminated: ', ''));
     switch (errorCode) {
@@ -98,13 +93,8 @@ function handleMessage(msg) {
   } else if (msg === 'Connection Established') {
     $('#loadingSpinner').css('display', 'none');
     $('body').css('backgroundColor', 'transparent');
-    $("#nacl_module").css("display", "");
-    $("#nacl_module").focus();
-
-    // Keep the display awake while streaming
-    if (runningOnChrome()) {
-      chrome.power.requestKeepAwake("display");
-    }
+    $("#wasm_module").css("display", "");
+    $("#wasm_module").focus();
   } else if (msg.indexOf('ProgressMsg: ') === 0) {
     $('#loadingMessage').text(msg.replace('ProgressMsg: ', ''));
   } else if (msg.indexOf('TransientMsg: ') === 0) {

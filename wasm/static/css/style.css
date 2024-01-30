@@ -174,7 +174,7 @@ main {
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.90);
 }
-#naclSpinner {
+#wasmSpinner {
     display: none;
     z-index: 2;
     position: fixed;

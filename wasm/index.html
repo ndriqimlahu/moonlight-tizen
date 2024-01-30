@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="static/css/material-icons.css">
   <script type="text/javascript" src="platform.js"></script>
 </head>
-<body data-name="moonlight-chrome" data-tools="emscripten" data-configs="Debug Release" data-path="{tc}/{config}">
+<body data-name="moonlight-tizen" data-tools="emscripten" data-configs="Debug Release" data-path="{tc}/{config}">
   <div class="mdl-layout mdl-js-layout">
     <header id="main-navigation" class="mdl-layout__header mdl-layout__header--transparent">
       <div class="mdl-layout__header-row">
@@ -116,8 +116,8 @@
       <div id="loadingSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
         <h5 id="loadingMessage"></h5>
       </div>
-      <div id="naclSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
-        <h5 id="naclSpinnerMessage"></h5>
+      <div id="wasmSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
+        <h5 id="wasmSpinnerMessage"></h5>
       </div>
     </main>
   </div>
@@ -225,6 +225,6 @@
     <button type="button" id="snackButton" class="mdl-snackbar__action"></button>
     <!-- This button exists to suppress the snackbar warning, we're really using a toast -->
   </div>
-  <video id="nacl_module" autoplay tabindex="-1"></video>
+  <video id="wasm_module" autoplay tabindex="-1"></video>
 </body>
 </html>

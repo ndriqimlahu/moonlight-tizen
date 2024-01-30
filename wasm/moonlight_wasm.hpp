@@ -54,7 +54,7 @@ enum class LoadResult {
   Success, CertErr, PrivateKeyErr
 };
 
-constexpr const char* kCanvasName = "#nacl_module";
+constexpr const char* kCanvasName = "#wasm_module";
 
 class MoonlightInstance {
   public:
