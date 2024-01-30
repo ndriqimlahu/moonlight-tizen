@@ -1,11 +1,10 @@
-# Moonlight port for Tizen Smart TVs
+# Moonlight port for Samsung Smart TVs running Tizen OS
 
-This is a fork of the moonlight Chrome project adapted to run on Samsung
-Tizen TVs. Changes made:
+This is a fork of the `Moonlight Chrome` project adapted to run on Samsung Tizen TVs.
+Changes made:
 
 - WebAssembly is used instead of Native Client
-- Main adaptation layer is in a wasm/ directory instead of the root
-  project directory
+- Main adaptation layer is in a wasm/ directory instead of the root project directory
 
 ## Used Tizen specific features
 
@@ -13,9 +12,7 @@ Tizen TVs. Changes made:
 - [Tizen Sockets Extension](https://developer.samsung.com/smarttv/develop/extension-libraries/webassembly/api-reference/tizen-sockets-extension.html)
 
 ## Checking out required submodules
-Since some of the dependencies used are provided as git submodules,
-after cloning this repository (if you did not provide the `--recurse-submodules`
-option while cloning) you need to issue the below command:
+Since some of the dependencies used are provided as git submodules, after cloning this repository (if you did not provide the `--recurse-submodules` option while cloning) you need to issue the below command:
 
 ```bash
 git submodule update --init --recursive
@@ -43,8 +40,6 @@ cmake -DCMAKE_INSTALL_PREFIX=. -P cmake_install.cmake
 cmake --install . --prefix .
 ```
 
-*Note:* On Linux and MacOS you can also use Makefile cmake generators.
+*Note:* On Linux and macOS you can also use `Makefile` cmake generators.
 
-After that you can pack widget as described in
-[Sample cURL application built using CLI tools](https://developer.samsung.com/smarttv/develop/extension-libraries/webassembly/tizen-sockets-extension/sample-curl-application-built-using-cli-tools.html)
-tutorial.
+After that you can pack widget as described in [Sample cURL application built using CLI tools](https://developer.samsung.com/smarttv/develop/extension-libraries/webassembly/tizen-sockets-extension/sample-curl-application-built-using-cli-tools.html) tutorial.
