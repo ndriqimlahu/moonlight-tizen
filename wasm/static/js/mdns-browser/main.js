@@ -23,7 +23,7 @@ var ServiceFinder = function(callback) {
       return true;
     }
     if (address.indexOf(':') != -1) {
-      // TODO: ipv6.
+      // TODO: IPv6.
       console.log('IPv6 address unsupported', address);
       return true;
     }
@@ -34,12 +34,12 @@ var ServiceFinder = function(callback) {
         this.callback_('could not bind UDP socket');
         return true;
       }
-      // Broadcast on it.
+      // Broadcast on it
       this.broadcast_(socket, address);
     }.bind(this));
   }.bind(this));
 
-  // After a short time, if our database is empty, report an error.
+  // After a short time, if our database is empty, report an error
   setTimeout(function() {
     if (!Object.keys(this.byIP_).length) {
       this.callback_('no mDNS services found!');
@@ -130,7 +130,7 @@ ServiceFinder.prototype.onReceive_ = function(info) {
     return o[k];
   };
 
-  // Update our local database.
+  // Update our local database
   // TODO: Resolve IPs using the dns extension.
   var packet = DNSPacket.parse(info.data);
   var byIP = getDefault_(this.byIP_, info.remoteAddress, {});
@@ -153,7 +153,7 @@ ServiceFinder.prototype.onReceive_ = function(info) {
 };
 
 /**
- * Handles network error occured while waiting for data.
+ * Handles network error occurred while waiting for data.
  * @private
  */
 ServiceFinder.prototype.onReceiveError_ = function(info) {
@@ -177,10 +177,10 @@ ServiceFinder.prototype.broadcast_ = function(sock, address) {
 };
 
 ServiceFinder.prototype.shutdown = function() {
-  // Remove event listeners.
+  // Remove event listeners
   chrome.sockets.udp.onReceive.removeListener(this.onReceiveListener_);
   chrome.sockets.udp.onReceiveError.removeListener(this.onReceiveErrorListener_);
-  // Close opened sockets.
+  // Close opened sockets
   chrome.sockets.udp.getSockets(function(sockets) {
     sockets.forEach(function(sock) {
       chrome.sockets.udp.close(sock.socketId);
@@ -190,12 +190,12 @@ ServiceFinder.prototype.shutdown = function() {
 
 var finder = null;
 function findNvService(callback) {
-    if (!runningOnChrome()) {
-        return;
-    }
+  if (!runningOnChrome()) {
+    return;
+  }
 
-    finder && finder.shutdown();
-    finder = new ServiceFinder(function (opt_error) {
-        callback(finder, opt_error);
-    });
+  finder && finder.shutdown();
+  finder = new ServiceFinder(function (opt_error) {
+    callback(finder, opt_error);
+  });
 }

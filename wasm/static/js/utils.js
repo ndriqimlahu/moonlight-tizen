@@ -96,7 +96,7 @@ function NvHTTP(address, clientUid, userEnteredAddress = '') {
   this.userEnteredAddress = userEnteredAddress; // if the user entered an address, we keep it on hand to try when polling
   this.serverUid = '';
   this.gfeVersion = '';
-  this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported framerates (only ever seen 30 or 60, here)
+  this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported framerates
   this.gputype = '';
   this.numofapps = 0;
   this.hostname = address;
@@ -134,10 +134,10 @@ NvHTTP.prototype = {
       }.bind(this));
     }
 
-    // try HTTPS first
+    // Try HTTPS first
     return sendMessage('openUrl', [this._baseUrlHttps + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(ret) {
-      if (!this._parseServerInfo(ret)) { // if that fails
-        // try HTTP as a failover.  Useful to clients who aren't paired yet
+      if (!this._parseServerInfo(ret)) { // If that fails
+        // Try HTTP as a failover. Useful to clients who aren't paired yet
         return sendMessage('openUrl', [this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
           this._parseServerInfo(retHttp);
         }.bind(this));
@@ -154,7 +154,7 @@ NvHTTP.prototype = {
       }.bind(this));
   },
 
-  // refreshes the server info using a given address.  This is useful for testing whether we can successfully ping a host at a given address
+  // Refreshes the server info using a given address. This is useful for testing whether we can successfully ping a host at a given address
   refreshServerInfoAtAddress: function(givenAddress) {
     if (this.ppkstr == null) {
       // Use HTTP if we have no pinned cert
@@ -163,11 +163,11 @@ NvHTTP.prototype = {
       }.bind(this));
     }
 
-    // try HTTPS first
+    // Try HTTPS first
     return sendMessage('openUrl', ['https://' + givenAddress + ':47984' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(ret) {
-      if (!this._parseServerInfo(ret)) { // if that fails
+      if (!this._parseServerInfo(ret)) { // If that fails
         console.log('%c[utils.js, utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Failed to parse serverinfo from HTTPS, falling back to HTTP');
-        // try HTTP as a failover.  Useful to clients who aren't paired yet
+        // Try HTTP as a failover. Useful to clients who aren't paired yet
         return sendMessage('openUrl', ['http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
           return this._parseServerInfo(retHttp);
         }.bind(this));
@@ -184,27 +184,25 @@ NvHTTP.prototype = {
       }.bind(this));
   },
 
-  // called every few seconds to poll the server for updated info
+  // Called every few seconds to poll the server for updated info
   pollServer: function(onComplete) {
     // Pend this callback on completion
     this._pollCompletionCallbacks.push(onComplete);
 
     // Check if a poll was already in progress
     if (this._pollCompletionCallbacks.length > 1) {
-      // Don't start another. The one in progress will
-      // alert our caller too.
+      // Don't start another, because the one in progress will alert our caller too
       return;
     }
 
     this.selectServerAddress(function(successfulAddress) {
-      // Successfully determined server address. Update base URL.
+      // Successfully determined server address. Update base URL
       this.address = successfulAddress;
       this._baseUrlHttps = 'https://' + successfulAddress + ':47984';
       this._baseUrlHttp = 'http://' + successfulAddress + ':47989';
 
-      // Poll for the app list every 10 successful serverinfo polls.
-      // Not including the first one to avoid PCs taking a while to show
-      // as online initially
+      // Poll for the app list every 10 successful serverinfo polls
+      // Not including the first one to avoid PCs taking a while to show as online initially
       if (this.paired && this._pollCount++ % 10 == 1) {
         this.getAppListWithCacheFlush();
       }
@@ -230,7 +228,7 @@ NvHTTP.prototype = {
     }.bind(this));
   },
 
-  // initially pings the server to try and figure out if it's routable by any means.
+  // Initially pings the server to try and figure out if it's routable by any means
   selectServerAddress: function(onSuccess, onFailure) {
     // TODO: Deduplicate the addresses
     this.refreshServerInfoAtAddress(this.address).then(function(successPrevAddr) {
@@ -280,7 +278,7 @@ NvHTTP.prototype = {
     }
 
     if (this.serverUid != $root.find('uniqueid').text().trim() && this.serverUid != "") {
-      // if we received a UID that isn't the one we expected, fail.
+      // If we received a UID that isn't the one we expected, fail
       return false;
     }
 
@@ -295,17 +293,16 @@ NvHTTP.prototype = {
 
     var externIP = $root.find('ExternalIP').text().trim();
     if (externIP) {
-      // New versions of GFE don't have this field, so don't overwrite
-      // the one we found via STUN
+      // New versions of GFE don't have this field, so don't overwrite the one we found via STUN
       this.externalIP = externIP;
     }
 
-    try { //  these aren't critical for functionality, and don't necessarily exist in older GFE versions.
+    try { // These aren't critical for functionality, and don't necessarily exist in older GFE versions
       this.gfeVersion = $root.find('GfeVersion').text().trim();
       this.gputype = $root.find('gputype').text().trim();
       this.numofapps = $root.find('numofapps').text().trim();
-      // now for the hard part: parsing the supported streaming
-      $root.find('DisplayMode').each(function(index, value) { // for each resolution:FPS object
+      // Now for the hard part: parsing the supported streaming
+      $root.find('DisplayMode').each(function(index, value) { // For each resolution:FPS object
         var yres = parseInt($(value).find('Height').text());
         var xres = parseInt($(value).find('Width').text());
         var fps = parseInt($(value).find('RefreshRate').text());
@@ -317,11 +314,10 @@ NvHTTP.prototype = {
         }
       }.bind(this));
     } catch (err) {
-      // we don't need this data, so no error handling necessary
+      // We don't need this data, so no error handling necessary
     }
 
-
-    // GFE 2.8 started keeping currentgame set to the last game played. As a result, it no longer
+    // GFE 2.8 started keeping current game set to the last game played. As a result, it no longer
     // has the semantics that its name would indicate. To contain the effects of this change as much
     // as possible, we'll force the current game to zero if the server isn't in a streaming session.
     if (!$root.find("state").text().trim().endsWith("_SERVER_BUSY")) {
@@ -405,8 +401,8 @@ NvHTTP.prototype = {
     return this.getAppListWithCacheFlush();
   },
 
-  // returns the box art of the given appID.
-  // three layers of response time are possible: memory cached (in javascript), storage cached, and streamed (host sends binary over the network)
+  // Returns the box art of the given appID
+  // Three layers of response time are possible: memory cached, storage cached, and streamed (host sends binary over the network)
   getBoxArt: function(appId) {
     return new Promise((resolve, reject) => {
         sendMessage('openUrl', [
@@ -467,8 +463,7 @@ NvHTTP.prototype = {
 
   quitApp: function() {
     return sendMessage('openUrl', [this._baseUrlHttps + '/cancel?' + this._buildUidStr(), this.ppkstr,  false])
-      // Refresh server info after quitting because it may silently fail if the
-      // session belongs to a different client.
+      // Refresh server info after quitting because it may silently fail if the session belongs to a different client
       // TODO: We should probably bubble this up to our caller.
       .then(this.refreshServerInfo());
   },

@@ -35,7 +35,7 @@ var common = (function() {
    * id "listener".
    *
    * The "load" event is sent when the module is successfully loaded. The
-   * "message" event is sent when the naclModule posts a message using
+   * "message" event is sent when the WasmModule posts a message using
    * PPB_Messaging.PostMessage() (in C) or pp::Instance().PostMessage() (in
    * C++).
    */
@@ -60,13 +60,13 @@ var common = (function() {
   }
 
   /**
-   * Called when the NaCl module sends a message to JavaScript (via
+   * Called when the Wasm module sends a message to JavaScript (via
    * PPB_Messaging.PostMessage())
    *
-   * This event listener is registered in createNaClModule above.
+   * This event listener is registered in createWasmModule above.
    *
    * @param {Event} message_event A message event. message_event.data contains
-   *     the data sent from the NaCl module.
+   *     the data sent from the Wasm module.
    */
   function handleMessage(message_event) {
     if (typeof message_event.data === 'string') {

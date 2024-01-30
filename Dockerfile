@@ -12,23 +12,21 @@ RUN apt-get update && apt-get install -y \
 	wget \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Some of Samsung scripts make reference to python,
-# but Ubuntu only provides /usr/bin/python2.
+# Some of the Samsung Tizen scripts refer to `python`, but Ubuntu only provides `/usr/bin/python2`
 RUN ln -sf /usr/bin/python2 /usr/bin/python
 
-# Use a non-root user from here on
+# From here on use a non-root user
 RUN useradd -m -s /bin/bash moonlight
 USER moonlight
 WORKDIR /home/moonlight
 
-# Install Tizen Studio
-# get file: web-cli_Tizen_Studio_5.5_ubuntu-64.bin
+# Install Tizen Studio, get the file: `web-cli_Tizen_Studio_5.5_ubuntu-64.bin`
 RUN wget -nv -O web-cli_Tizen_Studio_5.5_ubuntu-64.bin 'https://download.tizen.org/sdk/Installer/tizen-studio_5.5/web-cli_Tizen_Studio_5.5_ubuntu-64.bin'
 RUN chmod a+x web-cli_Tizen_Studio_5.5_ubuntu-64.bin
 RUN ./web-cli_Tizen_Studio_5.5_ubuntu-64.bin --accept-license /home/moonlight/tizen-studio
 ENV PATH=/home/moonlight/tizen-studio/tools/ide/bin:/home/moonlight/tizen-studio/tools:${PATH}
 
-# Prepare Tizen signing cerficates
+# Prepare the Tizen signing certificates
 RUN tizen certificate \
 	-a Moonlight \
 	-f Moonlight \
@@ -38,25 +36,24 @@ RUN tizen security-profiles add \
 	-a /home/moonlight/tizen-studio-data/keystore/author/Moonlight.p12 \
 	-p 1234
 
-# Workaround to package applications without gnome-keyring
-# These steps must be repeated each time prior to packaging an application. 
+# A workaround for packaging applications without gnome-keyring
+# These steps must be repeated each time before packaging an application
 # See <https://developer.tizen.org/forums/sdk-ide/pwd-fle-format-profile.xml-certificates>
 RUN sed -i 's|/home/moonlight/tizen-studio-data/keystore/author/Moonlight.pwd||' /home/moonlight/tizen-studio-data/profile/profiles.xml
 RUN sed -i 's|/home/moonlight/tizen-studio-data/tools/certificate-generator/certificates/distributor/tizen-distributor-signer.pwd|tizenpkcs12passfordsigner|' /home/moonlight/tizen-studio-data/profile/profiles.xml
 
-# Install Samsung Emscripten SDK
-# get file: emscripten-1.39.4.7-linux64.zip
+# Install Samsung Emscripten SDK, get the file: `emscripten-1.39.4.7-linux64.zip`
 RUN wget -nv -O emscripten-1.39.4.7-linux64.zip 'https://developer.samsung.com/smarttv/file/a5013a65-af11-4b59-844f-2d34f14d19a9'
 RUN unzip emscripten-1.39.4.7-linux64.zip
 WORKDIR emscripten-release-bundle/emsdk
 RUN ./emsdk activate latest-fastcomp
 WORKDIR ../.. 
 
-# Build the Moonlight from GitHub repository
+# Build the application from the GitHub repository
 #RUN git clone --recurse-submodules --depth 1 https://github.com/ndriqimlahu/moonlight-tizen
 #RUN git clone https://github.com/ndriqimlahu/moonlight-tizen
 
-# Build the Moonlight locally
+# Build the application from the local folder
 COPY . ./moonlight-tizen
 
 RUN cmake \
@@ -69,9 +66,8 @@ RUN cmake --install build --prefix build
 
 RUN cp moonlight-tizen/icons/icon.png build/widget/
 
-# Package and sign application 
-# Effectively runs `tizen package -t wgt -- build/widget`,
-# but uses an expect cmdfile to automate the password prompt.
+# Build the package and then sign the application
+# It effectively runs `tizen package -t wgt -- build/widget`, but uses an expected cmd file to automate the password prompt
 RUN echo \
 	'set timeout -1\n' \
 	'spawn tizen package -t wgt -- build/widget\n' \
@@ -82,7 +78,7 @@ RUN echo \
 	'expect eof\n' \
 | expect
 
-# Optional; remove unneed files
+# Optional: Remove unnecessary files
 RUN mv build/widget/Moonlight.wgt .
 #RUN rm -rf \
 #	build \

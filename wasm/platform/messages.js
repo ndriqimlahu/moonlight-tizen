@@ -24,11 +24,11 @@ var callbacks = {}
 var callbacks_ids = 1;
 
 /**
- * var sendMessage - Sends a message with arguments to the NaCl module
+ * var sendMessage - Sends a message with arguments to the Wasm module
  *
  * @param  {String} method A named method
  * @param  {(String|Array)} params An array of options or a single string
- * @return {void}        The NaCl module calls back through the handleMessage method
+ * @return {void}        The Wasm module calls back through the handleMessage method
  */
 var sendMessage = function(method, params) {
   if (SyncFunctions[method]) {
@@ -59,9 +59,9 @@ var handlePromiseMessage = function(callbackId, type, msg) {
 }
 
 /**
- * handleMessage - Handles messages from the NaCl module
+ * handleMessage - Handles messages from the Wasm module
  *
- * @param  {Object} msg An object given by the NaCl module
+ * @param  {Object} msg An object given by the Wasm module
  * @return {void}
  */
 function handleMessage(msg) {

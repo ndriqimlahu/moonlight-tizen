@@ -18,11 +18,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-// Requests the NaCl module to connection to the server specified after the:
+// Requests the Wasm module to connection to the server specified after the:
 #define MSG_START_REQUEST "startRequest"
-// Requests the NaCl module stop streaming
+// Requests the Wasm module stop streaming
 #define MSG_STOP_REQUEST "stopRequest"
-// Sent by the NaCl module when the stream has stopped whether user-requested or not
+// Sent by the Wasm module when the stream has stopped whether user-requested or not
 #define MSG_STREAM_TERMINATED "streamTerminated: "
 
 #define MSG_OPENURL "openUrl"
