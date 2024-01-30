@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.2
+
+### Changed
+- Changed the root directory name for the build package
+- Updated directory paths for certain core files
+
+### Removed
+- Removed all unnecessary core files of the 'ChromeOS' version
+- Removed all unnecessary code components of the 'ChromeOS' version
+
+### Fixed
+- Fixed spelling errors in the code
+
 ## v1.1.1
 
 ### Changed
@@ -28,7 +41,7 @@ All notable changes to this project will be documented in this file.
 - Improved audio synchronization for a better streaming experience
 - Reverted the order of combination keys for keyboard to the previous configuration for stopping streaming sessions
 - Adjusted the bitrate presets for each resolution and framerate options
-- Improved the structure of the 'WASM Player' and added comments to improve code clarity and understanding
+- Improved the structure of the 'Wasm Player' and added comments to improve code clarity and understanding
 
 ### Removed
 - Removed the '90 FPS' and '120 FPS' framerate options due to functionality issues causing screen freezes
@@ -115,7 +128,7 @@ All notable changes to this project will be documented in this file.
 ## v1.0.13
 
 ### Changed
-- Updated wasm core implementation files
+- Updated all core implementation files for 'Tizen'
 
 ### Dependencies
 - Updated 'opus' module to the latest version
@@ -127,7 +140,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Updated video codecs to a newer version
-- Updated core implementation files
+- Updated all core implementation files for 'ChromeOS'
 
 ### Removed
 - Removed the 'SLOW_AUDIO_DECODER' condition to resolve a garbled audio playback issue occurring at the beginning of the stream
