@@ -19,7 +19,7 @@ function attachListeners() {
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
-  $('#supportCenterBtn').on('click', showSupportDialog);
+  $('#supportBtn').on('click', showSupportDialog);
   $('#addHostCell').on('click', addHost);
   $('#goBackBtn').on('click', showHostsAndSettingsMode);
   $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
@@ -197,7 +197,7 @@ function snackbarLogLong(givenMessage) {
 }
 
 function updateBitrateField() {
-  $('#selectBitrate').html($('#bitrateSlider').val() + " MB/S");
+  $('#selectBitrate').html($('#bitrateSlider').val() + " Mbps");
   saveBitrate();
 }
 
@@ -518,7 +518,7 @@ function showSupportDialog() {
       supportDialog.close();
       isDialogOpen = false;
       Navigation.pop();
-      document.getElementById('supportCenterBtn').focus();
+      document.getElementById('supportBtn').focus();
   });
 }
 
@@ -746,7 +746,7 @@ function showHostsAndSettingsMode() {
   $(".nav-menu-parent").show();
   $("#externalAudioBtn").show();
   $('#removeAllHostsBtn').show();
-  $('#supportCenterBtn').show();
+  $('#supportBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
   $('#game-grid').hide();
   $('#goBackBtn').hide();
@@ -771,7 +771,7 @@ function showAppsMode() {
   $(".nav-menu-parent").hide();
   $("#externalAudioBtn").hide();
   $('#removeAllHostsBtn').hide();
-  $('#supportCenterBtn').hide();
+  $('#supportBtn').hide();
   $("#host-grid").hide();
   $("#settings").hide();
   $("#main-content").removeClass("fullscreen");

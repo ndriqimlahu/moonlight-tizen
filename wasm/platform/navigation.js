@@ -347,7 +347,7 @@ const Views = {
       'framePacingBtn',
       'audioSyncBtn',
       'removeAllHostsBtn',
-      'supportCenterBtn']),
+      'supportBtn']),
     up: function() {},
     down: function() {
       clearTimeout(navigationTimer);
@@ -381,7 +381,7 @@ const Views = {
       if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
           currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
         currentItem.click();
-      } else if (currentItem.id === 'removeAllHostsBtn' || currentItem.id === 'supportCenterBtn') {
+      } else if (currentItem.id === 'removeAllHostsBtn' || currentItem.id === 'supportBtn') {
         this.view.current().click();
       } else {
         // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
