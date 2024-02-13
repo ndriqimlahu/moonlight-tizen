@@ -73,6 +73,7 @@ function attachListeners() {
 }
 
 function changeUiModeForWasmLoad() {
+  $('#main-navigation').hide();
   $('#main-navigation').children().hide();
   $("#main-content").children().not("#listener, #wasmSpinner").hide();
   $('#wasmSpinnerMessage').text('Loading Moonlight plugins...');
@@ -92,6 +93,7 @@ function stopPollingHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
+  $('#main-navigation').show();
   $('#main-navigation').children().not("#quitRunningAppBtn").show();
   $("#main-content").children().not("#listener, #wasmSpinner, #game-grid").show();
   $('#wasmSpinner').hide();
@@ -648,6 +650,7 @@ function showApps(host) {
   $("#gameList .game-container").remove();
 
   // Show a spinner while the app list loads
+  $('#main-navigation').hide();
   $('#wasmSpinnerMessage').text('Loading apps...');
   $('#wasmSpinner').css('display', 'inline-block');
 
@@ -655,6 +658,7 @@ function showApps(host) {
 
   host.getAppList().then(function(appList) {
     $('#wasmSpinner').hide();
+    $('#main-navigation').show();
     $("#game-grid").show();
 
     if (appList.length == 0) {
@@ -736,6 +740,8 @@ function showApps(host) {
 // Set the layout to the initial mode when you open Hosts & Settings view
 function showHostsAndSettingsMode() {
   console.log('%c[index.js]', 'color: green;', 'Entering "Show hosts and settings" mode');
+  $("#navigation-title").html("Hosts");
+  $("#navigation-logo").show();
   $("#main-navigation").show();
   $(".nav-menu-parent").show();
   $("#externalAudioBtn").show();
@@ -756,9 +762,11 @@ function showHostsAndSettingsMode() {
 // Set the layout to the initial mode when you open Apps & Games view
 function showAppsMode() {
   console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and games" mode');
-  $('#goBackBtn').show();
+  $("#navigation-title").html("Apps");
   $("#main-navigation").show();
+  $('#goBackBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
+  $("#navigation-logo").hide();
   $("#streamSettings").hide();
   $(".nav-menu-parent").hide();
   $("#externalAudioBtn").hide();
