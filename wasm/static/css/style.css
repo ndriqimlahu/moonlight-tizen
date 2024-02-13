@@ -44,48 +44,6 @@ span.mdl-layout-title > span {
     text-indent: 10px;
     text-transform: uppercase;
 }
-main {
-    padding: 15px 80px 15px 80px;
-}
-@media screen and (max-width: 600px) {
-    #host-grid .mdl-card {
-        flex-basis: 50% !important;
-    }
-    #game-grid .mdl-card {
-        height: 100px !important;
-        width: 75px !important;
-    }
-}
-@media screen and (min-width: 600px) and (max-width: 800px) {
-    #host-grid .mdl-card {
-        flex-basis: 33% !important;
-    }
-    #game-grid .mdl-card {
-        height: 150px !important;
-        width: 112.5px !important;
-    }
-}
-@media screen and (min-width: 800px) and (max-width: 1024px) {
-    main {
-        padding: 0 72px 0 72px !important;
-    }
-    .mdl-layout__header-row {
-        padding: 0 72px 0 72px !important;
-    }
-    #host-grid .mdl-card {
-        flex-basis: 25% !important;
-    }
-    #game-grid .mdl-card {
-        height: 200px !important;
-        width: 150px !important;
-    }
-}
-@media screen and (min-width: 1024px) {
-    #game-grid .mdl-card {
-        height: 300px !important;
-        width: 225px !important;
-    }
-}
 .nav-menu-parent {
     position: relative;
     margin: 0 10px;
