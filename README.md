@@ -7,7 +7,7 @@ Check out the [Moonlight Wiki](https://github.com/moonlight-stream/moonlight-doc
 
 ## Getting Started
 
-Starting with the project, you should first take a look at the required [Prerequisites](https://github.com/ndriqimlahu/moonlight-chrome-tizen#prerequisites) and then follow the [Installation](https://github.com/ndriqimlahu/moonlight-chrome-tizen#installation) instructions in order to successfully install Moonlight on your Samsung Smart TV.
+Starting with the project, you should first take a look at the required [Prerequisites](https://github.com/ndriqimlahu/moonlight-tizen#prerequisites) and then follow the [Installation](https://github.com/ndriqimlahu/moonlight-tizen#installation) instructions in order to successfully install Moonlight on your Samsung Smart TV.
 
 ### Prerequisites
 
@@ -18,10 +18,10 @@ Host Requirements −󠀭󠀭 It is recommended to have a computer with `Windows
 Internet and Network Requirements −󠀭󠀭 To have a good experience, you need a mid to high-end wireless router with a good wireless connection to your client device (5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax) strongly recommended) and a good connection from your PC server to your router (Ethernet/wired connections highly recommended).
 
 ### Installation
-<!-- 1. Download the [Dockerfile](https://github.com/ndriqimlahu/moonlight-chrome-tizen-docker) and save it in the "Downloads" folder, then you should remove any extensions from the `Dockerfile` and just leave it without extensions. -->
+<!-- 1. Download the [Dockerfile](https://github.com/ndriqimlahu/moonlight-tizen-docker) and save it in the "Downloads" folder, then you should remove any extensions from the `Dockerfile` and just leave it without extensions. -->
 1. Download the source code or clone this repository to your local machine:
 	```
-   	git clone https://github.com/ndriqimlahu/moonlight-chrome-tizen.git
+   	git clone https://github.com/ndriqimlahu/moonlight-tizen.git
    	```
 2. Now, you need to run `Docker Desktop` before proceeding further and it is also recommended to close any software or application that requires high CPU and memory resources, because `Docker Desktop` will take high resources while running.
 <!-- 3. Open `Windows PowerShell` or a similar terminal depending on your OS, then change directory to where you downloaded the `Dockerfile`, so for example if you downloaded the file in the "Downloads" folder, then you should enter the following command to go on that path.
@@ -31,7 +31,7 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 -->
 3. Open `Windows PowerShell` or a similar terminal depending on your OS, then change directory to where you cloned the repository, then use the `Dockerfile` from source code folder, so for example you should enter the following command to go on that path.
    	```
-	cd .\Downloads\moonlight-chrome-tizen
+	cd .\Downloads\moonlight-tizen
 	```
 4. Enable the `Developer mode` on your "Samsung Smart TV" (If you need more detailed instructions, see the official [Samsung guide](https://developer.samsung.com/smarttv/develop/getting-started/using-sdk/tv-device.html)):
 	- Go to the `Apps` panel.
@@ -79,7 +79,7 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 	 docker image rm moonlight-tizen
 	 ```
  	> Note: At the end you can enter the `exit` command to close the `Windows PowerShell` window.
-8. Disable the `Developer mode` on your "Samsung Smart TV":
+8. (Optional) Disable the `Developer mode` on your "Samsung Smart TV":
 	- Go to the `Apps` panel.
 	- Press `12345` on the remote and a dialog should popup.
 	- Set `Developer mode` to `Off` and then click the `OK` button to close the dialog.
@@ -91,7 +91,7 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 ### Updating
 
 1. Before updating the Moonlight app, you must delete the installed Moonlight app that you already have on your "Samsung Smart TV" to prevent errors during the update.
-2. Now, whenever you want to install an updated version of Moonlight on your "Samsung Smart TV", you need to follow the [Installation](https://github.com/ndriqimlahu/moonlight-chrome-tizen#installation) instructions in order to successfully install the latest version of Moonlight on your TV.
+2. Now, whenever you want to install an updated version of Moonlight on your "Samsung Smart TV", you need to follow the [Installation](https://github.com/ndriqimlahu/moonlight-tizen#installation) instructions in order to successfully install the latest version of Moonlight on your TV.
 3. After that, you can launch Moonlight on your TV and enjoy the streaming experience with the latest features.
 
 ### FAQ
@@ -129,7 +129,7 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 
 ## Changelogs
 
-See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-chrome-tizen/blob/main/CHANGELOG.md) file for more information about the changes for each version of this project.
+See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-tizen/blob/main/CHANGELOG.md) file for more information about the changes for each version of this project.
 
 ## Contributing
 
@@ -141,11 +141,11 @@ Also, if you liked the project or found it useful, don't forget to give the proj
 
 ## License
 
-This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-chrome-tizen/blob/main/LICENSE) file for more information.
+This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/main/LICENSE) file for more information.
 
 ## Acknowledgements
 - Thanks to [Moonlight Developers](https://github.com/moonlight-stream/moonlight-chrome) for developing and maintaining Moonlight for Chrome OS.
 - Thanks to [Samsung Developers](https://github.com/SamsungDForum/moonlight-chrome) for adapting and implementing Moonlight for Tizen OS which is based on Chrome OS version.
 - Thanks to [jellyfin](https://github.com/jellyfin/jellyfin-tizen) and [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
 - Thanks to [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating an easy method for building Moonlight on Tizen OS by re-adapting the Dockerfile.
-- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) & [KyroFrCode-Dockerfile](https://github.com/KyroFrCode/moonlight-chrome-tizen-docker) for updating the content files and re-adapting the Dockerfile for better compatibility.
+- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the content files and re-adapting the Dockerfile for better compatibility.
