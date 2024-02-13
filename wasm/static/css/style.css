@@ -24,6 +24,10 @@ span.mdl-layout-title > span {
     font-size: 24px;
     color: #00A3C6;
 }
+.mdl-layout__header {
+    background-color: #2D3035;
+    box-shadow: #000;
+}
 .mdl-layout__header-row {
     padding: 0 80px 0 80px;
 }
