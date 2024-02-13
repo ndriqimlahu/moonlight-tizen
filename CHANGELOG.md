@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.3
+
+### Changed
+- Improved the header style for better appearance
+- Updated the navigation logo and title to dynamically change based on the current view
+- Enhanced the visual presentation of the host and game grids
+- Enhanced the appearance of buttons in the navigation bar
+
+### Removed
+- Removed unnecessary media queries from the styling
+
 ## v1.1.2
 
 ### Changed
