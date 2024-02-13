@@ -15,15 +15,6 @@ body {
     width: 100%;
     text-align: center;
 }
-span.mdl-layout-title {
-    font-weight: 300;
-    font-size: 24px;
-}
-span.mdl-layout-title > span {
-    font-weight: 900;
-    font-size: 24px;
-    color: #00A3C6;
-}
 .mdl-layout__header {
     background-color: #2D3035;
     box-shadow: #000;
@@ -182,14 +173,23 @@ span.mdl-layout-title > span {
     font-size: 16px;
     padding: 14px 30px 14px 30px;
 }
-#host-grid, #game-grid {
-    padding: 0;
+#host-grid {
     margin: 0;
+    padding: 15px 80px 15px 80px;
     flex: 1;
     display: flex;
     flex-flow: row wrap;
     align-items: center;
     justify-content: center;
+}
+#game-grid {
+    margin: 0;
+    padding: 15px 80px 15px 80px;
+    flex: 1;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: flex-start;
 }
 #host-grid .mdl-card {
     flex-basis: 16%;
@@ -198,20 +198,32 @@ span.mdl-layout-title > span {
     position: relative;
     background: url('../res/placeholder_game.svg') rgba(29, 29, 29, 1) center/cover no-repeat;
 }
-#host-grid .mdl-card, #game-grid .mdl-card {
-    text-align: center;
+#host-grid .mdl-card {
     width: 200px;
-    height: 200px;
+    height: 220px;
     min-height: 200px;
-    margin: 15px;
-    cursor: pointer;
+    margin: 20px 30px 20px 25px;
+    border-radius: 6px;
     transition: all .2s ease-in-out;
     will-change: transform;
-    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
 }
-#host-grid .mdl-card:hover, #host-grid .mdl-card:focus, #host-grid .mdl-card:active, #game-grid .mdl-card:focus, #game-grid .mdl-card:active {
+#game-grid .mdl-card {
+    width: 225px;
+    height: 300px;
+    min-height: 280px;
+    margin: 20px 35px 20px 30px;
+    border-radius: 6px;
+    transition: all .2s ease-in-out;
+    will-change: transform;
+    cursor: pointer;
+    text-align: center;
+}
+#host-grid .mdl-card:hover, #host-grid .mdl-card:focus, #host-grid .mdl-card:active,
+#game-grid .mdl-card:hover, #game-grid .mdl-card:focus, #game-grid .mdl-card:active {
     transform: scale(1.1);
-    outline-color: #00A3C6;
+    border: 4px solid #00A3C6;
 }
 #host-grid .mdl-card__title {
     padding: 0;
@@ -262,7 +274,7 @@ span.mdl-layout-title > span {
 .mdl-card.hovered {
     background-color: initial;
     transform: scale(1.1);
-    outline-color: #00A3C6;
+    border: 4px solid #00A3C6;
 }
 .hovered {
     background-color: rgba(158,158,158,.2);
@@ -293,22 +305,22 @@ span.mdl-layout-title > span {
     margin-bottom: 10px;
 }
 .remove-host {
-    position:absolute;
-    right:5px;
-    top:5px;
-    width:24px;
-    height:24px;
-    z-index: 5;
     background-image: url('../res/ic_remove_circle_outline_white_48px.svg');
     background-repeat: no-repeat;
     background-size: 20px 20px;
     background-position: center;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    z-index: 5;
     border: 0;
     cursor: pointer;
 }
-/*.remove-host:hover, .remove-host:focus {
-    background-image: url('\\static\\res\\ic_remove_circle_white_24px.svg');
-}*/
+.remove-host:hover, .remove-host:focus, .remove-host:active {
+    transform: scale(1.3);
+}
 #pairButton {
     margin: 3px;
 }
@@ -335,7 +347,7 @@ span.mdl-layout-title > span {
 }
 .host-cell:hover {
     cursor: pointer;
-    color: #000 !important;
+    color: #000;
 }
 .cancel-current:hover {
     cursor: pointer;
