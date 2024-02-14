@@ -1,6 +1,6 @@
 body {
-    background-color: #282C38;
     color: #fff;
+    background-color: #282C38;
     font-family: 'Roboto', sans-serif;
     scroll-behavior: smooth;
     -webkit-user-select: none;
@@ -8,11 +8,11 @@ body {
     user-select: none;
 }
 .page-title {
-    font-weight: 300;
-    font-size: 26px;
+    width: 100%;
     margin-top: 20px;
     margin-bottom: 30px;
-    width: 100%;
+    font-weight: 300;
+    font-size: 26px;
     text-align: center;
 }
 .mdl-layout__header {
@@ -40,11 +40,11 @@ body {
     margin: 0 10px;
 }
 .mdl-menu__outline {
+    color: #fff;
     background-color: #333846;
-    color: white;
 }
 .mdl-menu__item {
-    color: white;
+    color: #ececec;
     font-size: 14px;
     text-align: center;
 }
@@ -54,52 +54,18 @@ body {
 .mdl-tooltip {
     font-size: 14px;
 }
-.bitrateMenu {
-    width: 285px;
-    display: flex;
-    align-items: center;
-}
-#bitrateSlider {
-    width: 180px;
-}
-#bitrateLowestValue {
-    margin: 0 0 0 20px;
-}
-#bitrateHighestValue {
-    margin: 0 20px 0 0;
-}
 .mdl-button {
-    color: #fff !important;
+    color: #fff;
     border-radius: 6px;
+    text-transform: none;
 }
 .mdl-grid {
     width: 100%;
 }
 .mdl-cell {
+    color: #fff;
+    padding: 25px;
     text-align: center;
-    color:#fff;
-    padding:25px;
-}
-#supportBtn {
-    margin: 0 10px;
-}
-#removeAllHostsIcon {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 2px;
-}
-#supportQrCode {
-    width: 50%;
-    height: 50%;
-    margin: 5px 25% 5px 25%;
-    border-radius: 12px;
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px 3px;
-    align-items: center;
-    justify-content: center;
-}
-#goBackBtn {
-    position: fixed;
-    left: 30px;
 }
 .dialog-overlay {
     position: fixed;
@@ -107,28 +73,28 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 999;
     background: rgba(0, 0, 0, 0.4);
     display: none;
-    justify-content: center;
     align-items: center;
-	z-index: 999;
+    justify-content: center;
 }
 .mdl-dialog {
-    width: 500px;
+    color: #fff;
     background-color: #333846;
-    color: white;
+    width: 500px;
     padding: 20px;
     border-radius: 12px;
     box-shadow: rgba(0, 163, 198, 1) 0px 0px 10px 5px;
 }
 .mdl-dialog__title {
-    padding: 24px 24px 14px;
     margin: 0;
+    padding: 24px 24px 14px;
     font-size: 2.5rem;
 }
 .mdl-dialog__content {
-    padding: 20px 24px 14px 24px;
     color: rgba(255, 255, 255, 0.90);
+    padding: 20px 24px 14px 24px;
 }
 .mdl-dialog__actions button {
     width: 100%;
@@ -139,28 +105,36 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.90);
 }
 .mdl-textfield__label {
-    font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.90);
+    font-size: 1.2rem;
+}
+.mdl-icon-toggle__label.material-icons {
+    color: #818181;
+}
+#listener {
+    height: 0px;
+    margin-top: 0px;
+    overflow: hidden;
 }
 #wasmSpinner {
-    display: none;
-    z-index: 2;
     position: fixed;
     left: 50%;
     bottom: 50%;
-    transform: translate(-50%, -50%);
     margin: 0 auto;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    display: none;
     text-align: center;
 }
 #loadingSpinner {
-    display: none;
-    z-index: 1;
+    color: #fff;
     position: fixed;
     left: 50%;
     bottom: 50%;
-    transform: translate(-50%, -50%);
     margin: 0 auto;
-    color: white;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    display: none;
     text-align: center;
 }
 #snackButton {
@@ -172,8 +146,8 @@ body {
     min-width: 0px;
 }
 .mdl-snackbar__text {
-    font-size: 16px;
     padding: 14px 30px 14px 30px;
+    font-size: 16px;
 }
 #host-grid {
     margin: 0;
@@ -194,7 +168,7 @@ body {
     justify-content: flex-start;
 }
 #host-grid .mdl-card {
-    flex-basis: 16%;
+    flex-basis: 16.5%;
 }
 #game-grid .mdl-card {
     position: relative;
@@ -232,8 +206,8 @@ body {
 }
 #host-grid .mdl-card__title .mdl-card__title-text {
     width: 100%;
-    font-size: 16px;
     padding: 10px 15px;
+    font-size: 16px;
     background-color: rgba(0,0,0,0.7);
     justify-content: center;
 }
@@ -241,26 +215,26 @@ body {
     box-shadow: unset;
 }
 #game-grid .mdl-card img {
-    height: 100%;
     width: 100%;
-    opacity: 0;
-    transition: opacity .3s;
+    height: 100%;
     z-index: -1;
+    opacity: 0;
+    transition: opacity .2s;
 }
 #game-grid .mdl-card img.fade-in {
     opacity: 1;
 }
 #game-grid .game-title {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.6);
     position: absolute;
     bottom: 0;
-    min-height: 20px;
-    font-size: 14px;
-    font-weight: 300;
-    padding: 5px 0;
     width: 100%;
-    color: white;
+    min-height: 20px;
+    padding: 5px 0;
+    font-weight: 300;
+    font-size: 14px;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.6);
 }
 #game-grid .game-title span {
     padding: 0 10px;
@@ -286,25 +260,28 @@ body {
 }
 #host-grid .mdl-textfield {
     width: 200px;
-    margin-right: 20px;
     margin-bottom: 0px;
+    margin-right: 20px;
 }
 #host-grid #GFEHostIPField {
     padding-bottom: 0px;
 }
 #host-grid #selectHost {
-    padding: 0px;
-    line-height: 20px;
+    background: none;
     height: 20px;
+    line-height: 20px;
+    padding: 0px;
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 20px;
-    background: none;
 }
 #host-grid .button-holder {
     padding: 0px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+#pairButton, #showAppsButton {
+    margin: 3px;
 }
 .remove-host {
     background-image: url('../res/ic_remove_circle_outline_white_48px.svg');
@@ -323,41 +300,23 @@ body {
 .remove-host:hover, .remove-host:focus, .remove-host:active {
     transform: scale(1.3);
 }
-#pairButton {
-    margin: 3px;
-}
-#showAppsButton {
-    margin: 3px;
-}
-#listener {
-    overflow: hidden;
-    margin-top: 0px;
-    height: 0px;
-}
-.fullscreen {
-    height: 100vh !important;
-    overflow: hidden !important;
-    margin: auto !important;
-    padding: 0 !important;
-    border: none !important;
-}
-.current-game {
-    outline: auto #8BC34A;
-}
 .host-cell-inactive {
     outline: auto #F44336;
 }
 .host-cell:hover {
-    cursor: pointer;
     color: #000;
+    cursor: pointer;
+}
+.current-game {
+    outline: auto #8BC34A;
+}
+.cancel-current {
+    padding: 5px;
+    border: 2px solid #fff;
+    border-radius: 6px;
 }
 .cancel-current:hover {
     cursor: pointer;
-}
-.cancel-current {
-    border: 2px solid white;
-    padding: 5px;
-    border-radius: 5px;
 }
 .cancel-current img {
     margin-right: 5px;
@@ -365,13 +324,46 @@ body {
 .cancel-current .game-title {
     color: #fff;
 }
-#supportBtn, #goBackBtn, #externalAudioBtn, #mouseLockBtn,
-#optimizeGamesBtn, #framePacingBtn, #audioSyncBtn {
-    border-radius: 25%;
+.fullscreen {
+    height: 100vh !important;
+    margin: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
 }
-#removeAllHostsBtn, #quitRunningAppBtn {
+#goBackBtn {
+    background-color: #404354;
+    position: fixed;
+    left: 30px;
+}
+#supportBtn, #removeAllHostsBtn {
+    margin: 0 10px;
+}
+#quitRunningAppBtn {
     margin: 0 10px;
     border-radius: 6px;
+}
+#removeAllHostsIcon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+}
+#supportQrCode {
+    width: 50%;
+    height: 50%;
+    margin: 5px 25% 5px 25%;
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px 3px;
+    align-items: center;
+    justify-content: center;
+}
+#selectResolution, #selectFramerate, #selectBitrate {
+    background-color: #404354;
+}
+#goBackBtn, #supportBtn, #removeAllHostsBtn, #externalAudioBtn,
+#optimizeGamesBtn, #framePacingBtn, #audioSyncBtn {
+    background-color: #404354;
+    border-radius: 25%;
 }
 #pairingDialogText, #quitAppDialogText,
 #deleteHostDialogText, #supportDialogText,
@@ -386,24 +378,36 @@ body {
 #closeSupportDialog, #cancelQuitApp, #cancelTerminateMoonlight {
     margin: 0 10px 20px 0;
 }
-#continueTerminateMoonlight {
-    background-color: #F44336;
-}
-#continueTerminateMoonlight:hover, #continueTerminateMoonlight:focus {
-    background-color: #404354;
-    box-shadow: rgba(244, 67, 54, 1) 0px 0px 2px 4px;
+#quitRunningAppBtn, #continueAddHost, #cancelAddHost, #cancelPairingDialog,
+#continueDeleteHost, #cancelDeleteHost, #continueQuitApp, #cancelQuitApp,
+#closeSupportDialog, #continueTerminateMoonlight, #cancelTerminateMoonlight {
+    text-transform: uppercase;
 }
 #selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus,
 #selectBitrate:hover, #selectBitrate:focus, #externalAudioBtn:hover, #externalAudioBtn:focus,
-#mouseLockBtn:hover, #mouseLockBtn:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus,
-#framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
-#removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #supportBtn:hover, #supportBtn:focus,
-#goBackBtn:hover, #goBackBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus,
-#continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus,
-#cancelPairingDialog:hover, #cancelPairingDialog:focus, #continueQuitApp:hover, #continueQuitApp:focus,
-#cancelQuitApp:hover, #cancelQuitApp:focus, #continueDeleteHost:hover, #continueDeleteHost:focus,
-#cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
+#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #framePacingBtn:hover, #framePacingBtn:focus,
+#audioSyncBtn:hover, #audioSyncBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus,
+#goBackBtn:hover, #goBackBtn:focus, #supportBtn:hover, #supportBtn:focus, #quitRunningAppBtn:hover,
+#quitRunningAppBtn:focus, #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover,
+#cancelAddHost:focus, #cancelPairingDialog:hover, #cancelPairingDialog:focus, #continueQuitApp:hover,
+#continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #continueDeleteHost:hover,
+#continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeSupportDialog:hover,
+#closeSupportDialog:focus, #continueTerminateMoonlight:hover, #continueTerminateMoonlight:focus,
 #cancelTerminateMoonlight:hover, #cancelTerminateMoonlight:focus {
     background-color: #404354;
     box-shadow: rgba(0, 163, 198, 1) 0px 0px 2px 4px;
+}
+.bitrateMenu {
+    width: 285px;
+    display: flex;
+    align-items: center;
+}
+#bitrateSlider {
+    width: 180px;
+}
+#bitrateLowestValue {
+    margin: 0 0 0 20px;
+}
+#bitrateHighestValue {
+    margin: 0 20px 0 0;
 }
