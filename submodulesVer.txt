@@ -1,5 +1,3 @@
-* Submodules Version *
-
 moonlight-common-c @ 3ed3ba6
 enet @ c07aa74
 opus @ c854997

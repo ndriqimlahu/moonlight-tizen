@@ -57,10 +57,9 @@ function getConnectedGamepadMask() {
       }
 
       if (gamepad.timestamp == 0) {
-        // On some devices, Tizen returns "connected" pads that
-        // really aren't, so timestamp stays at zero. To work around this,
-        // we'll only count gamepads that have a non-zero timestamp in our
-        // controller index.
+        // On some platforms, Tizen returns "connected" gamepads that really 
+        // aren't, so timestamp stays at zero. To work around this, we'll only
+        // count gamepads that have a non-zero timestamp in our controller index.
         continue;
       }
 

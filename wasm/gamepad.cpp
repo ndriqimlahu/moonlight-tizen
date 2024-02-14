@@ -8,22 +8,10 @@
 #include <Limelight.h>
 #include <emscripten/emscripten.h>
 
-// Define a combination of buttons on the gamepad to stop streaming session
-const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
-
-// For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
-// Enumeration for gamepad axes
-enum GamepadAxis {
-  LeftX = 0,
-  LeftY = 1,
-  RightX = 2,
-  RightY = 3,
-};
-
 // For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
 // Enumeration for gamepad buttons
 enum GamepadButton {
-  A, B, Y, X, /* For unsupported controllers, change buttons to 'Y, X,' to prevent button swapping, otherwise leave as default */
+  A, B, Y, X, /* For unsupported gamepad, change buttons to "A, B, Y, X," to prevent button swapping, otherwise leave it at "A, B, X, Y," as default */
   LeftBumper, RightBumper,
   LeftTrigger, RightTrigger,
   Back, Play,
@@ -33,24 +21,34 @@ enum GamepadButton {
   Count,
 };
 
+// For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
+// Enumeration for gamepad axis
+enum GamepadAxis {
+  LeftX = 0,
+  LeftY = 1,
+  RightX = 2,
+  RightY = 3,
+};
+
 // Function to create a mask for active gamepads
 static short GetActiveGamepadMask(int numGamepads) {
   short result = 0;
+  
   for (int i = 0; i < numGamepads; ++i) {
     result |= (1 << i);
   }
+  
   return result;
 }
 
 // Function to map gamepad buttons to flags
 static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
-  // Triggers are considered analog buttons in Emscripten API, however they
-  // need to be passed in separate arguments for Limelight (it even lacks flags
-  // for them).
+  // Triggers are considered analog buttons in the "Emscripten API", however they need
+  // to be passed in separate arguments for "Limelight" (it even lacks flags for them).
 
   // Define button mappings
   static const int buttonMasks[] {
-    A_FLAG, B_FLAG, Y_FLAG, X_FLAG, /* For unsupported controllers, change buttons to 'Y_FLAG, X_FLAG,' to prevent button swapping, otherwise leave as default */
+    A_FLAG, B_FLAG, Y_FLAG, X_FLAG, /* For unsupported gamepad, change buttons to "A_FLAG, B_FLAG, Y_FLAG, X_FLAG," to prevent button swapping, otherwise leave it at "A_FLAG, B_FLAG, X_FLAG, Y_FLAG," as default */
     LB_FLAG, RB_FLAG,
     0 /* LT_FLAG */, 0 /* RT_FLAG */,
     BACK_FLAG, PLAY_FLAG,
@@ -62,13 +60,18 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
   static const int buttonMasksSize = static_cast<int>(sizeof(buttonMasks) / sizeof(buttonMasks[0]));
 
   short result = 0;
+  
   for (int i = 0; i < gamepad.numButtons && i < buttonMasksSize; ++i) {
     if (gamepad.digitalButton[i] == EM_TRUE) {
       result |= buttonMasks[i];
     }
   }
+
   return result;
 }
+
+// Define a combination of buttons on the gamepad to stop streaming session
+const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
 // Function to poll gamepad input
 void MoonlightInstance::PollGamepads() {
@@ -90,9 +93,13 @@ void MoonlightInstance::PollGamepads() {
   for (int gamepadID = 0; gamepadID < numGamepads; ++gamepadID) {
     emscripten_sample_gamepad_data();
     EmscriptenGamepadEvent gamepad;
+    // See logic in getConnectedGamepadMask() (utils.js)
+    // These must stay in sync!
+
     const auto result = emscripten_get_gamepad_status(gamepadID, &gamepad);
     if (result != EMSCRIPTEN_RESULT_SUCCESS || !gamepad.connected) {
-      continue; /* Skip disconnected gamepads */
+      // Not connected
+      continue;
     }
 
     if (gamepad.timestamp == 0) {
@@ -117,11 +124,10 @@ void MoonlightInstance::PollGamepads() {
     const auto rightStickY = -gamepad.axis[GamepadAxis::RightY]
       * std::numeric_limits<short>::max();
 
-    // Check if the current gamepad button configuration matches the predefined combination
-    // for stopping the streaming session (STOP_STREAM_BUTTONS_FLAGS). If true, invoke the 
-    // stopStream function to stop the streaming session.
+    // Check if the currently pressed gamepad buttons match the combination defined by "STOP_STREAM_BUTTONS_FLAGS" to stop streaming.
+    // If it matches, call the "stopStream" function to stop the streaming session and return to the applications list.
     if (buttonFlags == STOP_STREAM_BUTTONS_FLAGS) {
-      PostToJs(std::string("stopping stream, button flags is ") + std::to_string(buttonFlags));
+      PostToJs(std::string("stopping stream, button flags are ") + std::to_string(buttonFlags));
       // Terminate the connection
       stopStream();
       return;
@@ -134,7 +140,7 @@ void MoonlightInstance::PollGamepads() {
   }
 }
 
-// Send gamepad rumble for active gamepad
+// Send gamepad rumble for active gamepads
 void MoonlightInstance::ClControllerRumble(unsigned short controllerNumber, unsigned short lowFreqMotor, unsigned short highFreqMotor) {
   const float weakMagnitude = static_cast<float>(highFreqMotor) / static_cast<float>(UINT16_MAX);
   const float strongMagnitude = static_cast<float>(lowFreqMotor) / static_cast<float>(UINT16_MAX);

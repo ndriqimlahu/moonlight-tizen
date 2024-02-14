@@ -3,8 +3,8 @@ var activePolls = {}; // Hosts currently being polled. An associated array of po
 var pairingCert;
 var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clients to allow them to quit each other's games
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
-var isInGame = false; // Flag indicating whether the game stream started
-var isDialogOpen = false; // Flag indicating whether the dialog is opened
+var isInGame = false; // Flag indicating whether the game has started, so the initial value should always be false
+var isDialogOpen = false; // Flag indicating whether the dialog is open, so the initial value should always be false
 
 // Called by the common.js module
 function attachListeners() {
@@ -21,7 +21,7 @@ function attachListeners() {
   $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
   $('#supportBtn').on('click', showSupportDialog);
   $('#addHostCell').on('click', addHost);
-  $('#goBackBtn').on('click', showHostsAndSettingsMode);
+  $('#goBackBtn').on('click', showHostsMode);
   $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
 
   const registerMenu = (elementId, view) => {
@@ -98,7 +98,7 @@ function restoreUiAfterWasmLoad() {
   $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
   Navigation.push(Views.Hosts);
-  showHostsAndSettingsMode();
+  showHostsMode();
 
   findNvService(function(finder, opt_error) {
     if (finder.byService_['_nvstream._tcp']) {
@@ -415,10 +415,13 @@ function addHostToGrid(host, ismDNSDiscovered) {
 
 // Show a confirmation with Delete Host dialog before removing specific host
 function removeClicked(host) {
+  // Find the existing overlay and dialog elements
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
   var deleteHostDialog = document.querySelector('#deleteHostDialog');
   document.getElementById('deleteHostDialogText').innerHTML =
     ' Are you sure you want to delete ' + host.hostname + '?';
+
+  // Show the dialog and push the view
   deleteHostOverlay.style.display = 'flex';
   deleteHostDialog.showModal();
   Navigation.push(Views.DeleteHostDialog);
@@ -433,7 +436,7 @@ function removeClicked(host) {
   });
 
   // locally remove the hostname/ip from the saved `hosts` array
-  // Note: this does not make the host forget the pairing to us
+  // NOTE: this does not make the host forget the pairing to us
   // This means we can re-add the host, and will still be paired
   $('#continueDeleteHost').off('click');
   $('#continueDeleteHost').on('click', function() {
@@ -526,6 +529,7 @@ function showTerminateMoonlightDialog() {
   // Find the existing overlay and dialog elements
   var terminateMoonlightOverlay = document.querySelector('#terminateMoonlightDialogOverlay');
   var terminateMoonlightDialog = document.querySelector('#terminateMoonlightDialog');
+  var terminateMoonlightApp = tizen.application.getCurrentApplication();
 
   if (!terminateMoonlightOverlay && !terminateMoonlightDialog) {
     // Check if the dialog element doesn't exist, create it
@@ -587,7 +591,7 @@ function showTerminateMoonlightDialog() {
     document.body.removeChild(terminateMoonlightOverlay);
     isDialogOpen = false;
     Navigation.pop();
-    tizen.application.getCurrentApplication().exit();
+    terminateMoonlightApp.exit();
   });
 }
 
@@ -748,14 +752,13 @@ function showApps(host) {
   showAppsMode();
 }
 
-// Set the layout to the initial mode when you open Hosts & Settings view
-function showHostsAndSettingsMode() {
-  console.log('%c[index.js]', 'color: green;', 'Entering "Show hosts and settings" mode');
+// Set the layout to the initial mode when you open Hosts view
+function showHostsMode() {
+  console.log('%c[index.js]', 'color: green;', 'Entering "Show hosts" mode');
   $("#navigation-title").html("Hosts");
   $("#navigation-logo").show();
   $("#main-navigation").show();
   $(".nav-menu-parent").show();
-  $("#externalAudioBtn").show();
   $('#removeAllHostsBtn').show();
   $('#supportBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
@@ -770,21 +773,18 @@ function showHostsAndSettingsMode() {
   startPollingHosts();
 }
 
-// Set the layout to the initial mode when you open Apps & Games view
+// Set the layout to the initial mode when you open Apps view
 function showAppsMode() {
-  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and games" mode');
+  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps" mode');
   $("#navigation-title").html("Apps");
   $("#main-navigation").show();
   $('#goBackBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
   $("#navigation-logo").hide();
-  $("#streamSettings").hide();
   $(".nav-menu-parent").hide();
-  $("#externalAudioBtn").hide();
   $('#removeAllHostsBtn').hide();
   $('#supportBtn').hide();
   $("#host-grid").hide();
-  $("#settings").hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
   $('#loadingSpinner').css('display', 'none');
