@@ -93,7 +93,6 @@ function stopPollingHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
-  $('#main-navigation').show();
   $('#main-navigation').children().not("#quitRunningAppBtn").show();
   $("#main-content").children().not("#listener, #wasmSpinner, #game-grid").show();
   $('#wasmSpinner').hide();
@@ -649,16 +648,27 @@ function showApps(host) {
   $('#quitRunningAppBtn').show();
   $("#gameList .game-container").remove();
 
+  // Hide the main navigation before showing a loading screen
+  $('#main-navigation').css('backgroundColor', 'transparent');
+  $('#main-navigation').css('boxShadow', 'none');
+  $('#main-navigation').children().hide();
+
   // Show a spinner while the app list loads
-  $('#main-navigation').hide();
   $('#wasmSpinnerMessage').text('Loading apps...');
   $('#wasmSpinner').css('display', 'inline-block');
 
   $("div.game-container").remove();
 
   host.getAppList().then(function(appList) {
+    // Hide the spinner after the host has successfully retrieved the app list
     $('#wasmSpinner').hide();
-    $('#main-navigation').show();
+
+    // Show the main navigation after the loading screen is complete
+    $('#main-navigation').css('backgroundColor', '#2D3035');
+    $('#main-navigation').css('boxShadow', '#000');
+    $('#main-navigation').children().show();
+
+    // Show the game list section
     $("#game-grid").show();
 
     if (appList.length == 0) {
@@ -726,6 +736,7 @@ function showApps(host) {
       $(gameCard).append(img);
     });
   }, function(failedAppList) {
+    // Hide the spinner if the host has failed to retrieve the app list
     $('#wasmSpinner').hide();
     var img = new Image();
     img.src = 'static/res/applist_error.svg';
