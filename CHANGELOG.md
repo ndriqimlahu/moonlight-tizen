@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.4
+
+### Added
+- Added gamepad timestamp for accurate detection of valid gamepads
+
+### Changed
+- Rearranged elements for improved structure
+- Minor enhancements in visual stylization application-wide
+
+### Fixed
+- Fixed header display issues during the loading of host and game views
+- Refactored code for improved structure and readability
+
 ## v1.1.3
 
 ### Changed
