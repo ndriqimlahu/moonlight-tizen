@@ -94,13 +94,13 @@
             <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
           </button>
           <div id="removeAllHostsTooltip" class="mdl-tooltip" for="removeAllHostsBtn">Remove All Hosts</div>
-          <button type="button" id="quitRunningAppBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Quit Running App">
-            <i class="material-icons">remove_circle_outline</i> Quit Running App
-          </button>
           <button type="button" id="supportBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Support">
             <i class="material-icons">help</i>
           </button>
           <div id="supportTooltip" class="mdl-tooltip" for="supportBtn">Support</div>
+          <button type="button" id="quitRunningAppBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Quit Running App">
+            <i class="material-icons">remove_circle_outline</i> Quit Running App
+          </button>
         </nav>
       </div>
     </header>
@@ -134,6 +134,21 @@
   <script type="text/javascript" src="static/js/utils.js"></script>
   <script type="text/javascript" src="static/js/mdns-browser/dns.js"></script>
   <script type="text/javascript" src="static/js/mdns-browser/main.js"></script>
+  <div id="addHostDialogOverlay" class="dialog-overlay">
+    <dialog id="addHostDialog" class="mdl-dialog">
+      <h3 class="mdl-dialog__title">Add Host Manually</h3>
+      <div class="mdl-dialog__content">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input type="text" id="dialogInputHost" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
+          <label class="mdl-textfield__label" for="dialogInputHost">IP Address of Host PC</label>
+        </div>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" id="cancelAddHost" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
+        <button type="button" id="continueAddHost" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Continue</button>
+      </div>
+    </dialog>
+  </div>
   <div id="pairingDialogOverlay" class="dialog-overlay">
     <dialog id="pairingDialog" class="mdl-dialog">
       <h3 class="mdl-dialog__title">Pairing</h3>
@@ -147,20 +162,6 @@
       </div>
       <div class="mdl-dialog__actions">
         <button type="button" id="cancelPairingDialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
-      </div>
-    </dialog>
-  </div>
-  <div id="quitAppDialogOverlay" class="dialog-overlay">
-    <dialog id="quitAppDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Quit Running App</h3>
-      <div class="mdl-dialog__content">
-        <p id="quitAppDialogText">
-          Y is already running. Would you like to quit Y?
-        </p>
-      </div>
-      <div class="mdl-dialog__actions">
-        <button type="button" id="cancelQuitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">No</button>
-        <button type="button" id="continueQuitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Yes</button>
       </div>
     </dialog>
   </div>
@@ -178,18 +179,17 @@
       </div>
     </dialog>
   </div>
-  <div id="addHostDialogOverlay" class="dialog-overlay">
-    <dialog id="addHostDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Add Host Manually</h3>
+  <div id="quitAppDialogOverlay" class="dialog-overlay">
+    <dialog id="quitAppDialog" class="mdl-dialog">
+      <h3 class="mdl-dialog__title">Quit Running App</h3>
       <div class="mdl-dialog__content">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input type="text" id="dialogInputHost" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
-          <label class="mdl-textfield__label" for="dialogInputHost">IP Address of Host PC</label>
-        </div>
+        <p id="quitAppDialogText">
+          Y is already running. Would you like to quit Y?
+        </p>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="button" id="cancelAddHost" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
-        <button type="button" id="continueAddHost" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Continue</button>
+        <button type="button" id="cancelQuitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">No</button>
+        <button type="button" id="continueQuitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Yes</button>
       </div>
     </dialog>
   </div>
