@@ -95,6 +95,13 @@ void MoonlightInstance::PollGamepads() {
       continue; /* Skip disconnected gamepads */
     }
 
+    if (gamepad.timestamp == 0) {
+      // On some platforms, Tizen returns "connected" gamepads that really 
+      // aren't, so timestamp stays at zero. To work around this, we'll only
+      // count gamepads that have a non-zero timestamp in our controller index.
+      continue;
+    }
+
     // Process input for active gamepad
     const auto buttonFlags = GetButtonFlags(gamepad);
     const auto leftTrigger = gamepad.analogButton[GamepadButton::LeftTrigger]
