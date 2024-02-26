@@ -136,7 +136,7 @@
   <script type="text/javascript" src="static/js/mdns-browser/main.js"></script>
   <div id="addHostDialogOverlay" class="dialog-overlay">
     <dialog id="addHostDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Add Host Manually</h3>
+      <h3 id="addHostDialogTitle" class="mdl-dialog__title">Add Host</h3>
       <div class="mdl-dialog__content">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input type="text" id="dialogInputHost" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
@@ -151,7 +151,7 @@
   </div>
   <div id="pairingDialogOverlay" class="dialog-overlay">
     <dialog id="pairingDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Pairing</h3>
+      <h3 id="pairingDialogTitle" class="mdl-dialog__title">Pairing</h3>
       <div class="mdl-dialog__content">
         <p id="pairingDialogText">
           Please enter the following PIN on the target PC: XXXX<br><br>
@@ -167,7 +167,7 @@
   </div>
   <div id="deleteHostDialogOverlay" class="dialog-overlay">
     <dialog id="deleteHostDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Delete Host</h3>
+      <h3 id="deleteHostDialogTitle" class="mdl-dialog__title">Delete Host</h3>
       <div class="mdl-dialog__content">
         <p id="deleteHostDialogText">
           Are you sure you want to delete this host?
@@ -181,7 +181,7 @@
   </div>
   <div id="quitAppDialogOverlay" class="dialog-overlay">
     <dialog id="quitAppDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Quit Running App</h3>
+      <h3 id="quitAppDialogTitle" class="mdl-dialog__title">Quit Running App</h3>
       <div class="mdl-dialog__content">
         <p id="quitAppDialogText">
           Y is already running. Would you like to quit Y?
@@ -195,7 +195,7 @@
   </div>
   <div id="supportDialogOverlay" class="dialog-overlay">
     <dialog id="supportDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Moonlight Support</h3>
+      <h3 id="supportDialogTitle" class="mdl-dialog__title">Moonlight Support</h3>
       <div class="mdl-dialog__content">
         <p id="supportDialogText">
           If you're facing any problems with Moonlight, visit our comprehensive guide.<br><br>
@@ -210,7 +210,7 @@
   </div>
   <div id="terminateMoonlightDialogOverlay" class="dialog-overlay">
     <dialog id="terminateMoonlightDialog" class="mdl-dialog">
-      <h3 class="mdl-dialog__title">Exit Moonlight</h3>
+      <h3 id="terminateMoonlightDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
       <div class="mdl-dialog__content">
         <p id="terminateMoonlightDialogText">
           Are you sure you want to exit Moonlight?

@@ -26,12 +26,14 @@ function attachListeners() {
 
   const registerMenu = (elementId, view) => {
     $(`#${elementId}`).on('click', () => {
-      if (view.isActive())
+      if (view.isActive()) {
         Navigation.pop();
-      else
+      } else {
         Navigation.push(view);
+      }
     });
   }
+
   registerMenu('selectResolution', Views.SelectResolutionMenu);
   registerMenu('selectFramerate', Views.SelectFramerateMenu);
   registerMenu('selectBitrate', Views.SelectBitrateMenu);
@@ -93,7 +95,7 @@ function stopPollingHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
-  $('#main-navigation').children().not("#quitRunningAppBtn").show();
+  $('#main-navigation').children().not("#goBackBtn, #quitRunningAppBtn").show();
   $("#main-content").children().not("#listener, #wasmSpinner, #game-grid").show();
   $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
@@ -548,7 +550,7 @@ function showTerminateMoonlightDialog() {
 
     // Create the dialog content
     terminateMoonlightDialog.innerHTML = `
-      <h3 class="mdl-dialog__title">Exit Moonlight</h3>
+      <h3 id="terminateMoonlightDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
       <div class="mdl-dialog__content">
         <p id="terminateMoonlightDialogText">
           Are you sure you want to exit Moonlight?
@@ -657,14 +659,13 @@ function showApps(host) {
     console.log('%c[index.js, showApps]', 'color: green;', 'Moved into showApps, but `host` did not initialize properly! Failing.');
     return;
   }
+
   console.log('%c[index.js, showApps]', 'color: green;', 'Current host object:', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  $('#quitRunningAppBtn').show();
   $("#gameList .game-container").remove();
 
   // Hide the main navigation before showing a loading screen
-  $('#main-navigation').css('backgroundColor', 'transparent');
-  $('#main-navigation').css('boxShadow', 'none');
   $('#main-navigation').children().hide();
+  $('#main-navigation').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
   // Show a spinner while the app list loads
   $('#wasmSpinnerMessage').text('Loading apps...');
@@ -677,9 +678,8 @@ function showApps(host) {
     $('#wasmSpinner').hide();
 
     // Show the main navigation after the loading screen is complete
-    $('#main-navigation').css('backgroundColor', '#2D3035');
-    $('#main-navigation').css('boxShadow', '#000');
     $('#main-navigation').children().show();
+    $('#main-navigation').css({'backgroundColor': '#2D3035', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
     // Show the game list section
     $("#game-grid").show();
@@ -692,6 +692,7 @@ function showApps(host) {
       snackbarLog('Your game list is empty');
       return; // We stop the function right here
     }
+
     // If game grid is populated, empty it
     const sortedAppList = sortTitles(appList, 'ASC');
 
@@ -751,11 +752,16 @@ function showApps(host) {
   }, function(failedAppList) {
     // Hide the spinner if the host has failed to retrieve the app list
     $('#wasmSpinner').hide();
+
+    // Show the main navigation after the loading screen is complete
+    $('#main-navigation').children().show();
+    $('#main-navigation').css({'backgroundColor': '#2D3035', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+
+    console.error('%c[index.js, showApps]', 'Failed to get applist from host: ' + host.hostname, '\n Host object:', host, host.toString());
     var img = new Image();
     img.src = 'static/res/applist_error.svg';
     $("#game-grid").html(img);
     snackbarLog('Unable to retrieve your games');
-    console.error('%c[index.js, showApps]', 'Failed to get applist from host: ' + host.hostname, '\n Host object:', host, host.toString());
   });
 
   showAppsMode();
@@ -786,10 +792,11 @@ function showHostsMode() {
 function showAppsMode() {
   console.log('%c[index.js]', 'color: green;', 'Entering "Show apps" mode');
   $("#navigation-title").html("Apps");
+  $("#navigation-logo").show();
   $("#main-navigation").show();
   $('#goBackBtn').show();
+  $('#quitRunningAppBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
-  $("#navigation-logo").hide();
   $(".nav-menu-parent").hide();
   $('#removeAllHostsBtn').hide();
   $('#supportBtn').hide();
@@ -921,8 +928,7 @@ function startGame(host, appID) {
         if (status_code != 200) {
           var status_message = $root.attr('status_message');
           if (status_code == 4294967295 && status_message == 'Invalid') {
-            // Special case handling an audio capture error which GFE doesn't
-            // provide any useful status message for
+            // Special case handling an audio capture error which GFE doesn't provide any useful status message
             status_code = 418;
             status_message = 'Audio capture device is missing. Please reinstall Sunshine or GeForce Experience.';
           }
@@ -946,7 +952,7 @@ function startGame(host, appID) {
 }
 
 function playGameMode() {
-  console.log('%c[index.js, playGameMode]', 'color:green;', 'Entering play game mode');
+  console.log('%c[index.js, playGameMode]', 'color:green;', 'Entering "Play game" mode');
   isInGame = true;
 
   $("#main-navigation").hide();
@@ -1267,35 +1273,35 @@ function updateDefaultBitrate() {
   if (res === "858:480") {
     if (frameRate === "30") { // 480p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('2');
-    } else { // 480p, 60 FPS
-      $('#bitrateSlider')[0].MaterialSlider.change('5');
+    } else if (frameRate === "60") { // 480p, 60 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('4');
     }
   } else if (res === "1280:720") {
     if (frameRate === "30") { // 720p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('5');
-    } else { // 720p, 60 FPS
+    } else if (frameRate === "60") { // 720p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('10');
     }
   } else if (res === "1920:1080") {
     if (frameRate === "30") { // 1080p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('10');
-    } else { // 1080p, 60 FPS
+    } else if (frameRate === "60") { // 1080p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('20');
     }
   } else if (res === "2560:1440") {
     if (frameRate === "30") { // 1440p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('20');
-    } else { // 1440p, 60 FPS
+    } else if (frameRate === "60") { // 1440p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('40');
     }
   } else if (res === "3840:2160") {
-    if (frameRate === "30") { // 2160p (4K), 30 FPS
+    if (frameRate === "30") { // 2160p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('40');
-    } else { // 2160p (4K), 60 FPS
+    } else if (frameRate === "60") { // 2160p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('80');
     }
   } else { // Unrecognized option. In case someone screws with the JS to add custom resolutions
-    $('#bitrateSlider')[0].MaterialSlider.change('10');
+    $('#bitrateSlider')[0].MaterialSlider.change('20');
   }
 
   updateBitrateField();
@@ -1303,7 +1309,7 @@ function updateDefaultBitrate() {
 }
 
 function initSamsungKeys() {
-  console.log('initializing keys');
+  console.log('Initializing TV keys');
 
   var handler = {
     initRemoteController: true,

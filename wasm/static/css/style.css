@@ -15,9 +15,9 @@ body {
     font-size: 26px;
     text-align: center;
 }
-.mdl-layout__header {
+#main-navigation {
     background-color: #2D3035;
-    box-shadow: #000;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 1);
 }
 .mdl-layout__header-row {
     padding: 0 80px 0 80px;
@@ -47,9 +47,6 @@ body {
     color: #ececec;
     font-size: 14px;
     text-align: center;
-}
-.mdl-menu__item:hover {
-    background-color: #00A3C6;
 }
 .mdl-tooltip {
     font-size: 14px;
@@ -85,7 +82,7 @@ body {
     width: 500px;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: rgba(0, 163, 198, 1) 0px 0px 10px 5px;
+    box-shadow: 0 0 10px 5px rgba(0, 163, 198, 1);
 }
 .mdl-dialog__title {
     margin: 0;
@@ -160,7 +157,7 @@ body {
 }
 #game-grid {
     margin: 0;
-    padding: 15px 80px 15px 80px;
+    padding: 15px 68px 15px 95px;
     flex: 1;
     display: flex;
     flex-flow: row wrap;
@@ -196,8 +193,10 @@ body {
     cursor: pointer;
     text-align: center;
 }
-#host-grid .mdl-card:hover, #host-grid .mdl-card:focus, #host-grid .mdl-card:active,
-#game-grid .mdl-card:hover, #game-grid .mdl-card:focus, #game-grid .mdl-card:active {
+#host-grid .mdl-card.hovered, #host-grid .mdl-card:hover,
+#host-grid .mdl-card:focus, #host-grid .mdl-card:active,
+#game-grid .mdl-card.hovered, #game-grid .mdl-card:hover,
+#game-grid .mdl-card:focus, #game-grid .mdl-card:active {
     transform: scale(1.1);
     border: 4px solid #00A3C6;
 }
@@ -246,11 +245,6 @@ body {
 .host-container > .mdl-card__title {
     color: #fff;
     background: url('../res/ic_tv_white_48px.svg') center no-repeat #3E4454;
-}
-.mdl-card.hovered {
-    background-color: initial;
-    transform: scale(1.1);
-    border: 4px solid #00A3C6;
 }
 .hovered {
     background-color: rgba(158,158,158,.2);
@@ -353,7 +347,7 @@ body {
     height: 50%;
     margin: 5px 25% 5px 25%;
     border-radius: 12px;
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px 3px;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
 }
@@ -395,7 +389,7 @@ body {
 #closeSupportDialog:focus, #continueTerminateMoonlight:hover, #continueTerminateMoonlight:focus,
 #cancelTerminateMoonlight:hover, #cancelTerminateMoonlight:focus {
     background-color: #404354;
-    box-shadow: rgba(0, 163, 198, 1) 0px 0px 2px 4px;
+    box-shadow: 0 0 2px 4px rgba(0, 163, 198, 1);
 }
 .bitrateMenu {
     width: 285px;
