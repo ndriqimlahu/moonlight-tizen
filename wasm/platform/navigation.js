@@ -13,6 +13,14 @@ function unmarkElement(element) {
   }
 }
 
+function unmark(value) {
+  if (typeof value === 'string') {
+    unmarkElementById(value);
+  } else if (typeof value === 'object') {
+    unmarkElement(value);
+  }
+}
+
 function markElementById(id) {
   markElement(document.getElementById(id));
 }
@@ -29,14 +37,6 @@ function mark(value) {
     markElementById(value);
   } else if (typeof value === 'object') {
     markElement(value);
-  }
-}
-
-function unmark(value) {
-  if (typeof value === 'string') {
-    unmarkElementById(value);
-  } else if (typeof value === 'object') {
-    unmarkElement(value);
   }
 }
 
@@ -131,6 +131,7 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        // Navigate to the HostsNav view
         Navigation.change(Views.HostsNav);
         // Set focus on the first navigation item in HostsNav view when transitioning from Hosts view
         const navItem = document.getElementById(Views.HostsNav.view.current());
@@ -142,6 +143,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        // Navigate to the Hosts view
         Navigation.change(Views.Hosts);
         // Set focus on the first navigation item in Hosts view
         const navItem = document.getElementById(Views.Hosts.view.current());
@@ -191,34 +193,66 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  TerminateMoonlightDialog: {
+  HostsNav: {
     view: new ListView(() => [
-      'continueTerminateMoonlight',
-      'cancelTerminateMoonlight']),
+      'selectResolution',
+      'selectFramerate',
+      'selectBitrate',
+      'externalAudioBtn',
+      'optimizeGamesBtn',
+      'framePacingBtn',
+      'audioSyncBtn',
+      'removeAllHostsBtn',
+      'supportBtn']),
     up: function() {},
-    down: function() {},
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        // Remove focus from the current element before changing the view
+        document.getElementById(this.view.current()).blur();
+        // Navigate to the Hosts view
+        Navigation.change(Views.Hosts);
+        // Set focus on the first navigation item in Hosts view when transitioning from HostsNav view
+        const navItem = document.getElementById(Views.Hosts.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
+      }, delayBetweenNavigation);
+    },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
-        document.getElementById('continueTerminateMoonlight').focus();
+        document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
-        document.getElementById('cancelTerminateMoonlight').focus();
+        document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     select: function() {
-      this.view.current().click();
+      const currentItem = document.getElementById(this.view.current());
+      if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
+          currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
+        currentItem.click();
+      } else if (currentItem.id === 'removeAllHostsBtn' || currentItem.id === 'supportBtn') {
+        this.view.current().click();
+      } else {
+        // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('cancelTerminateMoonlight').click();
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Navigate to the Hosts view
+      Navigation.change(Views.Hosts);
     },
     enter: function() {
       mark(this.view.current());
@@ -329,72 +363,6 @@ const Views = {
     },
     back: function() {
       document.getElementById('cancelDeleteHost').click();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  HostsNav: {
-    view: new ListView(() => [
-      'selectResolution',
-      'selectFramerate',
-      'selectBitrate',
-      'externalAudioBtn',
-      'optimizeGamesBtn',
-      'framePacingBtn',
-      'audioSyncBtn',
-      'removeAllHostsBtn',
-      'supportBtn']),
-    up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        // Remove focus from the current element before changing the view
-        document.getElementById(this.view.current()).blur();
-        Navigation.change(Views.Hosts);
-        // Set focus on the first navigation item in Hosts view when transitioning from HostsNav view
-        const navItem = document.getElementById(Views.Hosts.view.current());
-        if (navItem) {
-          navItem.focus();
-        }
-      }, delayBetweenNavigation);
-    },
-    left: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.prev();
-        document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
-    },
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.next();
-        document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
-    },
-    select: function() {
-      const currentItem = document.getElementById(this.view.current());
-      if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
-          currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
-        currentItem.click();
-      } else if (currentItem.id === 'removeAllHostsBtn' || currentItem.id === 'supportBtn') {
-        this.view.current().click();
-      } else {
-        // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
-        currentItem.click();
-      }
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      // Remove focus from the current element before changing the view
-      document.getElementById(this.view.current()).blur();
-      Navigation.change(Views.Hosts);
     },
     enter: function() {
       mark(this.view.current());
@@ -610,6 +578,7 @@ const Views = {
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
+        // Navigate to the Apps view
         Navigation.change(Views.Apps);
         // Set focus on the first navigation item in Apps view when transitioning from AppsNav view
         const navItem = document.getElementById(Views.Apps.view.current());
@@ -677,6 +646,42 @@ const Views = {
     },
     back: function() {
       document.getElementById('cancelQuitApp').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  TerminateMoonlightDialog: {
+    view: new ListView(() => [
+      'continueTerminateMoonlight',
+      'cancelTerminateMoonlight']),
+    up: function() {},
+    down: function() {},
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueTerminateMoonlight').focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelTerminateMoonlight').focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('cancelTerminateMoonlight').click();
     },
     enter: function() {
       mark(this.view.current());

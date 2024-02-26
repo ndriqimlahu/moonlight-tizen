@@ -10,19 +10,18 @@ var isDialogOpen = false; // Flag indicating whether the dialog is open, so the 
 function attachListeners() {
   changeUiModeForWasmLoad();
 
+  $('#addHostCell').on('click', addHost);
+  $('#supportBtn').on('click', showSupportDialog);
+  $('#goBackBtn').on('click', showHostsMode);
+  $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
-  $('#bitrateSlider').on('input', updateBitrateField); // NOTE: Input occurs every notch you slide
-  // $('#bitrateSlider').on('change', saveBitrate); // FIXME: It doesn't seem to work and needs to be fixed
-  $("#externalAudioSwitch").on('click', saveExternalAudio);
+  $('#bitrateSlider').on('input', updateBitrateField);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
+  $("#externalAudioSwitch").on('click', saveExternalAudio);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
-  $('#supportBtn').on('click', showSupportDialog);
-  $('#addHostCell').on('click', addHost);
-  $('#goBackBtn').on('click', showHostsMode);
-  $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
 
   const registerMenu = (elementId, view) => {
     $(`#${elementId}`).on('click', () => {
@@ -195,11 +194,6 @@ function snackbarLogLong(givenMessage) {
     timeout: 5000
   };
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
-}
-
-function updateBitrateField() {
-  $('#selectBitrate').html($('#bitrateSlider').val() + " Mbps");
-  saveBitrate();
 }
 
 function moduleDidLoad() {
@@ -873,11 +867,11 @@ function startGame(host, appID) {
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
       var frameRate = $('#selectFramerate').data('value').toString();
       var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
-      const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const optimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + externalAudio + ":" + optimizeGames + ":" + framePacing + ":" + audioSync + ":");
+      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + optimizeGames + ":" + externalAudio + ":" + framePacing + ":" + audioSync + ":");
 
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
@@ -1230,40 +1224,9 @@ function saveBitrate() {
   storeData('bitrate', $('#bitrateSlider').val(), null);
 }
 
-function saveExternalAudio() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
-  setTimeout(function() {
-    const chosenExternalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state : ' + chosenExternalAudio);
-    storeData('externalAudio', chosenExternalAudio, null);
-  }, 100);
-}
-
-function saveOptimizeGames() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
-  setTimeout(function() {
-    const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state : ' + chosenOptimizeGames);
-    storeData('optimizeGames', chosenOptimizeGames, null);
-  }, 100);
-}
-
-function saveFramePacing() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
-  setTimeout(function() {
-    const chosenFramePacing = $("#framePacingSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state : ' + chosenFramePacing);
-    storeData('framePacing', chosenFramePacing, null);
-  }, 100);
-}
-
-function saveAudioSync() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
-  setTimeout(function() {
-    const chosenAudioSync = $("#audioSyncSwitch").parent().hasClass('is-checked');
-    console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state : ' + chosenAudioSync);
-    storeData('audioSync', chosenAudioSync, null);
-  }, 100);
+function updateBitrateField() {
+  $('#selectBitrate').html($('#bitrateSlider').val() + " Mbps");
+  saveBitrate();
 }
 
 function updateDefaultBitrate() {
@@ -1306,6 +1269,42 @@ function updateDefaultBitrate() {
 
   updateBitrateField();
   saveBitrate();
+}
+
+function saveOptimizeGames() {
+  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
+  setTimeout(function() {
+    const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state : ' + chosenOptimizeGames);
+    storeData('optimizeGames', chosenOptimizeGames, null);
+  }, 100);
+}
+
+function saveExternalAudio() {
+  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
+  setTimeout(function() {
+    const chosenExternalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state : ' + chosenExternalAudio);
+    storeData('externalAudio', chosenExternalAudio, null);
+  }, 100);
+}
+
+function saveFramePacing() {
+  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
+  setTimeout(function() {
+    const chosenFramePacing = $("#framePacingSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state : ' + chosenFramePacing);
+    storeData('framePacing', chosenFramePacing, null);
+  }, 100);
+}
+
+function saveAudioSync() {
+  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
+  setTimeout(function() {
+    const chosenAudioSync = $("#audioSyncSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state : ' + chosenAudioSync);
+    storeData('audioSync', chosenAudioSync, null);
+  }, 100);
 }
 
 function initSamsungKeys() {
@@ -1369,6 +1368,17 @@ function loadUserDataCb() {
     updateBitrateField();
   });
 
+  console.log('load stored optimizeGames prefs');
+  getData('optimizeGames', function(previousValue) {
+    if (previousValue.optimizeGames == null) {
+      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
+    } else if (previousValue.optimizeGames == false) {
+      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
+    } else {
+      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
+    }
+  });
+
   console.log('Load stored externalAudio prefs');
   getData('externalAudio', function(previousValue) {
     if (previousValue.externalAudio == null) {
@@ -1377,17 +1387,6 @@ function loadUserDataCb() {
       document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
     } else {
       document.querySelector('#externalAudioBtn').MaterialIconToggle.check();
-    }
-  });
-
-  console.log('load stored optimizeGames prefs');
-  getData('optimizeGames', function(previousValue) {
-    if (previousValue.optimizeGames == null) {
-      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
-    } else if (previousValue.optimizeGames == false) {
-      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
-    } else {
-      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
     }
   });
 
