@@ -49,3 +49,4 @@ dir.stamp
 
 # Visual Studio
 *.vs/
+*.vscode/
