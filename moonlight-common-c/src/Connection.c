@@ -31,7 +31,11 @@ uint16_t AudioPortNumber;
 uint16_t VideoPortNumber;
 SS_PING AudioPingPayload;
 SS_PING VideoPingPayload;
+uint32_t ControlConnectData;
 uint32_t SunshineFeatureFlags;
+uint32_t EncryptionFeaturesSupported;
+uint32_t EncryptionFeaturesRequested;
+uint32_t EncryptionFeaturesEnabled;
 
 // Connection stages
 static const char* stageNames[STAGE_MAX] = {
@@ -171,8 +175,8 @@ static void ClInternalConnectionTerminated(int errorCode)
         LC_ASSERT(err == 0);
     }
 
-    // Close the thread handle since we can never wait on it
-    PltCloseThread(&terminationCallbackThread);
+    // Detach the thread since we never wait on it
+    PltDetachThread(&terminationCallbackThread);
 }
 
 static bool parseRtspPortNumberFromUrl(const char* rtspSessionUrl, uint16_t* port)
@@ -518,4 +522,10 @@ Cleanup:
         LiStopConnection();
     }
     return err;
+}
+
+const char* LiGetLaunchUrlQueryParameters(void) {
+    // v0 = Video encryption and control stream encryption v2
+    // v1 = RTSP encryption
+    return "&corever=1";
 }

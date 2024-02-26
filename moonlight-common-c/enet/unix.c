@@ -29,6 +29,9 @@
 #include "enet/enet.h"
 
 #if defined(__APPLE__)
+#if !defined(IPV6_RECVPKTINFO) || !defined(IPV6_PKTINFO)
+#warning Missing IPv6 socket option definitions. Is __APPLE_USE_RFC_3542 defined?
+#endif
 #ifndef HAS_POLL
 #define HAS_POLL 1
 #endif
@@ -216,6 +219,27 @@ enet_time_set (enet_uint32 newTimeBase)
     timeBase = timeVal.tv_sec * 1000 + timeVal.tv_usec / 1000 - newTimeBase;
 }
 
+#ifdef __APPLE__
+void
+enet_address_make_v4mapped (ENetAddress * address)
+{
+    ENetAddress oldAddress = *address;
+    struct sockaddr_in *sin = ((struct sockaddr_in *)&oldAddress.address);
+    struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)&address->address;
+
+    memset(sin6, 0, sizeof(*sin6));
+    sin6->sin6_family = AF_INET6;
+    sin6->sin6_len = sizeof(*sin6);
+    sin6->sin6_port = sin->sin_port;
+
+    sin6->sin6_addr.s6_addr[10] = 0xFF;
+    sin6->sin6_addr.s6_addr[11] = 0xFF;
+    memcpy(&sin6->sin6_addr.s6_addr[12], &sin->sin_addr, 4);
+
+    address->addressLength = sizeof(*sin6);
+}
+#endif
+
 int
 enet_address_equal (ENetAddress * address1, ENetAddress * address2)
 {
@@ -374,6 +398,14 @@ enet_socket_create (int af, ENetSocketType type)
     }
 #endif
 
+#ifdef __WIIU__
+    {
+        // Enable usage of userbuffers on Wii U
+        int on = 1;
+        setsockopt(sock, SOL_SOCKET, SO_RUSRBUF, (char *)&on, sizeof(on));
+    }
+#endif
+
     return sock;
 }
 
@@ -438,15 +470,15 @@ enet_socket_set_option (ENetSocket socket, ENetSocketOption option, int value)
             // iOS/macOS
             value = value ? NET_SERVICE_TYPE_VO : NET_SERVICE_TYPE_BE;
             result = setsockopt (socket, SOL_SOCKET, SO_NET_SERVICE_TYPE, (char *) & value, sizeof (int));
-#else
+#endif
 #ifdef IP_TOS
             // UNIX - IPv4
-            value = value ? 46 << 2 : 0; // DSCP: Expedited Forwarding
+            value = value ? (46 << 2 | 0x01) : 0; // DSCP: Expedited Forwarding + ECT(1) (L4S)
             result = setsockopt (socket, IPPROTO_IP, IP_TOS, (char *) & value, sizeof (int));
 #endif
 #ifdef IPV6_TCLASS
             // UNIX - IPv6
-            value = value ? 46 << 2: 0; // DSCP: Expedited Forwarding
+            value = value ? (46 << 2 | 0x01): 0; // DSCP: Expedited Forwarding + ECT(1) (L4S)
             result = setsockopt (socket, IPPROTO_IPV6, IPV6_TCLASS, (char *) & value, sizeof (int));
 #endif
 #ifdef SO_PRIORITY
@@ -454,7 +486,6 @@ enet_socket_set_option (ENetSocket socket, ENetSocketOption option, int value)
             value = value ? 6 : 0; // Max priority without NET_CAP_ADMIN
             result = setsockopt (socket, SOL_SOCKET, SO_PRIORITY, (char *) & value, sizeof (int));
 #endif
-#endif /* SO_NET_SERVICE_TYPE */
             break;
 
         case ENET_SOCKOPT_TTL:
@@ -641,7 +672,26 @@ enet_socket_send (ENetSocket socket,
 #if defined(__EMSCRIPTEN__)
        if (errno == __WASI_ERRNO_AGAIN)
 #else
-       if (errno == EWOULDBLOCK)
+        switch (errno)
+        {
+        case EWOULDBLOCK:
+            return 0;
+
+        // These errors are treated as possible transient
+        // conditions that could be caused by a network
+        // interruption. We'll ignore them and allow the
+        // socket timeout to kill us if the connection
+        // is permanently interrupted.
+        case EADDRNOTAVAIL:
+        case ENETDOWN:
+        case ENETUNREACH:
+        case EHOSTDOWN:
+        case EHOSTUNREACH:
+            return 0;
+
+        default:
+            return -1;
+        }
 #endif
          return 0;
 
@@ -745,8 +795,19 @@ enet_socket_receive (ENetSocket socket,
         }
     }
 
-    if (peerAddress != NULL)
-      peerAddress -> addressLength = msgHdr.msg_namelen;
+    if (peerAddress != NULL) {
+        peerAddress -> addressLength = msgHdr.msg_namelen;
+
+#ifdef __APPLE__
+        // HACK: Apple platforms return AF_INET addresses in msg_name from recvmsg() on dual-stack sockets
+        // instead of AF_INET6 addresses then rejects those same addresses when they are passed to sendmsg().
+        // Strangely, this only happens when the socket is bound, and IPV6_PKTINFO properly returns v4-mapped
+        // addresses in the same call. This is probably a kernel bug, so we fix it up here.
+        if (peerAddress -> address.ss_family == AF_INET && localAddress -> address.ss_family == AF_INET6) {
+            enet_address_make_v4mapped(peerAddress);
+        }
+#endif
+    }
 
     return recvLength;
 #endif
@@ -779,7 +840,18 @@ enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeou
     if (* condition & ENET_SOCKET_WAIT_RECEIVE)
       pollSocket.events |= POLLIN;
 
+#if defined(__3DS__)
+    uint64_t poll_start = osGetTime();
+    for (uint64_t i = poll_start; (i - poll_start) < timeout; i = osGetTime()) {
+        pollCount = poll(& pollSocket, 1, 0); // need to do this on 3ds since poll will block even if socket is ready before
+        if (pollCount) {
+            break;
+        }
+        svcSleepThread(1000);
+    }
+#else
     pollCount = poll (& pollSocket, 1, timeout);
+#endif
 
     if (pollCount < 0)
     {

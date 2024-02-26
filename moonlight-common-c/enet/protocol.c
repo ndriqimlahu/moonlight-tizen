@@ -1725,8 +1725,8 @@ enet_protocol_send_outgoing_commands (ENetHost * host, ENetEvent * event, int ch
 
         currentPeer -> lastSendTime = host -> serviceTime;
 
-        if (currentPeer -> state == ENET_PEER_STATE_CONNECTING && currentPeer -> packetsLost == 2) {
-            // Disable QoS tagging if we don't get a response to 2 connection requests in a row.
+        if ((currentPeer -> state == ENET_PEER_STATE_CONNECTING || currentPeer -> state == ENET_PEER_STATE_ACKNOWLEDGING_CONNECT) && currentPeer -> packetsLost == 3) {
+            // Disable QoS tagging if we don't get a response to 3 connection requests/acks in a row.
             // Some networks drop QoS tagged packets, so let's try without it.
             enet_socket_set_option (host -> socket, ENET_SOCKOPT_QOS, 0);
         }
