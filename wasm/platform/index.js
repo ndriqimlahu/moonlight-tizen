@@ -528,12 +528,17 @@ function showSupportDialog() {
   });
 }
 
-// Create and show the Terminate Moonlight dialog
+// Terminate the application with one click
+function exitApplication() {
+  var exitApplication = tizen.application.getCurrentApplication();
+  exitApplication.exit();
+}
+
+// Show the Terminate Moonlight dialog
 function showTerminateMoonlightDialog() {
   // Find the existing overlay and dialog elements
   var terminateMoonlightOverlay = document.querySelector('#terminateMoonlightDialogOverlay');
   var terminateMoonlightDialog = document.querySelector('#terminateMoonlightDialog');
-  var terminateMoonlightApp = tizen.application.getCurrentApplication();
 
   if (!terminateMoonlightOverlay && !terminateMoonlightDialog) {
     // Check if the dialog element doesn't exist, create it
@@ -595,7 +600,7 @@ function showTerminateMoonlightDialog() {
     document.body.removeChild(terminateMoonlightOverlay);
     isDialogOpen = false;
     Navigation.pop();
-    terminateMoonlightApp.exit();
+    exitApplication();
   });
 }
 
