@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.5
+
+### Added
+- Introduced a new option to stop the streaming session using the 'Red' button on the remote control
+- Implemented a reusable function for terminating the application
+
+### Changed
+- Improved host deletion functionality
+
+### Fixed
+- Minor bug fixes and general improvements
+- Refactored code for improved structure and readability
+
+### Dependencies
+- Updated 'moonlight-common-c' module to the latest version
+
 ## v1.1.4
 
 ### Added
@@ -56,7 +72,6 @@ All notable changes to this project will be documented in this file.
 
 ### Dependencies
 - Updated 'moonlight-common-c' module to the latest version
-- Updated 'enet' module to the latest version
 - Updated 'opus' module to the latest version
 
 ## v1.0.20
