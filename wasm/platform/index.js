@@ -440,10 +440,13 @@ function removeClicked(host) {
   // This means we can re-add the host, and will still be paired
   $('#continueDeleteHost').off('click');
   $('#continueDeleteHost').on('click', function() {
-    var deleteHostDialog = document.querySelector('#deleteHostDialog');
     $('#host-container-' + host.serverUid).remove();
-    delete hosts[host.serverUid]; // Remove the host from the array
+    // Remove the host from the array
+    delete hosts[host.serverUid];
+    // Save the updated hosts
     saveHosts();
+    // If host removed, show snackbar message
+    snackbarLog(host.hostname + ' deleted successfully');
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
@@ -485,11 +488,12 @@ function removeAllHostsWithConfirmation() {
         if (hosts.hasOwnProperty(serverUid)) {
           var host = hosts[serverUid];
           $('#host-container-' + host.serverUid).remove();
+          // Remove the host from the array
           delete hosts[host.serverUid];
+          // Save the updated hosts (empty hosts object)
+          saveHosts();
         }
       }
-      // Save the updated hosts (empty hosts object)
-      saveHosts();
       // If all hosts removed, show snackbar message
       snackbarLog('All hosts deleted successfully');
       deleteHostOverlay.style.display = 'none';
