@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.6
+
+### Added
+- Introduced a new 'Settings' button and created a 'Settings' container
+- Implemented functionality for managing the 'Settings' container
+- Grouped all settings categories and added them to the left pane of the container
+
+### Changed
+- Grouped and migrated existing settings options to the right pane of the container
+- Converted all settings using 'Material Icon Toggle' to the 'Material Switch' for improved appearance
+
 ## v1.1.5
 
 ### Added
