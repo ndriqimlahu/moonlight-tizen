@@ -11,6 +11,7 @@ function attachListeners() {
   changeUiModeForWasmLoad();
 
   $('#addHostCell').on('click', addHost);
+  $('#settingsBtn').on('click', showSettingsContainer);
   $('#supportBtn').on('click', showSupportDialog);
   $('#goBackBtn').on('click', showHostsMode);
   $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
@@ -95,7 +96,7 @@ function stopPollingHosts() {
 
 function restoreUiAfterWasmLoad() {
   $('#main-navigation').children().not("#goBackBtn, #quitRunningAppBtn").show();
-  $("#main-content").children().not("#listener, #wasmSpinner, #game-grid").show();
+  $("#main-content").children().not("#listener, #wasmSpinner, #settings-container, #game-grid").show();
   $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
   Navigation.push(Views.Hosts);
@@ -501,6 +502,16 @@ function removeAllHostsWithConfirmation() {
   }
 }
 
+// Show the Settings container
+function showSettingsContainer() {
+  // Show the container section
+  $("#settings-container").removeClass('hide-container');
+  $("#settings-container").css('display', 'flex');
+  $("#settings-container").show()
+  
+  showSettingsMode();
+}
+
 // Show the Support dialog
 function showSupportDialog() {
   // Find the existing overlay and dialog elements
@@ -768,9 +779,10 @@ function showHostsMode() {
   $("#navigation-logo").show();
   $("#main-navigation").show();
   $(".nav-menu-parent").show();
-  $('#removeAllHostsBtn').show();
+  $('#settingsBtn').show();
   $('#supportBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
+  $('#settings-container').hide();
   $('#game-grid').hide();
   $('#goBackBtn').hide();
   $('#quitRunningAppBtn').hide();
@@ -780,6 +792,27 @@ function showHostsMode() {
   Navigation.pop();
 
   startPollingHosts();
+}
+
+// Set the layout to the initial mode when you open Settings view
+function showSettingsMode() {
+  console.log('%c[index.js]', 'color: green;', 'Entering "Show settings" mode');
+  $("#navigation-title").html("Settings");
+  $("#navigation-logo").show();
+  $("#main-navigation").show();
+  $('#goBackBtn').show();
+  $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
+  $(".nav-menu-parent").hide();
+  $('#settingsBtn').hide();
+  $('#supportBtn').hide();
+  $("#host-grid").hide();
+  $('#game-grid').hide();
+  $('#quitRunningAppBtn').hide();
+  $("#main-content").removeClass("fullscreen");
+  $("#listener").removeClass("fullscreen");
+
+  stopPollingHosts();
+  Navigation.start();
 }
 
 // Set the layout to the initial mode when you open Apps view
@@ -792,9 +825,10 @@ function showAppsMode() {
   $('#quitRunningAppBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
   $(".nav-menu-parent").hide();
-  $('#removeAllHostsBtn').hide();
+  $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $("#host-grid").hide();
+  $('#settings-container').hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
   $('#loadingSpinner').css('display', 'none');
