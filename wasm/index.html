@@ -28,72 +28,6 @@
         <div class="mdl-layout-spacer"></div>
         <!-- Navigation bar -->
         <nav class="mdl-navigation">
-          <div class="nav-menu-parent">
-            <div id="resolutionMenu">
-              <button type="button" id="selectResolution" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="1920:1080">1080p</button>
-            </div>
-            <ul class="resolutionMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="selectResolution">
-              <li class="mdl-menu__item" data-value="858:480">480p</li>
-              <li class="mdl-menu__item" data-value="1280:720">720p</li>
-              <li class="mdl-menu__item" data-value="1920:1080">1080p</li>
-              <li class="mdl-menu__item" data-value="2560:1440">1440p</li>
-              <li class="mdl-menu__item" data-value="3840:2160">4K</li>
-            </ul>
-            <div id="resolutionTooltip" class="mdl-tooltip" for="resolutionMenu">Video resolution</div>
-          </div>
-          <div class="nav-menu-parent">
-            <div id="framerateMenu">
-              <button type="button" id="selectFramerate" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="60">60 FPS</button>
-            </div>
-            <ul class="framerateMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="selectFramerate">
-              <li class="mdl-menu__item" data-value="30">30 FPS</li>
-              <li class="mdl-menu__item" data-value="60">60 FPS</li>
-            </ul>
-            <div id="framerateTooltip" class="mdl-tooltip" for="framerateMenu">Video frame rate</div>
-          </div>
-          <div class="nav-menu-parent">
-            <div id="bitrateMenu">
-              <button type="button" id="selectBitrate" class="mdl-button mdl-js-button mdl-js-ripple-effect">20 Mbps</button>
-            </div>
-            <div class="bitrateMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="selectBitrate">
-              <span id="bitrateLowestValue">0</span>
-              <input type="range" id="bitrateSlider" class="mdl-slider mdl-js-slider" min="0" max="100" step="0.5" value="20">
-              <span id="bitrateHighestValue">100</span>
-            </div>
-            <div id="bitrateTooltip" class="mdl-tooltip" for="bitrateMenu">Video bitrate</div>
-          </div>
-          <div class="nav-menu-parent">
-            <label id="optimizeGamesBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="optimizeGamesSwitch">
-              <input type="checkbox" id="optimizeGamesSwitch" class="mdl-icon-toggle__input">
-              <i class="mdl-icon-toggle__label material-icons">timeline</i>
-            </label>
-            <div id="optimizeGamesTooltip" class="mdl-tooltip" for="optimizeGamesBtn">Optimize game settings</div>
-          </div>
-          <div class="nav-menu-parent">
-            <label id="externalAudioBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="externalAudioSwitch">
-              <input type="checkbox" id="externalAudioSwitch" class="mdl-icon-toggle__input">
-              <i class="mdl-icon-toggle__label material-icons">volume_up</i>
-            </label>
-            <div id="externalAudioTooltip" class="mdl-tooltip" for="externalAudioBtn">Play audio on PC</div>
-          </div>
-          <div class="nav-menu-parent">
-            <label id="framePacingBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="framePacingSwitch">
-              <input type="checkbox" id="framePacingSwitch" class="mdl-icon-toggle__input">
-              <i class="mdl-icon-toggle__label material-icons">graphic_eq</i>
-            </label>
-            <div id="framePacingTooltip" class="mdl-tooltip" for="framePacingBtn">Video frame pacing</div>
-          </div>
-          <div class="nav-menu-parent">
-            <label id="audioSyncBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="audioSyncSwitch">
-              <input type="checkbox" id="audioSyncSwitch" class="mdl-icon-toggle__input">
-              <i class="mdl-icon-toggle__label material-icons">sync</i>
-            </label>
-            <div id="audioSyncTooltip" class="mdl-tooltip" for="audioSyncBtn">Audio syncing</div>
-          </div>
-          <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Remove All Hosts">
-            <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
-          </button>
-          <div id="removeAllHostsTooltip" class="mdl-tooltip" for="removeAllHostsBtn">Remove All Hosts</div>
           <button type="button" id="settingsBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" role="link" aria-label="Settings">
             <i class="material-icons">settings</i>
           </button>
@@ -135,6 +69,106 @@
           </div>
         </div>
         <!-- Right Pane: Options -->
+        <div id="settings-right-pane">
+          <div id="basicSettings" class="settings-options">
+            <div class="setting-option">
+              <label>Video resolution:</label>
+              <span class="mdl-list__item-text-body">
+                - Increase to improve image clarity or decrease for better performance on lower-end devices and slower networks.<br>
+                - Using a video resolution higher than the TV's specifications may cause a blank or distorted screen.
+              </span>
+              <div id="resolutionMenu">
+                <button type="button" id="selectResolution" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="1920:1080">1920 x 1080 (1080p)</button>
+              </div>
+              <ul class="resolutionMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectResolution">
+                <li class="mdl-menu__item" data-value="858:480">858 x 480 (480p)</li>
+                <li class="mdl-menu__item" data-value="1280:720">1280 x 720 (720p)</li>
+                <li class="mdl-menu__item" data-value="1920:1080">1920 x 1080 (1080p)</li>
+                <li class="mdl-menu__item" data-value="2560:1440">2560 x 1440 (1440p)</li>
+                <li class="mdl-menu__item" data-value="3840:2160">3840 x 2160 (4K)</li>
+              </ul>
+            </div>
+            <div class="setting-option">
+              <label>Video frame rate:</label>
+              <span class="mdl-list__item-text-body">
+                - Increase for smoother video stream or decrease for better performance on lower-end devices.<br>
+                - Using a video frame rate higher than the TV's specifications may cause video playback to stop working.
+              </span>
+              <div id="framerateMenu">
+                <button type="button" id="selectFramerate" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="60">60 FPS</button>
+              </div>
+              <ul class="framerateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectFramerate">
+                <li class="mdl-menu__item" data-value="30">30 FPS</li>
+                <li class="mdl-menu__item" data-value="60">60 FPS</li>
+                <li class="mdl-menu__item" data-value="120">120 FPS</li>
+              </ul>
+            </div>
+            <div class="setting-option">
+              <label>Video bitrate:</label>
+              <span class="mdl-list__item-text-body">
+                - Increase for better image quality or decrease to improve performance on slower connections.<br>
+                - Using a video bitrate higher than the TV's specifications may cause interruptions in video and audio playback.
+              </span>
+              <div id="bitrateMenu">
+                <button type="button" id="selectBitrate" class="mdl-button mdl-js-button mdl-js-ripple-effect">20 Mbps</button>
+              </div>
+              <div class="bitrateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectBitrate">
+                <span id="bitrateLowestValue">0</span>
+                <input type="range" id="bitrateSlider" class="mdl-slider mdl-js-slider" min="0" max="120" step="0.5" value="20">
+                <span id="bitrateHighestValue">120</span>
+              </div>
+            </div>
+          </div>
+          <div id="hostSettings" class="settings-options">
+            <div class="setting-option">
+              <label>Optimize game settings:</label>
+              <div id="optimizeGamesMenu">
+                <label id="optimizeGamesBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="optimizeGamesSwitch">
+                  <input type="checkbox" id="optimizeGamesSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Allow GFE to modify game settings for optimal streaming</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Play audio on PC:</label>
+              <div id="externalAudioMenu">
+                <label id="externalAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="externalAudioSwitch">
+                  <input type="checkbox" id="externalAudioSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Play audio from the computer and this device</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Remove all hosts:</label>
+              <div id="removeAllHostsMenu">
+                <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Remove All Hosts">
+                  Remove all existing hosts
+                  <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="decoderSettings" class="settings-options">
+            <div class="setting-option">
+              <label>Video frame pacing:</label>
+              <div id="framePacingMenu">
+                <label id="framePacingBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="framePacingSwitch">
+                  <input type="checkbox" id="framePacingSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Allow frame pacing to balance video latency and smoothness</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Audio synchronization:</label>
+              <div id="audioSyncMenu">
+                <label id="audioSyncBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="audioSyncSwitch">
+                  <input type="checkbox" id="audioSyncSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Allow audio synchronization to function while streaming</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="game-grid"></div>
       <div id="listener"></div>
