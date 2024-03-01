@@ -1405,44 +1405,44 @@ function loadUserDataCb() {
   console.log('load stored optimizeGames prefs');
   getData('optimizeGames', function(previousValue) {
     if (previousValue.optimizeGames == null) {
-      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
+      document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
     } else if (previousValue.optimizeGames == false) {
-      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.uncheck();
+      document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
     } else {
-      document.querySelector('#optimizeGamesBtn').MaterialIconToggle.check();
+      document.querySelector('#optimizeGamesBtn').MaterialSwitch.on();
     }
   });
 
   console.log('Load stored externalAudio prefs');
   getData('externalAudio', function(previousValue) {
     if (previousValue.externalAudio == null) {
-      document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
+      document.querySelector('#externalAudioBtn').MaterialSwitch.off();
     } else if (previousValue.externalAudio == false) {
-      document.querySelector('#externalAudioBtn').MaterialIconToggle.uncheck();
+      document.querySelector('#externalAudioBtn').MaterialSwitch.off();
     } else {
-      document.querySelector('#externalAudioBtn').MaterialIconToggle.check();
+      document.querySelector('#externalAudioBtn').MaterialSwitch.on();
     }
   });
 
   console.log('load stored framePacing prefs');
   getData('framePacing', function(previousValue) {
     if (previousValue.framePacing == null) {
-      document.querySelector('#framePacingBtn').MaterialIconToggle.check();
+      document.querySelector('#framePacingBtn').MaterialSwitch.off();
     } else if (previousValue.framePacing == false) {
-      document.querySelector('#framePacingBtn').MaterialIconToggle.uncheck();
+      document.querySelector('#framePacingBtn').MaterialSwitch.off();
     } else {
-      document.querySelector('#framePacingBtn').MaterialIconToggle.check();
+      document.querySelector('#framePacingBtn').MaterialSwitch.on();
     }
   });
 
   console.log('load stored audioSync prefs');
   getData('audioSync', function(previousValue) {
     if (previousValue.audioSync == null) {
-      document.querySelector('#audioSyncBtn').MaterialIconToggle.check();
+      document.querySelector('#audioSyncBtn').MaterialSwitch.off();
     } else if (previousValue.audioSync == false) {
-      document.querySelector('#audioSyncBtn').MaterialIconToggle.uncheck();
+      document.querySelector('#audioSyncBtn').MaterialSwitch.off();
     } else {
-      document.querySelector('#audioSyncBtn').MaterialIconToggle.check();
+      document.querySelector('#audioSyncBtn').MaterialSwitch.on();
     }
   });
 }
