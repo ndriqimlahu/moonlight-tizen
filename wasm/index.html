@@ -94,6 +94,10 @@
             <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
           </button>
           <div id="removeAllHostsTooltip" class="mdl-tooltip" for="removeAllHostsBtn">Remove All Hosts</div>
+          <button type="button" id="settingsBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" role="link" aria-label="Settings">
+            <i class="material-icons">settings</i>
+          </button>
+          <div id="settingsTooltip" class="mdl-tooltip" for="settingsBtn">Settings</div>
           <button type="button" id="supportBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Support">
             <i class="material-icons">help</i>
           </button>
@@ -111,6 +115,10 @@
             <h2 class="mdl-card__title-text">Add Host</h2>
           </div>
         </div>
+      </div>
+      <div id="settings-container" class="hide-container">
+        <!-- Left Pane: Categories -->
+        <!-- Right Pane: Options -->
       </div>
       <div id="game-grid"></div>
       <div id="listener"></div>
