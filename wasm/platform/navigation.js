@@ -76,6 +76,34 @@ class ListView {
     return array[this.index];
   }
 
+  prevCategory() {
+    const array = this.func();
+    if (this.index > 0) {
+      unmark(array[this.index]);
+      --this.index;
+      mark(array[this.index]);
+      // Indicate that there are more categories
+      return true;
+    } else {
+      // Indicate that there are no more categories
+      return false;
+    }
+  }
+
+  nextCategory() {
+    const array = this.func();
+    if (this.index < array.length - 1) {
+      unmark(array[this.index]);
+      ++this.index;
+      mark(array[this.index]);
+      // Indicate that there are more categories
+      return true;
+    } else {
+      // Indicate that there are no more categories
+      return false;
+    }
+  }
+
   prevRow() {
     const array = this.func();
     const currentRow = Math.floor(this.index / this.itemsPerRow);
@@ -376,15 +404,27 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
-        document.getElementById(this.view.current()).focus();
+        // If there are more categories behind, then go to the previous category
+        if (this.view.prevCategory()) {
+          document.getElementById(this.view.current()).focus();
+        } else {
+          // If there are no more categories, navigate to the SettingsNav view
+          Navigation.change(Views.SettingsNav);
+          // Set focus on the first navigation item in SettingsNav view when transitioning from Settings view
+          const navItem = document.getElementById(Views.SettingsNav.view.current());
+          if (navItem) {
+            navItem.focus();
+          }
+        }
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
-        document.getElementById(this.view.current()).focus();
+        // If there are more categories after, then go to the next category
+        if (this.view.nextCategory()) {
+          document.getElementById(this.view.current()).focus();
+        }
       }, delayBetweenNavigation);
     },
     left: function() {},
