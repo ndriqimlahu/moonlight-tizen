@@ -2,14 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.7
+
+### Added
+- Introduced a new 'About' category that contains a 'System Info' button as a placeholder
+- Introduced three new 'Tizen' privileges that grant access to app and system information
+- Implemented functionality to load system information in the 'System Info' button
+- Implemented all navigation views for full interaction within the 'Settings' container
+- Implemented navigation to go to the previous or next category in 'Settings' view
+- Implemented functionality to handle category clicks and show the settings options in the right pane
+
 ## v1.1.6
 
 ### Added
 - Introduced a new 'Settings' button and created a 'Settings' container
 - Implemented functionality for managing the 'Settings' container
 - Grouped all settings categories and added them to the left pane of the container
+- Expanded settings: Reintroduced '120 FPS' frame rate option
 
 ### Changed
+- Increased the bitrate slider for the bandwidth menu from '100' to '120'
 - Grouped and migrated existing settings options to the right pane of the container
 - Converted all settings using 'Material Icon Toggle' to the 'Material Switch' for improved appearance
 
@@ -90,11 +102,11 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Improved audio synchronization for a better streaming experience
 - Reverted the order of combination keys for keyboard to the previous configuration for stopping streaming sessions
-- Adjusted the bitrate presets for each resolution and framerate options
+- Adjusted the bitrate presets for each resolution and frame rate options
 - Improved the structure of the 'Wasm Player' and added comments to improve code clarity and understanding
 
 ### Removed
-- Removed the '90 FPS' and '120 FPS' framerate options due to functionality issues causing screen freezes
+- Temporarily removed the '90 FPS' and '120 FPS' frame rate options due to functionality issues causing screen freezes
 
 ## v1.0.19
 
@@ -164,7 +176,7 @@ All notable changes to this project will be documented in this file.
 ## v1.0.14
 
 ### Added
-- Expanded settings: Introduced '90 FPS' and '120 FPS' framerate options
+- Expanded settings: Introduced '90 FPS' and '120 FPS' frame rate options
 
 ### Changed
 - Increased the bitrate slider for the bandwidth menu from '100' to '150'
@@ -172,7 +184,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Fixed focus navigation issue for settings items
-- Fixed bitrate presets for '90 FPS' and '120 FPS' framerate options
+- Fixed bitrate presets for '90 FPS' and '120 FPS' frame rate options
 - Fixed the order of combination keys for both keyboard and gamepad buttons to stop streaming sessions
 
 ## v1.0.13
