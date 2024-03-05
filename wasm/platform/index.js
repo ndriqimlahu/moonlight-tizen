@@ -519,6 +519,87 @@ function showSettingsContainer() {
   showSettingsMode();
 }
 
+// Handle the click event on the settings categories and open the corresponding views
+function handleCategoryClick(category) {
+  // Hide the right settings pane which includes settings options
+  const settingsOptions = document.querySelectorAll('.settings-options');
+  settingsOptions.forEach(function (settingsOption) {
+    settingsOption.style.display = 'none';
+  });
+
+  // Remove the 'selected' class from all categories
+  const settingsCategories = document.querySelectorAll('.category');
+  settingsCategories.forEach(function (settingsCategory) {
+    settingsCategory.classList.remove('selected');
+  });
+
+  // Show the right settings pane when the category item is clicked
+  const currentItem = document.getElementById(category);
+  if (currentItem) {
+    currentItem.style.display = 'block';
+
+    // Add the 'selected' class to the clicked category and mark it as selected
+    const selectedCategory = document.querySelector('.category[data-category="' + category + '"]');
+    if (selectedCategory) {
+      selectedCategory.classList.add('selected');
+    }
+
+    // Retrieve the settings option for the current category
+    const currentSettingsCategory = document.getElementById(category);
+    const currentSettingsOption = currentSettingsCategory.querySelector('.setting-option');
+
+    // Trigger the corresponding action based on the category ID
+    switch (category) {
+      case 'basicSettings':
+        // Navigate to the BasicSettings view
+        Navigation.pop();
+        Navigation.push(Views.BasicSettings);
+        if (currentSettingsOption) {
+          // Set focus on the current settings option
+          currentSettingsOption.focus();
+          // Simulate navigation to set focus on the settings item
+          Navigation.right();
+        }
+        break;
+      case 'hostSettings':
+        // Navigate to the HostSettings view
+        Navigation.pop();
+        Navigation.push(Views.HostSettings);
+        if (currentSettingsOption) {
+          // Set focus on the current settings option
+          currentSettingsOption.focus();
+          // Simulate navigation to set focus on the settings item
+          Navigation.right();
+        }
+        break;
+      case 'decoderSettings':
+        // Navigate to the DecoderSettings view
+        Navigation.pop();
+        Navigation.push(Views.DecoderSettings);
+        if (currentSettingsOption) {
+          // Set focus on the current settings option
+          currentSettingsOption.focus();
+          // Simulate navigation to set focus on the settings item
+          Navigation.right();
+        }
+        break;
+      case 'aboutSettings':
+        // Navigate to the AboutSettings view
+        Navigation.pop();
+        Navigation.push(Views.AboutSettings);
+        if (currentSettingsOption) {
+          // Set focus on the current settings option
+          currentSettingsOption.focus();
+          // Simulate navigation to set focus on the settings item
+          Navigation.right();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 // Show the Support dialog
 function showSupportDialog() {
   // Find the existing overlay and dialog elements
