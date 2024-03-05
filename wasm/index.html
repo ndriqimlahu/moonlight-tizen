@@ -66,6 +66,10 @@
               <i class="category-icons material-icons">slideshow</i>
               <label>Decoder Settings</label>
             </div>
+            <div class="category" data-category="aboutSettings">
+              <i class="category-icons material-icons">info</i>
+              <label>About</label>
+            </div>
           </div>
         </div>
         <!-- Right Pane: Options -->
@@ -165,6 +169,14 @@
                   <input type="checkbox" id="audioSyncSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow audio synchronization to function while streaming</span>
                 </label>
+              </div>
+            </div>
+          </div>
+          <div id="aboutSettings" class="settings-options">
+            <div class="setting-option">
+              <label>System information:</label>
+              <div id="systemInfoMenu">
+                <button type="button" id="systemInfoBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="System Information">Loading...</button>
               </div>
             </div>
           </div>
