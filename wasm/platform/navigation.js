@@ -371,6 +371,174 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  Settings: {
+    view: new ListView(() => document.querySelector('.settings-categories').children),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      this.view.current().click();
+    },
+    back: function() {
+      document.getElementById('goBackBtn').click();
+      // Navigate to the HostsNav view
+      Navigation.change(Views.HostsNav);
+      document.getElementById('settingsBtn').focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SettingsNav: {
+    view: new ListView(() => [
+      'goBackBtn',
+      'restoreDefaultsBtn']),
+    up: function() {},
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        // Navigate to the Settings view
+        Navigation.change(Views.Settings);
+        // Set focus on the first navigation item in Settings view when transitioning from SettingsNav view
+        const navItem = document.getElementById(Views.Settings.view.current());
+        if (navItem) {
+          navItem.focus();
+        }
+      }, delayBetweenNavigation);
+    },
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      const currentItem = this.view.current();
+      if (currentItem.id === 'goBackBtn') {
+        currentItem.click();
+        // Navigate to the HostsNav view
+        Navigation.change(Views.HostsNav);
+        document.getElementById('settingsBtn').focus();
+      } else {
+        this.view.current().click();
+      }
+    },
+    accept: function() {
+      const currentItem = document.getElementById(this.view.current());
+      if (currentItem.id === 'goBackBtn') {
+        currentItem.click();
+        // Navigate to the HostsNav view
+        Navigation.change(Views.HostsNav);
+        document.getElementById('settingsBtn').focus();
+      } else {
+        document.getElementById(this.view.current()).click();
+      }
+    },
+    back: function() {
+      document.getElementById('goBackBtn').click();
+      // Navigate to the HostsNav view
+      Navigation.change(Views.HostsNav);
+      document.getElementById('settingsBtn').focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  BasicSettings: {
+    view: new ListView(() => [
+      'selectResolution',
+      'selectFramerate',
+      'selectBitrate']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
+      const toggleSwitches = document.querySelectorAll('.mdl-switch');
+      toggleSwitches.forEach(function (toggleSwitch) {
+        toggleSwitch.classList.remove('hovered', 'is-focused');
+      });
+      // Hide the right settings pane which includes settings options
+      const settingsOptions = document.querySelectorAll('.settings-options');
+      settingsOptions.forEach(function (settingsOption) {
+        settingsOption.style.display = 'none';
+      });
+      // Remove the 'selected' class from all categories
+      const settingsCategories = document.querySelectorAll('.category');
+      settingsCategories.forEach(function (settingsCategory) {
+        settingsCategory.classList.remove('selected');
+      });
+      // Navigate to the Settings view
+      Navigation.change(Views.Settings);
+      // Set focus on the category item in Settings view when transitioning from BasicSettings view
+      const navItem = document.getElementById(Views.Settings.view.current());
+      if (navItem) {
+        navItem.focus();
+      }
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   SelectResolutionMenu: {
     isActive: () => isPopupActive('resolutionMenu'),
     view: new ListView(() => 
@@ -477,6 +645,193 @@ const Views = {
     back: function() {
       document.getElementById('selectBitrate').click();
       document.getElementById('selectBitrate').focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  HostSettings: {
+    view: new ListView(() => [
+      'optimizeGamesBtn',
+      'externalAudioBtn',
+      'removeAllHostsBtn']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
+      const toggleSwitches = document.querySelectorAll('.mdl-switch');
+      toggleSwitches.forEach(function (toggleSwitch) {
+        toggleSwitch.classList.remove('hovered', 'is-focused');
+      });
+      // Hide the right settings pane which includes settings options
+      const settingsOptions = document.querySelectorAll('.settings-options');
+      settingsOptions.forEach(function (settingsOption) {
+        settingsOption.style.display = 'none';
+      });
+      // Remove the 'selected' class from all categories
+      const settingsCategories = document.querySelectorAll('.category');
+      settingsCategories.forEach(function (settingsCategory) {
+        settingsCategory.classList.remove('selected');
+      });
+      // Navigate to the Settings view
+      Navigation.change(Views.Settings);
+      // Set focus on the category item in Settings view when transitioning from HostSettings view
+      const navItem = document.getElementById(Views.Settings.view.current());
+      if (navItem) {
+        navItem.focus();
+      }
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  DecoderSettings: {
+    view: new ListView(() => [
+      'framePacingBtn',
+      'audioSyncBtn']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
+      const toggleSwitches = document.querySelectorAll('.mdl-switch');
+      toggleSwitches.forEach(function (toggleSwitch) {
+        toggleSwitch.classList.remove('hovered', 'is-focused');
+      });
+      // Hide the right settings pane which includes settings options
+      const settingsOptions = document.querySelectorAll('.settings-options');
+      settingsOptions.forEach(function (settingsOption) {
+        settingsOption.style.display = 'none';
+      });
+      // Remove the 'selected' class from all categories
+      const settingsCategories = document.querySelectorAll('.category');
+      settingsCategories.forEach(function (settingsCategory) {
+        settingsCategory.classList.remove('selected');
+      });
+      // Navigate to the Settings view
+      Navigation.change(Views.Settings);
+      // Set focus on the category item in Settings view when transitioning from DecoderSettings view
+      const navItem = document.getElementById(Views.Settings.view.current());
+      if (navItem) {
+        navItem.focus();
+      }
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  AboutSettings: {
+    view: new ListView(() => [
+      'systemInfoBtn']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Hide the right settings pane which includes settings options
+      const settingsOptions = document.querySelectorAll('.settings-options');
+      settingsOptions.forEach(function (settingsOption) {
+        settingsOption.style.display = 'none';
+      });
+      // Remove the 'selected' class from all categories
+      const settingsCategories = document.querySelectorAll('.category');
+      settingsCategories.forEach(function (settingsCategory) {
+        settingsCategory.classList.remove('selected');
+      });
+      // Navigate to the Settings view
+      Navigation.change(Views.Settings);
+      // Set focus on the category item in Settings view when transitioning from AboutSettings view
+      const navItem = document.getElementById(Views.Settings.view.current());
+      if (navItem) {
+        navItem.focus();
+      }
     },
     enter: function() {
       mark(this.view.current());

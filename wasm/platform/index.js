@@ -514,6 +514,8 @@ function showSettingsContainer() {
   $("#settings-container").css('display', 'flex');
   $("#settings-container").show()
   
+  // Navigate to the Settings view
+  Navigation.push(Views.Settings);
   showSettingsMode();
 }
 
