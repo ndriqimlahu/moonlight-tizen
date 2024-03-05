@@ -96,36 +96,45 @@ Internet and Network Requirements −󠀭󠀭 To have a good experience, you nee
 
 ### FAQ
 
-1. How can I find out what TV model I have?
-- Using your Samsung Smart TV remote, follow these steps: `Settings` -> `Support` -> `About This TV`.
-
-2. How can I add the Moonlight app icon to the home screen for easy access?
+1. How can I add the Moonlight app to the home screen for easy access?
 - Once you install the Moonlight app, hover over the app icon and long press the "OK" button on your TV remote. Then select `Add to Home`. Use the cursor to move the icon where you want it to be in the app launcher row on the home screen.
 
-3. How powerful is streaming in Moonlight?
-- Moonlight is powerful enough to push streaming up to `4K 60 FPS HDR` with stereo sound. Streaming performance may vary based on your client device and network setup. So, it is recommend that you adjust the streaming resolution, frame rate, bandwidth, and other settings to achieve the best performance.
+2. How can I find information about my TV model and the Moonlight app?
+- Using your remote or gamepad controller, follow these steps: `Settings` -> `About` -> `System information`.
 
-4. Are keyboard and mouse inputs supported in Moonlight?
+3. What is the best performance that can be achieved in Moonlight?
+- Based on the latest Samsung TVs specifications, the high-end devices are powerful enough to push streaming up to `4K 120 FPS HDR` with stereo sound.
+- Streaming performance may vary based on your host device, client device and network setup. So, it is recommended that you adjust the streaming resolution, frame rate, bitrate, and other settings to achieve the best performance.
+
+4. What video codecs are supported in Moonlight?
+- Most common video codecs such as `H.264` and `HEVC (H.265 - Main, Main10)` are supported.
+- In order to use HDR, then you are required to have an HDR10-capable device, a GPU that can encode HEVC Main 10, and HDR10-enabled game. Games that use DXGI/OS HDR also require an HDR display connected to your host PC.
+
+5. Are keyboard and mouse inputs supported in Moonlight?
 - Yes, Moonlight can support any Bluetooth or USB-wired keyboard and mouse input.
 
-5. What are the supported controllers that I can use on my TV?
-- You can use the most popular Bluetooth or USB-wired controllers such as `Microsoft Xbox Series X/S controllers, Xbox One controller, Xbox 360 controller, Xbox Elite Wireless controller Series 2, Xbox Adaptive controller, PlayStation DualShock 4 and DualSense controllers, Amazon Luna Wireless controller, NVIDIA Shield controller, Logitech F310, F510 and F710 controllers, PowerA MOGA XP5-X Plus Bluetooth controller, Joytron CYVOX DX`.
+6. What are the supported gamepad controllers that I can use on my TV?
+- You can use the most popular Bluetooth or USB-wired controllers such as `Xbox Series X/S`, `Xbox One`, `Xbox 360`, `Xbox Elite Wireless Series 2`, `Xbox Adaptive`, `PlayStation DualShock 4`, `PlayStation DualSense`, `Amazon Luna Wireless`, `NVIDIA Shield`, `Logitech F310/F510/F710`, `PowerA MOGA XP5-X Plus Bluetooth` and `Joytron CYVOX DX`.
 
-6. Why am I having some problems with unsupported controllers on my TV?
-- If you use any Bluetooth or USB 2.0 game controllers other than those mentioned in the previous question, then unfortunately you may encounter problems such as unresponsive Guide and D-PAD buttons, Y and X buttons switching, and other controller issues. We advise you to use one of the supported controllers to enjoy the best possible gaming experience.
+7. Why am I having some problems with unsupported gamepad controllers on my TV?
+- If you use any Bluetooth or USB 2.0 game controllers other than those mentioned in the previous question, then unfortunately you may encounter problems such as unresponsive Guide and D-PAD buttons, Y and X buttons switching, and other gamepad controller issues.
+- We advise you to use one of the supported gamepad controllers to enjoy the best possible gaming experience.
 
-7. How do I connect my Bluetooth controller to my TV?
-- Using your Samsung Smart TV remote, follow these steps: `Settings` -> `Connection` -> `External Device Manager` -> `Input Device Manager` -> `Bluetooth Device List` -> `Pair your controller`.
+8. How do I connect my Bluetooth gamepad controller to my TV?
+- Using your remote, follow these steps: `Settings` -> `Connection` -> `External Device Manager` -> `Input Device Manager` -> `Bluetooth Device List` -> `Pair your controller`.
 
-8. Does the rumble feature work for controllers in Moonlight?
-- Yes, Moonlight supports any wired Bluetooth or USB controller that has a built-in vibration rumble motor.
+9. Does the rumble feature work for gamepad controllers in Moonlight?
+- Yes, Moonlight supports any wired Bluetooth or USB gamepad controller that has a built-in vibration rumble motor.
 
-9. How can I test the functionality of the controller on my TV?
-- To test the functionality of the controller on Samsung Smart TV, you can use the [GamepadChecker](https://developer.samsung.com/smarttv/accessory/gamepad.html) application, please visit the above link and follow all the instructions in the `Testing Gamepad Functionality` section to download and install the app on your Samsung Smart TV.
+10. How can I test the functionality of the gamepad controller on my TV?
+- To test the functionality of the gamepad controller on Samsung Smart TV, you can use the [GamepadChecker](https://developer.samsung.com/smarttv/accessory/gamepad.html) application.
+- Please visit the above link and follow all the instructions in the `Testing Gamepad Functionality` section to download and install the app on your Samsung Smart TV.
 
-10. How can I stop the streaming session in Moonlight?
-- If you are using a keyboard, simply press the key combination simultaneously: `CTRL` + `ALT` + `SHIFT` + `Q`. Pressing these four keys together will end the streaming session.
-- But if you are using a controller, just press the button combination at the same time: `BACK` + `PLAY` + `LB` + `RB`. Pressing these four buttons together will end the streaming session.
+11. How can I stop the streaming session in Moonlight?
+- Stopping the streaming session can be done in three ways as follows:
+    - If you are using the remote control, simply press the `Red` button.
+    - If you are using a keyboard, then simultaneously press the key combination: `CTRL` + `ALT` + `SHIFT` + `Q` or alternatively you can press the `F1` key.
+    - If you are using a gamepad, then simultaneously press the button combination: `BACK` + `PLAY` + `LB` + `RB`.
 
 ## Changelogs
 
