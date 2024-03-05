@@ -5,6 +5,11 @@ var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clie
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
 var isInGame = false; // Flag indicating whether the game has started, so the initial value should always be false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, so the initial value should always be false
+var appName = null; // Flag indicating whether the application name is set, so the initial value should always be null
+var appVer = null; // Flag indicating whether the application version is set, so the initial value should always be null
+var platformVer = null; // Flag indicating whether the platform version is set, so the initial value should always be null
+var tvModelName = null; // Flag indicating whether the TV model name is set, so the initial value should always be null
+var tvModelCode = null; // Flag indicating whether the TV model code is set, so the initial value should always be null
 
 // Called by the common.js module
 function attachListeners() {
@@ -1447,6 +1452,33 @@ function loadUserDataCb() {
   });
 }
 
+function loadSystemInfo() {
+  console.log("load system information");
+  var systemInfoPlaceholder = document.getElementById("systemInfoBtn");
+
+  if (systemInfoPlaceholder) {
+    appName = tizen.application.getAppInfo();
+    console.log("App Name: ", appName.name);
+    appVer = tizen.application.getAppInfo();
+    console.log("App Version: ", appVer.version);
+    platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version");
+    console.log("Platform Version: Tizen ", platformVer);
+    tvModelName = webapis.productinfo.getRealModel();
+    console.log("TV Model Name: ", tvModelName);
+    tvModelCode = webapis.productinfo.getModelCode();
+    console.log("TV Model Code: ", tvModelCode);
+
+    systemInfoPlaceholder.innerText =
+      "App Name: " + (appName.name ? appName.name : "Unknown") + " Game Streaming" + "\n" +
+      "App Version: " + (appVer.version ? appVer.version : "Unknown") + "\n" +
+      "Platform Version: Tizen " + (platformVer ? platformVer : "Unknown") + "\n" +
+      "TV Model: " + (tvModelName ? tvModelName : "Unknown") + "\n" +
+      "TV Model Code: " + (tvModelCode ? tvModelCode : "Unknown");
+  } else {
+    systemInfoPlaceholder.innerText = "Failed to get system information!";
+  }
+}
+
 function loadHTTPCerts() {
   console.log('loading stored HTTP certs');
   openIndexDB(loadHTTPCertsCb);
@@ -1516,6 +1548,7 @@ function onWindowLoad() {
 
   initSamsungKeys();
   loadUserData();
+  loadSystemInfo();
 }
 
 window.onload = onWindowLoad;
