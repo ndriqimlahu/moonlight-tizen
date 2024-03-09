@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.8
+
+### Added
+- Introduced a new 'Restore Defaults' button in the 'Settings' navigation bar
+- Introduced a new 'Restore Defaults' dialog and its corresponding view
+- Implemented a function to reset all settings to their default values
+- Implemented functionality for handling the 'Restore Defaults' with confirmation dialog
+
 ## v1.1.7
 
 ### Added
