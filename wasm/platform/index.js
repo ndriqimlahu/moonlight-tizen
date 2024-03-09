@@ -19,6 +19,7 @@ function attachListeners() {
   $('#settingsBtn').on('click', showSettingsContainer);
   $('#supportBtn').on('click', showSupportDialog);
   $('#goBackBtn').on('click', showHostsMode);
+  $('#restoreDefaultsBtn').on('click', restoreDefaultsSettingsWithConfirmation);
   $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
@@ -598,6 +599,43 @@ function handleCategoryClick(category) {
         break;
     }
   }
+}
+
+// Show a confirmation with the Restore Defaults dialog before restoring the default settings
+function restoreDefaultsSettingsWithConfirmation() {
+  // Find the existing overlay and dialog elements
+  var restoreDefaultsDialogOverlay = document.querySelector('#restoreDefaultsDialogOverlay');
+  var restoreDefaultsDialog = document.querySelector('#restoreDefaultsDialog');
+
+  // Show the dialog and push the view
+  restoreDefaultsDialogOverlay.style.display = 'flex';
+  restoreDefaultsDialog.showModal();
+  Navigation.push(Views.RestoreDefaultsDialog);
+  isDialogOpen = true;
+
+  // Cancel the operation if the Cancel button is pressed
+  $('#cancelRestoreDefaults').off('click');
+  $('#cancelRestoreDefaults').on('click', function() {
+    restoreDefaultsDialogOverlay.style.display = 'none';
+    restoreDefaultsDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    document.getElementById('restoreDefaultsBtn').focus();
+  });
+
+  // Restore all default settings if the Continue button is pressed
+  $('#continueRestoreDefaults').off('click');
+  $('#continueRestoreDefaults').on('click', function() {
+    // Reset any settings to their default state and save the updated values
+    restoreDefaultsSettingsValues();
+    // If the settings have been reset to default, show snackbar message
+    snackbarLog('Settings have been restored to defaults');
+    restoreDefaultsDialogOverlay.style.display = 'none';
+    restoreDefaultsDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    document.getElementById('restoreDefaultsBtn').focus();
+  });
 }
 
 // Show the Support dialog
