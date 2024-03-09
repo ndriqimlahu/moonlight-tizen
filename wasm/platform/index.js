@@ -1432,6 +1432,38 @@ function saveAudioSync() {
   }, 100);
 }
 
+// Reset all settings to their default state and save the value data
+function restoreDefaultsSettingsValues() {
+  const defaultResolution = '1920:1080';
+  $('#selectResolution').text('1920 x 1080 (1080p)').data('value', defaultResolution);
+  storeData('resolution', defaultResolution, null);
+
+  const defaultFramerate = 60;
+  $('#selectFramerate').text('60 FPS').data('value', defaultFramerate);
+  storeData('frameRate', defaultFramerate, null);
+
+  const defaultBitrate = '20';
+  $('#selectBitrate').html(defaultBitrate + " Mbps");
+  $('#bitrateSlider')[0].MaterialSlider.change(defaultBitrate);
+  storeData('bitrate', defaultBitrate, null);
+
+  const defaultOptimizeGames = false;
+  document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
+  storeData('optimizeGames', defaultOptimizeGames, null);
+
+  const defaultExternalAudio = false;
+  document.querySelector('#externalAudioBtn').MaterialSwitch.off();
+  storeData('externalAudio', defaultExternalAudio, null);
+
+  const defaultFramePacing = false;
+  document.querySelector('#framePacingBtn').MaterialSwitch.off();
+  storeData('framePacing', defaultFramePacing, null);
+  
+  const defaultAudioSync = false;
+  document.querySelector('#audioSyncBtn').MaterialSwitch.off();
+  storeData('audioSync', defaultAudioSync, null);
+}
+
 function initSamsungKeys() {
   console.log('Initializing TV keys');
 
