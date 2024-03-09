@@ -100,7 +100,7 @@ function stopPollingHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
-  $('#main-navigation').children().not("#goBackBtn, #quitRunningAppBtn").show();
+  $('#main-navigation').children().not("#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn").show();
   $("#main-content").children().not("#listener, #wasmSpinner, #settings-container, #game-grid").show();
   $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
@@ -873,6 +873,7 @@ function showHostsMode() {
   $('#settings-container').hide();
   $('#game-grid').hide();
   $('#goBackBtn').hide();
+  $('#restoreDefaultsBtn').hide();
   $('#quitRunningAppBtn').hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
@@ -889,6 +890,7 @@ function showSettingsMode() {
   $("#navigation-logo").show();
   $("#main-navigation").show();
   $('#goBackBtn').show();
+  $('#restoreDefaultsBtn').show();
   $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
   $(".nav-menu-parent").hide();
   $('#settingsBtn').hide();
@@ -917,6 +919,7 @@ function showAppsMode() {
   $('#supportBtn').hide();
   $("#host-grid").hide();
   $('#settings-container').hide();
+  $('#restoreDefaultsBtn').hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
   $('#loadingSpinner').css('display', 'none');
