@@ -514,6 +514,43 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  RestoreDefaultsDialog: {
+    isActive: () => isDialogActive('restoreDefaultsDialog'),
+    view: new ListView(() => [
+      'continueRestoreDefaults',
+      'cancelRestoreDefaults']),
+    up: function() {},
+    down: function() {},
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueRestoreDefaults').focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelRestoreDefaults').focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('cancelRestoreDefaults').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   BasicSettings: {
     view: new ListView(() => [
       'selectResolution',
