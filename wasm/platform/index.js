@@ -1373,7 +1373,6 @@ function saveResolution() {
   $('#selectResolution').text($(this).text()).data('value', chosenResolution);
   storeData('resolution', chosenResolution, null);
   updateDefaultBitrate();
-  Navigation.pop();
 }
 
 function saveFramerate() {
@@ -1381,7 +1380,6 @@ function saveFramerate() {
   $('#selectFramerate').text($(this).text()).data('value', chosenFramerate);
   storeData('frameRate', chosenFramerate, null);
   updateDefaultBitrate();
-  Navigation.pop();
 }
 
 function saveBitrate() {

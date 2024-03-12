@@ -44,7 +44,7 @@ function isPopupActive(id) {
   return document
     .getElementById(id)
     .parentNode
-    .children[1]
+    .children[3]
     .classList
     .contains('is-visible');
 }
@@ -223,14 +223,7 @@ const Views = {
   },
   HostsNav: {
     view: new ListView(() => [
-      'selectResolution',
-      'selectFramerate',
-      'selectBitrate',
-      'externalAudioBtn',
-      'optimizeGamesBtn',
-      'framePacingBtn',
-      'audioSyncBtn',
-      'removeAllHostsBtn',
+      'settingsBtn',
       'supportBtn']),
     up: function() {},
     down: function() {
@@ -262,16 +255,7 @@ const Views = {
       }, delayBetweenNavigation);
     },
     select: function() {
-      const currentItem = document.getElementById(this.view.current());
-      if (currentItem.id === 'externalAudioBtn' || currentItem.id === 'optimizeGamesBtn' || 
-          currentItem.id === 'framePacingBtn' || currentItem.id === 'audioSyncBtn') {
-        currentItem.click();
-      } else if (currentItem.id === 'removeAllHostsBtn' || currentItem.id === 'supportBtn') {
-        this.view.current().click();
-      } else {
-        // For other elements like 'selectResolution', 'selectFramerate' and 'selectBitrate'
-        currentItem.click();
-      }
+      this.view.current().click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -620,7 +604,7 @@ const Views = {
     isActive: () => isPopupActive('resolutionMenu'),
     view: new ListView(() => 
       document.getElementById('resolutionMenu')
-      .parentNode.children[1].children[1].children),
+      .parentNode.children[3].children[1].children),
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
@@ -643,6 +627,7 @@ const Views = {
     },
     accept: function() {
       this.view.current().click();
+      Navigation.pop();
       document.getElementById('selectResolution').focus();
     },
     back: function() {
@@ -660,7 +645,7 @@ const Views = {
     isActive: () => isPopupActive('framerateMenu'),
     view: new ListView(() => 
       document.getElementById('framerateMenu')
-      .parentNode.children[1].children[1].children),
+      .parentNode.children[3].children[1].children),
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
@@ -683,6 +668,7 @@ const Views = {
     },
     accept: function() {
       this.view.current().click();
+      Navigation.pop();
       document.getElementById('selectFramerate').focus();
     },
     back: function() {
@@ -700,7 +686,7 @@ const Views = {
     isActive: () => isPopupActive('bitrateMenu'),
     view: new ListView(() => 
       document.getElementById('bitrateMenu')
-      .parentNode.children[1].children[1].children),
+      .parentNode.children[3].children[1].children),
     up: function() {},
     down: function() {},
     left: function() {
