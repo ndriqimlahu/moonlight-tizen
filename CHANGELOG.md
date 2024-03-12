@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.9
+
+### Added
+- Added a new 'Power Off' icon specifically for the 'Exit App' button
+- Introduced an 'Exit App' button for immediate application termination
+
+### Changed
+- Enhanced the visual stylization of the 'Settings' container
+
+### Fixed
+- Fixed control navigation issues in multiple views
+
 ## v1.1.8
 
 ### Added
