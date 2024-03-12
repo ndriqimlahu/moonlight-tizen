@@ -29,6 +29,7 @@ function attachListeners() {
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
+  $('#exitAppBtn').on('click', exitApplication);
 
   const registerMenu = (elementId, view) => {
     $(`#${elementId}`).on('click', () => {
