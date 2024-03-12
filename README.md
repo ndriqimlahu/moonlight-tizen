@@ -1,4 +1,13 @@
+# Moonlight for Samsung TV (Tizen OS)
+
+<a href="#" target="_blank">
+
+![Project Status](https://img.shields.io/badge/project-actively_maintained-brightgreen?style=for-the-badge&logo=github)
+
+</a>
+
 ## About
+
 [Moonlight](https://moonlight-stream.org) is an open source client for NVIDIA GameStream and [Sunshine](https://app.lizardbyte.dev/Sunshine/).
 
 Moonlight for Tizen allows you to stream your collection of games, programs, or your full desktop from your powerful PC to your Samsung Smart TV running Tizen OS.
@@ -15,20 +24,14 @@ Client Requirements −󠀭󠀭 You must have a Samsung Smart TV with Tizen OS s
 
 Host Requirements −󠀭󠀭 It is recommended to have a computer with `Windows 10 or later`, you must also have [Windows Subsystem for Linux (WSL 2)](https://learn.microsoft.com/en-us/windows/wsl/install-manual) and [Docker Desktop](https://docs.docker.com/desktop/) installed on your computer.
 
-Internet and Network Requirements −󠀭󠀭 To have a good experience, you need a mid to high-end wireless router with a good wireless connection to your client device (5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax) strongly recommended) and a good connection from your PC server to your router (Ethernet/wired connections highly recommended).
+Network Requirements −󠀭󠀭 To have a good experience, you need a mid to high-end wireless router with a good wireless connection to your client device (5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax) strongly recommended) and a good connection from your PC server to your router (Ethernet/wired connections highly recommended).
 
 ### Installation
-<!-- 1. Download the [Dockerfile](https://github.com/ndriqimlahu/moonlight-tizen-docker) and save it in the "Downloads" folder, then you should remove any extensions from the `Dockerfile` and just leave it without extensions. -->
 1. Download the source code or clone this repository to your local machine:
 	```
    	git clone https://github.com/ndriqimlahu/moonlight-tizen.git
    	```
 2. Now, you need to run `Docker Desktop` before proceeding further and it is also recommended to close any software or application that requires high CPU and memory resources, because `Docker Desktop` will take high resources while running.
-<!-- 3. Open `Windows PowerShell` or a similar terminal depending on your OS, then change directory to where you downloaded the `Dockerfile`, so for example if you downloaded the file in the "Downloads" folder, then you should enter the following command to go on that path.
-   	```
-	cd .\Downloads\
-	```
--->
 3. Open `Windows PowerShell` or a similar terminal depending on your OS, then change directory to where you cloned the repository, then use the `Dockerfile` from source code folder, so for example you should enter the following command to go on that path.
    	```
 	cd .\Downloads\moonlight-tizen
