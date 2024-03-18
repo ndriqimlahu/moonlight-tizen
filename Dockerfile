@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 as base
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
@@ -47,14 +47,10 @@ RUN wget -nv -O emscripten-1.39.4.7-linux64.zip 'https://developer.samsung.com/s
 RUN unzip emscripten-1.39.4.7-linux64.zip
 WORKDIR emscripten-release-bundle/emsdk
 RUN ./emsdk activate latest-fastcomp
-WORKDIR ../.. 
+WORKDIR ../..
 
-# Build the application from the GitHub repository
-#RUN git clone --recurse-submodules --depth 1 https://github.com/ndriqimlahu/moonlight-tizen
-#RUN git clone https://github.com/ndriqimlahu/moonlight-tizen
-
-# Build the application from the local folder
-COPY . ./moonlight-tizen
+# Build the application package from the source code
+COPY --chown=moonlight . ./moonlight-tizen
 
 RUN cmake \
 	-DCMAKE_TOOLCHAIN_FILE=/home/moonlight/emscripten-release-bundle/emsdk/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake \
@@ -78,18 +74,29 @@ RUN echo \
 	'expect eof\n' \
 | expect
 
-# Optional: Remove unnecessary files
 RUN mv build/widget/Moonlight.wgt .
-#RUN rm -rf \
-#	build \
-#	emscripten-1.39.4.7-linux64.zip \
-#	emscripten-release-bundle \
-#	moonlight-tizen \
-#	tizen-package-expect.sh \
-#	web-cli_Tizen_Studio_5.5_ubuntu-64.bin \
-#	.emscripten \
-#	.emscripten_cache \
-#	.emscripten_cache.lock \ 
-#	.emscripten_ports \
-#	.emscripten_sanity \
-#	.wget-hsts
+
+# Optional: Remove unnecessary files
+RUN rm -rf \
+	build \
+	emscripten-1.39.4.7-linux64.zip \
+	emscripten-release-bundle \
+	moonlight-tizen \
+	tizen-package-expect.sh \
+	web-cli_Tizen_Studio_5.5_ubuntu-64.bin \
+	.emscripten \
+	.emscripten_cache \
+	.emscripten_cache.lock \
+	.emscripten_ports \
+	.emscripten_sanity \
+	.package-manager \
+	.wget-hsts
+
+# Use a multi-stage build to reclaim space from deleted files
+FROM ubuntu:22.04
+COPY --from=base / /
+USER moonlight
+WORKDIR /home/moonlight
+
+# Add Tizen Studio to the path
+ENV PATH=/home/moonlight/tizen-studio/tools/ide/bin:/home/moonlight/tizen-studio/tools:${PATH}
