@@ -11,7 +11,7 @@
 // For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
 // Enumeration for gamepad buttons
 enum GamepadButton {
-  A, B, Y, X, /* For unsupported gamepad, change buttons to "A, B, Y, X," to prevent button swapping, otherwise leave it at "A, B, X, Y," as default */
+  A, B, X, Y,
   LeftBumper, RightBumper,
   LeftTrigger, RightTrigger,
   Back, Play,
@@ -48,7 +48,7 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
 
   // Define button mappings
   static const int buttonMasks[] {
-    A_FLAG, B_FLAG, Y_FLAG, X_FLAG, /* For unsupported gamepad, change buttons to "A_FLAG, B_FLAG, Y_FLAG, X_FLAG," to prevent button swapping, otherwise leave it at "A_FLAG, B_FLAG, X_FLAG, Y_FLAG," as default */
+    A_FLAG, B_FLAG, X_FLAG, Y_FLAG,
     LB_FLAG, RB_FLAG,
     0 /* LT_FLAG */, 0 /* RT_FLAG */,
     BACK_FLAG, PLAY_FLAG,
