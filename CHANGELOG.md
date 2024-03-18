@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.10
+
+### Added
+- Added bitrate presets for '120 FPS' frame rate option
+- Added GitHub Action for automated Docker image publishing
+
+### Changed
+- Optimized Dockerfile using multi-stage build to reduce Docker image size
+
+### Fixed
+- Fixed gamepad button mapping issue with 'X' and 'Y' buttons
+
 ## v1.1.9
 
 ### Added
