@@ -199,7 +199,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
   m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
   m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H265_MAIN10;
-  m_StreamConfig.encryptionFlags = ENCFLG_AUDIO;
 
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);
