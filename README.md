@@ -127,35 +127,39 @@ Network Requirements −󠀭󠀭 To have a good experience, you need a mid to hi
 2. How can I find information about my TV model and the Moonlight app?
 - Using your remote or gamepad controller, follow these steps: `Settings` -> `About` -> `System information`.
 
-3. What is the best performance that can be achieved in Moonlight?
-- Based on the latest Samsung TVs specifications, the high-end devices are powerful enough to push streaming up to `4K 120 FPS HDR` with stereo sound.
-- Streaming performance may vary based on your host device, client device and network setup. So, it is recommended that you adjust the streaming resolution, frame rate, bitrate, and other settings to achieve the best performance.
+3. How to find specifications and video capabilities for my TV?
+- To learn more about your TV's specifications and capabilities, such as supported resolution, frame rate, bit rate, audio and video codecs and their limitations. You can refer to the official [Samsung TV specifications](https://developer.samsung.com/smarttv/develop/specifications/media-specifications/2020-tv-video-specifications.html) and based on the [TV model groups](https://developer.samsung.com/smarttv/develop/specifications/tv-model-groups.html) you can find the model and year of your TV.
+- You will then be able to find all the necessary information about your TV's specifications and capabilities, which will help you set the right settings in the Moonlight app.
 
-4. What video codecs are supported in Moonlight?
-- Most common video codecs such as `H.264` and `HEVC (H.265 - Main, Main10)` are supported.
-- In order to use HDR, then you are required to have an HDR10-capable device, a GPU that can encode HEVC Main 10, and HDR10-enabled game. Games that use DXGI/OS HDR also require an HDR display connected to your host PC.
+4. What is the best streaming performance achievable in Moonlight?
+- Based on the latest TV video specifications, the high-end devices are powerful enough to push streaming up to `4K 120 FPS HDR` with stereo sound.
+- Streaming performance may vary based on your host device, client device and network configuration. So, it is recommended that you adjust the streaming resolution, frame rate, bit rate, and other settings to achieve the desired performance.
 
-5. Are keyboard and mouse inputs supported in Moonlight?
+5. What video codecs are supported in Moonlight?
+- Most common video codecs such as `H.264`, `HEVC (H.265 - Main)` and `HEVC Main10` are supported.
+- In order to use HDR, then you are required to have an HDR10-capable device, a GPU that can encode HEVC Main10, and HDR10-enabled game. Games that use DXGI/OS HDR also require an HDR display connected to your host PC.
+
+6. Are keyboard and mouse inputs supported in Moonlight?
 - Yes, Moonlight can support any Bluetooth or USB-wired keyboard and mouse input.
 
-6. What are the supported gamepad controllers that I can use on my TV?
+7. What are the supported gamepad controllers that I can use on my TV?
 - You can use the most popular Bluetooth or USB-wired controllers such as `Xbox Series X/S`, `Xbox One`, `Xbox 360`, `Xbox Elite Wireless Series 2`, `Xbox Adaptive`, `PlayStation DualShock 4`, `PlayStation DualSense`, `Amazon Luna Wireless`, `NVIDIA Shield`, `Logitech F310/F510/F710`, `PowerA MOGA XP5-X Plus Bluetooth` and `Joytron CYVOX DX`.
 
-7. Why am I having some problems with unsupported gamepad controllers on my TV?
-- If you use any Bluetooth or USB 2.0 game controllers other than those mentioned in the previous question, then unfortunately you may encounter problems such as unresponsive Guide and D-PAD buttons, Y and X buttons switching, and other gamepad controller issues.
+8. Why am I having some problems with unsupported gamepad controllers on my TV?
+- If you use any Bluetooth or USB 2.0 controllers other than those mentioned in the previous question, then unfortunately due to the lack of a large number of unsupported gamepad controllers on Samsung TV, you may encounter such problems like unresponsive D-PAD and Guide button, Y and X button swapping, and other gamepad controller issues.
 - We advise you to use one of the supported gamepad controllers to enjoy the best possible gaming experience.
 
-8. How do I connect my Bluetooth gamepad controller to my TV?
+9. How do I connect my Bluetooth gamepad controller to my TV?
 - Using your remote, follow these steps: `Settings` -> `Connection` -> `External Device Manager` -> `Input Device Manager` -> `Bluetooth Device List` -> `Pair your controller`.
 
-9. Does the rumble feature work for gamepad controllers in Moonlight?
+10. Does the rumble feature work for gamepad controllers in Moonlight?
 - Yes, Moonlight supports any wired Bluetooth or USB gamepad controller that has a built-in vibration rumble motor.
 
-10. How can I test the functionality of the gamepad controller on my TV?
+11. How can I test the functionality of the gamepad controller on my TV?
 - To test the functionality of the gamepad controller on Samsung Smart TV, you can use the [GamepadChecker](https://developer.samsung.com/smarttv/accessory/gamepad.html) application.
 - Please visit the above link and follow all the instructions in the `Testing Gamepad Functionality` section to download and install the app on your Samsung Smart TV.
 
-11. How can I stop the streaming session in Moonlight?
+12. How can I stop the streaming session in Moonlight?
 - Stopping the streaming session can be done in three ways as follows:
     - If you are using the remote control, simply press the `Red` button.
     - If you are using a keyboard, then simultaneously press the key combination: `CTRL` + `ALT` + `SHIFT` + `Q` or alternatively you can press the `F1` key.
