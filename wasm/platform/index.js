@@ -1200,8 +1200,9 @@ function stopGame(host, callbackFunction) {
         return;
       }
       var appName = runningApp.title;
-      snackbarLog('Stopping ' + appName);
+      snackbarLog('Quitting ' + appName + '...');
       host.quitApp().then(function(ret2) {
+        snackbarLog("Successfully quit " + appName);
         host.refreshServerInfo().then(function(ret3) { // Refresh to show no app is currently running
           showApps(host);
           if (typeof(callbackFunction) === "function") callbackFunction();
