@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.11
+
+### Added
+- Added snackbar notification to warn user to restart app after restoring default settings
+
+### Changed
+- Updated the icon of the 'Quit Running App' button for improved appearance
+- Improved the snackbar notifications when quitting the running app to provide better clarity
+- Upgraded H.264 codec from High Level 4.2 to High Level 5.1 profile
+
+### Removed
+- Removed audio encryption flags from stream configurations
+
+### Fixed
+- Minor bug fixes and general improvements
+
 ## v1.1.10
 
 ### Added
