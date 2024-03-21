@@ -152,7 +152,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   {
     const char *mimetype = "video/mp4";                          // MIME-type: Video MP4 Container
     if (videoFormat & VIDEO_FORMAT_H264) {
-      mimetype = "video/mp4; codecs=\"avc1.64002a\"";            // Video Codec: H.264 High Level 4.2 Profile
+      mimetype = "video/mp4; codecs=\"avc1.640033\"";            // Video Codec: H.264 High Level 5.1 Profile
     } else if (videoFormat & VIDEO_FORMAT_H265) {
       mimetype = "video/mp4; codecs=\"hev1.1.6.L153.B0\"";       // Video Codec: HEVC Main Level 5.1 Profile
     } else if (videoFormat & VIDEO_FORMAT_H265_MAIN10) {
