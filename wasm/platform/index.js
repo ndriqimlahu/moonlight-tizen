@@ -636,6 +636,8 @@ function restoreDefaultsSettingsWithConfirmation() {
     isDialogOpen = false;
     Navigation.pop();
     document.getElementById('restoreDefaultsBtn').focus();
+    // Notify the user to restart the application
+    setTimeout(() => snackbarLog("Restart the application for the changes to take effect"), 1500);
   });
 }
 
