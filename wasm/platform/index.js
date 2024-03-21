@@ -990,13 +990,11 @@ function startGame(host, appID) {
         host.getAppById(host.currentGame).then(function(currentApp) {
           var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
           var quitAppDialog = document.querySelector('#quitAppDialog');
-          document.getElementById('quitAppDialogText').innerHTML =
-            currentApp.title + ' is already running. Would you like to quit ' +
-            currentApp.title + '?';
+          document.getElementById('quitAppDialogText').innerHTML = currentApp.title + ' is already running. Would you like to quit ' + currentApp.title + '?';
           
           quitAppOverlay.style.display = 'flex';
           quitAppDialog.showModal();
-          Navigation.push(Views.CloseAppDialog);
+          Navigation.push(Views.QuitAppDialog);
           isDialogOpen = true;
 
           $('#cancelQuitApp').off('click');
@@ -1010,7 +1008,7 @@ function startGame(host, appID) {
 
           $('#continueQuitApp').off('click');
           $('#continueQuitApp').on('click', function() {
-            console.log('[index.js, startGame]', 'color: green;', 'Stopping game, and closing app dialog, and returning');
+            console.log('[index.js, startGame]', 'color: green;', 'Quitting game, and closing app dialog, and returning');
             stopGame(host, function() {
               // Please, don't infinite loop with recursion
               startGame(host, appID);
@@ -1159,7 +1157,7 @@ function stopGameWithConfirmation() {
       // Show the dialog and push the view
       quitAppOverlay.style.display = 'flex';
       quitAppDialog.showModal();
-      Navigation.push(Views.CloseAppDialog);
+      Navigation.push(Views.QuitAppDialog);
       isDialogOpen = true;
 
       $('#cancelQuitApp').off('click');
@@ -1174,7 +1172,7 @@ function stopGameWithConfirmation() {
 
       $('#continueQuitApp').off('click');
       $('#continueQuitApp').on('click', function() {
-        console.log('%c[index.js, stopGameWithConfirmation]', 'color:green;', 'Stopping game, and closing app dialog, and returning');
+        console.log('%c[index.js, stopGameWithConfirmation]', 'color:green;', 'Quitting game, and closing app dialog, and returning');
         stopGame(api);
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
@@ -1488,7 +1486,7 @@ function restoreDefaultsSettingsValues() {
   $('#selectResolution').text('1920 x 1080 (1080p)').data('value', defaultResolution);
   storeData('resolution', defaultResolution, null);
 
-  const defaultFramerate = 60;
+  const defaultFramerate = '60';
   $('#selectFramerate').text('60 FPS').data('value', defaultFramerate);
   storeData('frameRate', defaultFramerate, null);
 

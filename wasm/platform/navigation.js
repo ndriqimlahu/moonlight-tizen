@@ -211,7 +211,7 @@ const Views = {
       }
     },
     back: function() {
-      // Show the dialog and push the view
+      // Show the Terminate Moonlight dialog and push the view
       showTerminateMoonlightDialog();
     },
     enter: function() {
@@ -1036,7 +1036,7 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  CloseAppDialog: {
+  QuitAppDialog: {
     isActive: () => isDialogActive('quitAppDialog'),
     view: new ListView(() => [
       'continueQuitApp',

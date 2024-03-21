@@ -98,6 +98,7 @@ void MoonlightInstance::VideoTrackListener::OnTrackOpen() {
   ClLogMessage("VIDEO ElementaryMediaTrack::OnTrackOpen\n");
   std::unique_lock<std::mutex> lock(m_Instance->m_Mutex);
   m_Instance->m_VideoStarted = true;
+  LiRequestIdrFrame();
   m_Instance->m_EmssVideoStateChanged.notify_all();
 }
 
