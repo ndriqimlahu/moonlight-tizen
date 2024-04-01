@@ -26,6 +26,7 @@ function attachListeners() {
   $('#bitrateSlider').on('input', updateBitrateField);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $("#externalAudioSwitch").on('click', saveExternalAudio);
+  $('.codecMenu li').on('click', saveCodecMode);	
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
@@ -44,6 +45,7 @@ function attachListeners() {
   registerMenu('selectResolution', Views.SelectResolutionMenu);
   registerMenu('selectFramerate', Views.SelectFramerateMenu);
   registerMenu('selectBitrate', Views.SelectBitrateMenu);
+  registerMenu('selectCodec', Views.SelectCodecMenu);
 
   $(window).resize(fullscreenWasmModule);
 
@@ -1033,9 +1035,13 @@ function startGame(host, appID) {
       var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
       const optimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      var codecMode = $('#selectCodec').data('value').toString();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + optimizeGames + ":" + externalAudio + ":" + framePacing + ":" + audioSync + ":");
+
+      console.log('%c[index.js, startGame]', 'color:green;', 'startRequest:' + host.address + ":" + 
+        streamWidth + ":" + streamHeight + ":" + frameRate + ":" + bitrate + ":" + optimizeGames + ":" + 
+        externalAudio + ":" + codecMode + ":" + framePacing + ":" + audioSync + ":");
 
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
@@ -1061,7 +1067,7 @@ function startGame(host, appID) {
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
             bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim(), framePacing, audioSync
+            $root.find('sessionUrl0').text().trim(), codecMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color:green;', 'Failed to resume the app! Returned error was' + failedResumeApp);
@@ -1097,7 +1103,7 @@ function startGame(host, appID) {
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
           bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim(), framePacing, audioSync
+          $root.find('sessionUrl0').text().trim(), codecMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Failed to launch app width id: ' + appID + '\nReturned error was: ' + failedLaunchApp);
@@ -1462,6 +1468,12 @@ function saveExternalAudio() {
   }, 100);
 }
 
+function saveCodecMode() {
+  var chosenCodecMode = $(this).data('value');
+  $('#selectCodec').text($(this).text()).data('value', chosenCodecMode);
+  storeData('codecMode', chosenCodecMode, null);
+}
+
 function saveFramePacing() {
   // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
@@ -1502,6 +1514,10 @@ function restoreDefaultsSettingsValues() {
   const defaultExternalAudio = false;
   document.querySelector('#externalAudioBtn').MaterialSwitch.off();
   storeData('externalAudio', defaultExternalAudio, null);
+
+  const defaultCodecMode = '0x0001';
+  $('#selectCodec').text('H.264').data('value', defaultCodecMode);
+  storeData('codecMode', defaultCodecMode, null);
 
   const defaultFramePacing = false;
   document.querySelector('#framePacingBtn').MaterialSwitch.off();
@@ -1592,6 +1608,17 @@ function loadUserDataCb() {
       document.querySelector('#externalAudioBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#externalAudioBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('load stored codecMode prefs');
+  getData('codecMode', function(previousValue) {
+    if (previousValue.codecMode != null) {
+      $('.codecMenu li').each(function() {
+        if ($(this).data('value') === previousValue.codecMode) {
+          $('#selectCodec').text($(this).text()).data('value', previousValue.codecMode);
+        }
+      });
     }
   });
 
