@@ -518,22 +518,23 @@ body {
     background-color: #404354;
     border-radius: 6px;
 }
-#pairingDialogText, #deleteHostDialogText, #supportDialogText,
-#restoreDefaultsDialogText, #quitAppDialogText, #terminateMoonlightDialogText {
+#pairingDialogText, #deleteHostDialogText, #supportDialogText, #restoreDefaultsDialogText,
+#restartAppDialogText, #quitAppDialogText, #terminateMoonlightDialogText {
     font-size: 1.2rem;
 }
 #continueAddHost, #cancelAddHost, #continueDeleteHost, #cancelDeleteHost,
-#continueRestoreDefaults, #cancelRestoreDefaults, #continueQuitApp, #cancelQuitApp,
-#continueTerminateMoonlight, #cancelTerminateMoonlight {
+#continueRestoreDefaults, #cancelRestoreDefaults, #continueRestartApp, #cancelRestartApp,
+#continueQuitApp, #cancelQuitApp, #continueTerminateMoonlight, #cancelTerminateMoonlight {
     width: 48%;
 }
 #cancelAddHost, #cancelPairingDialog, #cancelDeleteHost, #closeSupportDialog,
-#cancelRestoreDefaults, #cancelQuitApp, #cancelTerminateMoonlight {
+#cancelRestoreDefaults, #cancelRestartApp, #cancelQuitApp, #cancelTerminateMoonlight {
     margin: 0 10px 20px 0;
 }
 #continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost, #cancelDeleteHost,
 #closeSupportDialog, #restoreDefaultsBtn, #continueRestoreDefaults, #cancelRestoreDefaults,
-#quitRunningAppBtn, #continueQuitApp, #cancelQuitApp, #continueTerminateMoonlight, #cancelTerminateMoonlight {
+#continueRestartApp, #cancelRestartApp, #quitRunningAppBtn, #continueQuitApp, #cancelQuitApp,
+#continueTerminateMoonlight, #cancelTerminateMoonlight {
     text-transform: uppercase;
 }
 .category.hovered, .category:hover, .category:focus, .mdl-switch.is-focused,
@@ -541,6 +542,7 @@ body {
 #cancelPairingDialog:hover, #cancelPairingDialog:focus, #continueDeleteHost:hover, #continueDeleteHost:focus,
 #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
 #continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover, #cancelRestoreDefaults:focus,
+#continueRestartApp:hover, #continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus,
 #continueQuitApp:hover, #continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #continueTerminateMoonlight:hover,
 #continueTerminateMoonlight:focus, #cancelTerminateMoonlight:hover, #cancelTerminateMoonlight:focus,
 #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,

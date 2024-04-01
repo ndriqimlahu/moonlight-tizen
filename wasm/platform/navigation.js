@@ -535,6 +535,47 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  RestartMoonlightDialog: {
+    view: new ListView(() => [
+      'continueRestartApp',
+      'cancelRestartApp']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {},
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueRestartApp').focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelRestartApp').focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('cancelRestartApp').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   BasicSettings: {
     view: new ListView(() => [
       'selectResolution',
