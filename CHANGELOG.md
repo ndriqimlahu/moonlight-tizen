@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.12
+
+### Added
+- Introduced a new 'Video codec' setting that allows selection of video codec
+- Implemented functionality to select, save, and initiate the stream with the preferred video codec
+- Introduced a new 'Restart Moonlight' dialog and its corresponding view
+- Implemented functionality for handling the 'Restart Moonlight' with confirmation dialog
+- Added a navigation view for interacting with the new 'Video codec' setting
+
 ## v1.1.11
 
 ### Added
