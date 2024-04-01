@@ -425,13 +425,13 @@ body {
     text-align: left;
 }
 #selectResolution, #selectFramerate, #selectBitrate,
-#removeAllHostsBtn, #exitAppBtn {
+#removeAllHostsBtn, #selectCodec, #exitAppBtn {
     font-size: 1.4em;
     text-indent: 36px;
 }
 #selectResolution, #selectFramerate, #selectBitrate,
 #optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn,
-#framePacingBtn, #audioSyncBtn, #exitAppBtn {
+#selectCodec, #framePacingBtn, #audioSyncBtn, #exitAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -457,10 +457,10 @@ body {
 #bitrateHighestValue {
     margin: 0 12px 0 -10px;
 }
-.resolutionMenu, .framerateMenu, .bitrateMenu, .mdl-menu__container {
+.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__container {
     width: 59.4% !important;
 }
-.resolutionMenu, .framerateMenu, .bitrateMenu, .mdl-menu__outline {
+.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__outline {
     width: 100% !important;
     top: 2.5px !important;
     border-radius: 3px;
@@ -547,8 +547,8 @@ body {
 #restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus,
 #selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus,
 #selectBitrate:hover, #selectBitrate:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus,
-#externalAudioBtn:hover, #externalAudioBtn:focus, #framePacingBtn:hover, #framePacingBtn:focus,
-#audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus {
+#externalAudioBtn:hover, #externalAudioBtn:focus, #selectCodec:hover, #selectCodec:focus,#framePacingBtn:hover,
+#framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 4px rgba(0, 163, 198, 1);
 }

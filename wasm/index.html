@@ -157,6 +157,21 @@
           </div>
           <div id="decoderSettings" class="settings-options">
             <div class="setting-option">
+              <label>Video codec:</label>
+              <span class="mdl-list__item-text-body">
+                - Increase for better video compression and quality or decrease to improve performance on lower-end devices.<br>
+                - HDR requires an HDR10-capable device, a GPU that can encode HEVC Main10, and HDR10-enabled game.
+              </span>
+              <div id="codecMenu">
+                <button type="button" id="selectCodec" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="0x0001">H.264</button>
+              </div>
+              <ul class="codecMenu mdl-menu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectCodec">
+                <li class="mdl-menu__item" data-value="0x0001">H.264</li>
+                <li class="mdl-menu__item" data-value="0x0100">HEVC</li>
+                <li class="mdl-menu__item" data-value="0x0200">HEVC Main10</li>
+              </ul>
+            </div>
+            <div class="setting-option">
               <label>Video frame pacing:</label>
               <div id="framePacingMenu">
                 <label id="framePacingBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="framePacingSwitch">
