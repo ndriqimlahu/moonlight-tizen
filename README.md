@@ -1,7 +1,7 @@
 # Moonlight for Samsung TV (Tizen OS)
 
 [![Project Status](https://img.shields.io/badge/project-actively_maintained-brightgreen?style=for-the-badge&logo=github)](#)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/docker-publish.yml?branch=master&style=for-the-badge&logo=github)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/docker-publish.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/docker-publish.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/docker-publish.yml)
 
 ## About
 
@@ -128,7 +128,7 @@ Network Requirements −󠀭󠀭 To have a good experience, you need a mid to hi
 - Using your remote or gamepad controller, follow these steps: `Settings` -> `About` -> `System information`.
 
 3. How to find specifications and video capabilities for my TV?
-- To learn more about your TV's specifications and capabilities, such as supported resolution, frame rate, bit rate, audio and video codecs and their limitations. You can refer to the official [Samsung TV specifications](https://developer.samsung.com/smarttv/develop/specifications/media-specifications/2020-tv-video-specifications.html) and based on the [TV model groups](https://developer.samsung.com/smarttv/develop/specifications/tv-model-groups.html) you can find the model and year of your TV.
+- To learn more about your TV's specifications and capabilities, such as supported resolution, frame rate, bit rate, video codecs and their limitations. You can refer to the official [Samsung TV specifications](https://developer.samsung.com/smarttv/develop/specifications/media-specifications/2020-tv-video-specifications.html) and based on the [TV model groups](https://developer.samsung.com/smarttv/develop/specifications/tv-model-groups.html) you can find the model and year of your TV.
 - You will then be able to find all the necessary information about your TV's specifications and capabilities, which will help you set the right settings in the Moonlight app.
 
 4. What is the best streaming performance achievable in Moonlight?
@@ -181,7 +181,7 @@ Also, if you liked the project or found it useful, don't forget to give the proj
 
 This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/LICENSE) file for more information.
 
-## Acknowledgements
+## Credits
 - Thanks to [Moonlight Developers](https://github.com/moonlight-stream/moonlight-chrome) for developing and maintaining Moonlight for Chrome OS.
 - Thanks to [Samsung Developers](https://github.com/SamsungDForum/moonlight-chrome) for adapting and implementing Moonlight for Tizen OS which is based on Chrome OS version.
 - Thanks to [jellyfin](https://github.com/jellyfin/jellyfin-tizen) and [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
