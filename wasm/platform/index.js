@@ -643,6 +643,44 @@ function restoreDefaultsSettingsWithConfirmation() {
   });
 }
 
+// Restart the application
+function restartApplication() {
+  window.location.reload(true);
+}
+
+// Show the Restart Moonlight dialog
+function showRestartMoonlightDialog() {
+  // Find the existing overlay and dialog elements
+  var restartAppDialogOverlay = document.querySelector('#restartAppDialogOverlay');
+  var restartAppDialog = document.querySelector('#restartAppDialog');
+
+  // Show the dialog and push the view
+  restartAppDialogOverlay.style.display = 'flex';
+  restartAppDialog.showModal();
+  Navigation.push(Views.RestartMoonlightDialog);
+  isDialogOpen = true;
+
+  // Close the dialog if the Cancel button is pressed
+  $('#cancelRestartApp').off('click');
+  $('#cancelRestartApp').on('click', function() {
+    restartAppDialogOverlay.style.display = 'none';
+    restartAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.up();
+  });
+
+  // Restart the application if the Restart button is pressed
+  $('#continueRestartApp').off('click');
+  $('#continueRestartApp').on('click', function() {
+    restartAppDialogOverlay.style.display = 'none';
+    restartAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    restartApplication();
+  });
+}
+
 // Show the Support dialog
 function showSupportDialog() {
   // Find the existing overlay and dialog elements
