@@ -824,6 +824,7 @@ const Views = {
   },
   DecoderSettings: {
     view: new ListView(() => [
+      'selectCodec',
       'framePacingBtn',
       'audioSyncBtn']),
     up: function() {
@@ -878,6 +879,51 @@ const Views = {
       if (navItem) {
         navItem.focus();
       }
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SelectCodecMenu: {
+    isActive: () => isPopupActive('codecMenu'),
+    view: new ListView(() => 
+      document.getElementById('codecMenu')
+      .parentNode.children[3].children[1].children),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+      document.getElementById('selectCodec').focus();
+      // Show the Restart Moonlight dialog and push the view
+      setTimeout(() => showRestartMoonlightDialog(), 1200);
+    },
+    accept: function() {
+      this.view.current().click();
+      Navigation.pop();
+      document.getElementById('selectCodec').focus();
+      // Show the Restart Moonlight dialog and push the view
+      setTimeout(() => showRestartMoonlightDialog(), 1200);
+    },
+    back: function() {
+      document.getElementById('selectCodec').click();
+      document.getElementById('selectCodec').focus();
     },
     enter: function() {
       mark(this.view.current());
