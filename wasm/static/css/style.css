@@ -163,10 +163,14 @@ body {
     display: none;
 }
 .mdl-snackbar {
+    color: #fff;
+    background-color: #3E4454;
+    box-shadow: 0 0 8px 4px rgba(0, 163, 198, 1);
+    border-radius: 6px 6px 0 0;
     min-width: 0px;
 }
 .mdl-snackbar__text {
-    padding: 14px 30px 14px 30px;
+    padding: 15px 30px 15px 30px;
     font-size: 16px;
 }
 #host-grid {
