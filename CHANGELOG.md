@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.13
+
+### Added
+- Expanded settings: Reintroduced '90 FPS' frame rate option
+- Added bitrate presets for '90 FPS' frame rate option
+
+### Changed
+- Improved visibility and readability of tooltips
+- Improved snackbar design for enhanced user experience
+
 ## v1.1.12
 
 ### Added
