@@ -1445,6 +1445,8 @@ function updateDefaultBitrate() {
       $('#bitrateSlider')[0].MaterialSlider.change('2');
     } else if (frameRate === "60") { // 480p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('4');
+    } else if (frameRate === "90") { // 480p, 90 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('5');
     } else if (frameRate === "120") { // 480p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('6');
     }
@@ -1453,6 +1455,8 @@ function updateDefaultBitrate() {
       $('#bitrateSlider')[0].MaterialSlider.change('5');
     } else if (frameRate === "60") { // 720p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('10');
+    } else if (frameRate === "90") { // 720p, 90 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('12');
     } else if (frameRate === "120") { // 720p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('15');
     }
@@ -1461,6 +1465,8 @@ function updateDefaultBitrate() {
       $('#bitrateSlider')[0].MaterialSlider.change('10');
     } else if (frameRate === "60") { // 1080p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('20');
+    } else if (frameRate === "90") { // 1080p, 90 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('25');
     } else if (frameRate === "120") { // 1080p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('30');
     }
@@ -1469,6 +1475,8 @@ function updateDefaultBitrate() {
       $('#bitrateSlider')[0].MaterialSlider.change('20');
     } else if (frameRate === "60") { // 1440p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('40');
+    } else if (frameRate === "90") { // 1440p, 90 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('50');
     } else if (frameRate === "120") { // 1440p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('60');
     }
@@ -1477,6 +1485,8 @@ function updateDefaultBitrate() {
       $('#bitrateSlider')[0].MaterialSlider.change('40');
     } else if (frameRate === "60") { // 2160p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('80');
+    } else if (frameRate === "90") { // 2160p, 90 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('100');
     } else if (frameRate === "120") { // 2160p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('120');
     }
