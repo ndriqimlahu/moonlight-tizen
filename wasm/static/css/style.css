@@ -50,7 +50,12 @@ body {
     text-indent: 40px;
 }
 .mdl-tooltip {
-    font-size: 14px;
+    color: #fff;
+    background-color: #3E4454;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
 }
 .mdl-button {
     color: #fff;
