@@ -853,7 +853,7 @@ function showApps(host) {
 
     // Show the main navigation after the loading screen is complete
     $('#main-navigation').children().show();
-    $('#main-navigation').css({'backgroundColor': '#2D3035', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+    $('#main-navigation').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
     // Show the game list section
     $("#game-grid").show();
@@ -929,7 +929,7 @@ function showApps(host) {
 
     // Show the main navigation after the loading screen is complete
     $('#main-navigation').children().show();
-    $('#main-navigation').css({'backgroundColor': '#2D3035', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+    $('#main-navigation').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
     console.error('%c[index.js, showApps]', 'Failed to get applist from host: ' + host.hostname, '\n Host object:', host, host.toString());
     var img = new Image();
