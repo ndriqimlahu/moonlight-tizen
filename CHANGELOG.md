@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.14
+
+### Added
+- Added a new 'Drop Down' icon for multi-select buttons
+
+### Changed
+- Adjusted the size of the 'Add Host' and 'Host Container' icons for better visibility
+- Changed the color of the 'Power Off' icon to white as the default
+- Enhanced the visual stylization application-wide
+
 ## v1.1.13
 
 ### Added
