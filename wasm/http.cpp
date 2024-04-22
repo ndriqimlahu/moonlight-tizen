@@ -94,6 +94,11 @@ MessageResult MoonlightInstance::HttpInit(std::string cert, std::string privateK
 }
 
 void MoonlightInstance::OpenUrl_private(int callbackId, std::string url, std::string ppk, bool binaryResponse) {
+  // For launch/resume requests, append the additional query parameters
+  if (url.find("/launch?") != std::string::npos || url.find("/resume?") != std::string::npos) {
+    url += LiGetLaunchUrlQueryParameters();
+  }
+  
   PHTTP_DATA data = http_create_data();
   int err;
 
