@@ -440,13 +440,13 @@ body {
     text-align: left;
 }
 #selectResolution, #selectFramerate, #selectBitrate,
-#removeAllHostsBtn, #selectCodec, #exitAppBtn {
+#removeAllHostsBtn, #selectCodec, #restartAppBtn, #exitAppBtn {
     font-size: 1.4em;
     text-indent: 36px;
 }
 #selectResolution, #selectFramerate, #selectBitrate,
 #optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn,
-#selectCodec, #framePacingBtn, #audioSyncBtn, #exitAppBtn {
+#selectCodec, #framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -529,14 +529,14 @@ body {
     white-space: pre-line;
     box-sizing: border-box;
 }
-#exitApplicationIcon {
+#restartApplicationIcon, #exitApplicationIcon {
     width: 35px;
     height: 35px;
     margin: 0 46px 2px 25em;
 	float: right;
 }
 #settingsBtn, #supportBtn, #goBackBtn, #optimizeGamesBtn, #externalAudioBtn,
-#removeAllHostsBtn, #framePacingBtn, #audioSyncBtn, #exitAppBtn {
+#removeAllHostsBtn, #framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
     background-color: #404354;
     border-radius: 6px;
 }
@@ -573,7 +573,7 @@ body {
 #selectBitrate:hover, #selectBitrate:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus,
 #externalAudioBtn:hover, #externalAudioBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus,
 #selectCodec:hover, #selectCodec:focus, #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
-#systemInfoBtn:hover, #systemInfoBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
+#systemInfoBtn:hover, #systemInfoBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 4px rgba(0, 163, 198, 1);
 }

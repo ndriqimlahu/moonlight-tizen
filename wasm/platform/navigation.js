@@ -935,6 +935,7 @@ const Views = {
   AboutSettings: {
     view: new ListView(() => [
       'systemInfoBtn',
+      'restartAppBtn',
       'exitAppBtn']),
     up: function() {
       clearTimeout(navigationTimer);
