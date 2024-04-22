@@ -404,29 +404,29 @@ NvHTTP.prototype = {
   // Three layers of response time are possible: memory cached, storage cached, and streamed (host sends binary over the network)
   getBoxArt: function(appId) {
     return new Promise((resolve, reject) => {
-        sendMessage('openUrl', [
-          this._baseUrlHttps +
-          '/appasset?' + this._buildUidStr() +
-          '&appid=' + appId +
-          '&AssetType=2&AssetIdx=0',
-          this.ppkstr,
-          true
-        ]).then((boxArtBuffer) => {
-          var reader = new FileReader();
-          reader.onloadend = function() {
-            var obj = {};
-            obj['boxart-' + appId] = this.result;
-            console.log('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'Returning network-fetched box art');
-            resolve(this.result);
-          }
-          reader.readAsDataURL(new Blob([boxArtBuffer], {
-            type: "image/png"
-          }));
-        }, (error) => {
-          console.error('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'Box-art request failed!', error);
-          reject(error);
-          return;
-        });
+      sendMessage('openUrl', [
+        this._baseUrlHttps +
+        '/appasset?' + this._buildUidStr() +
+        '&appid=' + appId +
+        '&AssetType=2&AssetIdx=0',
+        this.ppkstr,
+        true
+      ]).then((boxArtBuffer) => {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          var obj = {};
+          obj['boxart-' + appId] = this.result;
+          console.log('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'Returning network-fetched box art');
+          resolve(this.result);
+        }
+        reader.readAsDataURL(new Blob([boxArtBuffer], {
+          type: "image/png"
+        }));
+      }, (error) => {
+        console.error('%c[utils.js, utils.js,  getBoxArt]', 'color: gray;', 'Box-art request failed!', error);
+        reject(error);
+        return;
+      });
     });
   },
 
@@ -481,9 +481,9 @@ NvHTTP.prototype = {
 
   pair: function(randomNumber) {
     return this.refreshServerInfo().then(function() {
-      if (this.paired && this.ppkstr)
+      if (this.paired && this.ppkstr) {
         return true;
-
+      }
       return sendMessage('pair', [this.serverMajorVersion.toString(), this.address, randomNumber]).then(function(ppkstr) {
         this.ppkstr = ppkstr;
         return sendMessage('openUrl', [this._baseUrlHttps + '/pair?uniqueid=' + this.clientUid + '&devicename=roth&updateState=1&phrase=pairchallenge', this.ppkstr, false]).then(function(ret) {

@@ -233,7 +233,7 @@ body {
 #host-grid .mdl-card__title {
     padding: 0;
 }
-#host-grid .mdl-card__title .mdl-card__title-text {
+#host-grid .host-title {
     background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
     padding: 10px 15px;

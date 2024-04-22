@@ -26,10 +26,10 @@ function attachListeners() {
   $('#bitrateSlider').on('input', updateBitrateField);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $("#externalAudioSwitch").on('click', saveExternalAudio);
+  $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
   $('.codecMenu li').on('click', saveCodecMode);	
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
-  $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
   $('#restartAppBtn').on('click', restartApplication);
   $('#exitAppBtn').on('click', exitApplication);
 
@@ -167,7 +167,6 @@ function beginBackgroundPollingOfHost(host) {
       } else {
         el.classList.add('host-cell-inactive');
       }
-
       // Now start background polling
       activePolls[host.serverUid] = window.setInterval(function() {
         // Every 5 seconds, poll at the address we know it was live at
@@ -199,7 +198,7 @@ function snackbarLog(givenMessage) {
 }
 
 function snackbarLogLong(givenMessage) {
-  console.log('%c[index.js, snackbarLog]', 'color: green;', givenMessage);
+  console.log('%c[index.js, snackbarLogLong]', 'color: green;', givenMessage);
   var data = {
     message: givenMessage,
     timeout: 5000
@@ -244,14 +243,19 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     }
 
     var randomNumber = String("0000" + (Math.random() * 10000 | 0)).slice(-4);
+
+    // Find the existing overlay and dialog elements
     var pairingOverlay = document.querySelector('#pairingDialogOverlay');
     var pairingDialog = document.querySelector('#pairingDialog');
     $('#pairingDialogText').html('Please enter the following PIN on the target PC:  ' + randomNumber + '<br><br>If your host PC is running Sunshine (all GPUs), navigate to the Sunshine Web UI to enter the PIN.<br><br>Alternatively, if your host PC has NVIDIA GameStream (NVIDIA-only), navigate to the GeForce Experience to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
+    
+    // Show the dialog and push the view
     pairingOverlay.style.display = 'flex';
     pairingDialog.showModal();
     Navigation.push(Views.PairingDialog);
     isDialogOpen = true;
 
+    // Cancel the operation if the Cancel button is pressed
     $('#cancelPairingDialog').off('click');
     $('#cancelPairingDialog').on('click', function() {
       pairingOverlay.style.display = 'none';
@@ -263,6 +267,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     console.log('%c[index.js]', 'color: green;', 'Sending pairing request to ' + nvhttpHost.hostname + ' with PIN: ' + randomNumber);
     nvhttpHost.pair(randomNumber).then(function() {
       snackbarLog('Pairing successful');
+      // Close the dialog if the pairing was successful
       pairingOverlay.style.display = 'none';
       pairingDialog.close();
       isDialogOpen = false;
@@ -312,14 +317,17 @@ function hostChosen(host) {
 // If the `+` was selected on the host grid, then
 // give the user a dialog to input connection details for the PC
 function addHost() {
+  // Find the existing overlay and dialog elements
   var addHostOverlay = document.querySelector('#addHostDialogOverlay');
   var addHostDialog = document.querySelector('#addHostDialog');
+  
+  // Show the dialog and push the view
   addHostOverlay.style.display = 'flex';
   addHostDialog.showModal();
   Navigation.push(Views.AddHostDialog);
   isDialogOpen = true;
 
-  // Drop the dialog if they cancel
+  // Cancel the operation if the Cancel button is pressed
   $('#cancelAddHost').off('click');
   $('#cancelAddHost').on('click', function() {
     addHostOverlay.style.display = 'none';
@@ -327,28 +335,27 @@ function addHost() {
     isDialogOpen = false;
     Navigation.pop();
     // Clear the input field after unsuccessful processing
-    $('#dialogInputHost').val('');
+    $('#enterHostIpAddress').val('');
   });
 
-  // Try to pair if they continue
+  // Send a pair request if the Continue button is pressed
   $('#continueAddHost').off('click');
   $('#continueAddHost').on('click', function() {
-    var inputHost = $('#dialogInputHost').val();
+    var inputHost = $('#enterHostIpAddress').val();
     var _nvhttpHost = new NvHTTP(inputHost, myUniqueid, inputHost);
 
     _nvhttpHost.refreshServerInfoAtAddress(inputHost).then(function(success) {
+      // Close the dialog if the user has provided the IP address
       addHostOverlay.style.display = 'none';
       addHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
-
       // Check if we already have record of this host. If so,
       // we'll need the PPK string to ensure our pairing status is accurate.
       if (hosts[_nvhttpHost.serverUid] != null) {
         // Update the addresses
         hosts[_nvhttpHost.serverUid].address = _nvhttpHost.address;
         hosts[_nvhttpHost.serverUid].userEnteredAddress = _nvhttpHost.userEnteredAddress;
-
         // Use the host in the array directly to ensure the PPK propagates after pairing
         pairTo(hosts[_nvhttpHost.serverUid], function() {
           saveHosts();
@@ -361,9 +368,8 @@ function addHost() {
           saveHosts();
         });
       }
-      
       // Clear the input field after successful processing
-      $('#dialogInputHost').val('');
+      $('#enterHostIpAddress').val('');
     }.bind(this),
     function(failure) {
       snackbarLog('Failed to connect to ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
@@ -385,7 +391,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
     id: 'hostgrid-' + host.serverUid
   });
   $(cell).prepend($("<h2>", {
-    class: "mdl-card__title-text",
+    class: "host-title mdl-card__title-text",
     html: host.hostname
   }));
   var removalButton = $("<div>", {
@@ -425,8 +431,7 @@ function removeClicked(host) {
   // Find the existing overlay and dialog elements
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
   var deleteHostDialog = document.querySelector('#deleteHostDialog');
-  document.getElementById('deleteHostDialogText').innerHTML =
-    ' Are you sure you want to delete ' + host.hostname + '?';
+  document.getElementById('deleteHostDialogText').innerHTML = ' Are you sure you want to delete ' + host.hostname + '?';
 
   // Show the dialog and push the view
   deleteHostOverlay.style.display = 'flex';
@@ -434,6 +439,7 @@ function removeClicked(host) {
   Navigation.push(Views.DeleteHostDialog);
   isDialogOpen = true;
 
+  // Cancel the operation if the Cancel button is pressed
   $('#cancelDeleteHost').off('click');
   $('#cancelDeleteHost').on('click', function() {
     deleteHostOverlay.style.display = 'none';
@@ -442,13 +448,15 @@ function removeClicked(host) {
     Navigation.pop();
   });
 
+  // Remove the specific host if the Continue button is pressed
   // locally remove the hostname/ip from the saved `hosts` array
   // NOTE: this does not make the host forget the pairing to us
   // This means we can re-add the host, and will still be paired
   $('#continueDeleteHost').off('click');
   $('#continueDeleteHost').on('click', function() {
+    // Remove the host container from the grid
     $('#host-container-' + host.serverUid).remove();
-    // Remove the host from the array
+    // Remove the host from the hosts object
     delete hosts[host.serverUid];
     // Save the updated hosts
     saveHosts();
@@ -470,8 +478,7 @@ function removeAllHostsWithConfirmation() {
     // Find the existing overlay and dialog elements
     var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
     var deleteHostDialog = document.querySelector('#deleteHostDialog');
-    document.getElementById('deleteHostDialogText').innerHTML =
-      ' Are you sure you want to delete all hosts?';
+    document.getElementById('deleteHostDialogText').innerHTML = ' Are you sure you want to delete all hosts?';
     
     // Show the dialog and push the view
     deleteHostOverlay.style.display = 'flex';
@@ -479,6 +486,7 @@ function removeAllHostsWithConfirmation() {
     Navigation.push(Views.DeleteHostDialog);
     isDialogOpen = true;
   
+    // Cancel the operation if the Cancel button is pressed
     $('#cancelDeleteHost').off('click');
     $('#cancelDeleteHost').on('click', function() {
       deleteHostOverlay.style.display = 'none';
@@ -488,14 +496,16 @@ function removeAllHostsWithConfirmation() {
       document.getElementById('removeAllHostsBtn').focus();
     });
   
+    // Remove all existing hosts if the Continue button is pressed
     $('#continueDeleteHost').off('click');
     $('#continueDeleteHost').on('click', function() {
       // Iterate through all hosts and remove them
       for (var serverUid in hosts) {
         if (hosts.hasOwnProperty(serverUid)) {
           var host = hosts[serverUid];
+          // Remove the host container from the grid
           $('#host-container-' + host.serverUid).remove();
-          // Remove the host from the array
+          // Remove the host from the hosts object
           delete hosts[host.serverUid];
           // Save the updated hosts (empty hosts object)
           saveHosts();
@@ -526,7 +536,7 @@ function showSettingsContainer() {
 
 // Handle the click event on the settings categories and open the corresponding views
 function handleCategoryClick(category) {
-  // Hide the right settings pane which includes settings options
+  // Hide the right settings panel which includes settings options
   const settingsOptions = document.querySelectorAll('.settings-options');
   settingsOptions.forEach(function (settingsOption) {
     settingsOption.style.display = 'none';
@@ -538,7 +548,7 @@ function handleCategoryClick(category) {
     settingsCategory.classList.remove('selected');
   });
 
-  // Show the right settings pane when the category item is clicked
+  // Show the right settings panel when the category item is clicked
   const currentItem = document.getElementById(category);
   if (currentItem) {
     currentItem.style.display = 'block';
@@ -644,6 +654,29 @@ function restoreDefaultsSettingsWithConfirmation() {
   });
 }
 
+// Show the Support dialog
+function showSupportDialog() {
+  // Find the existing overlay and dialog elements
+  var supportDialogOverlay = document.querySelector('#supportDialogOverlay');
+  var supportDialog = document.querySelector('#supportDialog');
+
+  // Show the dialog and push the view
+  supportDialogOverlay.style.display = 'flex';
+  supportDialog.showModal();
+  Navigation.push(Views.SupportDialog);
+  isDialogOpen = true;
+
+  // Close the dialog if the Close button is pressed
+  $('#closeSupportDialog').off('click');
+  $('#closeSupportDialog').on('click', function() {
+    supportDialogOverlay.style.display = 'none';
+    supportDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    document.getElementById('supportBtn').focus();
+  });
+}
+
 // Restart the application
 function restartApplication() {
   window.location.reload(true);
@@ -661,7 +694,7 @@ function showRestartMoonlightDialog() {
   Navigation.push(Views.RestartMoonlightDialog);
   isDialogOpen = true;
 
-  // Close the dialog if the Cancel button is pressed
+  // Cancel the operation if the Cancel button is pressed
   $('#cancelRestartApp').off('click');
   $('#cancelRestartApp').on('click', function() {
     restartAppDialogOverlay.style.display = 'none';
@@ -682,99 +715,76 @@ function showRestartMoonlightDialog() {
   });
 }
 
-// Show the Support dialog
-function showSupportDialog() {
-  // Find the existing overlay and dialog elements
-  var supportDialogOverlay = document.querySelector('#supportDialogOverlay');
-  var supportDialog = document.querySelector('#supportDialog');
-
-  // Show the dialog and push the view
-  supportDialogOverlay.style.display = 'flex';
-  supportDialog.showModal();
-  Navigation.push(Views.SupportDialog);
-  isDialogOpen = true;
-
-  // Close the dialog if the Close button is pressed
-  $('#closeSupportDialog').off('click');
-    $('#closeSupportDialog').on('click', function() {
-      supportDialogOverlay.style.display = 'none';
-      supportDialog.close();
-      isDialogOpen = false;
-      Navigation.pop();
-      document.getElementById('supportBtn').focus();
-  });
-}
-
-// Terminate the application with one click
+// Exit the application
 function exitApplication() {
   var exitApplication = tizen.application.getCurrentApplication();
   exitApplication.exit();
 }
 
-// Show the Terminate Moonlight dialog
-function showTerminateMoonlightDialog() {
+// Show the Exit Application dialog
+function showExitMoonlightDialog() {
   // Find the existing overlay and dialog elements
-  var terminateMoonlightOverlay = document.querySelector('#terminateMoonlightDialogOverlay');
-  var terminateMoonlightDialog = document.querySelector('#terminateMoonlightDialog');
+  var exitAppOverlay = document.querySelector('#exitAppDialogOverlay');
+  var exitAppDialog = document.querySelector('#exitAppDialog');
 
-  if (!terminateMoonlightOverlay && !terminateMoonlightDialog) {
+  if (!exitAppOverlay && !exitAppDialog) {
     // Check if the dialog element doesn't exist, create it
-    var terminateMoonlightDialog = document.createElement('dialog');
-    terminateMoonlightDialog.id = 'terminateMoonlightDialog';
-    terminateMoonlightDialog.classList.add('mdl-dialog');
+    var exitAppDialog = document.createElement('dialog');
+    exitAppDialog.id = 'exitAppDialog';
+    exitAppDialog.classList.add('mdl-dialog');
 
     // Create the dialog content
-    terminateMoonlightDialog.innerHTML = `
-      <h3 id="terminateMoonlightDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
+    exitAppDialog.innerHTML = `
+      <h3 id="exitAppDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
       <div class="mdl-dialog__content">
-        <p id="terminateMoonlightDialogText">
+        <p id="exitAppDialogText">
           Are you sure you want to exit Moonlight?
         </p>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="button" id="cancelTerminateMoonlight" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
-        <button type="button" id="continueTerminateMoonlight" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Exit</button>
+        <button type="button" id="cancelExitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
+        <button type="button" id="continueExitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Exit</button>
       </div>
     `;
 
     // Create the dialog overlay
-    terminateMoonlightOverlay = document.createElement('div');
-    terminateMoonlightOverlay.id = 'terminateMoonlightDialogOverlay';
-    terminateMoonlightOverlay.classList.add('dialog-overlay');
-    terminateMoonlightOverlay.appendChild(terminateMoonlightDialog);
+    exitAppOverlay = document.createElement('div');
+    exitAppOverlay.id = 'exitAppDialogOverlay';
+    exitAppOverlay.classList.add('dialog-overlay');
+    exitAppOverlay.appendChild(exitAppDialog);
 
     // Append the dialog overlay with dialog content to the DOM
-    document.body.appendChild(terminateMoonlightOverlay);
+    document.body.appendChild(exitAppOverlay);
 
     // Initialize the dialog
-    componentHandler.upgradeElements(terminateMoonlightDialog);
+    componentHandler.upgradeElements(exitAppDialog);
   }
 
   // Show the dialog and push the view
-  terminateMoonlightOverlay.style.display = 'flex';
-  terminateMoonlightDialog.showModal();
-  Navigation.push(Views.TerminateMoonlightDialog);
+  exitAppOverlay.style.display = 'flex';
+  exitAppDialog.showModal();
+  Navigation.push(Views.ExitMoonlightDialog);
   isDialogOpen = true;
 
-  // Close the dialog if the Cancel button is pressed
-  $('#cancelTerminateMoonlight').off('click');
-  $('#cancelTerminateMoonlight').on('click', function() {
-    terminateMoonlightOverlay.style.display = 'none';
-    terminateMoonlightDialog.close();
+  // Cancel the operation if the Cancel button is pressed
+  $('#cancelExitApp').off('click');
+  $('#cancelExitApp').on('click', function() {
+    exitAppOverlay.style.display = 'none';
+    exitAppDialog.close();
     // Remove the dialog overlay and dialog content from the DOM if the dialog is open
-    document.body.removeChild(terminateMoonlightOverlay);
+    document.body.removeChild(exitAppOverlay);
     isDialogOpen = false;
     Navigation.pop();
     Navigation.change(Views.Hosts);
   });
 
-  // Terminate the application if the Exit button is pressed
-  $('#continueTerminateMoonlight').off('click');
-  $('#continueTerminateMoonlight').on('click', function() {
-    terminateMoonlightOverlay.style.display = 'none';
-    terminateMoonlightDialog.close();
+  // Exit the application if the Exit button is pressed
+  $('#continueExitApp').off('click');
+  $('#continueExitApp').on('click', function() {
+    exitAppOverlay.style.display = 'none';
+    exitAppDialog.close();
     // Remove the dialog overlay and dialog content from the DOM if the dialog is open
-    document.body.removeChild(terminateMoonlightOverlay);
+    document.body.removeChild(exitAppOverlay);
     isDialogOpen = false;
     Navigation.pop();
     exitApplication();
@@ -882,7 +892,6 @@ function showApps(host) {
         gameCard.setAttribute('role', 'link');
         gameCard.tabIndex = 0;
         gameCard.title = app.title;
-
         gameCard.innerHTML = `<div class="game-title">${app.title}</div>`;
 
         gameCard.addEventListener('click', e => {
@@ -989,8 +998,8 @@ function showSettingsMode() {
 
 // Set the layout to the initial mode when you open Apps view
 function showAppsMode() {
-  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps" mode');
-  $("#navigation-title").html("Apps");
+  console.log('%c[index.js]', 'color: green;', 'Entering "Show apps and games" mode');
+  $("#navigation-title").html("Apps & Games");
   $("#navigation-logo").show();
   $("#main-navigation").show();
   $('#goBackBtn').show();
@@ -1010,7 +1019,7 @@ function showAppsMode() {
 
   isInGame = false;
 
-  // FIXME: We want to eventually poll on the app screen but we can't now
+  // FIXME: We want to eventually poll on the app screen, but we can't now
   // because it slows down box art loading and we don't update the UI live anyway.
   stopPollingHosts();
   Navigation.start();
@@ -1029,15 +1038,18 @@ function startGame(host, appID) {
     host.getAppById(appID).then(function(appToStart) {
       if (host.currentGame != 0 && host.currentGame != appID) {
         host.getAppById(host.currentGame).then(function(currentApp) {
+          // Find the existing overlay and dialog elements
           var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
           var quitAppDialog = document.querySelector('#quitAppDialog');
           document.getElementById('quitAppDialogText').innerHTML = currentApp.title + ' is already running. Would you like to quit ' + currentApp.title + '?';
           
+          // Show the dialog and push the view
           quitAppOverlay.style.display = 'flex';
           quitAppDialog.showModal();
           Navigation.push(Views.QuitAppDialog);
           isDialogOpen = true;
 
+          // Cancel the operation if the Cancel button is pressed
           $('#cancelQuitApp').off('click');
           $('#cancelQuitApp').on('click', function() {
             quitAppOverlay.style.display = 'none';
@@ -1047,6 +1059,7 @@ function startGame(host, appID) {
             console.log('[index.js, startGame]', 'color: green;', 'Closing app dialog, and returning');
           });
 
+          // Quit the running app if the Continue button is pressed
           $('#continueQuitApp').off('click');
           $('#continueQuitApp').on('click', function() {
             console.log('[index.js, startGame]', 'color: green;', 'Quitting game, and closing app dialog, and returning');
@@ -1195,9 +1208,7 @@ function stopGameWithConfirmation() {
       // Find the existing overlay and dialog elements
       var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
       var quitAppDialog = document.querySelector('#quitAppDialog');
-      document.getElementById('quitAppDialogText').innerHTML =
-        ' Are you sure you want to quit ' +
-        currentGame.title + '?  All unsaved data will be lost.';
+      document.getElementById('quitAppDialogText').innerHTML = ' Are you sure you want to quit ' + currentGame.title + '?  All unsaved data will be lost.';
       
       // Show the dialog and push the view
       quitAppOverlay.style.display = 'flex';
@@ -1205,6 +1216,7 @@ function stopGameWithConfirmation() {
       Navigation.push(Views.QuitAppDialog);
       isDialogOpen = true;
 
+      // Cancel the operation if the Cancel button is pressed
       $('#cancelQuitApp').off('click');
       $('#cancelQuitApp').on('click', function() {
         console.log('%c[index.js, stopGameWithConfirmation]', 'color:green;', 'Closing app dialog, and returning');
@@ -1215,6 +1227,7 @@ function stopGameWithConfirmation() {
         document.getElementById('quitRunningAppBtn').focus();
       });
 
+      // Quit the running app if the Continue button is pressed
       $('#continueQuitApp').off('click');
       $('#continueQuitApp').on('click', function() {
         console.log('%c[index.js, stopGameWithConfirmation]', 'color:green;', 'Quitting game, and closing app dialog, and returning');
@@ -1350,8 +1363,7 @@ function getData(key, callbackFunction) {
         let value = null;
         if (readRequest.result) {
           value = JSON.parse(readRequest.result);
-          console.log('Parsed value');
-          console.log(value);
+          console.log('Parsed value: ' + value);
         }
 
         callCb(key, value, callbackFunction);
@@ -1491,7 +1503,8 @@ function updateDefaultBitrate() {
     } else if (frameRate === "120") { // 2160p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('120');
     }
-  } else { // Unrecognized option. In case someone screws with the JS to add custom resolutions
+  } else {
+    // Unrecognized option! In case someone screws with the JS to add custom resolutions.
     $('#bitrateSlider')[0].MaterialSlider.change('20');
   }
 
@@ -1500,7 +1513,6 @@ function updateDefaultBitrate() {
 }
 
 function saveOptimizeGames() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
     const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
     console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state : ' + chosenOptimizeGames);
@@ -1509,7 +1521,6 @@ function saveOptimizeGames() {
 }
 
 function saveExternalAudio() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
     const chosenExternalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked');
     console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state : ' + chosenExternalAudio);
@@ -1524,7 +1535,6 @@ function saveCodecMode() {
 }
 
 function saveFramePacing() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
     const chosenFramePacing = $("#framePacingSwitch").parent().hasClass('is-checked');
     console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state : ' + chosenFramePacing);
@@ -1533,7 +1543,6 @@ function saveFramePacing() {
 }
 
 function saveAudioSync() {
-  // MaterialDesignLight uses the mouseup trigger, so we give it some time to change the class name before checking the new state
   setTimeout(function() {
     const chosenAudioSync = $("#audioSyncSwitch").parent().hasClass('is-checked');
     console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state : ' + chosenAudioSync);

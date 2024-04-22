@@ -73,8 +73,7 @@ ServiceFinder.forEachAddress_ = function(callback) {
  */
 ServiceFinder.bindToAddress_ = function(address, callback) {
   chrome.sockets.udp.create({}, function(createInfo) {
-    chrome.sockets.udp.bind(createInfo['socketId'], address, 0,
-        function(result) {
+    chrome.sockets.udp.bind(createInfo['socketId'], address, 0, function(result) {
       callback((result >= 0) ? createInfo['socketId'] : null);
     });
   });
@@ -171,8 +170,9 @@ ServiceFinder.prototype.broadcast_ = function(sock, address) {
 
   var raw = packet.serialize();
   chrome.sockets.udp.send(sock, raw, '224.0.0.251', 5353, function(sendInfo) {
-    if (sendInfo.resultCode < 0)
+    if (sendInfo.resultCode < 0) {
       this.callback_('Could not send data to:' + address);
+    }
   });
 };
 

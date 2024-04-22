@@ -153,9 +153,9 @@ DNSPacket.parse = function(buffer) {
   // Parse the QUESTION section.
   for (var i = 0; i < count['qd']; ++i) {
     var part = new DNSRecord(
-        consumer.name(),
-        consumer.short(),  // type
-        consumer.short()); // class
+      consumer.name(),
+      consumer.short(), // type
+      consumer.short()); // class
     packet.push('qd', part);
   }
 
@@ -163,11 +163,11 @@ DNSPacket.parse = function(buffer) {
   ['an', 'ns', 'ar'].forEach(function(section) {
     for (var i = 0; i < count[section]; ++i) {
       var part = new DNSRecord(
-          consumer.name(),
-          consumer.short(), // type
-          consumer.short(), // class
-          consumer.long(),  // ttl
-          consumer.slice(consumer.short()));
+        consumer.name(),
+        consumer.short(), // type
+        consumer.short(), // class
+        consumer.long(), // ttl
+        consumer.slice(consumer.short()));
       packet.push(section, part);
     }
   });
@@ -216,7 +216,7 @@ DNSPacket.prototype.serialize = function() {
       if (section != 'qd') {
         // TODO: implement .bytes()
         throw new Error('can\'t yet serialize non-QD records');
-//        out.long(rec.ttl).bytes(rec.data_);
+        // out.long(rec.ttl).bytes(rec.data_);
       }
     });
   }.bind(this));

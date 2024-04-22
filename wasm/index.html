@@ -49,13 +49,13 @@
       <div id="host-grid">
         <div id="addHostCell" class="add-host-card mdl-card mdl-shadow--4dp">
           <div id="addHostIcon" class="mdl-card__title mdl-card--expand" role="link" tabindex="0" aria-label="Add Host">
-            <h2 class="mdl-card__title-text">Add Host</h2>
+            <h2 class="host-title mdl-card__title-text">Add Host</h2>
           </div>
         </div>
       </div>
       <div id="settings-container" class="hide-container">
-        <!-- Left Pane: Categories -->
-        <div id="settings-left-pane">
+        <!-- Left Panel: Settings Categories -->
+        <div id="settings-left-panel">
           <div class="settings-categories">
             <div class="category" onclick="handleCategoryClick('basicSettings')" data-category="basicSettings">
               <i class="category-icons material-icons">tune</i>
@@ -75,8 +75,8 @@
             </div>
           </div>
         </div>
-        <!-- Right Pane: Options -->
-        <div id="settings-right-pane">
+        <!-- Right Panel: Settings Options -->
+        <div id="settings-right-panel">
           <div id="basicSettings" class="settings-options">
             <div class="setting-option">
               <label>Video resolution:</label>
@@ -150,7 +150,7 @@
               <label>Remove all hosts:</label>
               <div id="removeAllHostsMenu">
                 <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Remove All Hosts">
-                  Remove all existing hosts
+                  Remove all existing hosts from the container
                   <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
                 </button>
               </div>
@@ -195,7 +195,7 @@
             <div class="setting-option">
               <label>System information:</label>
               <div id="systemInfoMenu">
-                <button type="button" id="systemInfoBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="System Information">Loading...</button>
+                <button type="button" id="systemInfoBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="System Information">Loading system information...</button>
               </div>
             </div>
             <div class="setting-option">
@@ -211,8 +211,8 @@
               <label>Exit the application:</label>
               <div id="exitApplicationMenu">
                 <button type="button" id="exitAppBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Exit Application">
-                  Exit the Moonlight app
-                  <img src="static/res/ic_power_settings_off_48px.svg" id="exitApplicationIcon">
+                  Exit the Moonlight app immediately
+                  <img src="static/res/ic_power_off_48px.svg" id="exitApplicationIcon">
                 </button>
               </div>
             </div>
@@ -247,8 +247,8 @@
       <h3 id="addHostDialogTitle" class="mdl-dialog__title">Add Host</h3>
       <div class="mdl-dialog__content">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input type="text" id="dialogInputHost" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
-          <label class="mdl-textfield__label" for="dialogInputHost">IP Address of Host PC</label>
+          <input type="text" id="enterHostIpAddress" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
+          <label class="mdl-textfield__label" for="enterHostIpAddress">IP Address of Host PC</label>
         </div>
       </div>
       <div class="mdl-dialog__actions">
@@ -301,21 +301,6 @@
       </div>
     </dialog>
   </div>
-  <div id="restartAppDialogOverlay" class="dialog-overlay">
-    <dialog id="restartAppDialog" class="mdl-dialog">
-      <h3 id="restartAppDialogTitle" class="mdl-dialog__title">Restart Moonlight</h3>
-      <div class="mdl-dialog__content">
-        <p id="restartAppDialogText">
-          In order for your changes to take effect, a restart of the application is required.<br><br>
-          Would you like to proceed with the restart?
-        </p>
-      </div>
-      <div class="mdl-dialog__actions">
-        <button type="button" id="cancelRestartApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
-        <button type="button" id="continueRestartApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Restart</button>
-      </div>
-    </dialog>
-  </div>
   <div id="quitAppDialogOverlay" class="dialog-overlay">
     <dialog id="quitAppDialog" class="mdl-dialog">
       <h3 id="quitAppDialogTitle" class="mdl-dialog__title">Quit Running App</h3>
@@ -345,17 +330,32 @@
       </div>
     </dialog>
   </div>
-  <div id="terminateMoonlightDialogOverlay" class="dialog-overlay">
-    <dialog id="terminateMoonlightDialog" class="mdl-dialog">
-      <h3 id="terminateMoonlightDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
+  <div id="restartAppDialogOverlay" class="dialog-overlay">
+    <dialog id="restartAppDialog" class="mdl-dialog">
+      <h3 id="restartAppDialogTitle" class="mdl-dialog__title">Restart Moonlight</h3>
       <div class="mdl-dialog__content">
-        <p id="terminateMoonlightDialogText">
+        <p id="restartAppDialogText">
+          In order for your changes to take effect, a restart of the application is required.<br><br>
+          Would you like to proceed with the restart?
+        </p>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" id="cancelRestartApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
+        <button type="button" id="continueRestartApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Restart</button>
+      </div>
+    </dialog>
+  </div>
+  <div id="exitAppDialogOverlay" class="dialog-overlay">
+    <dialog id="exitAppDialog" class="mdl-dialog">
+      <h3 id="exitAppDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
+      <div class="mdl-dialog__content">
+        <p id="exitAppDialogText">
           Are you sure you want to exit Moonlight?
         </p>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="button" id="cancelTerminateMoonlight" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
-        <button type="button" id="continueTerminateMoonlight" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Exit</button>
+        <button type="button" id="cancelExitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
+        <button type="button" id="continueExitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Exit</button>
       </div>
     </dialog>
   </div>

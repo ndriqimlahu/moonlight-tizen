@@ -3,28 +3,28 @@ function remoteControllerHandler(e) {
 
   switch (keyCode) {
     case tvKey.KEY_UP:
-      // Navigate up
+      // Navigate in the up direction
       Navigation.up();
       break;
     case tvKey.KEY_DOWN:
-      // Navigate down
+      // Navigate in the down direction
       Navigation.down();
       break;
     case tvKey.KEY_LEFT:
-      // Navigate left
+      // Navigate in the left direction
       Navigation.left();
       break;
     case tvKey.KEY_RIGHT:
-      // Navigate right
+      // Navigate in the right direction
       Navigation.right();
       break;
     case tvKey.KEY_ENTER:
     case tvKey.KEY_REMOTE_ENTER:
-      // Select the item
+      // Select the current item
       Navigation.select();
       break;
     case tvKey.KEY_RETURN:
-      // Go back
+      // Go back or cancel the operation
       Navigation.back();
       break;
     case tvKey.KEY_VOLUME_UP:

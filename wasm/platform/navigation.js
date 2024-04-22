@@ -2,8 +2,23 @@ const hoveredClassName = 'hovered';
 let navigationTimer = null;
 const delayBetweenNavigation = 120; // 120ms (milliseconds)
 
-function unmarkElementById(id) {
-  unmarkElement(document.getElementById(id));
+function markElement(element) {
+  if (element) {
+    element.classList.add(hoveredClassName);
+    element.dispatchEvent(new Event('mouseenter'));
+  }
+}
+
+function markElementById(id) {
+  markElement(document.getElementById(id));
+}
+
+function mark(value) {
+  if (typeof value === 'string') {
+    markElementById(value);
+  } else if (typeof value === 'object') {
+    markElement(value);
+  }
 }
 
 function unmarkElement(element) {
@@ -13,30 +28,15 @@ function unmarkElement(element) {
   }
 }
 
+function unmarkElementById(id) {
+  unmarkElement(document.getElementById(id));
+}
+
 function unmark(value) {
   if (typeof value === 'string') {
     unmarkElementById(value);
   } else if (typeof value === 'object') {
     unmarkElement(value);
-  }
-}
-
-function markElementById(id) {
-  markElement(document.getElementById(id));
-}
-
-function markElement(element) {
-  if (element) {
-    element.classList.add(hoveredClassName);
-    element.dispatchEvent(new Event('mouseenter'));
-  }
-}
-
-function mark(value) {
-  if (typeof value === 'string') {
-    markElementById(value);
-  } else if (typeof value === 'object') {
-    markElement(value);
   }
 }
 
@@ -76,30 +76,30 @@ class ListView {
     return array[this.index];
   }
 
-  prevCategory() {
+  prevOption() {
     const array = this.func();
     if (this.index > 0) {
       unmark(array[this.index]);
       --this.index;
       mark(array[this.index]);
-      // Indicate that there are more categories
+      // Indicate that there are more options
       return true;
     } else {
-      // Indicate that there are no more categories
+      // Indicate that there are no more options
       return false;
     }
   }
 
-  nextCategory() {
+  nextOption() {
     const array = this.func();
     if (this.index < array.length - 1) {
       unmark(array[this.index]);
       ++this.index;
       mark(array[this.index]);
-      // Indicate that there are more categories
+      // Indicate that there are more options
       return true;
     } else {
-      // Indicate that there are no more categories
+      // Indicate that there are no more options
       return false;
     }
   }
@@ -211,8 +211,8 @@ const Views = {
       }
     },
     back: function() {
-      // Show the Terminate Moonlight dialog and push the view
-      showTerminateMoonlightDialog();
+      // Show the Exit Moonlight dialog and push the view
+      showExitMoonlightDialog();
     },
     enter: function() {
       mark(this.view.current());
@@ -275,13 +275,13 @@ const Views = {
   },
   AddHostDialog: {
     view: new ListView(() => [
-      'dialogInputHost',
+      'enterHostIpAddress',
       'continueAddHost',
       'cancelAddHost']),
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        document.getElementById('dialogInputHost').focus();
+        document.getElementById('enterHostIpAddress').focus();
       }, delayBetweenNavigation);
     },
     down: function() {
@@ -389,7 +389,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         // If there are more categories behind, then go to the previous category
-        if (this.view.prevCategory()) {
+        if (this.view.prevOption()) {
           document.getElementById(this.view.current()).focus();
         } else {
           // If there are no more categories, navigate to the SettingsNav view
@@ -406,7 +406,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         // If there are more categories after, then go to the next category
-        if (this.view.nextCategory()) {
+        if (this.view.nextOption()) {
           document.getElementById(this.view.current()).focus();
         }
       }, delayBetweenNavigation);
@@ -499,7 +499,6 @@ const Views = {
     },
   },
   RestoreDefaultsDialog: {
-    isActive: () => isDialogActive('restoreDefaultsDialog'),
     view: new ListView(() => [
       'continueRestoreDefaults',
       'cancelRestoreDefaults']),
@@ -527,47 +526,6 @@ const Views = {
     },
     back: function() {
       document.getElementById('cancelRestoreDefaults').click();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  RestartMoonlightDialog: {
-    view: new ListView(() => [
-      'continueRestartApp',
-      'cancelRestartApp']),
-    up: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
-    },
-    down: function() {},
-    left: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.prev();
-        document.getElementById('continueRestartApp').focus();
-      }, delayBetweenNavigation);
-    },
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        this.view.next();
-        document.getElementById('cancelRestartApp').focus();
-      }, delayBetweenNavigation);
-    },
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('cancelRestartApp').click();
     },
     enter: function() {
       mark(this.view.current());
@@ -992,33 +950,6 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  SupportDialog: {
-    view: new ListView(() => ['closeSupportDialog']),
-    up: function() {},
-    down: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById('closeSupportDialog').focus();
-      }, delayBetweenNavigation);
-    },
-    left: function() {},
-    right: function() {},
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('closeSupportDialog').click();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
   Apps: {
     view: new ListView(() => document.getElementById('game-grid').children),
     up: function() {
@@ -1125,7 +1056,6 @@ const Views = {
     },
   },
   QuitAppDialog: {
-    isActive: () => isDialogActive('quitAppDialog'),
     view: new ListView(() => [
       'continueQuitApp',
       'cancelQuitApp']),
@@ -1161,24 +1091,56 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  TerminateMoonlightDialog: {
-    view: new ListView(() => [
-      'continueTerminateMoonlight',
-      'cancelTerminateMoonlight']),
+  SupportDialog: {
+    view: new ListView(() => ['closeSupportDialog']),
     up: function() {},
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('closeSupportDialog').focus();
+      }, delayBetweenNavigation);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeSupportDialog').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  RestartMoonlightDialog: {
+    view: new ListView(() => [
+      'continueRestartApp',
+      'cancelRestartApp']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, delayBetweenNavigation);
+    },
     down: function() {},
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
-        document.getElementById('continueTerminateMoonlight').focus();
+        document.getElementById('continueRestartApp').focus();
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
-        document.getElementById('cancelTerminateMoonlight').focus();
+        document.getElementById('cancelRestartApp').focus();
       }, delayBetweenNavigation);
     },
     select: function() {
@@ -1188,7 +1150,43 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('cancelTerminateMoonlight').click();
+      document.getElementById('cancelRestartApp').click();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  ExitMoonlightDialog: {
+    view: new ListView(() => [
+      'continueExitApp',
+      'cancelExitApp']),
+    up: function() {},
+    down: function() {},
+    left: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.prev();
+        document.getElementById('continueExitApp').focus();
+      }, delayBetweenNavigation);
+    },
+    right: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        this.view.next();
+        document.getElementById('cancelExitApp').focus();
+      }, delayBetweenNavigation);
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('cancelExitApp').click();
     },
     enter: function() {
       mark(this.view.current());
