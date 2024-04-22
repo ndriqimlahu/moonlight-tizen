@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.15
+
+### Added
+- Added a new 'Restart' icon specifically for the 'Restart App' button
+- Introduced an 'Restart App' button for instant application restart
+- Added additional query parameters for launch and resume requests
+
+### Fixed
+- Refactored code for improved structure and readability
+
 ## v1.1.14
 
 ### Added
