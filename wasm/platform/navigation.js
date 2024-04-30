@@ -214,7 +214,14 @@ const Views = {
       // Show the Exit Moonlight dialog and push the view
       showExitMoonlightDialog();
     },
-    shortcut: function() {},
+    shortcut: function() {
+      const currentCell = this.view.current();
+      if (currentCell.id !== 'addHostCell') {
+        currentCell.children[1].focus();
+        // Show the Delete Host dialog and push the view
+        setTimeout(() => currentCell.children[1].click(), 800);
+      }
+    },
     alternative: function() {},
     enter: function() {
       mark(this.view.current());
