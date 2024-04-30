@@ -285,6 +285,7 @@ const Views = {
     },
   },
   AddHostDialog: {
+    isActive: () => isDialogActive('addHostDialog'),
     view: new ListView(() => [
       'enterHostIpAddress',
       'continueAddHost',
@@ -334,6 +335,7 @@ const Views = {
     },
   },
   PairingDialog: {
+    isActive: () => isDialogActive('pairingDialog'),
     view: new ListView(() => ['cancelPairingDialog']),
     up: function() {},
     down: function() {
@@ -363,6 +365,7 @@ const Views = {
     },
   },
   DeleteHostDialog: {
+    isActive: () => isDialogActive('deleteHostDialog'),
     view: new ListView(() => [
       'continueDeleteHost',
       'cancelDeleteHost']),
@@ -520,6 +523,7 @@ const Views = {
     },
   },
   RestoreDefaultsDialog: {
+    isActive: () => isDialogActive('restoreDefaultsDialog'),
     view: new ListView(() => [
       'continueRestoreDefaults',
       'cancelRestoreDefaults']),
@@ -1099,6 +1103,7 @@ const Views = {
     },
   },
   QuitAppDialog: {
+    isActive: () => isDialogActive('quitAppDialog'),
     view: new ListView(() => [
       'continueQuitApp',
       'cancelQuitApp']),
@@ -1137,6 +1142,7 @@ const Views = {
     },
   },
   SupportDialog: {
+    isActive: () => isDialogActive('supportDialog'),
     view: new ListView(() => ['closeSupportDialog']),
     up: function() {},
     down: function() {
@@ -1166,6 +1172,7 @@ const Views = {
     },
   },
   RestartMoonlightDialog: {
+    isActive: () => isDialogActive('restartAppDialog'),
     view: new ListView(() => [
       'continueRestartApp',
       'cancelRestartApp']),
@@ -1209,6 +1216,7 @@ const Views = {
     },
   },
   ExitMoonlightDialog: {
+    isActive: () => isDialogActive('exitAppDialog'),
     view: new ListView(() => [
       'continueExitApp',
       'cancelExitApp']),

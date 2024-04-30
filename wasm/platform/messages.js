@@ -98,7 +98,7 @@ function handleMessage(msg) {
   } else if (msg.indexOf('ProgressMsg: ') === 0) {
     $('#loadingMessage').text(msg.replace('ProgressMsg: ', ''));
   } else if (msg.indexOf('TransientMsg: ') === 0) {
-    snackbarLog(msg.replace('TransientMsg: ', ''));
+    snackbarLogLong(msg.replace('TransientMsg: ', ''));
   } else if (msg.indexOf('DialogMsg: ') === 0) {
     // FIXME: Really use a dialog
     snackbarLogLong(msg.replace('DialogMsg: ', ''));

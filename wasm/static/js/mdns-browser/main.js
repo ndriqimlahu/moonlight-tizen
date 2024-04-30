@@ -190,10 +190,6 @@ ServiceFinder.prototype.shutdown = function() {
 
 var finder = null;
 function findNvService(callback) {
-  if (!runningOnChrome()) {
-    return;
-  }
-
   finder && finder.shutdown();
   finder = new ServiceFinder(function (opt_error) {
     callback(finder, opt_error);
