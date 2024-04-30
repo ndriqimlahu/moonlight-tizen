@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.16
+
+### Added
+- Added additional navigation controls for special cases
+- Added the ability to remove a host by pressing 'Channel Up/P+' (remote) or 'Select/Back' (gamepad) while hovering over the host
+- Implemented a rumble vibration effect when the gamepad is connected
+
+### Fixed
+- Minor bug fixes and general improvements
+
 ## v1.1.15
 
 ### Added
