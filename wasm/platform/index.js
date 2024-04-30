@@ -1808,8 +1808,22 @@ window.onload = onWindowLoad;
 
 // Required on Samsung TV, to get gamepad connected events
 window.addEventListener('gamepadconnected', function(event) {
-  console.log('%c[index.js, gamepadconnected] gamepad connected: ' + JSON.stringify(event.gamepad), event.gamepad);
+  const connectedGamepad = event.gamepad;
+  console.log('%c[index.js, gamepadconnected] gamepad connected: ' + JSON.stringify(connectedGamepad), connectedGamepad);
   snackbarLog('Gamepad connected');
+  // Check if the connected gamepad supports rumble and try sending a rumble effect to notify the user
+  if (connectedGamepad.vibrationActuator) {
+    console.log('Gamepad supports the rumble. Vibrating now...');
+    // Specify the vibration parameters and play the rumble effect
+    connectedGamepad.vibrationActuator.playEffect('dual-rumble', {
+      startDelay: 0,
+      duration: 200, // 200ms (milliseconds)
+      weakMagnitude: 0.5,
+      strongMagnitude: 0.5,
+    });
+  } else {
+    console.log('Gamepad does not support the rumble feature!');
+  }
 });
 
 // Required on Samsung TV, to get gamepad disconnected events
