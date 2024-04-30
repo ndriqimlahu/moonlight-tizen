@@ -62,6 +62,8 @@ function attachListeners() {
         const buttonMapping = {
           0: () => Navigation.accept(),
           1: () => Navigation.back(),
+          8: () => Navigation.shortcut(),
+          9: () => Navigation.alternative(),
           12: () => Navigation.up(),
           13: () => Navigation.down(),
           14: () => Navigation.left(),

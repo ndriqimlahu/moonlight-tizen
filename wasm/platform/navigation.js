@@ -214,6 +214,8 @@ const Views = {
       // Show the Exit Moonlight dialog and push the view
       showExitMoonlightDialog();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -266,6 +268,8 @@ const Views = {
       // Navigate to the Hosts view
       Navigation.change(Views.Hosts);
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -313,6 +317,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelAddHost').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -340,6 +346,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelPairingDialog').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -376,6 +384,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelDeleteHost').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -425,6 +435,8 @@ const Views = {
       Navigation.change(Views.HostsNav);
       document.getElementById('settingsBtn').focus();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -491,6 +503,8 @@ const Views = {
       Navigation.change(Views.HostsNav);
       document.getElementById('settingsBtn').focus();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -527,6 +541,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelRestoreDefaults').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -592,6 +608,8 @@ const Views = {
         navItem.focus();
       }
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -633,6 +651,8 @@ const Views = {
       document.getElementById('selectResolution').click();
       document.getElementById('selectResolution').focus();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -674,6 +694,8 @@ const Views = {
       document.getElementById('selectFramerate').click();
       document.getElementById('selectFramerate').focus();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -708,6 +730,8 @@ const Views = {
       document.getElementById('selectBitrate').click();
       document.getElementById('selectBitrate').focus();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -773,6 +797,8 @@ const Views = {
         navItem.focus();
       }
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -838,6 +864,8 @@ const Views = {
         navItem.focus();
       }
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -883,6 +911,8 @@ const Views = {
       document.getElementById('selectCodec').click();
       document.getElementById('selectCodec').focus();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -943,6 +973,8 @@ const Views = {
         navItem.focus();
       }
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1001,6 +1033,8 @@ const Views = {
     back: function() {
       document.getElementById('goBackBtn').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1048,6 +1082,8 @@ const Views = {
     back: function() {
       document.getElementById('goBackBtn').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1084,6 +1120,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelQuitApp').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1111,6 +1149,8 @@ const Views = {
     back: function() {
       document.getElementById('closeSupportDialog').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1152,6 +1192,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelRestartApp').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1188,6 +1230,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelExitApp').click();
     },
+    shortcut: function() {},
+    alternative: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1305,6 +1349,8 @@ const Navigation = (function() {
     select: runOp('select'),
     accept: runOp('accept'),
     back: runOp('back'),
+    shortcut: runOp('shortcut'),
+    alternative: runOp('alternative'),
     push: Stack.push,
     change: Stack.change,
     pop: Stack.pop,
