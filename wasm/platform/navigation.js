@@ -286,34 +286,85 @@ const Views = {
   },
   AddHostDialog: {
     isActive: () => isDialogActive('addHostDialog'),
-    view: new ListView(() => [
-      'enterHostIpAddress',
-      'continueAddHost',
-      'cancelAddHost']),
+    view: new ListView(() => {
+      if (document.getElementById('ipAddressFieldModeSwitch').checked) {
+        return ['ipAddressField1', 'ipAddressField2', 'ipAddressField3', 'ipAddressField4', 'continueAddHost', 'cancelAddHost'];
+      } else {
+        return ['ipAddressTextInput', 'continueAddHost', 'cancelAddHost'];
+      }
+    }),
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        document.getElementById('enterHostIpAddress').focus();
+        if (document.getElementById('ipAddressFieldModeSwitch').checked) {
+          const currentItem = this.view.current();
+          if (currentItem.startsWith('ipAddressField')) {
+            const digitElement = document.getElementById(currentItem);
+            const currentValue = parseInt(digitElement.value, 10);
+            if (currentValue < 255) {
+              digitElement.value = currentValue + 1;
+            } else {
+              digitElement.value = 0;
+            }
+          }
+        } else {
+          document.getElementById('ipAddressTextInput').focus();
+        }
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        document.getElementById('continueAddHost').focus();
+        if (document.getElementById('ipAddressFieldModeSwitch').checked) {
+          const currentItem = this.view.current();
+          if (currentItem.startsWith('ipAddressField')) {
+            const digitElement = document.getElementById(currentItem);
+            const currentValue = parseInt(digitElement.value, 10);
+            if (currentValue > 0) {
+              digitElement.value = currentValue - 1;
+            } else {
+              digitElement.value = 255;
+            }
+          }
+        } else {
+          document.getElementById('continueAddHost').focus();
+        }
       }, delayBetweenNavigation);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
-        document.getElementById('continueAddHost').focus();
+        if (document.getElementById('ipAddressFieldModeSwitch').checked) {
+          const currentItem = this.view.current();
+          if (currentItem.startsWith('ipAddressField') && currentItem !== 'continueAddHost' || currentItem !== 'cancelAddHost') {
+            // Remove focus from any currently focused item element
+            document.getElementById(currentItem).blur();
+            document.getElementById(this.view.prev());
+          } else {
+            document.getElementById(this.view.prev()).focus();
+          }
+        } else {
+          this.view.prev();
+          document.getElementById('continueAddHost').focus();
+        }
       }, delayBetweenNavigation);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
-        document.getElementById('cancelAddHost').focus();
+        if (document.getElementById('ipAddressFieldModeSwitch').checked) {
+          const currentItem = this.view.current();
+          if (currentItem.startsWith('ipAddressField') && currentItem !== 'ipAddressField4') {
+            // Remove focus from any currently focused item element
+            document.getElementById(currentItem).blur();
+            document.getElementById(this.view.next());
+          } else {
+            document.getElementById(this.view.next()).focus();
+          }
+        } else {
+          this.view.next();
+          document.getElementById('cancelAddHost').focus();
+        }
       }, delayBetweenNavigation);
     },
     select: function() {
@@ -326,7 +377,9 @@ const Views = {
       document.getElementById('cancelAddHost').click();
     },
     shortcut: function() {},
-    alternative: function() {},
+    alternative: function() {
+      document.getElementById('ipAddressFieldModeSwitch').click();
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -752,6 +805,7 @@ const Views = {
   },
   HostSettings: {
     view: new ListView(() => [
+      'ipAddressFieldModeBtn',
       'optimizeGamesBtn',
       'externalAudioBtn',
       'removeAllHostsBtn']),
