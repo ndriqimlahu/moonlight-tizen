@@ -450,9 +450,9 @@ body {
     font-size: 1.4em;
     text-indent: 36px;
 }
-#selectResolution, #selectFramerate, #selectBitrate,
-#optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn,
-#selectCodec, #framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
+#selectResolution, #selectFramerate, #selectBitrate, #ipAddressFieldModeBtn,
+#optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn, #selectCodec,
+#framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -541,7 +541,7 @@ body {
     margin: 0 46px 2px 25em;
 	float: right;
 }
-#settingsBtn, #supportBtn, #goBackBtn, #optimizeGamesBtn, #externalAudioBtn,
+#settingsBtn, #supportBtn, #goBackBtn, #ipAddressFieldModeBtn, #optimizeGamesBtn, #externalAudioBtn,
 #removeAllHostsBtn, #framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
     background-color: #404354;
     border-radius: 6px;
@@ -576,10 +576,11 @@ body {
 #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,
 #restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus,
 #selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus,
-#selectBitrate:hover, #selectBitrate:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus,
-#externalAudioBtn:hover, #externalAudioBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus,
-#selectCodec:hover, #selectCodec:focus, #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
-#systemInfoBtn:hover, #systemInfoBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
+#selectBitrate:hover, #selectBitrate:focus, #ipAddressFieldModeBtn:hover, #ipAddressFieldModeBtn:focus,
+#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover, #externalAudioBtn:focus, 
+#removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #selectCodec:hover, #selectCodec:focus,
+#framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus,
+#restartAppBtn:hover, #restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 4px rgba(0, 163, 198, 1);
 }

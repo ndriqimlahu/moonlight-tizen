@@ -129,6 +129,18 @@
           </div>
           <div id="hostSettings" class="settings-options">
             <div class="setting-option">
+              <label>IP address field mode:</label>
+              <span class="mdl-list__item-text-body">
+                - Recommended for devices that have issues with the TV keyboard when entering the IP address.
+              </span>
+              <div id="ipAddressFieldModeMenu">
+                <label id="ipAddressFieldModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="ipAddressFieldModeSwitch">
+                  <input type="checkbox" id="ipAddressFieldModeSwitch" class="mdl-switch__input" onchange="handleIpAddressFieldMode()">
+                  <span class="mdl-switch__label">Change the field mode when entering the IP address of host PC</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
               <label>Optimize game settings:</label>
               <div id="optimizeGamesMenu">
                 <label id="optimizeGamesBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="optimizeGamesSwitch">
