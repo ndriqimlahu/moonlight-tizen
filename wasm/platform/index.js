@@ -14,6 +14,7 @@ var tvModelCode = null; // Flag indicating whether the TV model code is set, so 
 // Called by the common.js module
 function attachListeners() {
   changeUiModeForWasmLoad();
+  initializeIpAddressFields();
 
   $('#addHostCell').on('click', addHost);
   $('#settingsBtn').on('click', showSettingsContainer);
@@ -24,6 +25,7 @@ function attachListeners() {
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', updateBitrateField);
+  $("#ipAddressFieldModeSwitch").on('click', saveIpAddressFieldMode);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $("#externalAudioSwitch").on('click', saveExternalAudio);
   $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
@@ -316,6 +318,59 @@ function hostChosen(host) {
   }
 }
 
+// Handles the change of input mode based on the state of the IP address field mode switch
+function handleIpAddressFieldMode() {
+  // Finds the existing switch, input field, and select fields elements
+  const ipAddressFieldModeSwitch = document.getElementById('ipAddressFieldModeSwitch');
+  const ipAddressInputField = document.getElementById('ipAddressInputField');
+  const ipAddressSelectFields = document.getElementById('ipAddressSelectFields');
+
+  // Checks if the IP address field mode switch is checked
+  if (ipAddressFieldModeSwitch.checked) {
+    // Hides the input field and shows the select field
+    ipAddressInputField.style.display = 'none';
+    ipAddressSelectFields.style.display = 'block';
+  } else {
+    // Shows the input field and hides the select field
+    ipAddressInputField.style.display = 'block';
+    ipAddressSelectFields.style.display = 'none';
+  }
+}
+
+// Populates the select IP address fields with options from a specified range
+function populateSelectFields(element, start, end, selectedValue) {
+  // Iterate through the range from start to end
+  for (let i = start; i <= end; i++) {
+    // Create a new option element
+    const option = document.createElement('option');
+    // Set the value and text of the option to the current iteration value
+    option.value = i;
+    option.text = i;
+    // Checks if the current iteration value matches the selected value
+    if (i === selectedValue) {
+      // Mark the option as selected
+      option.selected = true;
+    }
+    // Append the created option to the select element
+    element.appendChild(option);
+  }
+}
+
+// Initialize the IP address select fields with default values
+function initializeIpAddressFields() {
+  // Find the existing select fields elements
+  const ipAddressField1 = document.getElementById('ipAddressField1');
+  const ipAddressField2 = document.getElementById('ipAddressField2');
+  const ipAddressField3 = document.getElementById('ipAddressField3');
+  const ipAddressField4 = document.getElementById('ipAddressField4');
+
+  // Populate each IP address select field with default values
+  populateSelectFields(ipAddressField1, 0, 255, 192);
+  populateSelectFields(ipAddressField2, 0, 255, 168);
+  populateSelectFields(ipAddressField3, 0, 255, 0);
+  populateSelectFields(ipAddressField4, 0, 255, 0);
+}
+
 // If the `+` was selected on the host grid, then
 // give the user a dialog to input connection details for the PC
 function addHost() {
@@ -337,13 +392,24 @@ function addHost() {
     isDialogOpen = false;
     Navigation.pop();
     // Clear the input field after unsuccessful processing
-    $('#enterHostIpAddress').val('');
+    $('#ipAddressTextInput').val('');
+    initializeIpAddressFields();
   });
 
   // Send a pair request if the Continue button is pressed
   $('#continueAddHost').off('click');
   $('#continueAddHost').on('click', function() {
-    var inputHost = $('#enterHostIpAddress').val();
+    var inputHost;
+    if ($('#ipAddressFieldModeSwitch').prop('checked')) {
+      var ipAddressField1 = $('#ipAddressField1').val();
+      var ipAddressField2 = $('#ipAddressField2').val();
+      var ipAddressField3 = $('#ipAddressField3').val();
+      var ipAddressField4 = $('#ipAddressField4').val();
+      inputHost = ipAddressField1 + '.' + ipAddressField2 + '.' + ipAddressField3 + '.' + ipAddressField4;
+    } else {
+      inputHost = $('#ipAddressTextInput').val();
+    }
+
     var _nvhttpHost = new NvHTTP(inputHost, myUniqueid, inputHost);
 
     _nvhttpHost.refreshServerInfoAtAddress(inputHost).then(function(success) {
@@ -371,7 +437,8 @@ function addHost() {
         });
       }
       // Clear the input field after successful processing
-      $('#enterHostIpAddress').val('');
+      $('#ipAddressTextInput').val('');
+      initializeIpAddressFields();
     }.bind(this),
     function(failure) {
       snackbarLog('Failed to connect to ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
@@ -1514,6 +1581,14 @@ function updateDefaultBitrate() {
   saveBitrate();
 }
 
+function saveIpAddressFieldMode() {
+  setTimeout(function() {
+    const chosenIpAddressFieldMode = $("#ipAddressFieldModeSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveIpAddressFieldMode]', 'color: green;', 'Saving IP address field mode state : ' + chosenIpAddressFieldMode);
+    storeData('ipAddressFieldMode', chosenIpAddressFieldMode, null);
+  }, 100);
+}
+
 function saveOptimizeGames() {
   setTimeout(function() {
     const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
@@ -1566,6 +1641,10 @@ function restoreDefaultsSettingsValues() {
   $('#selectBitrate').html(defaultBitrate + " Mbps");
   $('#bitrateSlider')[0].MaterialSlider.change(defaultBitrate);
   storeData('bitrate', defaultBitrate, null);
+
+  const defaultIpAddressFieldMode = false;
+  document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
+  storeData('ipAddressFieldMode', defaultIpAddressFieldMode, null);
 
   const defaultOptimizeGames = false;
   document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
@@ -1647,6 +1726,19 @@ function loadUserDataCb() {
   getData('bitrate', function(previousValue) {
     $('#bitrateSlider')[0].MaterialSlider.change(previousValue.bitrate != null ? previousValue.bitrate : '20');
     updateBitrateField();
+  });
+
+  console.log('Load stored ipAddressFieldMode prefs');
+  getData('ipAddressFieldMode', function(previousValue) {
+    if (previousValue.ipAddressFieldMode == null) {
+      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
+    } else if (previousValue.ipAddressFieldMode == false) {
+      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.on();
+    }
+    // Handle the display of the IP address field mode based on the loaded state
+    handleIpAddressFieldMode();
   });
 
   console.log('load stored optimizeGames prefs');
