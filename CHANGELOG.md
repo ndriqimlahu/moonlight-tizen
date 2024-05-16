@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.17
+
+### Added
+- Introduced a new 'IP address field mode' setting to change the field mode when entering the IP address
+- Implemented functionality to toggle and save the preferred mode for the IP address field
+- Enhanced the 'Add Host' dialog to provide two different IP address fields
+- Improved navigation for the 'Add Host' dialog view to support both IP address fields
+
 ## v1.1.16
 
 ### Added
