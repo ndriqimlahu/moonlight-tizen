@@ -309,6 +309,48 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+#ipAddressInputField {
+    display: block;
+    margin: 15px 0 15px 0;
+}
+#ipAddressInputField .mdl-textfield__label {
+    top: -5px;
+}
+#ipAddressTextInput {
+    font-size: 18px;
+}
+#ipAddressSelectFields {
+    display: none;
+    margin: 15px 0 15px 0;
+}
+#ipAddressSelectFields .mdl-textfield__label {
+    top: -8px;
+}
+.select-option-field {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    width: 460px;
+    max-width: 112%;
+    margin: 0;
+    padding: 20px 0;
+    font-size: 16px;
+}
+.select-option-field-floating-label .mdl-textfield__label {
+    color: #00a3c6;
+    font-size: 18px;
+}
+.ip-address-select-field {
+    width: 112px;
+    height: 32px;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+}
+.ip-address-select-field.hovered, .ip-address-select-field:hover {
+    color: #fff;
+    background-color: #7E818F;
+}
 #pairButton, #showAppsButton {
     margin: 3px;
 }

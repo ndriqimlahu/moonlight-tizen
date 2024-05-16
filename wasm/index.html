@@ -257,10 +257,19 @@
   <div id="addHostDialogOverlay" class="dialog-overlay">
     <dialog id="addHostDialog" class="mdl-dialog">
       <h3 id="addHostDialogTitle" class="mdl-dialog__title">Add Host</h3>
-      <div class="mdl-dialog__content">
+      <div id="ipAddressInputField" class="mdl-dialog__content">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input type="text" id="enterHostIpAddress" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*">
-          <label class="mdl-textfield__label" for="enterHostIpAddress">IP Address of Host PC</label>
+          <label class="mdl-textfield__label" for="ipAddressTextInput">IP address of host PC</label>
+          <input type="text" id="ipAddressTextInput" class="mdl-textfield__input" maxlength="15" pattern="[0-9.]*" placeholder="Enter the IP address...">
+        </div>
+      </div>
+      <div id="ipAddressSelectFields" class="mdl-dialog__content">
+        <div class="select-option-field select-option-field-floating-label">
+          <label class="mdl-textfield__label">IP address of host PC</label>
+          <select id="ipAddressField1" name="ipAddressField1" class="ip-address-select-field" tabindex="-1"></select>
+          <select id="ipAddressField2" name="ipAddressField2" class="ip-address-select-field" tabindex="-1"></select>
+          <select id="ipAddressField3" name="ipAddressField3" class="ip-address-select-field" tabindex="-1"></select>
+          <select id="ipAddressField4" name="ipAddressField4" class="ip-address-select-field" tabindex="-1"></select>
         </div>
       </div>
       <div class="mdl-dialog__actions">
