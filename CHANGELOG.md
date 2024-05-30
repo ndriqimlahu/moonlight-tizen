@@ -2,11 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.18
+
+### Added
+- Added a FUNDING file to enable project funding based on supported model platforms
+- Implemented logic to handle focus for the active element based on the IP address switch state
+
+### Changed
+- Enhanced navigation controls for the 'Add Host' dialog view
+- Updated implementation logic to initialize IP address fields with predefined values
+
+### Fixed
+- Fixed navigation issue after removing a host, preventing focus from shifting out of view
+
 ## v1.1.17
 
 ### Added
 - Introduced a new 'IP address field mode' setting to change the field mode when entering the IP address
 - Implemented functionality to toggle and save the preferred mode for the IP address field
+
+### Changed
 - Enhanced the 'Add Host' dialog to provide two different IP address fields
 - Improved navigation for the 'Add Host' dialog view to support both IP address fields
 
