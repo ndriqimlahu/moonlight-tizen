@@ -49,6 +49,16 @@ function isPopupActive(id) {
     .contains('is-visible');
 }
 
+function changeIpAddressFieldValue(adjust) {
+  const currentItem = this.view.current();
+  if (currentItem.startsWith('ipAddressField')) {
+    const digitElement = document.getElementById(currentItem);
+    let currentValue = parseInt(digitElement.value, 10);
+    currentValue = (currentValue + adjust + 256) % 256;
+    digitElement.value = currentValue;
+  }
+}
+
 class ListView {
   constructor (func, itemsPerRow) {
     this.index = 0;
@@ -297,39 +307,21 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         if (document.getElementById('ipAddressFieldModeSwitch').checked) {
-          const currentItem = this.view.current();
-          if (currentItem.startsWith('ipAddressField')) {
-            const digitElement = document.getElementById(currentItem);
-            const currentValue = parseInt(digitElement.value, 10);
-            if (currentValue < 255) {
-              digitElement.value = currentValue + 1;
-            } else {
-              digitElement.value = 0;
-            }
-          }
+          changeIpAddressFieldValue.call(this, 1);
         } else {
           document.getElementById('ipAddressTextInput').focus();
         }
-      }, delayBetweenNavigation);
+      }, 40);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         if (document.getElementById('ipAddressFieldModeSwitch').checked) {
-          const currentItem = this.view.current();
-          if (currentItem.startsWith('ipAddressField')) {
-            const digitElement = document.getElementById(currentItem);
-            const currentValue = parseInt(digitElement.value, 10);
-            if (currentValue > 0) {
-              digitElement.value = currentValue - 1;
-            } else {
-              digitElement.value = 255;
-            }
-          }
+          changeIpAddressFieldValue.call(this, -1);
         } else {
           document.getElementById('continueAddHost').focus();
         }
-      }, delayBetweenNavigation);
+      }, 40);
     },
     left: function() {
       clearTimeout(navigationTimer);
