@@ -356,19 +356,21 @@ function populateSelectFields(element, start, end, selectedValue) {
   }
 }
 
-// Initialize the IP address select fields with default values
+// Initialize the IP address select fields with predefined values
 function initializeIpAddressFields() {
-  // Find the existing select fields elements
-  const ipAddressField1 = document.getElementById('ipAddressField1');
-  const ipAddressField2 = document.getElementById('ipAddressField2');
-  const ipAddressField3 = document.getElementById('ipAddressField3');
-  const ipAddressField4 = document.getElementById('ipAddressField4');
+  // Find the existing select fields elements and set the values
+  const ipAddressFields = [
+    { element: 'ipAddressField1', selectedValue: 192 },
+    { element: 'ipAddressField2', selectedValue: 168 },
+    { element: 'ipAddressField3', selectedValue: 0 },
+    { element: 'ipAddressField4', selectedValue: 0 },
+  ];
 
-  // Populate each IP address select field with default values
-  populateSelectFields(ipAddressField1, 0, 255, 192);
-  populateSelectFields(ipAddressField2, 0, 255, 168);
-  populateSelectFields(ipAddressField3, 0, 255, 0);
-  populateSelectFields(ipAddressField4, 0, 255, 0);
+  // Populate each IP address field with the selected values
+  ipAddressFields.forEach(ipAddressField => {
+    const element = document.getElementById(ipAddressField.element);
+    populateSelectFields(element, 0, 255, ipAddressField.selectedValue);
+  });
 }
 
 // If the `+` was selected on the host grid, then
