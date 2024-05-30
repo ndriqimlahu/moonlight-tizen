@@ -546,6 +546,7 @@ function removeClicked(host) {
     deleteHostDialog.close();
     isDialogOpen = false;
     Navigation.pop();
+    Navigation.left();
   });
 }
 
