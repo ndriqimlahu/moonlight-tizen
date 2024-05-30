@@ -384,6 +384,15 @@ function addHost() {
   Navigation.push(Views.AddHostDialog);
   isDialogOpen = true;
 
+  // Checks if the IP address field mode switch is checked
+  if ($('#ipAddressFieldModeSwitch').prop('checked')) {
+    // Remove focus from any currently focused element
+    document.activeElement.blur();
+  } else {
+    // Set focus to the currently active element
+    document.activeElement.focus();
+  }
+
   // Cancel the operation if the Cancel button is pressed
   $('#cancelAddHost').off('click');
   $('#cancelAddHost').on('click', function() {
