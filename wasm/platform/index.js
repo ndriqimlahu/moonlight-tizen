@@ -410,6 +410,15 @@ function addHost() {
   // Send a pair request if the Continue button is pressed
   $('#continueAddHost').off('click');
   $('#continueAddHost').on('click', function() {
+    // Disable the Continue button to prevent multiple connection requests
+    setTimeout(function() {
+      // Add disabled state immediately on click
+      $(this).addClass('mdl-button--disabled').prop('disabled', true);
+      // Re-enable the Continue button after 10 seconds
+      setTimeout(function() {
+        $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
+      }, 10000);
+    });
     var inputHost;
     if ($('#ipAddressFieldModeSwitch').prop('checked')) {
       var ipAddressField1 = $('#ipAddressField1').val();
