@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.19
+
+### Added
+- Introduced a new 'Tizen' privilege: 'Fullscreen' which allows the application to use the full screen view
+- Disabled the 'Continue' button to prevent multiple connection requests when adding a host
+- Re-enabled the 'Continue' button upon successful, failed or cancel processing when adding a host
+
+### Changed
+- Enhanced visual styling across multiple elements in the application
+
+### Fixed
+- Fixed a navigation issue to ensure proper bound checking for previous/next row
+
 ## v1.1.18
 
 ### Added
