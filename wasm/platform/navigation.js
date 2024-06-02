@@ -60,10 +60,10 @@ function changeIpAddressFieldValue(adjust) {
 }
 
 class ListView {
-  constructor (func, itemsPerRow) {
+  constructor (func, gameCardsPerRow) {
     this.index = 0;
-    this.itemsPerRow = itemsPerRow || 6;
     this.func = func;
+    this.gameCardsPerRow = gameCardsPerRow || 6;
   }
 
   prev() {
@@ -86,72 +86,74 @@ class ListView {
     return array[this.index];
   }
 
-  prevOption() {
+  prevCategory() {
     const array = this.func();
     if (this.index > 0) {
       unmark(array[this.index]);
       --this.index;
       mark(array[this.index]);
-      // Indicate that there are more options
+      // Indicate that there are more categories
       return true;
     } else {
-      // Indicate that there are no more options
+      // Indicate that there are no more categories
       return false;
     }
   }
 
-  nextOption() {
+  nextCategory() {
     const array = this.func();
     if (this.index < array.length - 1) {
       unmark(array[this.index]);
       ++this.index;
       mark(array[this.index]);
-      // Indicate that there are more options
+      // Indicate that there are more categories
       return true;
     } else {
-      // Indicate that there are no more options
+      // Indicate that there are no more categories
       return false;
     }
   }
 
-  prevRow() {
+  prevGameRow() {
     const array = this.func();
-    const currentRow = Math.floor(this.index / this.itemsPerRow);
-    if (currentRow > 0) {
+    const currentRow = Math.floor(this.index / this.gameCardsPerRow);
+    // Check if there is a previous row and if the previous index is within array bounds
+    if (currentRow > 0 && this.index - this.gameCardsPerRow >= 0) {
       unmark(array[this.index]);
-      this.index -= this.itemsPerRow;
+      this.index -= this.gameCardsPerRow;
       mark(array[this.index]);
-      this.scrollToRow(currentRow - 1);
-      // Indicate that there are more rows
+      this.scrollToGameRow(currentRow - 1);
+      // Indicate that there are more game rows
       return true;
     } else {
-      // Indicate that there are no more rows
+      // Indicate that there are no more game rows
       return false;
     }
   }
 
-  nextRow() {
+  nextGameRow() {
     const array = this.func();
-    const rows = Math.ceil(array.length / this.itemsPerRow);
-    const currentRow = Math.floor(this.index / this.itemsPerRow);
-    if (currentRow < rows - 1) {
+    const rows = Math.ceil(array.length / this.gameCardsPerRow);
+    const currentRow = Math.floor(this.index / this.gameCardsPerRow);
+    // Check if there is a next row and if the next index is within array bounds
+    if (currentRow < rows - 1 && this.index + this.gameCardsPerRow < array.length) {
       unmark(array[this.index]);
-      this.index += this.itemsPerRow;
+      this.index += this.gameCardsPerRow;
       mark(array[this.index]);
-      this.scrollToRow(currentRow + 1);
-      // Indicate that there are more rows
+      this.scrollToGameRow(currentRow + 1);
+      // Indicate that there are more game rows
       return true;
     } else {
-      // Indicate that there are no more rows
+      // Indicate that there are no more game rows
       return false;
     }
   }
   
-  scrollToRow(row) {
+  scrollToGameRow(row) {
     const array = this.func();
-    const targetItem = array[row * this.itemsPerRow];
-    if (targetItem) {
-      targetItem.scrollIntoView({
+    const targetCard = array[row * this.gameCardsPerRow];
+    if (targetCard) {
+      targetCard.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
@@ -454,7 +456,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         // If there are more categories behind, then go to the previous category
-        if (this.view.prevOption()) {
+        if (this.view.prevCategory()) {
           document.getElementById(this.view.current()).focus();
         } else {
           // If there are no more categories, navigate to the SettingsNav view
@@ -471,7 +473,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         // If there are more categories after, then go to the next category
-        if (this.view.nextOption()) {
+        if (this.view.nextCategory()) {
           document.getElementById(this.view.current()).focus();
         }
       }, delayBetweenNavigation);
@@ -1045,7 +1047,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         // If there are more rows behind, then go to the previous row
-        if (this.view.prevRow()) {
+        if (this.view.prevGameRow()) {
           document.getElementById(this.view.current()).focus();
         } else {
           // If there are no more rows, navigate to the AppsNav view
@@ -1062,7 +1064,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         // If there are more rows after, then go to the next row
-        if (this.view.nextRow()) {
+        if (this.view.nextGameRow()) {
           document.getElementById(this.view.current()).focus();
         }
       }, delayBetweenNavigation);
