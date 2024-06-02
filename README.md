@@ -5,39 +5,41 @@
 
 ## About
 
-[Moonlight](https://moonlight-stream.org) is an open source client for NVIDIA GameStream and [Sunshine](https://app.lizardbyte.dev/Sunshine/).
+[Moonlight for Tizen](https://moonlight-stream.org) is an open source client for NVIDIA GameStream and [Sunshine](https://app.lizardbyte.dev/Sunshine/).
 
-Moonlight for Tizen allows you to stream your collection of games, programs, or your full desktop from your powerful PC to your Samsung Smart TV running Tizen OS.
+Moonlight it allows you to stream your collection of games, programs, or your full desktop from your powerful PC to your Samsung Smart TV running **Tizen OS 5.5 or higher**.
 
-Check out the [Moonlight Wiki](https://github.com/moonlight-stream/moonlight-docs/wiki) and [Sunshine Docs](https://docs.lizardbyte.dev/en/latest/) for more detailed project information, setup guide, or troubleshooting steps.
+Check out the [Moonlight Wiki](https://github.com/moonlight-stream/moonlight-docs/wiki) and [Sunshine Docs](https://docs.lizardbyte.dev/en/latest/) for more details, setup guides, or troubleshooting steps.
 
 ## Getting Started
 
-Starting with the project, you should first take a look at the required [Prerequisites](https://github.com/ndriqimlahu/moonlight-tizen#prerequisites) and then follow the [Installation](https://github.com/ndriqimlahu/moonlight-tizen#installation) instructions in order to successfully install Moonlight on your Samsung Smart TV.
+To get started, make sure your setup meets the [Prerequisites](https://github.com/ndriqimlahu/moonlight-tizen#prerequisites) and then follow the [Installation](https://github.com/ndriqimlahu/moonlight-tizen#installation) guide to successfully install Moonlight on your Samsung Smart TV.
 
 ### Prerequisites
 
-Client Requirements −󠀭󠀭 You must have a Samsung Smart TV with Tizen OS starting from model year `2020 (Tizen 5.5) or newer`.
+- Client Requirements — You must have a Samsung Smart TV with Tizen OS starting from model year `2020 (Tizen 5.5) or newer`.
 
-Host Requirements −󠀭󠀭 It is recommended to have a computer with `Windows 10 or later`, you must also have [Windows Subsystem for Linux (WSL 2)](https://learn.microsoft.com/en-us/windows/wsl/install-manual) and [Docker Desktop](https://docs.docker.com/desktop/) installed on your computer.
+- Host Requirements — It is highly recommended that you have a powerful PC running `Windows 10 64-bit or higher`, that is capable and supports at least hardware-accelerated H.264 video decoding, otherwise it will have to use CPU decoding.
+    > Note: You must also have WSL 2 and Docker installed on your computer to proceed with the Moonlight installation. For more details on how to install them, you can check out the installation guides below.
+    - Windows Subsystem for Linux (WSL 2) — Check the [Installation](https://learn.microsoft.com/en-us/windows/wsl/install-manual) guide and follow the instructions step by step.
+    - Docker Desktop — Check the [Installation](https://docs.docker.com/desktop/) guide and follow the instructions step by step.
 
-Network Requirements −󠀭󠀭 To have a good experience, you need a mid to high-end wireless router with a good wireless connection to your client device (5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax) strongly recommended) and a good connection from your PC server to your router (Ethernet/Wired connections highly recommended).
+- Network Requirements — You need a mid-range or high-end wireless router with a good wireless connection to your client device using `5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax)` and a good wired connection to your host PC using the `Ethernet` cable which is strongly recommended.
 
 ## Installation
 
 ### Using the pre-built Docker image (*Recommended for all users*)
 
-1. Enable the `Developer mode` on your "Samsung Smart TV" (If you need more detailed instructions, see the official [Samsung guide](https://developer.samsung.com/smarttv/develop/getting-started/using-sdk/tv-device.html)):
-	- Go to the `Apps` panel.
-	- Press `12345` on the remote and a dialog should popup.
-	- Set `Developer mode` to `On` and fill in the `Host PC IP` field which is the `IP Address` of your PC, then click the `OK` button to close the dialog.
-	- Restart the TV by holding the power button for 2 seconds as instructed by the new dialog popup, then again go to the `Apps` panel.
-	- Depending on your model, a `DEVELOP MODE` or similar message will appear in the `Apps` panel at the top of the screen.
-2. Find the `TV IP Address` on your "Samsung Smart TV":
+1. Enable the `Developer mode` on your "Samsung Smart TV" (If you need more details, check the official [Samsung guide](https://developer.samsung.com/smarttv/develop/getting-started/using-sdk/tv-device.html)):
+	- Go to the `Apps` panel and press `12345` on the remote, then a dialog should popup.
+	- Set `Developer mode` to `On`, then enter your computer's IP address in the `Host PC IP` field.
+	- Restart the TV by holding the power button, then go to the `Apps` panel.
+	- Depending on your model, a `DEVELOP MODE` will appear in the `Apps` panel at the top of the screen.
+2. Get the `TV IP Address` on your "Samsung Smart TV":
 	- Go to the `Settings` panel, then go to the `General` section.
 	- Select the `Network` menu, then select `Network Status` and click the `IP Settings` button.
 	- Now you can get the "IP Address" from the `IP Address` field.
-3. Now, you need to run `Docker Desktop` before proceeding further and it is also recommended to close any software or application that requires high CPU and memory resources, because `Docker Desktop` will take high resources while running.
+3. Now, you need to run `Docker Desktop` and make sure to close any resource intensive applications.
 4. Open `Windows PowerShell` or a similar terminal depending on your OS, then enter the following command to pull the pre-built "Docker" image:
 	 ```
 	 docker pull ghcr.io/ndriqimlahu/moonlight-tizen:master
@@ -63,25 +65,21 @@ Network Requirements −󠀭󠀭 To have a good experience, you need a mid to hi
 	 tizen install -n Moonlight.wgt -t YOUR_DEVICE_ID
 	 ```
  	> Note: Replace `YOUR_DEVICE_ID` with `Device ID` of your TV.
-
- 	> Note: At the end of installation logs you will see `Tizen application is successfully installed`.
 	- Next, enter the following command to exit the container:
 	 ```
 	 exit
 	 ```
- 	> Note: Moonlight app should now appear on your `Recent Apps` or similar page on your "Samsung Smart TV".
+ 	> Note: Moonlight should now be available under `Recent Apps` on your "Samsung Smart TV".
 7. Finally, in `Windows PowerShell`, enter the following command to remove the "Docker" image, as it is no longer needed:
 	 ```
 	 docker image rm ghcr.io/ndriqimlahu/moonlight-tizen:master
 	 ```
  	> Note: At the end you can enter the `exit` command to close the `Windows PowerShell` window.
 8. (Optional) Disable the `Developer mode` on your "Samsung Smart TV":
-	- Go to the `Apps` panel.
-	- Press `12345` on the remote and a dialog should popup.
+	- Go to the `Apps` panel and press `12345` on the remote, then a dialog should popup.
 	- Set `Developer mode` to `Off` and then click the `OK` button to close the dialog.
-	- Restart the TV by holding the power button for 2 seconds as instructed by the new dialog popup, then again go to the `Apps` panel.
-	- Depending on your model, a `DEVELOP MODE` or similar message will disappear from the `Apps` panel at the top of the screen.
-9. You can now launch Moonlight on your TV and then pair it with the host computer. Also, make sure to adjust the settings and enjoy the streaming experience.
+	- Restart the TV by holding the power button, then go to the `Apps` panel.
+	- Depending on your model, a `DEVELOP MODE` will disappear from the `Apps` panel at the top of the screen.
 
 ### Building the Docker image from source (*Only for developers*)
 
@@ -111,13 +109,11 @@ Network Requirements −󠀭󠀭 To have a good experience, you need a mid to hi
 	 ```
 	 docker image rm moonlight-tizen
 	 ```
-9. Now you can launch Moonlight on your TV and enjoy the streaming experience.
 
 ## Updating
 
-1. Before updating the Moonlight app, you must delete the installed Moonlight app that you already have on your "Samsung Smart TV" to prevent errors during the update.
-2. Now, whenever you want to install an updated version of Moonlight on your "Samsung Smart TV", you need to follow the [Installation](https://github.com/ndriqimlahu/moonlight-tizen#installation) instructions in order to successfully install the latest version of Moonlight on your TV.
-3. After that, you can launch Moonlight on your TV and enjoy the streaming experience with the latest features.
+1. You must delete the existing Moonlight app that you already have on your Samsung Smart TV to prevent errors when installing the new Moonlight app.
+2. Then you need to follow the [Installation](https://github.com/ndriqimlahu/moonlight-tizen#installation) guide from the beginning in order to successfully install the latest version of Moonlight on your Samsung Smart TV.
 
 ## FAQ
 
@@ -136,7 +132,7 @@ Network Requirements −󠀭󠀭 To have a good experience, you need a mid to hi
 - Streaming performance may vary based on your host device, client device and network configuration. So, it is recommended that you adjust the streaming resolution, frame rate, bit rate, and other settings to achieve the desired performance.
 
 5. What video codecs are supported in Moonlight?
-- Most common video codecs such as `H.264`, `HEVC (H.265 - Main)` and `HEVC Main10` are supported.
+- Most common video codecs such as `H.264` and `HEVC (H.265 - Main, Main10)` are supported.
 - In order to use HDR, then you are required to have an HDR10-capable device, a GPU that can encode HEVC Main10, and HDR10-enabled game. Games that use DXGI/OS HDR also require an HDR display connected to your host PC.
 
 6. Are keyboard and mouse inputs supported in Moonlight?
@@ -182,8 +178,9 @@ Also, if you liked the project or found it useful, don't forget to give the proj
 This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/LICENSE) file for more information.
 
 ## Credits
-- Thanks to [Moonlight Developers](https://github.com/moonlight-stream/moonlight-chrome) for developing and maintaining Moonlight for Chrome OS.
-- Thanks to [Samsung Developers](https://github.com/SamsungDForum/moonlight-chrome) for adapting and implementing Moonlight for Tizen OS which is based on Chrome OS version.
-- Thanks to [jellyfin](https://github.com/jellyfin/jellyfin-tizen) and [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
-- Thanks to [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating an easy method for building Moonlight on Tizen OS by re-adapting the Dockerfile.
-- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the content files and re-adapting the Dockerfile for better compatibility.
+- Thanks to [Moonlight Game Streaming Project](https://github.com/moonlight-stream/moonlight-chrome) for developing and maintaining Moonlight for Chrome OS.
+- Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for adapting the code and implementing Moonlight for Tizen OS.
+- Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
+- Thanks to [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating a method for building Moonlight by re-adapting the Dockerfile.
+- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files and improving the Dockerfile for better compatibility.
+- Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for fixing many issues in the app and adding new features for a better experience.
