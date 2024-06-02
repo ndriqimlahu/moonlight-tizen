@@ -14,6 +14,7 @@
     <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
     <tizen:privilege name="http://tizen.org/privilege/filesystem.write"/>
     <tizen:privilege name="http://tizen.org/privilege/unlimitedstorage"/>
+    <tizen:privilege name="http://tizen.org/privilege/fullscreen"/>
     <tizen:privilege name="http://tizen.org/privilege/ime"/>
     <tizen:privilege name="http://tizen.org/privilege/tv.audio"/>
     <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
