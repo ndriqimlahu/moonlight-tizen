@@ -402,7 +402,9 @@ function addHost() {
     addHostDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    // Clear the input field after unsuccessful processing
+    // Re-enable the Continue button after canceling the operation
+    $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
+    // Clear the input field after canceling the operation
     $('#ipAddressTextInput').val('');
     initializeIpAddressFields();
   });
@@ -456,12 +458,19 @@ function addHost() {
           saveHosts();
         });
       }
+      // Re-enable the Continue button after successful processing
+      $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
       // Clear the input field after successful processing
       $('#ipAddressTextInput').val('');
       initializeIpAddressFields();
     }.bind(this),
     function(failure) {
       snackbarLog('Failed to connect to ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
+      // Re-enable the Continue button after failure processing
+      $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
+      // Clear the input field after failure processing
+      $('#ipAddressTextInput').val('');
+      initializeIpAddressFields();
     }.bind(this));
   });
 }
