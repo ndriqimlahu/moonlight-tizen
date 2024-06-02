@@ -49,6 +49,9 @@ body {
     text-align: left;
     text-indent: 40px;
 }
+.mdl-menu__item.hovered, .mdl-menu__item:hover, .mdl-menu__item:focus {
+    background-color: #484C5F;
+}
 .mdl-tooltip {
     color: #fff;
     background-color: #3E4454;
@@ -110,6 +113,9 @@ body {
 .mdl-textfield__input {
     width: 152%;
     border-bottom: 1px solid rgba(255, 255, 255, 0.60);
+}
+.mdl-textfield__input.hovered, .mdl-textfield__input:hover, .mdl-textfield__input:focus {
+    background-color: #404354;
 }
 .mdl-textfield__label {
     color: rgba(255, 255, 255, 0.90);
@@ -230,8 +236,9 @@ body {
 #host-grid .mdl-card:focus, #host-grid .mdl-card:active,
 #game-grid .mdl-card.hovered, #game-grid .mdl-card:hover,
 #game-grid .mdl-card:focus, #game-grid .mdl-card:active {
+    border-radius: 0;
     transform: scale(1.2);
-    border: 4px solid #00A3C6;
+    outline: #00A3C6 solid 3px;
 }
 #host-grid .mdl-card__title {
     padding: 0;
@@ -337,8 +344,8 @@ body {
     font-size: 16px;
 }
 .select-option-field-floating-label .mdl-textfield__label {
-    color: #00a3c6;
-    font-size: 18px;
+    color: #00A3C6;
+    font-size: 20px;
 }
 .ip-address-select-field {
     width: 112px;
@@ -349,7 +356,8 @@ body {
 }
 .ip-address-select-field.hovered, .ip-address-select-field:hover {
     color: #fff;
-    background-color: #7E818F;
+    background-color: #404354;
+    box-shadow: 0 0 2px 2px rgba(0, 163, 198, 1);
 }
 #pairButton, #showAppsButton {
     margin: 3px;
@@ -375,14 +383,14 @@ body {
     box-shadow: 0 0 2px 2px rgba(244, 67, 54, 1);
 }
 .host-cell-inactive {
-    outline: auto #F44336;
+    outline: #F44336 solid 3px;
 }
 .host-cell:hover {
     color: #000;
     cursor: pointer;
 }
 .current-game {
-    outline: auto #8BC34A;
+    outline: #8BC34A solid 3px;
 }
 .cancel-current {
     padding: 5px;
@@ -604,8 +612,19 @@ body {
 #continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost, #cancelDeleteHost,
 #closeSupportDialog, #restoreDefaultsBtn, #continueRestoreDefaults, #cancelRestoreDefaults, #quitRunningAppBtn,
 #continueQuitApp, #cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
-    color: #ececec;
     text-transform: uppercase;
+}
+#continueAddHost[disabled], #continueAddHost.mdl-button--disabled {
+    color: #fff;
+    background-color: #666876;
+    pointer-events: auto;
+    cursor: pointer;
+}
+#continueAddHost[disabled]:hover, #continueAddHost[disabled]:focus,
+#continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus {
+    background-color: #474852;
+    box-shadow: 0 0 2px 3px rgba(147, 149, 159, 1);
+    cursor: pointer;
 }
 .category.hovered, .category:hover, .category:focus, .mdl-switch.is-focused,
 #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus,
@@ -624,5 +643,5 @@ body {
 #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus,
 #restartAppBtn:hover, #restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
     background-color: #404354;
-    box-shadow: 0 0 2px 4px rgba(0, 163, 198, 1);
+    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
