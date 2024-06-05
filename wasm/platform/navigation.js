@@ -60,9 +60,10 @@ function changeIpAddressFieldValue(adjust) {
 }
 
 class ListView {
-  constructor (func, gameCardsPerRow) {
+  constructor (func, hostCardsPerRow, gameCardsPerRow) {
     this.index = 0;
     this.func = func;
+    this.hostCardsPerRow = hostCardsPerRow || 5;
     this.gameCardsPerRow = gameCardsPerRow || 6;
   }
 
@@ -84,6 +85,52 @@ class ListView {
       mark(array[this.index]);
     }
     return array[this.index];
+  }
+
+  prevHostRow() {
+    const array = this.func();
+    const currentRow = Math.floor(this.index / this.hostCardsPerRow);
+    // Check if there is a previous row and if the previous index is within array bounds
+    if (currentRow > 0 && this.index - this.hostCardsPerRow >= 0) {
+      unmark(array[this.index]);
+      this.index -= this.hostCardsPerRow;
+      mark(array[this.index]);
+      this.scrollToHostRow(currentRow - 1);
+      // Indicate that there are more host rows
+      return true;
+    } else {
+      // Indicate that there are no more host rows
+      return false;
+    }
+  }
+
+  nextHostRow() {
+    const array = this.func();
+    const rows = Math.ceil(array.length / this.hostCardsPerRow);
+    const currentRow = Math.floor(this.index / this.hostCardsPerRow);
+    // Check if there is a next row and if the next index is within array bounds
+    if (currentRow < rows - 1 && this.index + this.hostCardsPerRow < array.length) {
+      unmark(array[this.index]);
+      this.index += this.hostCardsPerRow;
+      mark(array[this.index]);
+      this.scrollToHostRow(currentRow + 1);
+      // Indicate that there are more host rows
+      return true;
+    } else {
+      // Indicate that there are no more host rows
+      return false;
+    }
+  }
+
+  scrollToHostRow(row) {
+    const array = this.func();
+    const targetCard = array[row * this.hostCardsPerRow];
+    if (targetCard) {
+      targetCard.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
   }
 
   prevCategory() {
@@ -171,24 +218,26 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        // Navigate to the HostsNav view
-        Navigation.change(Views.HostsNav);
-        // Set focus on the first navigation item in HostsNav view when transitioning from Hosts view
-        const navItem = document.getElementById(Views.HostsNav.view.current());
-        if (navItem) {
-          navItem.focus();
+        // If there are more rows behind, then go to the previous row
+        if (this.view.prevHostRow()) {
+          document.getElementById(this.view.current()).focus();
+        } else {
+          // If there are no more rows, navigate to the HostsNav view
+          Navigation.change(Views.HostsNav);
+          // Set focus on the first navigation item in HostsNav view when transitioning from Hosts view
+          const navItem = document.getElementById(Views.HostsNav.view.current());
+          if (navItem) {
+            navItem.focus();
+          }
         }
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        // Navigate to the Hosts view
-        Navigation.change(Views.Hosts);
-        // Set focus on the first navigation item in Hosts view
-        const navItem = document.getElementById(Views.Hosts.view.current());
-        if (navItem) {
-          navItem.focus();
+        // If there are more rows after, then go to the next row
+        if (this.view.nextHostRow()) {
+          document.getElementById(this.view.current()).focus();
         }
       }, delayBetweenNavigation);
     },
