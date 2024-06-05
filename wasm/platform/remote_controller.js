@@ -40,12 +40,12 @@ function remoteControllerHandler(e) {
       tizen.tvaudiocontrol.setMute();
       break;
     case tvKey.KEY_CHANNEL_UP:
-      // Triggers the shortcut action
-      Navigation.shortcut();
+      // Triggers the press action
+      Navigation.press();
       break;
     case tvKey.KEY_CHANNEL_DOWN:
-      // Triggers the alternative action
-      Navigation.alternative();
+      // Triggers the switch action
+      Navigation.switch();
       break;
     case tvKey.KEY_RED:
       // Terminate the connection

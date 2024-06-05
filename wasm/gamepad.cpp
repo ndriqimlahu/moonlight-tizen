@@ -1,12 +1,15 @@
 #include "moonlight_wasm.hpp"
 
 #include <iostream>
-#include <sstream>
 #include <array>
 #include <utility>
+#include <sstream>
 
 #include <Limelight.h>
 #include <emscripten/emscripten.h>
+
+// Define a combination of buttons on the gamepad to stop streaming session
+const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
 // For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
 // Enumeration for gamepad buttons
@@ -69,9 +72,6 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
 
   return result;
 }
-
-// Define a combination of buttons on the gamepad to stop streaming session
-const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
 // Function to poll gamepad input
 void MoonlightInstance::PollGamepads() {

@@ -215,7 +215,6 @@ body {
     height: 220px;
     min-height: 200px;
     margin: 25px 30px 30px 25px;
-    border-radius: 6px;
     transition: all .2s ease-in-out;
     will-change: transform;
     cursor: pointer;
@@ -226,7 +225,6 @@ body {
     height: 300px;
     min-height: 280px;
     margin: 25px 35px 30px 30px;
-    border-radius: 6px;
     transition: all .2s ease-in-out;
     will-change: transform;
     cursor: pointer;
@@ -236,7 +234,6 @@ body {
 #host-grid .mdl-card:focus, #host-grid .mdl-card:active,
 #game-grid .mdl-card.hovered, #game-grid .mdl-card:hover,
 #game-grid .mdl-card:focus, #game-grid .mdl-card:active {
-    border-radius: 0;
     transform: scale(1.2);
     outline: #00A3C6 solid 3px;
 }
@@ -620,8 +617,10 @@ body {
     pointer-events: auto;
     cursor: pointer;
 }
-#continueAddHost[disabled]:hover, #continueAddHost[disabled]:focus,
-#continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus {
+#continueAddHost[disabled].hovered, #continueAddHost[disabled]:hover,
+#continueAddHost[disabled]:focus, #continueAddHost[disabled]:active,
+#continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus,
+#continueAddHost.mdl-button--disabled:active {
     background-color: #474852;
     box-shadow: 0 0 2px 3px rgba(147, 149, 159, 1);
     cursor: pointer;

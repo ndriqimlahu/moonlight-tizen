@@ -32,7 +32,7 @@
 
 // These will mostly be I/O bound so we'll create
 // a bunch to allow more concurrent server requests
-// since our HTTP request libary is synchronous.
+// since our HTTP request library is synchronous.
 #define HTTP_HANDLER_THREADS 8
 
 struct MessageResult {

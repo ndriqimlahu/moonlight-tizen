@@ -64,8 +64,8 @@ function attachListeners() {
         const buttonMapping = {
           0: () => Navigation.accept(),
           1: () => Navigation.back(),
-          8: () => Navigation.shortcut(),
-          9: () => Navigation.alternative(),
+          8: () => Navigation.press(),
+          9: () => Navigation.switch(),
           12: () => Navigation.up(),
           13: () => Navigation.down(),
           14: () => Navigation.left(),
@@ -148,37 +148,37 @@ function restoreUiAfterWasmLoad() {
 }
 
 function beginBackgroundPollingOfHost(host) {
-  var el = document.querySelector('#hostgrid-' + host.serverUid);
+  var hostCell = document.querySelector('#hostgrid-' + host.serverUid);
   if (host.online) {
-    el.classList.remove('host-cell-inactive');
+    hostCell.classList.remove('host-cell-inactive');
     // The host was already online, just start polling in the background now
     activePolls[host.serverUid] = window.setInterval(function() {
       // Every 5 seconds, poll at the address we know it was live at
       host.pollServer(function() {
         if (host.online) {
-          el.classList.remove('host-cell-inactive');
+          hostCell.classList.remove('host-cell-inactive');
         } else {
-          el.classList.add('host-cell-inactive');
+          hostCell.classList.add('host-cell-inactive');
         }
       });
     }, 5000);
   } else {
-    el.classList.add('host-cell-inactive');
+    hostCell.classList.add('host-cell-inactive');
     // The host was offline, so poll immediately
     host.pollServer(function() {
       if (host.online) {
-        el.classList.remove('host-cell-inactive');
+        hostCell.classList.remove('host-cell-inactive');
       } else {
-        el.classList.add('host-cell-inactive');
+        hostCell.classList.add('host-cell-inactive');
       }
       // Now start background polling
       activePolls[host.serverUid] = window.setInterval(function() {
         // Every 5 seconds, poll at the address we know it was live at
         host.pollServer(function() {
           if (host.online) {
-            el.classList.remove('host-cell-inactive');
+            hostCell.classList.remove('host-cell-inactive');
           } else {
-            el.classList.add('host-cell-inactive');
+            hostCell.classList.add('host-cell-inactive');
           }
         });
       }, 5000);
@@ -222,7 +222,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
 
   if (!pairingCert) {
     snackbarLog('ERROR: Cert has not been generated yet. Is Wasm initialized?');
-    console.warn('%c[index.js]', 'color: green;', 'User wants to pair, and we still have no cert. Problem = very yes.');
+    console.warn('%c[index.js]', 'color: green;', 'User wants to pair, and we still have no cert.');
     onFailure();
     return;
   }
@@ -373,8 +373,8 @@ function initializeIpAddressFields() {
   });
 }
 
-// If the `+` was selected on the host grid, then
-// give the user a dialog to input connection details for the PC
+// If the `Add Host +` is selected on the host grid, then show the 
+// Add Host dialog to enter the connection details for the host PC
 function addHost() {
   // Find the existing overlay and dialog elements
   var addHostOverlay = document.querySelector('#addHostDialogOverlay');
@@ -409,18 +409,19 @@ function addHost() {
     initializeIpAddressFields();
   });
 
-  // Send a pair request if the Continue button is pressed
+  // Send a connection request if the Continue button is pressed
   $('#continueAddHost').off('click');
   $('#continueAddHost').on('click', function() {
     // Disable the Continue button to prevent multiple connection requests
     setTimeout(function() {
-      // Add disabled state immediately on click
-      $(this).addClass('mdl-button--disabled').prop('disabled', true);
-      // Re-enable the Continue button after 10 seconds
+      // Add disabled state after 2 seconds
+      $('#continueAddHost').addClass('mdl-button--disabled').prop('disabled', true);
+      // Re-enable the Continue button after 15 seconds
       setTimeout(function() {
         $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
-      }, 10000);
-    });
+      }, 15000);
+    }, 2000);
+    // Get the IP address value from the input field
     var inputHost;
     if ($('#ipAddressFieldModeSwitch').prop('checked')) {
       var ipAddressField1 = $('#ipAddressField1').val();
@@ -431,17 +432,16 @@ function addHost() {
     } else {
       inputHost = $('#ipAddressTextInput').val();
     }
-
+    // Send a connection request to the Host object based on the given IP address
     var _nvhttpHost = new NvHTTP(inputHost, myUniqueid, inputHost);
-
     _nvhttpHost.refreshServerInfoAtAddress(inputHost).then(function(success) {
       // Close the dialog if the user has provided the IP address
       addHostOverlay.style.display = 'none';
       addHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
-      // Check if we already have record of this host. If so,
-      // we'll need the PPK string to ensure our pairing status is accurate.
+      // Check if we already have record of this host. If so, we'll
+      // need the PPK string to ensure our pairing status is accurate.
       if (hosts[_nvhttpHost.serverUid] != null) {
         // Update the addresses
         hosts[_nvhttpHost.serverUid].address = _nvhttpHost.address;
@@ -463,8 +463,7 @@ function addHost() {
       // Clear the input field after successful processing
       $('#ipAddressTextInput').val('');
       initializeIpAddressFields();
-    }.bind(this),
-    function(failure) {
+    }.bind(this), function(failure) {
       snackbarLog('Failed to connect to ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
       // Re-enable the Continue button after failure processing
       $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
@@ -475,7 +474,7 @@ function addHost() {
   });
 }
 
-// Host is an NvHTTP object
+// Add the new NvHTTP Host object inside the host grid
 function addHostToGrid(host, ismDNSDiscovered) {
   var outerDiv = $("<div>", {
     class: 'host-container mdl-card mdl-shadow--4dp',
@@ -524,7 +523,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
   }
 }
 
-// Show a confirmation with Delete Host dialog before removing specific host
+// Show a confirmation with the Delete Host dialog before removing the host object
 function removeClicked(host) {
   // Find the existing overlay and dialog elements
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
@@ -546,7 +545,7 @@ function removeClicked(host) {
     Navigation.pop();
   });
 
-  // Remove the specific host if the Continue button is pressed
+  // Remove the host object if the Continue button is pressed
   // locally remove the hostname/ip from the saved `hosts` array
   // NOTE: this does not make the host forget the pairing to us
   // This means we can re-add the host, and will still be paired
@@ -568,7 +567,7 @@ function removeClicked(host) {
   });
 }
 
-// Show a confirmation with Delete Host dialog before removing all hosts
+// Show a confirmation with the Delete Host dialog before removing all hosts objects
 function removeAllHostsWithConfirmation() {
   if (Object.keys(hosts).length === 0) {
     // If no hosts exist, show snackbar message
@@ -896,14 +895,14 @@ function showExitMoonlightDialog() {
 // the function was made like this so that we can remove duplicated code, but
 // not do N*N stylization of the box art, or make the code not flow very well
 function stylizeBoxArt(freshApi, appIdToStylize) {
-  // If the running game is the good one then style it
-  var el = document.querySelector("#game-" + appIdToStylize);
+  // If the app or game is currently running, then apply CSS stylization
+  var appBox = document.querySelector("#game-" + appIdToStylize);
   if (freshApi.currentGame === appIdToStylize) {
-    el.classList.add('current-game');
-    el.title += ' (Running)';
+    appBox.classList.add('current-game');
+    appBox.title += ' (Running)';
   } else {
-    el.classList.remove('current-game');
-    el.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
+    appBox.classList.remove('current-game');
+    appBox.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
   }
 }
 
@@ -982,9 +981,9 @@ function showApps(host) {
 
     sortedAppList.forEach(function(app) {
       if ($('#game-' + app.id).length === 0) {
-        // Double clicking the button will cause multiple box arts to appear
-        // To mitigate this we ensure we don't add a duplicate
-        // This isn't perfect: there's lots of RTTs before the logic prevents anything
+        // Double clicking the button will cause multiple box arts to appear.
+        // To mitigate this, we ensure that we don't add a duplicate box art.
+        // This isn't perfect: there's lots of RTTs before the logic prevents anything.
         var gameCard = document.createElement('div');
         gameCard.id = 'game-' + app.id;
         gameCard.className = 'game-container mdl-card mdl-shadow--4dp';
@@ -1124,8 +1123,7 @@ function showAppsMode() {
   Navigation.start();
 }
 
-// Start the given appID. If another app is running, offer to quit it.
-// If the given app is already running, just resume it.
+// Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
 function startGame(host, appID) {
   if (!host || !host.paired) {
     console.error('%c[index.js, startGame]', 'color: green;', 'Attempted to start a game, but `host` did not initialize properly. Host object: ', host);
@@ -1298,6 +1296,7 @@ function fullscreenWasmModule() {
   module.style.marginTop = ((screenHeight - module.height) / 2) + "px";
 }
 
+// Show a confirmation with the Quit App dialog before stopping the running game
 function stopGameWithConfirmation() {
   if (api.currentGame === 0) {
     // If no app or game is running, show snackbar message
@@ -1415,15 +1414,15 @@ function openIndexDB(callback) {
   const request = indexedDB.open(dbName, dbVersion);
 
   request.onerror = function(event) {
-    console.log('Error creating/accessing IndexedDB database');
+    console.error('Error creating/accessing IndexedDB database', event);
   };
 
   request.onsuccess = function(event) {
-    console.log('Success creating/accessing IndexedDB database');
+    console.log('Success creating/accessing IndexedDB database', event);
     db = request.result;
 
     db.onerror = function(event) {
-      console.log('Error creating/accessing IndexedDB database');
+      console.error('Error creating/accessing IndexedDB database', event);
     };
 
     // Interim solution to create an objectStore
@@ -1519,8 +1518,8 @@ function storeData(key, data, callbackFunction) {
 }
 
 // Storing data takes the data as an object, and shoves it into JSON to store.
-// Unfortunately, objects with function instances (classes) are stripped of their function instances when converted to a raw object,
-// so we cannot forget to revive the object after we load it.
+// Unfortunately, objects with function instances (classes) are stripped of their function instances
+// when converted to a raw object, so we cannot forget to revive the object after we load it.
 function saveHosts() {
   storeData('hosts', hosts, null);
 }
@@ -1724,6 +1723,34 @@ function initSamsungKeys() {
   platformOnLoad(handler);
 }
 
+function loadSystemInfo() {
+  console.log('load system information');
+  const systemInfoPlaceholder = document.getElementById("systemInfoBtn");
+
+  if (systemInfoPlaceholder) {
+    appName = tizen.application.getAppInfo();
+    console.log("App Name: ", appName.name);
+    appVer = tizen.application.getAppInfo();
+    console.log("App Version: ", appVer.version);
+    platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version");
+    console.log("Platform Version: Tizen ", platformVer);
+    tvModelName = webapis.productinfo.getRealModel();
+    console.log("TV Model Name: ", tvModelName);
+    tvModelCode = webapis.productinfo.getModelCode();
+    console.log("TV Model Code: ", tvModelCode);
+
+    systemInfoPlaceholder.innerText =
+      "App Name: " + (appName.name ? appName.name : "Unknown") + " Game Streaming" + "\n" +
+      "App Version: " + (appVer.version ? appVer.version : "Unknown") + "\n" +
+      "Platform Version: Tizen " + (platformVer ? platformVer : "Unknown") + "\n" +
+      "TV Model: " + (tvModelName ? tvModelName : "Unknown") + "\n" +
+      "TV Model Code: " + (tvModelCode ? tvModelCode : "Unknown");
+  } else {
+    console.error('Error: Failed to load system information');
+    systemInfoPlaceholder.innerText = "Failed to load system information!";
+  }
+}
+
 function loadUserData() {
   console.log('loading stored user data');
   openIndexDB(loadUserDataCb);
@@ -1827,33 +1854,6 @@ function loadUserDataCb() {
   });
 }
 
-function loadSystemInfo() {
-  console.log("load system information");
-  var systemInfoPlaceholder = document.getElementById("systemInfoBtn");
-
-  if (systemInfoPlaceholder) {
-    appName = tizen.application.getAppInfo();
-    console.log("App Name: ", appName.name);
-    appVer = tizen.application.getAppInfo();
-    console.log("App Version: ", appVer.version);
-    platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version");
-    console.log("Platform Version: Tizen ", platformVer);
-    tvModelName = webapis.productinfo.getRealModel();
-    console.log("TV Model Name: ", tvModelName);
-    tvModelCode = webapis.productinfo.getModelCode();
-    console.log("TV Model Code: ", tvModelCode);
-
-    systemInfoPlaceholder.innerText =
-      "App Name: " + (appName.name ? appName.name : "Unknown") + " Game Streaming" + "\n" +
-      "App Version: " + (appVer.version ? appVer.version : "Unknown") + "\n" +
-      "Platform Version: Tizen " + (platformVer ? platformVer : "Unknown") + "\n" +
-      "TV Model: " + (tvModelName ? tvModelName : "Unknown") + "\n" +
-      "TV Model Code: " + (tvModelCode ? tvModelCode : "Unknown");
-  } else {
-    systemInfoPlaceholder.innerText = "Failed to get system information!";
-  }
-}
-
 function loadHTTPCerts() {
   console.log('loading stored HTTP certs');
   openIndexDB(loadHTTPCertsCb);
@@ -1922,18 +1922,18 @@ function onWindowLoad() {
   $('#gameSelection').css('display', 'none');
 
   initSamsungKeys();
-  loadUserData();
   loadSystemInfo();
+  loadUserData();
 }
 
 window.onload = onWindowLoad;
 
-// Required on Samsung TV, to get gamepad connected events
+// Gamepad connected events
 window.addEventListener('gamepadconnected', function(event) {
   const connectedGamepad = event.gamepad;
   console.log('%c[index.js, gamepadconnected] gamepad connected: ' + JSON.stringify(connectedGamepad), connectedGamepad);
   snackbarLog('Gamepad connected');
-  // Check if the connected gamepad supports rumble and try sending a rumble effect to notify the user
+  // If the connected gamepad supports rumble, then play a rumble effect
   if (connectedGamepad.vibrationActuator) {
     console.log('Gamepad supports the rumble. Vibrating now...');
     // Specify the vibration parameters and play the rumble effect
@@ -1948,7 +1948,7 @@ window.addEventListener('gamepadconnected', function(event) {
   }
 });
 
-// Required on Samsung TV, to get gamepad disconnected events
+// Gamepad disconnected events
 window.addEventListener('gamepaddisconnected', function(event) {
   console.log('%c[index.js, gamepaddisconnected] gamepad disconnected: ' + JSON.stringify(event.gamepad), event.gamepad);
   snackbarLog('Gamepad disconnected');

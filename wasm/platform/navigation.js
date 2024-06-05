@@ -1,6 +1,6 @@
 const hoveredClassName = 'hovered';
 let navigationTimer = null;
-const delayBetweenNavigation = 120; // 120ms (milliseconds)
+const navigationDelay = 120; // 120ms (milliseconds)
 
 function markElement(element) {
   if (element) {
@@ -211,7 +211,7 @@ class ListView {
       return false;
     }
   }
-  
+
   scrollToGameRow(row) {
     const array = this.func();
     const targetCard = array[row * this.gameCardsPerRow];
@@ -246,7 +246,7 @@ const Views = {
             navItem.focus();
           }
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
@@ -255,21 +255,21 @@ const Views = {
         if (this.view.nextHostRow()) {
           document.getElementById(this.view.current()).focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       const currentCell = this.view.current();
@@ -291,7 +291,7 @@ const Views = {
       // Show the Exit Moonlight dialog and push the view
       showExitMoonlightDialog();
     },
-    shortcut: function() {
+    press: function() {
       const currentCell = this.view.current();
       if (currentCell.id !== 'addHostCell') {
         currentCell.children[1].focus();
@@ -299,7 +299,7 @@ const Views = {
         setTimeout(() => currentCell.children[1].click(), 800);
       }
     },
-    alternative: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -324,21 +324,21 @@ const Views = {
         if (navItem) {
           navItem.focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -352,8 +352,8 @@ const Views = {
       // Navigate to the Hosts view
       Navigation.change(Views.Hosts);
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -406,7 +406,7 @@ const Views = {
           this.view.prev();
           document.getElementById('continueAddHost').focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
@@ -424,7 +424,7 @@ const Views = {
           this.view.next();
           document.getElementById('cancelAddHost').focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -435,8 +435,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelAddHost').click();
     },
-    shortcut: function() {},
-    alternative: function() {
+    press: function() {},
+    switch: function() {
       document.getElementById('ipAddressFieldModeSwitch').click();
     },
     enter: function() {
@@ -454,7 +454,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById('cancelPairingDialog').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {},
@@ -467,8 +467,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelPairingDialog').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -488,14 +488,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById('continueDeleteHost').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById('cancelDeleteHost').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -506,8 +506,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelDeleteHost').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -532,7 +532,7 @@ const Views = {
             navItem.focus();
           }
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
@@ -541,7 +541,7 @@ const Views = {
         if (this.view.nextCategory()) {
           document.getElementById(this.view.current()).focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {},
@@ -557,8 +557,8 @@ const Views = {
       Navigation.change(Views.HostsNav);
       document.getElementById('settingsBtn').focus();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -581,21 +581,21 @@ const Views = {
         if (navItem) {
           navItem.focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       const currentItem = this.view.current();
@@ -625,8 +625,8 @@ const Views = {
       Navigation.change(Views.HostsNav);
       document.getElementById('settingsBtn').focus();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -646,14 +646,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById('continueRestoreDefaults').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById('cancelRestoreDefaults').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -664,8 +664,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelRestoreDefaults').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -683,21 +683,21 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -731,8 +731,8 @@ const Views = {
         navItem.focus();
       }
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -750,14 +750,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {},
@@ -774,8 +774,8 @@ const Views = {
       document.getElementById('selectResolution').click();
       document.getElementById('selectResolution').focus();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -793,14 +793,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {},
@@ -817,8 +817,8 @@ const Views = {
       document.getElementById('selectFramerate').click();
       document.getElementById('selectFramerate').focus();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -859,8 +859,8 @@ const Views = {
       document.getElementById('selectBitrate').click();
       document.getElementById('selectBitrate').focus();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -879,21 +879,21 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -927,8 +927,8 @@ const Views = {
         navItem.focus();
       }
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -946,21 +946,21 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -994,8 +994,8 @@ const Views = {
         navItem.focus();
       }
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1013,14 +1013,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {},
@@ -1041,8 +1041,8 @@ const Views = {
       document.getElementById('selectCodec').click();
       document.getElementById('selectCodec').focus();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1060,21 +1060,21 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prevOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.nextOption();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -1103,8 +1103,8 @@ const Views = {
         navItem.focus();
       }
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1129,7 +1129,7 @@ const Views = {
             navItem.focus();
           }
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {
       clearTimeout(navigationTimer);
@@ -1138,21 +1138,21 @@ const Views = {
         if (this.view.nextGameRow()) {
           document.getElementById(this.view.current()).focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -1163,8 +1163,8 @@ const Views = {
     back: function() {
       document.getElementById('goBackBtn').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1187,21 +1187,21 @@ const Views = {
         if (navItem) {
           navItem.focus();
         }
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -1212,8 +1212,8 @@ const Views = {
     back: function() {
       document.getElementById('goBackBtn').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1233,14 +1233,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById('continueQuitApp').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById('cancelQuitApp').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -1251,8 +1251,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelQuitApp').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1268,7 +1268,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById('closeSupportDialog').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     left: function() {},
     right: function() {},
@@ -1281,8 +1281,8 @@ const Views = {
     back: function() {
       document.getElementById('closeSupportDialog').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1299,7 +1299,7 @@ const Views = {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         document.getElementById(this.view.current()).focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     down: function() {},
     left: function() {
@@ -1307,14 +1307,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById('continueRestartApp').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById('cancelRestartApp').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -1325,8 +1325,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelRestartApp').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1346,14 +1346,14 @@ const Views = {
       navigationTimer = setTimeout(() => {
         this.view.prev();
         document.getElementById('continueExitApp').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     right: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
         this.view.next();
         document.getElementById('cancelExitApp').focus();
-      }, delayBetweenNavigation);
+      }, navigationDelay);
     },
     select: function() {
       this.view.current().click();
@@ -1364,8 +1364,8 @@ const Views = {
     back: function() {
       document.getElementById('cancelExitApp').click();
     },
-    shortcut: function() {},
-    alternative: function() {},
+    press: function() {},
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1483,8 +1483,8 @@ const Navigation = (function() {
     select: runOp('select'),
     accept: runOp('accept'),
     back: runOp('back'),
-    shortcut: runOp('shortcut'),
-    alternative: runOp('alternative'),
+    press: runOp('press'),
+    switch: runOp('switch'),
     push: Stack.push,
     change: Stack.change,
     pop: Stack.pop,
