@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.20
+
+### Added
+- Introduced a new 'Tizen' metadata: 'Voice Guide' which disables the voice guide in the app
+- Implemented navigation to go to the previous or next row in 'Hosts' view
+- Added a navigation delay for the bitrate slider when adjusting the value
+- Implemented navigation to go to the previous or next option in 'Settings' view
+
+### Fixed
+- Refactored code for improved structure and readability
+
 ## v1.1.19
 
 ### Added
