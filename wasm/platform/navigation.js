@@ -818,12 +818,18 @@ const Views = {
     up: function() {},
     down: function() {},
     left: function() {
-      bitrateSlider.stepDown();
-      bitrateSlider.dispatchEvent(new Event('input'));
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        bitrateSlider.stepDown();
+        bitrateSlider.dispatchEvent(new Event('input'));
+      }, 40);
     },
     right: function() {
-      bitrateSlider.stepUp();
-      bitrateSlider.dispatchEvent(new Event('input'));
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        bitrateSlider.stepUp();
+        bitrateSlider.dispatchEvent(new Event('input'));
+      }, 40);
     },
     select: function() {
       this.view.current().click();
