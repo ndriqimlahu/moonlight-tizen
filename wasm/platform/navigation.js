@@ -161,6 +161,22 @@ class ListView {
     }
   }
 
+  prevOption() {
+    const array = this.func();
+    unmark(array[this.index]);
+    this.index = (this.index - 1 + array.length) % array.length;
+    mark(array[this.index]);
+    return array[this.index];
+  }
+
+  nextOption() {
+    const array = this.func();
+    unmark(array[this.index]);
+    this.index = (this.index + 1) % array.length;
+    mark(array[this.index]);
+    return array[this.index];
+  }
+
   prevGameRow() {
     const array = this.func();
     const currentRow = Math.floor(this.index / this.gameCardsPerRow);
@@ -665,14 +681,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -732,14 +748,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -775,14 +791,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -861,14 +877,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -928,14 +944,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -995,14 +1011,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
@@ -1042,14 +1058,14 @@ const Views = {
     up: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.prev();
+        this.view.prevOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
-        this.view.next();
+        this.view.nextOption();
         document.getElementById(this.view.current()).focus();
       }, delayBetweenNavigation);
     },
