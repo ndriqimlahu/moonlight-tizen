@@ -173,7 +173,7 @@
               <label>Video codec:</label>
               <span class="mdl-list__item-text-body">
                 - Increase for better video compression and quality or decrease to improve performance on lower-end devices.<br>
-                - HDR requires an HDR10-capable device, a GPU that can encode HEVC Main10, and HDR10-enabled game.
+                - HDR requires an HDR10-capable device, a GPU that can encode HEVC Main10 or AV1 Main10, and HDR10-enabled game.
               </span>
               <div id="codecMenu">
                 <button type="button" id="selectCodec" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="0x0001">H.264</button>
@@ -182,6 +182,8 @@
                 <li class="mdl-menu__item" data-value="0x0001">H.264</li>
                 <li class="mdl-menu__item" data-value="0x0100">HEVC</li>
                 <li class="mdl-menu__item" data-value="0x0200">HEVC Main10</li>
+                <li class="mdl-menu__item" data-value="0x1000">AV1</li>
+                <li class="mdl-menu__item" data-value="0x2000">AV1 Main10</li>
               </ul>
             </div>
             <div class="setting-option">
