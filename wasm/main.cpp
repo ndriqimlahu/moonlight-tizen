@@ -173,9 +173,9 @@ static void HexStringToBytes(const char* str, char* output) {
   }
 }
 
-MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height,
-  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-  std::string gfeversion, std::string rtspurl, std::string codecMode, bool framePacing, bool audioSync) {
+MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps,
+  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
+  std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
   PostToJs("Setting stream width to: " + width);
   PostToJs("Setting stream height to: " + height);
   PostToJs("Setting stream fps to: " + fps);
@@ -187,6 +187,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting gfeversion to: " + gfeversion);
   PostToJs("Setting RTSP URL to: " + rtspurl);
   PostToJs("Setting codec mode to: " + codecMode);
+  PostToJs("Setting server codec mode to: " + serverCodecMode);
   PostToJs("Setting frame pacing to: " + std::to_string(framePacing));
   PostToJs("Setting audio syncing to: " + std::to_string(audioSync));
 
@@ -211,7 +212,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
   m_RtspUrl = rtspurl;
-  m_SupportedVideoCodecs = stoi(codecMode,0,16);
+  m_SupportedVideoCodecs = stoi(serverCodecMode);
   m_FramePacingEnabled = framePacing;
   m_AudioSyncEnabled = audioSync;
 
@@ -300,12 +301,12 @@ int main(int argc, char** argv) {
   RAND_seed(buffer, 128);
 }
 
-MessageResult startStream(std::string host, std::string width, std::string height,
-  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-  std::string gfeversion, std::string rtspurl, std::string codecMode, bool framePacing, bool audioSync) {
+MessageResult startStream(std::string host, std::string width, std::string height, std::string fps,
+  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
+  std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
-  return g_Instance->StartStream(host, width, height, fps, bitrate, rikey,
-  rikeyid, appversion, gfeversion, rtspurl, codecMode, framePacing, audioSync);
+  return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid,
+  appversion, gfeversion, rtspurl, codecMode, serverCodecMode, framePacing, audioSync);
 }
 
 MessageResult stopStream() {

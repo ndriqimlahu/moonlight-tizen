@@ -60,9 +60,9 @@ class MoonlightInstance {
   public:
   explicit MoonlightInstance();
 
-  MessageResult StartStream(std::string host, std::string width, std::string height,
-    std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-    std::string gfeversion, std::string rtspurl, std::string codecMode, bool framePacing, bool audioSync);
+  MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps,
+    std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
+    std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -235,9 +235,9 @@ MessageResult makeCert();
 MessageResult httpInit(std::string cert, std::string privateKey, std::string myUniqueId);
 void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryResponse);
 
-MessageResult startStream(std::string host, std::string width, std::string height,
-  std::string fps, std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion,
-  std::string gfeversion, std::string rtspurl, std::string codecMode, bool framePacing, bool audioSync);
+MessageResult startStream(std::string host, std::string width, std::string height, std::string fps,
+  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
+  std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
 MessageResult stopStream();
 
 void stun(int callbackId);

@@ -289,6 +289,7 @@ NvHTTP.prototype = {
     this.serverMajorVersion = parseInt(this.appVersion.substring(0, 1), 10);
     this.serverUid = $root.find('uniqueid').text().trim();
     this.hostname = $root.find('hostname').text().trim();
+    this.serverCodecMode = $root.find('ServerCodecModeSupport').text().trim();
 
     var externIP = $root.find('ExternalIP').text().trim();
     if (externIP) {

@@ -1216,7 +1216,7 @@ function startGame(host, appID) {
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
             bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim(), codecMode, framePacing, audioSync
+            $root.find('sessionUrl0').text().trim(), codecMode, host.serverCodecMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color:green;', 'Failed to resume the app! Returned error was' + failedResumeApp);
@@ -1252,7 +1252,7 @@ function startGame(host, appID) {
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
           bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim(), codecMode, framePacing, audioSync
+          $root.find('sessionUrl0').text().trim(), codecMode, host.serverCodecMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Failed to launch app width id: ' + appID + '\nReturned error was: ' + failedLaunchApp);
