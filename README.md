@@ -132,8 +132,8 @@ To get started, make sure your setup meets the [Prerequisites](https://github.co
 - Streaming performance may vary based on your host device, client device and network configuration. So, it is recommended that you adjust the streaming resolution, frame rate, bit rate, and other settings to achieve the desired performance.
 
 5. What video codecs are supported in Moonlight?
-- Most common video codecs such as `H.264` and `HEVC (H.265 - Main, Main10)` are supported.
-- In order to use HDR, then you are required to have an HDR10-capable device, a GPU that can encode HEVC Main10, and HDR10-enabled game. Games that use DXGI/OS HDR also require an HDR display connected to your host PC.
+- Most common video codecs such as `H.264`, `HEVC (H.265 - Main, Main10)` and `AV1 (Main, Main10)` are supported.
+- To use HDR for streaming, then you must have an HDR10-capable device, a GPU that can encode HEVC Main10 or AV1 Main10, and HDR10-enabled game. Games that use DXGI/OS HDR also require an HDR display connected to your host PC.
 
 6. Are keyboard and mouse inputs supported in Moonlight?
 - Yes, Moonlight can support any Bluetooth or USB-wired keyboard and mouse input.
