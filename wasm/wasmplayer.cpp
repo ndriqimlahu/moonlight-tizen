@@ -157,6 +157,10 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
       mimetype = "video/mp4; codecs=\"hev1.1.6.L153.B0\"";       // Video Codec: HEVC Main Level 5.1 Profile
     } else if (videoFormat & VIDEO_FORMAT_H265_MAIN10) {
       mimetype = "video/mp4; codecs=\"hev1.2.4.L153.B0\"";       // Video Codec: HEVC Main10 Level 5.1 Profile
+    } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN8) {
+      mimetype = "video/mp4; codecs=\"av01.0.13M.08\"";          // Video Codec: AV1 Main Level 5.1 Profile
+    } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN10) {
+      mimetype = "video/mp4; codecs=\"av01.0.13M.10\"";          // Video Codec: AV1 Main10 Level 5.1 Profile
     } else {
       ClLogMessage("Cannot select MIME-type for videoFormat=0x%x\n", videoFormat);
       return -1;
