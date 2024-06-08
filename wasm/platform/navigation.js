@@ -353,7 +353,12 @@ const Views = {
       Navigation.change(Views.Hosts);
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -626,7 +631,12 @@ const Views = {
       document.getElementById('settingsBtn').focus();
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -693,12 +703,7 @@ const Views = {
       }, navigationDelay);
     },
     left: function() {},
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById(this.view.current()).focus();
-      }, navigationDelay);
-    },
+    right: function() {},
     select: function() {
       this.view.current().click();
     },
@@ -732,7 +737,12 @@ const Views = {
       }
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -889,12 +899,7 @@ const Views = {
       }, navigationDelay);
     },
     left: function() {},
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById(this.view.current()).focus();
-      }, navigationDelay);
-    },
+    right: function() {},
     select: function() {
       this.view.current().click();
     },
@@ -928,7 +933,12 @@ const Views = {
       }
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -956,12 +966,7 @@ const Views = {
       }, navigationDelay);
     },
     left: function() {},
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById(this.view.current()).focus();
-      }, navigationDelay);
-    },
+    right: function() {},
     select: function() {
       this.view.current().click();
     },
@@ -995,7 +1000,12 @@ const Views = {
       }
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -1070,12 +1080,7 @@ const Views = {
       }, navigationDelay);
     },
     left: function() {},
-    right: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById(this.view.current()).focus();
-      }, navigationDelay);
-    },
+    right: function() {},
     select: function() {
       this.view.current().click();
     },
@@ -1104,7 +1109,12 @@ const Views = {
       }
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -1213,7 +1223,12 @@ const Views = {
       document.getElementById('goBackBtn').click();
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById(this.view.current()).focus();
+      }, navigationDelay);
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -1295,12 +1310,7 @@ const Views = {
     view: new ListView(() => [
       'continueRestartApp',
       'cancelRestartApp']),
-    up: function() {
-      clearTimeout(navigationTimer);
-      navigationTimer = setTimeout(() => {
-        document.getElementById(this.view.current()).focus();
-      }, navigationDelay);
-    },
+    up: function() {},
     down: function() {},
     left: function() {
       clearTimeout(navigationTimer);

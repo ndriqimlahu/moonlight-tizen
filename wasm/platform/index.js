@@ -591,7 +591,7 @@ function removeAllHostsWithConfirmation() {
       deleteHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
-      document.getElementById('removeAllHostsBtn').focus();
+      Navigation.switch();
     });
   
     // Remove all existing hosts if the Continue button is pressed
@@ -615,7 +615,7 @@ function removeAllHostsWithConfirmation() {
       deleteHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
-      document.getElementById('removeAllHostsBtn').focus();
+      Navigation.switch();
     });
   }
 }
@@ -671,7 +671,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.right();
+          Navigation.switch();
         }
         break;
       case 'hostSettings':
@@ -682,7 +682,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.right();
+          Navigation.switch();
         }
         break;
       case 'decoderSettings':
@@ -693,7 +693,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.right();
+          Navigation.switch();
         }
         break;
       case 'aboutSettings':
@@ -704,7 +704,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.right();
+          Navigation.switch();
         }
         break;
       default:
@@ -732,7 +732,7 @@ function restoreDefaultsSettingsWithConfirmation() {
     restoreDefaultsDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    document.getElementById('restoreDefaultsBtn').focus();
+    Navigation.switch();
   });
 
   // Restore all default settings if the Continue button is pressed
@@ -746,7 +746,7 @@ function restoreDefaultsSettingsWithConfirmation() {
     restoreDefaultsDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    document.getElementById('restoreDefaultsBtn').focus();
+    Navigation.switch();
     // Notify the user to restart the application
     setTimeout(() => snackbarLog("Restart the application for the changes to take effect"), 1500);
   });
@@ -771,7 +771,7 @@ function showSupportDialog() {
     supportDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    document.getElementById('supportBtn').focus();
+    Navigation.switch();
   });
 }
 
@@ -799,7 +799,7 @@ function showRestartMoonlightDialog() {
     restartAppDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    Navigation.up();
+    Navigation.switch();
   });
 
   // Restart the application if the Restart button is pressed
@@ -1322,7 +1322,7 @@ function stopGameWithConfirmation() {
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
-        document.getElementById('quitRunningAppBtn').focus();
+        Navigation.switch();
       });
 
       // Quit the running app if the Continue button is pressed
@@ -1334,7 +1334,7 @@ function stopGameWithConfirmation() {
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
-        document.getElementById('quitRunningAppBtn').focus();
+        Navigation.switch();
       });
     });
   }
