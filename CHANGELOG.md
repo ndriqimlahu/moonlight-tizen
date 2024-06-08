@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.0
+
+### Added
+- Introduced 'AV1' as a new video codec option in the 'Video codec' settings
+- Implemented logic to handle server codec mode support checks
+- Added the High Level 5.1 profiles for AV1 and AV1 Main10 codecs
+
+### Fixed
+- Fixed navigation issues when switching between views
+
 ## v1.1.20
 
 ### Added
