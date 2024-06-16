@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.1
+
+### Added
+- Introduced the 'Mouse Emulation' feature for gamepad controller
+- Added snackbar notifications for mouse emulation state changes
+- Implemented logic to handle mouse movements with the Left Stick
+- Implemented logic to handle mouse scrolls with the Right Stick
+- Implemented logic to handle mouse buttons with the Face Buttons
+
 ## v1.2.0
 
 ### Added
