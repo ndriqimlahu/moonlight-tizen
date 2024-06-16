@@ -28,8 +28,6 @@ To get started, make sure your setup meets the [Prerequisites](https://github.co
 
 ## Installation
 
-### Using the pre-built Docker image (*Recommended for all users*)
-
 1. Enable the `Developer mode` on your "Samsung Smart TV" (If you need more details, check the official [Samsung guide](https://developer.samsung.com/smarttv/develop/getting-started/using-sdk/tv-device.html)):
 	- Go to the `Apps` panel and press `12345` on the remote, then a dialog should popup.
 	- Set `Developer mode` to `On`, then enter your computer's IP address in the `Host PC IP` field.
@@ -80,35 +78,6 @@ To get started, make sure your setup meets the [Prerequisites](https://github.co
 	- Set `Developer mode` to `Off` and then click the `OK` button to close the dialog.
 	- Restart the TV by holding the power button, then go to the `Apps` panel.
 	- Depending on your model, a `DEVELOP MODE` will disappear from the `Apps` panel at the top of the screen.
-
-### Building the Docker image from source (*Only for developers*)
-
-1. Clone this repository to your local machine:
-	 ```
-	 git clone https://github.com/ndriqimlahu/moonlight-tizen.git
-	 ```
- 	> Note: After that, you need to run `Docker Desktop` before proceeding further.
-2. Open `Windows PowerShell` or a similar terminal depending on your OS, then change directory to where you cloned the repository so that you can use the `Dockerfile` from source folder:
-	 ```
-	 cd .\Downloads\moonlight-tizen
-	 ```
-3. Enable the `Developer mode` on your "Samsung Smart TV" using the steps from the previous section.
-4. Find the `TV IP Address` on your "Samsung Smart TV" using the steps from the previous section.
-5. After that, in `Windows PowerShell`, enter the following command to build the "Docker" image from source:
-	 ```
-	 docker build -t moonlight-tizen . --no-cache
-	 ```
-	- This operation may take a while, please be patient.
- 	> Note: If you are running "Docker" on a "Mac" with a silicon chip (M1/M2 etc), then you need to change the first line in the `Dockerfile` to `FROM --platform=linux/amd64 ubuntu:22.04` before building the application to ensure compatibility.
-6. After that, in `Windows PowerShell`, enter the following command to run and enter the container:
-	 ```
-	 docker run -it --rm moonlight-tizen
-	 ```
-7. After that, in `Windows PowerShell`, install the application on your TV using the steps from the previous section.
-8. Finally, in `Windows PowerShell`, enter the following command to remove the "Docker" image, as it is no longer needed:
-	 ```
-	 docker image rm moonlight-tizen
-	 ```
 
 ## Updating
 
