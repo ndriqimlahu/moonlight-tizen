@@ -187,6 +187,29 @@ void MoonlightInstance::PollGamepads() {
       // Send mouse scroll events with the specified delta values for both horizontal (X-axis) and vertical (Y-axis) coordinates
       LiSendHScrollEvent(static_cast<int>(scrollXDelta));
       LiSendScrollEvent(static_cast<int>(scrollYDelta));
+
+      // Face Buttons values are mapped to control mouse buttons
+      if (buttonFlags & (A_FLAG | LB_FLAG)) {
+        // Send a mouse button press event for the left button
+        LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_LEFT);
+      } else {
+        // Send a mouse button release event for the left button
+        LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_LEFT);
+      }
+      if (buttonFlags & (LS_CLK_FLAG | RS_CLK_FLAG)) {
+        // Send a mouse button press event for the Middle button
+        LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_MIDDLE);
+      } else {
+        // Send a mouse button release event for the Middle button
+        LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_MIDDLE);
+      }
+      if (buttonFlags & (B_FLAG | RB_FLAG)) {
+        // Send a mouse button press event for the Right button
+        LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_RIGHT);
+      } else {
+        // Send a mouse button release event for the Right button
+        LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_RIGHT);
+      }
     } else {
       // If mouse emulation is disabled, then send gamepad input to the desired handler (acts as a gamepad)
       LiSendMultiControllerEvent(
