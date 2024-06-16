@@ -167,6 +167,15 @@ void MoonlightInstance::PollGamepads() {
 
     // If mouse emulation is enabled, then send mouse input to the desired handler (acts as a mouse)
     if (isMouseEmulationActive) {
+      // Left Stick values are mapped to horizontal and vertical mouse movements
+      const float baseMouseSpeed = 10.0f;
+      const float leftStickMagnitude = std::sqrt(leftStickX * leftStickX + leftStickY * leftStickY) / std::numeric_limits<short>::max();
+      const float mouseSpeed = baseMouseSpeed * leftStickMagnitude;
+      const float mouseXDelta = static_cast<float>(leftStickX) / std::numeric_limits<short>::max() * mouseSpeed;
+      const float mouseYDelta = -static_cast<float>(leftStickY) / std::numeric_limits<short>::max() * mouseSpeed;
+      
+      // Send a mouse move event with the specified delta values for both horizontal (X-axis) and vertical (Y-axis) coordinates
+      LiSendMouseMoveEvent(static_cast<int>(mouseXDelta), static_cast<int>(mouseYDelta));
     } else {
       // If mouse emulation is disabled, then send gamepad input to the desired handler (acts as a gamepad)
       LiSendMultiControllerEvent(
