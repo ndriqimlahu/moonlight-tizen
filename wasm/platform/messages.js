@@ -105,6 +105,10 @@ function handleMessage(msg) {
   } else if (msg === 'displayVideo') {
     // Show the video stream now
     $("#listener").addClass("fullscreen");
+  } else if (msg.indexOf('mouseEmulation enabled') === 0) {
+    snackbarLogLong("Mouse emulation is enabled");
+  } else if (msg.indexOf('mouseEmulation disabled') === 0) {
+    snackbarLogLong("Mouse emulation is disabled");
   } else if (msg.indexOf('controllerRumble: ' ) === 0) {
     const eventData = msg.split( ' ' )[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);
