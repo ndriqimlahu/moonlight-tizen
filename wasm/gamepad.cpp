@@ -176,6 +176,17 @@ void MoonlightInstance::PollGamepads() {
       
       // Send a mouse move event with the specified delta values for both horizontal (X-axis) and vertical (Y-axis) coordinates
       LiSendMouseMoveEvent(static_cast<int>(mouseXDelta), static_cast<int>(mouseYDelta));
+
+      // Right Stick values are mapped to horizontal and vertical mouse scrolls
+      const float baseScrollSpeed = 1.0f;
+      const float rightStickMagnitude = std::sqrt(rightStickX * rightStickX + rightStickY * rightStickY) / std::numeric_limits<short>::max();
+      const float scrollSpeed = baseScrollSpeed * rightStickMagnitude;
+      const float scrollXDelta = static_cast<float>(rightStickX) / std::numeric_limits<short>::max() * scrollSpeed;
+      const float scrollYDelta = static_cast<float>(rightStickY) / std::numeric_limits<short>::max() * scrollSpeed;
+      
+      // Send mouse scroll events with the specified delta values for both horizontal (X-axis) and vertical (Y-axis) coordinates
+      LiSendHScrollEvent(static_cast<int>(scrollXDelta));
+      LiSendScrollEvent(static_cast<int>(scrollYDelta));
     } else {
       // If mouse emulation is disabled, then send gamepad input to the desired handler (acts as a gamepad)
       LiSendMultiControllerEvent(
