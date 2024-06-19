@@ -148,6 +148,7 @@ function restoreUiAfterWasmLoad() {
 }
 
 function beginBackgroundPollingOfHost(host) {
+  console.log('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Starting background polling of host ' + host.serverUid + '\n', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   var hostCell = document.querySelector('#hostgrid-' + host.serverUid);
   if (host.online) {
     hostCell.classList.remove('host-cell-inactive');
@@ -262,6 +263,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     // Cancel the operation if the Cancel button is pressed
     $('#cancelPairingDialog').off('click');
     $('#cancelPairingDialog').on('click', function() {
+      console.log('%c[index.js, pairTo]', 'color: green;', 'Closing app dialog, and returning');
       pairingOverlay.style.display = 'none';
       pairingDialog.close();
       isDialogOpen = false;
@@ -272,6 +274,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     nvhttpHost.pair(randomNumber).then(function() {
       snackbarLog('Paired successfully with ' + nvhttpHost.hostname);
       // Close the dialog if the pairing was successful
+      console.log('%c[index.js, pairTo]', 'color: green;', 'Closing app dialog, and returning');
       pairingOverlay.style.display = 'none';
       pairingDialog.close();
       isDialogOpen = false;
@@ -292,6 +295,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
 
 function hostChosen(host) {
   if (!host.online) {
+    console.error('%c[index.js, hostChosen]', 'color: green;', 'Error: Connection to the host has failed or host has gone offline');
     // If the host is offline, then return to the previous view
     snackbarLog('Connection to the host failed or the host is offline! Ensure the host is online and Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
     return;
@@ -398,6 +402,7 @@ function addHost() {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelAddHost').off('click');
   $('#cancelAddHost').on('click', function() {
+    console.log('%c[index.js, addHost]', 'color: green;', 'Closing app dialog, and returning');
     addHostOverlay.style.display = 'none';
     addHostDialog.close();
     isDialogOpen = false;
@@ -412,6 +417,7 @@ function addHost() {
   // Send a connection request if the Continue button is pressed
   $('#continueAddHost').off('click');
   $('#continueAddHost').on('click', function() {
+    console.log('%c[index.js, addHost]', 'color: green;', 'Adding host, and closing app dialog, and returning');
     // Disable the Continue button to prevent multiple connection requests
     setTimeout(function() {
       // Add disabled state after 2 seconds
@@ -434,8 +440,11 @@ function addHost() {
     }
     // Send a connection request to the Host object based on the given IP address
     var _nvhttpHost = new NvHTTP(inputHost, myUniqueid, inputHost);
+    console.log('%c[index.js, addHost]', 'color: green;', 'Sending connection request to ' + _nvhttpHost.hostname);
     _nvhttpHost.refreshServerInfoAtAddress(inputHost).then(function(success) {
+      snackbarLog('Connected successfully with ' + _nvhttpHost.hostname);
       // Close the dialog if the user has provided the IP address
+      console.log('%c[index.js, addHost]', 'color: green;', 'Closing app dialog, and returning');
       addHostOverlay.style.display = 'none';
       addHostDialog.close();
       isDialogOpen = false;
@@ -464,6 +473,7 @@ function addHost() {
       $('#ipAddressTextInput').val('');
       initializeIpAddressFields();
     }.bind(this), function(failure) {
+      console.error('%c[index.js, addHost]', 'color: green;', 'Error: Failed API object: ', _nvhttpHost, _nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLog('Failed to connect with ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
       // Re-enable the Continue button after failure processing
       $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
@@ -539,6 +549,7 @@ function removeClicked(host) {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelDeleteHost').off('click');
   $('#cancelDeleteHost').on('click', function() {
+    console.log('%c[index.js, removeClicked]', 'color: green;', 'Closing app dialog, and returning');
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
@@ -551,6 +562,7 @@ function removeClicked(host) {
   // This means we can re-add the host, and will still be paired
   $('#continueDeleteHost').off('click');
   $('#continueDeleteHost').on('click', function() {
+    console.log('%c[index.js, removeClicked]', 'color: green;', 'Removing host, and closing app dialog, and returning');
     // Remove the host container from the grid
     $('#host-container-' + host.serverUid).remove();
     // Remove the host from the hosts object
@@ -587,6 +599,7 @@ function removeAllHostsWithConfirmation() {
     // Cancel the operation if the Cancel button is pressed
     $('#cancelDeleteHost').off('click');
     $('#cancelDeleteHost').on('click', function() {
+      console.log('%c[index.js, removeAllHostsWithConfirmation]', 'color: green;', 'Closing app dialog, and returning');
       deleteHostOverlay.style.display = 'none';
       deleteHostDialog.close();
       isDialogOpen = false;
@@ -597,6 +610,7 @@ function removeAllHostsWithConfirmation() {
     // Remove all existing hosts if the Continue button is pressed
     $('#continueDeleteHost').off('click');
     $('#continueDeleteHost').on('click', function() {
+      console.log('%c[index.js, removeAllHostsWithConfirmation]', 'color: green;', 'Removing all hosts, and closing app dialog, and returning');
       // Iterate through all hosts and remove them
       for (var serverUid in hosts) {
         if (hosts.hasOwnProperty(serverUid)) {
@@ -728,6 +742,7 @@ function restoreDefaultsSettingsWithConfirmation() {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelRestoreDefaults').off('click');
   $('#cancelRestoreDefaults').on('click', function() {
+    console.log('%c[index.js, restoreDefaultSettingsWithConfirmation]', 'color: green;', 'Closing app dialog, and returning');
     restoreDefaultsDialogOverlay.style.display = 'none';
     restoreDefaultsDialog.close();
     isDialogOpen = false;
@@ -738,6 +753,7 @@ function restoreDefaultsSettingsWithConfirmation() {
   // Restore all default settings if the Continue button is pressed
   $('#continueRestoreDefaults').off('click');
   $('#continueRestoreDefaults').on('click', function() {
+    console.log('%c[index.js, restoreDefaultSettingsWithConfirmation]', 'color: green;', 'Restoring default settings, and closing app dialog, and returning');
     // Reset any settings to their default state and save the updated values
     restoreDefaultsSettingsValues();
     // If the settings have been reset to default, show snackbar message
@@ -767,6 +783,7 @@ function showSupportDialog() {
   // Close the dialog if the Close button is pressed
   $('#closeSupportDialog').off('click');
   $('#closeSupportDialog').on('click', function() {
+    console.log('%c[index.js, showSupportDialog]', 'color: green;', 'Closing app dialog, and returning');
     supportDialogOverlay.style.display = 'none';
     supportDialog.close();
     isDialogOpen = false;
@@ -795,6 +812,7 @@ function showRestartMoonlightDialog() {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelRestartApp').off('click');
   $('#cancelRestartApp').on('click', function() {
+    console.log('%c[index.js, showRestartMoonlightDialog]', 'color: green;', 'Closing app dialog, and returning');
     restartAppDialogOverlay.style.display = 'none';
     restartAppDialog.close();
     isDialogOpen = false;
@@ -805,6 +823,7 @@ function showRestartMoonlightDialog() {
   // Restart the application if the Restart button is pressed
   $('#continueRestartApp').off('click');
   $('#continueRestartApp').on('click', function() {
+    console.log('%c[index.js, showRestartMoonlightDialog]', 'color: green;', 'Restart application, and closing app dialog, and returning to Moonlight');
     restartAppDialogOverlay.style.display = 'none';
     restartAppDialog.close();
     isDialogOpen = false;
@@ -867,6 +886,7 @@ function showExitMoonlightDialog() {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelExitApp').off('click');
   $('#cancelExitApp').on('click', function() {
+    console.log('%c[index.js, showExitMoonlightDialog]', 'color: green;', 'Closing app dialog, and returning');
     exitAppOverlay.style.display = 'none';
     exitAppDialog.close();
     // Remove the dialog overlay and dialog content from the DOM if the dialog is open
@@ -879,6 +899,7 @@ function showExitMoonlightDialog() {
   // Exit the application if the Exit button is pressed
   $('#continueExitApp').off('click');
   $('#continueExitApp').on('click', function() {
+    console.log('%c[index.js, showExitMoonlightDialog]', 'color: green;', 'Exit application, and closing app dialog, and returning to Smart Hub');
     exitAppOverlay.style.display = 'none';
     exitAppDialog.close();
     // Remove the dialog overlay and dialog content from the DOM if the dialog is open

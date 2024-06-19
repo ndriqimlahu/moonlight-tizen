@@ -176,9 +176,7 @@ static void HexStringToBytes(const char* str, char* output) {
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps,
   std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
   std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
-  PostToJs("Setting stream width to: " + width);
-  PostToJs("Setting stream height to: " + height);
-  PostToJs("Setting stream fps to: " + fps);
+  PostToJs("Streaming session has started");
   PostToJs("Setting stream host to: " + host);
   PostToJs("Setting stream resolution to: " + width + "x" + height);
   PostToJs("Setting stream frame rate to: " + fps + " FPS");
@@ -231,6 +229,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
 }
 
 MessageResult MoonlightInstance::StopStream() {
+  PostToJs("Streaming session has ended");
   // Begin connection teardown
   StopConnection();
 
