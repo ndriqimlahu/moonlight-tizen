@@ -326,7 +326,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added a snackbar notification for offline hosts
-- Implemented 'Left Analog Stick' axis handling logic to navigate application-wide
+- Implemented logic to handle the Left Stick axis for in-app navigation
 - Implemented a delay for smoother in-app navigation
 
 ### Changed
@@ -437,9 +437,9 @@ All notable changes to this project will be documented in this file.
 ## v1.0.5
 
 ### Added
-- Introduced a new feature: 'Terminate Moonlight' dialog
-- Implemented dynamic handling for 'Terminate Moonlight' dialog
-- Show 'Terminate Moonlight' dialog via 'Back' button on 'Hosts' view
+- Introduced a new 'Exit Moonlight' dialog
+- Implemented dynamic handling for 'Exit Moonlight' dialog
+- Show 'Exit Moonlight' dialog via 'Back' button on 'Hosts' view
 
 ## v1.0.4
 
