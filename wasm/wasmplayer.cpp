@@ -128,11 +128,11 @@ bool MoonlightInstance::InitializeRenderingSurface(int width, int height) {
 
 int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags) {
   g_Instance->m_MediaElement.SetSrc(&g_Instance->m_Source);
-  ClLogMessage("Waiting for closed\n");
+  ClLogMessage("Waiting to close\n");
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
     return g_Instance->m_EmssReadyState == EmssReadyState::kClosed;
   });
-  ClLogMessage("closed done\n");
+  ClLogMessage("Closed\n");
 
   {
     auto add_track_result = g_Instance->m_Source.AddTrack(
@@ -162,7 +162,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN10) {
       mimetype = "video/mp4; codecs=\"av01.0.13M.10\"";          // Video Codec: AV1 Main10 Level 5.1 Profile
     } else {
-      ClLogMessage("Cannot select MIME-type for videoFormat=0x%x\n", videoFormat);
+      ClLogMessage("Cannot select mimeType for videoFormat=0x%x\n", videoFormat);
       return -1;
     }
 
@@ -196,7 +196,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
     }
   });
 
-  ClLogMessage("Waiting for start\n");
+  ClLogMessage("Waiting to start\n");
   g_Instance->WaitFor(&g_Instance->m_EmssAudioStateChanged, [] {
     return g_Instance->m_AudioStarted.load();
   });
@@ -204,7 +204,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   g_Instance->WaitFor(&g_Instance->m_EmssVideoStateChanged, [] {
     return g_Instance->m_VideoStarted.load();
   });
-  ClLogMessage("started\n");
+  ClLogMessage("Started\n");
   return 0;
 }
 

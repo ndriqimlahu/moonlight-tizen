@@ -17,7 +17,7 @@ const Controller = (function () {
 
     analyzeButtonsAndAxes(newButtons, newAxes) {
       if (this.buttons.length !== newButtons.length || this.axes.length !== newAxes.length) {
-        console.error("New buttons or axes layout does not match the saved one");
+        console.error('%c[gamepad.js, analyzeButtonsAndAxes]', 'color: gray;', 'Error: New buttons or axes layout does not match the saved one!');
         return;
       }
 

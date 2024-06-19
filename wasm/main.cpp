@@ -180,7 +180,9 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting stream height to: " + height);
   PostToJs("Setting stream fps to: " + fps);
   PostToJs("Setting stream host to: " + host);
-  PostToJs("Setting stream bitrate to: " + bitrate);
+  PostToJs("Setting stream resolution to: " + width + "x" + height);
+  PostToJs("Setting stream frame rate to: " + fps + " FPS");
+  PostToJs("Setting stream bitrate to: " + bitrate + " Kbps");
   PostToJs("Setting rikey to: " + rikey);
   PostToJs("Setting rikeyid to: " + rikeyid);
   PostToJs("Setting appversion to: " + appversion);
@@ -255,7 +257,7 @@ void MoonlightInstance::Pair_private(int callbackId, std::string serverMajorVers
   char* ppkstr;
   int err = gs_pair(atoi(serverMajorVersion.c_str()), address.c_str(), randomNumber.c_str(), &ppkstr);
 
-  printf("pair address: %s result: %d\n", address.c_str(), err);
+  printf("Pair address: %s with result: %d\n", address.c_str(), err);
   if (err == 0) {
     free(ppkstr);
     PostPromiseMessage(callbackId, "resolve", ppkstr);

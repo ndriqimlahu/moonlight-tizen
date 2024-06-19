@@ -65,7 +65,7 @@ var handlePromiseMessage = function(callbackId, type, msg) {
  * @return {void}
  */
 function handleMessage(msg) {
-  console.log('%c[messages.js, handleMessage]', 'color:gray;', 'Message data: ', msg);
+  console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Message data: ', msg);
   if (msg.indexOf('streamTerminated: ') === 0) { // If it's a recognized event, notify the appropriate function
     // Show a termination snackbar message if the termination was unexpected
     var errorCode = parseInt(msg.replace('streamTerminated: ', ''));
@@ -114,7 +114,7 @@ function handleMessage(msg) {
     const gamepadIdx = parseInt(eventData[0]);
     const weakMagnitude = parseFloat(eventData[1]);
     const strongMagnitude = parseFloat(eventData[2]);
-    console.log("Playing rumble on gamepad " + gamepadIdx + " with weakMagnitude " + weakMagnitude + " and strongMagnitude " + strongMagnitude);
+    console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Playing rumble on gamepad ' + gamepadIdx + ' with weakMagnitude ' + weakMagnitude + ' and strongMagnitude ' + strongMagnitude);
     // We may not actually have a gamepad at this index
     // Even if we do have a gamepad, it may not have a vibrationActuator associated with it
     navigator.getGamepads()[gamepadIdx].vibrationActuator.playEffect('dual-rumble', {

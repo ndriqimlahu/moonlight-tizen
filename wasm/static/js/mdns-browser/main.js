@@ -24,10 +24,10 @@ var ServiceFinder = function(callback) {
     }
     if (address.indexOf(':') != -1) {
       // TODO: IPv6.
-      console.log('IPv6 address unsupported', address);
+      console.log('%c[main.js, ServiceFinder]', 'color: gray;', 'IPv6 address unsupported: ', address);
       return true;
     }
-    console.log('Broadcasting to address', address);
+    console.log('%c[main.js, ServiceFinder]', 'color: gray;', 'Broadcasting to address: ', address);
 
     ServiceFinder.bindToAddress_(address, function(socket) {
       if (!socket) {

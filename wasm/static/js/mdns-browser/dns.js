@@ -172,7 +172,7 @@ DNSPacket.parse = function(buffer) {
     }
   });
 
-  consumer.isEOF() || console.warn('was not EOF on incoming packet');
+  consumer.isEOF() || console.warn('%c[dns.js, DNSPacket]', 'color: gray;', 'It was not EOF on incoming packet');
   return packet;
 };
 
