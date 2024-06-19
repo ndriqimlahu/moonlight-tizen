@@ -128,25 +128,32 @@ function _base64ToArrayBuffer(base64) {
 NvHTTP.prototype = {
   refreshServerInfo: function() {
     if (this.ppkstr == null) {
-      return sendMessage('openUrl', [this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
+      return sendMessage('openUrl', [
+        this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+      ]).then(function(retHttp) {
         this._parseServerInfo(retHttp);
       }.bind(this));
     }
 
     // Try HTTPS first
-    return sendMessage('openUrl', [this._baseUrlHttps + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(ret) {
+    return sendMessage('openUrl', [
+      this._baseUrlHttps + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+    ]).then(function(ret) {
       if (!this._parseServerInfo(ret)) { // If that fails
         // Try HTTP as a failover. Useful to clients who aren't paired yet
-        return sendMessage('openUrl', [this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
+        return sendMessage('openUrl', [
+          this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+        ]).then(function(retHttp) {
           this._parseServerInfo(retHttp);
         }.bind(this));
       }
-    }.bind(this),
-      function(error) {
+    }.bind(this), function(error) {
         if (error == -100) { // GS_CERT_MISMATCH
           // Retry over HTTP
           console.warn('%c[utils.js, refreshServerInfo]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
-          return sendMessage('openUrl', [this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
+          return sendMessage('openUrl', [
+            this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+          ]).then(function(retHttp) {
             this._parseServerInfo(retHttp);
           }.bind(this));
         }
@@ -157,26 +164,33 @@ NvHTTP.prototype = {
   refreshServerInfoAtAddress: function(givenAddress) {
     if (this.ppkstr == null) {
       // Use HTTP if we have no pinned cert
-      return sendMessage('openUrl', ['http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
-          return this._parseServerInfo(retHttp);
+      return sendMessage('openUrl', [
+        'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+      ]).then(function(retHttp) {
+        return this._parseServerInfo(retHttp);
       }.bind(this));
     }
 
     // Try HTTPS first
-    return sendMessage('openUrl', ['https://' + givenAddress + ':47984' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(ret) {
+    return sendMessage('openUrl', [
+      'https://' + givenAddress + ':47984' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+    ]).then(function(ret) {
       if (!this._parseServerInfo(ret)) { // If that fails
         console.error('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Error: Failed to parse server info from HTTPS, falling back to HTTP');
         // Try HTTP as a failover. Useful to clients who aren't paired yet
-        return sendMessage('openUrl', ['http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
+        return sendMessage('openUrl', [
+          'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+        ]).then(function(retHttp) {
           return this._parseServerInfo(retHttp);
         }.bind(this));
       }
-    }.bind(this),
-      function(error) {
+    }.bind(this), function(error) {
         if (error == -100) { // GS_CERT_MISMATCH
           // Retry over HTTP
           console.warn('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
-          return sendMessage('openUrl', ['http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false]).then(function(retHttp) {
+          return sendMessage('openUrl', [
+            'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+          ]).then(function(retHttp) {
             return this._parseServerInfo(retHttp);
           }.bind(this));
         }
@@ -262,9 +276,11 @@ NvHTTP.prototype = {
     string += 'gpu type: ' + this.gputype + '\r\n';
     string += 'number of apps: ' + this.numofapps + '\r\n';
     string += 'supported display modes: ' + '\r\n';
+
     for (var displayMode in this.supportedDisplayModes) {
       string += '\t' + displayMode + ': ' + this.supportedDisplayModes[displayMode] + '\r\n';
     }
+
     return string;
   },
 
@@ -283,9 +299,9 @@ NvHTTP.prototype = {
 
     console.log('%c[utils.js, _parseServerInfo]', 'color: gray;', 'Parsing server info: ', $root);
 
-    this.paired = $root.find("PairStatus").text().trim() == 1;
-    this.currentGame = parseInt($root.find("currentgame").text().trim(), 10);
-    this.appVersion = $root.find("appversion").text().trim();
+    this.paired = $root.find('PairStatus').text().trim() == 1;
+    this.currentGame = parseInt($root.find('currentgame').text().trim(), 10);
+    this.appVersion = $root.find('appversion').text().trim();
     this.serverMajorVersion = parseInt(this.appVersion.substring(0, 1), 10);
     this.serverUid = $root.find('uniqueid').text().trim();
     this.hostname = $root.find('hostname').text().trim();
@@ -302,7 +318,7 @@ NvHTTP.prototype = {
       this.gputype = $root.find('gputype').text().trim();
       this.numofapps = $root.find('numofapps').text().trim();
       // Now for the hard part: parsing the supported streaming
-      $root.find('DisplayMode').each(function(index, value) { // For each resolution:FPS object
+      $root.find('DisplayMode').each(function(index, value) { // For each resolution: FPS object
         var yres = parseInt($(value).find('Height').text());
         var xres = parseInt($(value).find('Width').text());
         var fps = parseInt($(value).find('RefreshRate').text());
@@ -320,7 +336,7 @@ NvHTTP.prototype = {
     // GFE 2.8 started keeping current game set to the last game played. As a result, it no longer
     // has the semantics that its name would indicate. To contain the effects of this change as much
     // as possible, we'll force the current game to zero if the server isn't in a streaming session.
-    if (!$root.find("state").text().trim().endsWith("_SERVER_BUSY")) {
+    if (!$root.find('state').text().trim().endsWith('_SERVER_BUSY')) {
       this.currentGame = 0;
     }
 
@@ -336,7 +352,6 @@ NvHTTP.prototype = {
           retApp = app;
           return true;
         }
-
         return false;
       });
 
@@ -353,7 +368,6 @@ NvHTTP.prototype = {
           retApp = app;
           return true;
         }
-
         return false;
       });
 
@@ -362,7 +376,9 @@ NvHTTP.prototype = {
   },
 
   getAppListWithCacheFlush: function() {
-    return sendMessage('openUrl', [this._baseUrlHttps + '/applist?' + this._buildUidStr(), this.ppkstr, false]).then(function(ret) {
+    return sendMessage('openUrl', [
+      this._baseUrlHttps + '/applist?' + this._buildUidStr(), this.ppkstr, false
+    ]).then(function(ret) {
       $xml = this._parseXML(ret);
       $root = $xml.find("root");
 
@@ -404,15 +420,10 @@ NvHTTP.prototype = {
   // Returns the box art of the given appID
   // Three layers of response time are possible: memory cached, storage cached, and streamed (host sends binary over the network)
   getBoxArt: function(appId) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function(resolve, reject) {
       sendMessage('openUrl', [
-        this._baseUrlHttps +
-        '/appasset?' + this._buildUidStr() +
-        '&appid=' + appId +
-        '&AssetType=2&AssetIdx=0',
-        this.ppkstr,
-        true
-      ]).then((boxArtBuffer) => {
+        this._baseUrlHttps + '/appasset?' + this._buildUidStr() + '&appid=' + appId + '&AssetType=2&AssetIdx=0', this.ppkstr, true
+      ]).then(function(boxArtBuffer) {
         var reader = new FileReader();
         reader.onloadend = function() {
           var obj = {};
@@ -423,49 +434,35 @@ NvHTTP.prototype = {
         reader.readAsDataURL(new Blob([boxArtBuffer], {
           type: "image/png"
         }));
-      }, (error) => {
+      }.bind(this), function(error) {
         console.error('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Box-art request failed: ', error);
         reject(error);
         return;
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   },
 
   launchApp: function(appId, mode, sops, rikey, rikeyid, localAudio, surroundAudioInfo, gamepadMask) {
     return sendMessage('openUrl', [
-      this._baseUrlHttps +
-      '/launch?' + this._buildUidStr() +
-      '&appid=' + appId +
-      '&mode=' + mode +
-      '&additionalStates=1&sops=' + sops +
-      '&rikey=' + rikey +
-      '&rikeyid=' + rikeyid +
-      '&localAudioPlayMode=' + localAudio +
-      '&surroundAudioInfo=' + surroundAudioInfo +
-      '&remoteControllersBitmap=' + gamepadMask +
-      '&gcmap=' + gamepadMask,
-      this.ppkstr,
-      false
+      this._baseUrlHttps + '/launch?' + this._buildUidStr() + '&appid=' + appId + '&mode=' + mode +
+      '&additionalStates=1&sops=' + sops + '&rikey=' + rikey + '&rikeyid=' + rikeyid + '&localAudioPlayMode=' + localAudio +
+      '&surroundAudioInfo=' + surroundAudioInfo + '&remoteControllersBitmap=' + gamepadMask + '&gcmap=' + gamepadMask, this.ppkstr, false
     ]);
   },
 
   resumeApp: function(rikey, rikeyid, surroundAudioInfo) {
     return sendMessage('openUrl', [
-      this._baseUrlHttps +
-      '/resume?' + this._buildUidStr() +
-      '&rikey=' + rikey +
-      '&rikeyid=' + rikeyid +
-      '&surroundAudioInfo=' + surroundAudioInfo,
-      this.ppkstr,
-      false
+      this._baseUrlHttps + '/resume?' + this._buildUidStr() + '&rikey=' + rikey +
+      '&rikeyid=' + rikeyid + '&surroundAudioInfo=' + surroundAudioInfo, this.ppkstr, false
     ]);
   },
 
   quitApp: function() {
-    return sendMessage('openUrl', [this._baseUrlHttps + '/cancel?' + this._buildUidStr(), this.ppkstr,  false])
-      // Refresh server info after quitting because it may silently fail if the session belongs to a different client
-      // TODO: We should probably bubble this up to our caller.
-      .then(this.refreshServerInfo());
+    // Refresh server info after quitting because it may silently fail if the session belongs to a different client
+    return sendMessage('openUrl', [
+      this._baseUrlHttps + '/cancel?' + this._buildUidStr(), this.ppkstr, false
+    ]).then(this.refreshServerInfo());
+    // TODO: We should probably bubble this up to our caller.
   },
 
   updateExternalAddressIP4: function() {
@@ -485,9 +482,13 @@ NvHTTP.prototype = {
       if (this.paired && this.ppkstr) {
         return true;
       }
-      return sendMessage('pair', [this.serverMajorVersion.toString(), this.address, randomNumber]).then(function(ppkstr) {
+      return sendMessage('pair', [
+        this.serverMajorVersion.toString(), this.address, randomNumber
+      ]).then(function(ppkstr) {
         this.ppkstr = ppkstr;
-        return sendMessage('openUrl', [this._baseUrlHttps + '/pair?uniqueid=' + this.clientUid + '&devicename=roth&updateState=1&phrase=pairchallenge', this.ppkstr, false]).then(function(ret) {
+        return sendMessage('openUrl', [
+          this._baseUrlHttps + '/pair?uniqueid=' + this.clientUid + '&devicename=roth&updateState=1&phrase=pairchallenge', this.ppkstr, false
+        ]).then(function(ret) {
           $xml = this._parseXML(ret);
           this.paired = $xml.find('paired').html() == "1";
           return this.paired;

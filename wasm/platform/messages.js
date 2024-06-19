@@ -66,7 +66,8 @@ var handlePromiseMessage = function(callbackId, type, msg) {
  */
 function handleMessage(msg) {
   console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Message data: ', msg);
-  if (msg.indexOf('streamTerminated: ') === 0) { // If it's a recognized event, notify the appropriate function
+  // If it's a recognized event, notify the appropriate function
+  if (msg.indexOf('streamTerminated: ') === 0) {
     // Show a termination snackbar message if the termination was unexpected
     var errorCode = parseInt(msg.replace('streamTerminated: ', ''));
     switch (errorCode) {
@@ -82,7 +83,7 @@ function handleMessage(msg) {
         snackbarLogLong("Connection terminated");
         break;
     }
-
+    // Refresh the server info
     api.refreshServerInfo().then(function(ret) {
       // Return to app list with new current game
       showApps(api);

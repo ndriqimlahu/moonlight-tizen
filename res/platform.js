@@ -193,11 +193,13 @@ function platformOnLoad(handler) {
       event_anchor.focus();
     }
   }
+  
   if (handler.onKeydownListener) {
     document.addEventListener("keydown", handler.onKeydownListener);
   }
+
   if (handler.buttonsToRegister) {
-    handler.buttonsToRegister.forEach(function (button) {
+    handler.buttonsToRegister.forEach(function(button) {
       tizen.tvinputdevice.registerKey(button);
     });
   }

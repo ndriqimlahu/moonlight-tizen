@@ -87,6 +87,7 @@ ServiceFinder.sortIps_ = function(arg) {
   arg.sort(ServiceFinder.sortIps_.sort);
   return arg;
 };
+
 ServiceFinder.sortIps_.sort = function(l, r) {
   // TODO: support v6.
   var lp = l.split('.').map(ServiceFinder.sortIps_.toInt_);
@@ -100,7 +101,10 @@ ServiceFinder.sortIps_.sort = function(l, r) {
   }
   return 0;
 };
-ServiceFinder.sortIps_.toInt_ = function(i) { return +i };
+
+ServiceFinder.sortIps_.toInt_ = function(i) { 
+  return +i
+};
 
 /**
  * Returns the services found by this ServiceFinder, optionally filtered by IP.
@@ -158,7 +162,7 @@ ServiceFinder.prototype.onReceive_ = function(info) {
 ServiceFinder.prototype.onReceiveError_ = function(info) {
   this.callback_(info.resultCode);
   return true;
-}
+};
 
 /**
  * Broadcasts for services on the given socket/address.
@@ -186,12 +190,12 @@ ServiceFinder.prototype.shutdown = function() {
       chrome.sockets.udp.close(sock.socketId);
     });
   });
-}
+};
 
 var finder = null;
 function findNvService(callback) {
   finder && finder.shutdown();
-  finder = new ServiceFinder(function (opt_error) {
+  finder = new ServiceFinder(function(opt_error) {
     callback(finder, opt_error);
   });
 }

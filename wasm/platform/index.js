@@ -20,16 +20,16 @@ function attachListeners() {
   $('#settingsBtn').on('click', showSettingsContainer);
   $('#supportBtn').on('click', showSupportDialog);
   $('#goBackBtn').on('click', showHostsMode);
-  $('#restoreDefaultsBtn').on('click', restoreDefaultsSettingsWithConfirmation);
-  $('#quitRunningAppBtn').on('click', stopGameWithConfirmation);
+  $('#restoreDefaultsBtn').on('click', restoreDefaultSettings);
+  $('#quitRunningAppBtn').on('click', quitRunningApp);
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', updateBitrateField);
   $("#ipAddressFieldModeSwitch").on('click', saveIpAddressFieldMode);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $("#externalAudioSwitch").on('click', saveExternalAudio);
-  $('#removeAllHostsBtn').on('click', removeAllHostsWithConfirmation);
-  $('.codecMenu li').on('click', saveCodecMode);	
+  $('#removeAllHostsBtn').on('click', removeAllHosts);
+  $('.codecMenu li').on('click', saveCodecMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#restartAppBtn').on('click', restartApplication);
@@ -128,7 +128,6 @@ function restoreUiAfterWasmLoad() {
             if (!returneMdnsDiscoveredHost.online) {
               return;
             }
-
             if (hosts[returneMdnsDiscoveredHost.serverUid] != null) {
               // If we're seeing a host we've already seen before, update it for the current local IP
               hosts[returneMdnsDiscoveredHost.serverUid].address = returneMdnsDiscoveredHost.address;
@@ -138,7 +137,6 @@ function restoreUiAfterWasmLoad() {
               addHostToGrid(returneMdnsDiscoveredHost, true);
               beginBackgroundPollingOfHost(returneMdnsDiscoveredHost);
             }
-
             saveHosts();
           });
         }
@@ -422,11 +420,12 @@ function addHost() {
     setTimeout(function() {
       // Add disabled state after 2 seconds
       $('#continueAddHost').addClass('mdl-button--disabled').prop('disabled', true);
-      // Re-enable the Continue button after 15 seconds
+      // Re-enable the Continue button after 12 seconds
       setTimeout(function() {
         $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
-      }, 15000);
+      }, 12000);
     }, 2000);
+    
     // Get the IP address value from the input field
     var inputHost;
     if ($('#ipAddressFieldModeSwitch').prop('checked')) {
@@ -580,7 +579,7 @@ function removeClicked(host) {
 }
 
 // Show a confirmation with the Delete Host dialog before removing all hosts objects
-function removeAllHostsWithConfirmation() {
+function removeAllHosts() {
   if (Object.keys(hosts).length === 0) {
     // If no hosts exist, show snackbar message
     snackbarLog('No hosts exist');
@@ -599,7 +598,7 @@ function removeAllHostsWithConfirmation() {
     // Cancel the operation if the Cancel button is pressed
     $('#cancelDeleteHost').off('click');
     $('#cancelDeleteHost').on('click', function() {
-      console.log('%c[index.js, removeAllHostsWithConfirmation]', 'color: green;', 'Closing app dialog, and returning');
+      console.log('%c[index.js, removeAllHosts]', 'color: green;', 'Closing app dialog, and returning');
       deleteHostOverlay.style.display = 'none';
       deleteHostDialog.close();
       isDialogOpen = false;
@@ -610,7 +609,7 @@ function removeAllHostsWithConfirmation() {
     // Remove all existing hosts if the Continue button is pressed
     $('#continueDeleteHost').off('click');
     $('#continueDeleteHost').on('click', function() {
-      console.log('%c[index.js, removeAllHostsWithConfirmation]', 'color: green;', 'Removing all hosts, and closing app dialog, and returning');
+      console.log('%c[index.js, removeAllHosts]', 'color: green;', 'Removing all hosts, and closing app dialog, and returning');
       // Iterate through all hosts and remove them
       for (var serverUid in hosts) {
         if (hosts.hasOwnProperty(serverUid)) {
@@ -650,13 +649,13 @@ function showSettingsContainer() {
 function handleCategoryClick(category) {
   // Hide the right settings panel which includes settings options
   const settingsOptions = document.querySelectorAll('.settings-options');
-  settingsOptions.forEach(function (settingsOption) {
+  settingsOptions.forEach(function(settingsOption) {
     settingsOption.style.display = 'none';
   });
 
   // Remove the 'selected' class from all categories
   const settingsCategories = document.querySelectorAll('.category');
-  settingsCategories.forEach(function (settingsCategory) {
+  settingsCategories.forEach(function(settingsCategory) {
     settingsCategory.classList.remove('selected');
   });
 
@@ -728,7 +727,7 @@ function handleCategoryClick(category) {
 }
 
 // Show a confirmation with the Restore Defaults dialog before restoring the default settings
-function restoreDefaultsSettingsWithConfirmation() {
+function restoreDefaultSettings() {
   // Find the existing overlay and dialog elements
   var restoreDefaultsDialogOverlay = document.querySelector('#restoreDefaultsDialogOverlay');
   var restoreDefaultsDialog = document.querySelector('#restoreDefaultsDialog');
@@ -742,7 +741,7 @@ function restoreDefaultsSettingsWithConfirmation() {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelRestoreDefaults').off('click');
   $('#cancelRestoreDefaults').on('click', function() {
-    console.log('%c[index.js, restoreDefaultSettingsWithConfirmation]', 'color: green;', 'Closing app dialog, and returning');
+    console.log('%c[index.js, restoreDefaultSettings]', 'color: green;', 'Closing app dialog, and returning');
     restoreDefaultsDialogOverlay.style.display = 'none';
     restoreDefaultsDialog.close();
     isDialogOpen = false;
@@ -753,7 +752,7 @@ function restoreDefaultsSettingsWithConfirmation() {
   // Restore all default settings if the Continue button is pressed
   $('#continueRestoreDefaults').off('click');
   $('#continueRestoreDefaults').on('click', function() {
-    console.log('%c[index.js, restoreDefaultSettingsWithConfirmation]', 'color: green;', 'Restoring default settings, and closing app dialog, and returning');
+    console.log('%c[index.js, restoreDefaultSettings]', 'color: green;', 'Restoring default settings, and closing app dialog, and returning');
     // Reset any settings to their default state and save the updated values
     restoreDefaultsSettingsValues();
     // If the settings have been reset to default, show snackbar message
@@ -959,7 +958,8 @@ function sortTitles(list, sortOrder) {
 
 // Show the app list
 function showApps(host) {
-  if (!host || !host.paired) { // Safety checking, shouldn't happen
+  // Safety checking, shouldn't happen
+  if (!host || !host.paired) {
     console.error('%c[index.js, showApps]', 'color: green;', 'Error: Moved into showApps, but `host` was not initialized properly.\nHost object: ', host);
     return;
   }
@@ -989,7 +989,7 @@ function showApps(host) {
     $("#game-grid").show();
 
     if (appList.length == 0) {
-      console.error('%c[index.js, showApps]', 'User\'s applist is empty');
+      console.error('%c[index.js, showApps]', 'Error: User\'s applist is empty');
       var img = new Image();
       img.src = 'static/res/applist_empty.svg';
       $('#game-grid').html(img);
@@ -1319,7 +1319,7 @@ function fullscreenWasmModule() {
 }
 
 // Show a confirmation with the Quit App dialog before stopping the running game
-function stopGameWithConfirmation() {
+function quitRunningApp() {
   if (api.currentGame === 0) {
     // If no app or game is running, show snackbar message
     snackbarLog('Nothing was running');
@@ -1339,7 +1339,7 @@ function stopGameWithConfirmation() {
       // Cancel the operation if the Cancel button is pressed
       $('#cancelQuitApp').off('click');
       $('#cancelQuitApp').on('click', function() {
-        console.log('%c[index.js, stopGameWithConfirmation]', 'color: green;', 'Closing app dialog, and returning');
+        console.log('%c[index.js, quitRunningApp]', 'color: green;', 'Closing app dialog, and returning');
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
@@ -1350,7 +1350,7 @@ function stopGameWithConfirmation() {
       // Quit the running app if the Continue button is pressed
       $('#continueQuitApp').off('click');
       $('#continueQuitApp').on('click', function() {
-        console.log('%c[index.js, stopGameWithConfirmation]', 'color: green;', 'Quitting game, and closing app dialog, and returning');
+        console.log('%c[index.js, quitRunningApp]', 'color: green;', 'Quitting game, and closing app dialog, and returning');
         stopGame(api);
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
@@ -1419,10 +1419,11 @@ function openIndexDB(callback) {
   console.log('%c[index.js, openIndexDB]', 'color: green;', 'Opening IndexDB');
   if (navigator.storage && navigator.storage.persist) {
     navigator.storage.persisted().then(persistent => {
-      if (persistent)
+      if (persistent) {
         console.log('%c[index.js, openIndexDB]', 'color: green;', 'Storage will not be cleared except by explicit user action');
-      else
+      } else {
         console.log('%c[index.js, openIndexDB]', 'color: green;', 'Storage may be cleared by the UA under storage pressure');
+      }
     });
   } else {
     console.warn('%c[index.js, openIndexDB]', 'color: green;', 'Persistent storage not available');
@@ -1435,15 +1436,15 @@ function openIndexDB(callback) {
   // Create/open database
   const request = indexedDB.open(dbName, dbVersion);
 
-  request.onerror = function(event) {
+  request.onerror = function(e) {
     console.error('%c[index.js, openIndexDB]', 'color: green;', 'Error creating/accessing IndexedDB database: ', e);
   };
 
-  request.onsuccess = function(event) {
+  request.onsuccess = function(e) {
     console.log('%c[index.js, openIndexDB]', 'color: green;', 'Success creating/accessing IndexedDB database: ', e);
     db = request.result;
 
-    db.onerror = function(event) {
+    db.onerror = function(e) {
       console.error('%c[index.js, openIndexDB]', 'color: green;', 'Error creating/accessing IndexedDB database: ', e);
     };
 
@@ -1459,8 +1460,8 @@ function openIndexDB(callback) {
     }
   };
 
-  request.onupgradeneeded = function(event) {
-    createObjectStore(event.target.result);
+  request.onupgradeneeded = function(e) {
+    createObjectStore(e.target.result);
   };
 }
 
@@ -1478,14 +1479,13 @@ function getData(key, callbackFunction) {
       const readRequest = transaction.objectStore(storeName).get(key);
 
       // Retrieve the data that was stored
-      readRequest.onsuccess = function(event) {
+      readRequest.onsuccess = function(e) {
         console.log('%c[index.js, getData]', 'color: green;', 'Read data from the DB key: ' + key + ' with value: ' + readRequest.result);
         let value = null;
         if (readRequest.result) {
           value = JSON.parse(readRequest.result);
           console.log('%c[index.js, getData]', 'color: green;', 'Parsed value: ' + value);
         }
-
         callCb(key, value, callbackFunction);
       };
 
@@ -1493,9 +1493,9 @@ function getData(key, callbackFunction) {
         console.error('%c[index.js, getData]', 'color: green;', 'Error reading data at key: ' + key + ' from IndexDB: ' + e);
         callCb(key, value, callbackFunction);
       };
-    } catch (e) {
+    } catch (err) {
       console.warn('%c[index.js, getData]', 'color: green;', 'getData: caught exception while reading key: ' + key);
-      console.error('%c[index.js, getData]', 'color: green;', 'getData: caught error while reading key: ' + e);
+      console.error('%c[index.js, getData]', 'color: green;', 'Error getData: caught error while reading key: ' + err);
       callCb(key, value, callbackFunction);
     }
   };
@@ -1523,11 +1523,11 @@ function storeData(key, data, callbackFunction) {
       };
 
       transaction.onerror = function(e) {
-        console.error('%c[index.js, storeData]', 'color: green;', 'Error storing data in IndexDB: ' + e);
+        console.error('%c[index.js, storeData]', 'color: green;', 'Error: Storing data in IndexDB: ' + e);
       };
-    } catch (e) {
+    } catch (err) {
       console.warn('%c[index.js, storeData]', 'color: green;', 'storeData: caught exception while storing key: ' + key);
-      console.error('%c[index.js, storeData]', 'color: green;', 'storeData: caught error while storing key: ' + e);
+      console.error('%c[index.js, storeData]', 'color: green;', 'Error storeData: caught error while storing key: ' + err);
     }
   };
 
@@ -1950,8 +1950,8 @@ function onWindowLoad() {
 window.onload = onWindowLoad;
 
 // Gamepad connected events
-window.addEventListener('gamepadconnected', function(event) {
-  const connectedGamepad = event.gamepad;
+window.addEventListener('gamepadconnected', function(e) {
+  const connectedGamepad = e.gamepad;
   console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Gamepad connected: ' + JSON.stringify(connectedGamepad), connectedGamepad);
   snackbarLog('Gamepad connected');
   // If the connected gamepad supports rumble, then play a rumble effect
@@ -1970,7 +1970,7 @@ window.addEventListener('gamepadconnected', function(event) {
 });
 
 // Gamepad disconnected events
-window.addEventListener('gamepaddisconnected', function(event) {
+window.addEventListener('gamepaddisconnected', function(e) {
   console.log('%c[index.js, gamepaddisconnected]', 'color: green;', 'Gamepad disconnected: ' + JSON.stringify(e.gamepad), e.gamepad);
   snackbarLog('Gamepad disconnected');
 });

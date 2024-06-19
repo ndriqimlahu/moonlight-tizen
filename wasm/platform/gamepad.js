@@ -1,4 +1,4 @@
-const Controller = (function () {
+const Controller = (function() {
   let pollingInterval = null;
   const gamepads = {};
 
@@ -44,8 +44,7 @@ const Controller = (function () {
       }
 
       if (changes.length > 0) {
-        window.dispatchEvent(
-          new CustomEvent("gamepadinputchanged", {
+        window.dispatchEvent(new CustomEvent("gamepadinputchanged", {
             detail: { changes },
           })
         );
@@ -88,10 +87,10 @@ const Controller = (function () {
 
   function startWatching() {
     if (!pollingInterval) {
-      window.addEventListener("gamepadconnected", function (e) {
+      window.addEventListener("gamepadconnected", function(e) {
         gamepadConnected(e.gamepad);
       });
-      window.addEventListener("gamepaddisconnected", function (e) {
+      window.addEventListener("gamepaddisconnected", function(e) {
         gamepadDisconnected(e.gamepad);
       });
       pollingInterval = setInterval(pollGamepads, 5);

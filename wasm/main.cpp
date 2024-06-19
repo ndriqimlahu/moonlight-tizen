@@ -100,8 +100,7 @@ void* MoonlightInstance::StopThreadFunc(void* context) {
   // not be invoked during LiStartConnection.
   pthread_join(g_Instance->m_ConnectionThread, NULL);
 
-  // Force raise all modifier keys to avoid leaving them down after
-  // disconnecting
+  // Force raise all modifier keys to avoid leaving them down after disconnecting
   LiSendKeyboardEvent(0xA0, KEY_ACTION_UP, 0);
   LiSendKeyboardEvent(0xA1, KEY_ACTION_UP, 0);
   LiSendKeyboardEvent(0xA2, KEY_ACTION_UP, 0);
@@ -340,6 +339,7 @@ void PostPromiseMessage(int callbackId, const std::string& type, const std::stri
       },
       callbackId, type.c_str(), response.c_str());
 }
+
 void PostPromiseMessage(int callbackId, const std::string& type, const std::vector<uint8_t>& response) {
   MAIN_THREAD_EM_ASM(
       {
