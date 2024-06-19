@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.2
+
+### Added
+- Introduced a new 'Tizen' privilege: 'Media Storage' that gives access to the TV's internal storage
+- Added additional detailed logging for debugging purposes
+
+### Changed
+- Improved existing logs for better debugging and understanding
+
+### Fixed
+- Refactored code for improved readability and maintainability
+
 ## v1.2.1
 
 ### Added
