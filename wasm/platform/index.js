@@ -762,8 +762,8 @@ function restoreDefaultSettings() {
     isDialogOpen = false;
     Navigation.pop();
     Navigation.switch();
-    // Notify the user to restart the application
-    setTimeout(() => snackbarLog("Restart the application for the changes to take effect"), 1500);
+    // Show the Restart Moonlight dialog and push the view
+    setTimeout(() => showRestartMoonlightDialog(), 2000);
   });
 }
 
@@ -1087,9 +1087,9 @@ function showHostsMode() {
   $('#quitRunningAppBtn').hide();
   $("#main-content").removeClass("fullscreen");
   $("#listener").removeClass("fullscreen");
+
   Navigation.start();
   Navigation.pop();
-
   startPollingHosts();
 }
 
@@ -1137,7 +1137,6 @@ function showAppsMode() {
   $('#wasm_module').css('display', 'none');
 
   isInGame = false;
-
   // FIXME: We want to eventually poll on the app screen, but we can't now
   // because it slows down box art loading and we don't update the UI live anyway.
   stopPollingHosts();
