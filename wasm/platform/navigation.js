@@ -440,10 +440,10 @@ const Views = {
     back: function() {
       document.getElementById('cancelAddHost').click();
     },
-    press: function() {},
-    switch: function() {
+    press: function() {
       document.getElementById('ipAddressFieldModeSwitch').click();
     },
+    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
