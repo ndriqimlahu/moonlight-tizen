@@ -211,7 +211,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
   m_RtspUrl = rtspurl;
-  m_SupportedVideoCodecs = stoi(serverCodecMode);
+  m_SupportedVideoCodecs = stoi(serverCodecMode,0,16);
   m_FramePacingEnabled = framePacing;
   m_AudioSyncEnabled = audioSync;
 
