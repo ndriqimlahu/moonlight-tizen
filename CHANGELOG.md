@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.3
+
+### Added
+- Introduced a new 'Tizen' metadata: 'Game Mode' which enables the app to use game mode
+- Added the 'Buy Me a Coffee' platform for developer support
+
+### Changed
+- Show the 'Restart Moonlight' dialog after restoring default settings instead of the snackbar
+- Quick switching to the alternate IP address field can now be done by pressing 'Channel Up/P+' or 'Select/Back' button
+
+### Fixed
+- Fixed an issue with the server codec mode support value not displaying correctly
+
 ## v1.2.2
 
 ### Added
