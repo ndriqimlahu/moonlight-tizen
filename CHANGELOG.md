@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.4
+
+### Added
+- Added a new 'Navigation' icon specifically for the 'Navigation Guide' button
+- Introduced a new 'Navigation Guide' button to learn about navigation controls
+- Introduced a new 'Navigation Guide' dialog and its corresponding view
+- Implemented functionality for handling the 'Navigation Guide' dialog
+
+### Changed
+- Minor enhancements in visual stylization and general improvements
+
 ## v1.2.3
 
 ### Added
