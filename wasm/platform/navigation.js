@@ -1063,6 +1063,7 @@ const Views = {
   AboutSettings: {
     view: new ListView(() => [
       'systemInfoBtn',
+      'navigationGuideBtn',
       'restartAppBtn',
       'exitAppBtn']),
     up: function() {
