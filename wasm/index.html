@@ -362,6 +362,91 @@
       </div>
     </dialog>
   </div>
+  <div id="navGuideDialogOverlay" class="dialog-overlay">
+    <dialog id="navGuideDialog" class="mdl-dialog large-dialog">
+      <h3 id="navGuideDialogTitle" class="mdl-dialog__title">Navigation Guide</h3>
+      <div class="mdl-dialog__content">
+        <div class="navGuideContainer">
+          <span class="navGuideLabel navGuideRemoteColor"></span>
+          <span class="navGuideLabelText">Remote</span>&nbsp;(TV)
+        </div>
+        <div class="navGuideContainer">
+          <span class="navGuideLabel navGuideKeyboardColor"></span>
+          <span class="navGuideLabelText">Keyboard</span>&nbsp;(Standard)
+        </div>
+        <div class="navGuideContainer">
+          <span class="navGuideLabel navGuideGamepadColor"></span>
+          <span class="navGuideLabelText">Gamepad</span>&nbsp;(Xbox)
+        </div>
+        <ul id="navGuideDialogText">
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">UP</span> / <span class="navGuideKeyboardText">UP ARROW</span> / <span class="navGuideGamepadText">D-PAD UP</span> / <span class="navGuideGamepadText">LEFT STICK UP</span>
+            — Navigate to the above view, previous item, category, option, or row, increase the IP address value, and move the mouse cursor up in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">DOWN</span> / <span class="navGuideKeyboardText">DOWN ARROW</span> / <span class="navGuideGamepadText">D-PAD DOWN</span> / <span class="navGuideGamepadText">LEFT STICK DOWN</span>
+            — Navigate to the below view, next item, category, option, or row, decrease the IP address value, and move the mouse cursor down in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">LEFT</span> / <span class="navGuideKeyboardText">LEFT ARROW</span> / <span class="navGuideGamepadText">D-PAD LEFT</span> / <span class="navGuideGamepadText">LEFT STICK LEFT</span>
+            — Navigate to the previous item, decrease the bitrate value, and move the mouse cursor left in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">RIGHT</span> / <span class="navGuideKeyboardText">RIGHT ARROW</span> / <span class="navGuideGamepadText">D-PAD RIGHT</span> / <span class="navGuideGamepadText">LEFT STICK RIGHT</span>
+            — Navigate to the next item, increase the bitrate, and move the mouse cursor right in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideGamepadText">RIGHT STICK UP</span> / <span class="navGuideGamepadText">RIGHT STICK DOWN</span>
+            — Scroll the mouse vertically in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideGamepadText">RIGHT STICK LEFT</span> / <span class="navGuideGamepadText">RIGHT STICK RIGHT</span>
+            — Scroll the mouse horizontally in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideGamepadText">LEFT STICK BUTTON</span> / <span class="navGuideGamepadText">RIGHT STICK BUTTON</span>
+            — Click the middle mouse button in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">SELECT</span> / <span class="navGuideKeyboardText">ENTER</span> /<span class="navGuideGamepadText">A</span>
+            — Navigate to the next view, select the current item, enable or disable settings, load the app or game list, start the streaming session, and click the left mouse button in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">RETURN</span> / <span class="navGuideKeyboardText">ESC</span> / <span class="navGuideGamepadText">B</span>
+            — Return to the previous view, close any active menu or dialog, cancel the operation, exit the application with confirmation, and click the right mouse button in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideGamepadText">LEFT BUMPER</span>
+            — Click the left mouse button in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideGamepadText">RIGHT BUMPER</span>
+            — Click the right mouse button in emulation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">VOLUME UP</span> / <span class="navGuideKeyboardText">F9</span> / <span class="navGuideRemoteText">VOLUME DOWN</span> /
+            <span class="navGuideKeyboardText">F10</span> / <span class="navGuideRemoteText">VOLUME MUTE</span> / <span class="navGuideKeyboardText">F8</span>
+            — Adjust the TV volume: increase, decrease, or mute.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">CHANNEL UP</span> / <span class="navGuideKeyboardText">F11</span> / <span class="navGuideGamepadText">BACK</span>
+            — Switch the mode of the IP address field, and remove the host PC with confirmation.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">CHANNEL DOWN</span> / <span class="navGuideKeyboardText">F12</span> / <span class="navGuideGamepadText">PLAY</span>
+            — Set focus to the current item, and press &amp; hold for 1 second to toggle mouse emulation for the gamepad.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">RED</span> / <span class="navGuideKeyboardText">F1</span> / <span class="navGuideKeyboardText">CTRL + ALT + SHIFT + Q</span> / <span class="navGuideGamepadText">BACK + PLAY + LB + RB</span>
+            — Stop the streaming session.
+          </li>
+        </ul>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" id="closeNavGuideDialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
+      </div>
+    </dialog>
+  </div>
   <div id="restartAppDialogOverlay" class="dialog-overlay">
     <dialog id="restartAppDialog" class="mdl-dialog">
       <h3 id="restartAppDialogTitle" class="mdl-dialog__title">Restart Moonlight</h3>

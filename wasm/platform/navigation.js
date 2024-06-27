@@ -1306,6 +1306,41 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  NavigationGuideDialog: {
+    isActive: () => isDialogActive('navGuideDialog'),
+    view: new ListView(() => ['closeNavGuideDialog']),
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('closeNavGuideDialog').blur();
+      }, navigationDelay);
+    },
+    down: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('closeNavGuideDialog').focus();
+      }, navigationDelay);
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeNavGuideDialog').click();
+    },
+    press: function() {},
+    switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   RestartMoonlightDialog: {
     isActive: () => isDialogActive('restartAppDialog'),
     view: new ListView(() => [
