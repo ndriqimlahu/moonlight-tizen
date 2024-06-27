@@ -2,6 +2,7 @@
 
 [![Project Status](https://img.shields.io/badge/project-actively_maintained-brightgreen?style=for-the-badge&logo=github)](#)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/docker-publish.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/docker-publish.yml)
+[![Release Version](https://img.shields.io/badge/widget-V1.2.4-orange?style=for-the-badge&logo=windows)](https://github.com/ndriqimlahu/moonlight-tizen/pkgs/container/moonlight-tizen)
 
 ## About
 
