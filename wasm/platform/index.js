@@ -32,6 +32,7 @@ function attachListeners() {
   $('.codecMenu li').on('click', saveCodecMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
+  $('#navigationGuideBtn').on('click', showNavigationGuideDialog);
   $('#restartAppBtn').on('click', restartApplication);
   $('#exitAppBtn').on('click', exitApplication);
 
@@ -785,6 +786,30 @@ function showSupportDialog() {
     console.log('%c[index.js, showSupportDialog]', 'color: green;', 'Closing app dialog, and returning');
     supportDialogOverlay.style.display = 'none';
     supportDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  });
+}
+
+// Show the Navigation Guide dialog
+function showNavigationGuideDialog() {
+  // Find the existing overlay and dialog elements
+  var navGuideDialogOverlay = document.querySelector('#navGuideDialogOverlay');
+  var navGuideDialog = document.querySelector('#navGuideDialog');
+
+  // Show the dialog and push the view
+  navGuideDialogOverlay.style.display = 'flex';
+  navGuideDialog.showModal();
+  Navigation.push(Views.NavigationGuideDialog);
+  isDialogOpen = true;
+
+  // Close the dialog if the Close button is pressed
+  $('#closeNavGuideDialog').off('click');
+  $('#closeNavGuideDialog').on('click', function() {
+    console.log('%c[index.js, showNavigationGuideDialog]', 'color: green;', 'Closing app dialog, and returning');
+    navGuideDialogOverlay.style.display = 'none';
+    navGuideDialog.close();
     isDialogOpen = false;
     Navigation.pop();
     Navigation.switch();
