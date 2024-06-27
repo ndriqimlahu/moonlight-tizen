@@ -57,14 +57,20 @@ body {
     background-color: #3E4454;
     padding: 14px;
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 500;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
 }
 .mdl-button {
     color: #fff;
     border-radius: 6px;
     font-size: 16px;
+    font-weight: 500;
     text-transform: none;
+}
+.mdl-button--raised.mdl-button--colored {
+    color: #fff;
+    background-color: #404354;
 }
 .button-icons {
     margin: 1px 4px 3px 0;
@@ -93,6 +99,7 @@ body {
     color: #fff;
     background-color: #333846;
     width: 500px;
+    height: auto;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 10px 5px rgba(0, 163, 198, 1);
@@ -109,6 +116,15 @@ body {
 .mdl-dialog__actions button {
     width: 100%;
     border-radius: 6px;
+}
+.large-dialog {
+    color: #fff;
+    background-color: #333846;
+    width: 85%;
+    height: auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 5px rgba(0, 163, 198, 1);
 }
 .mdl-textfield__input {
     width: 152%;
@@ -130,9 +146,14 @@ body {
 }
 .mdl-switch.is-checked .mdl-switch__track {
     background: rgba(0, 163, 198, 1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.40);
 }
 .mdl-switch.is-checked .mdl-switch__thumb {
-    background: #fff;
+    background-color: #fff;
+}
+.mdl-switch.is-focused {
+    background-color: #404354;
+    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
 .mdl-icon-toggle__label.material-icons {
     color: #818181;
@@ -142,8 +163,8 @@ body {
     margin: 5px 28px 5px 28px;
 }
 #listener {
-    height: 0px;
-    margin-top: 0px;
+    height: 0;
+    margin-top: 0;
     overflow: hidden;
 }
 #wasmSpinner {
@@ -152,9 +173,9 @@ body {
     bottom: 50%;
     margin: 0 auto;
     z-index: 2;
-    transform: translate(-50%, -50%);
     display: none;
     text-align: center;
+    transform: translate(-50%, -50%);
 }
 #loadingSpinner {
     color: #fff;
@@ -163,25 +184,25 @@ body {
     bottom: 50%;
     margin: 0 auto;
     z-index: 1;
-    transform: translate(-50%, -50%);
     display: none;
     text-align: center;
+    transform: translate(-50%, -50%);
 }
 #snackButton {
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     display: none;
 }
 .mdl-snackbar {
     background-color: #3E4454;
-    box-shadow: 0 0 8px 4px rgba(0, 163, 198, 1);
+    min-width: 0;
     border-radius: 6px 6px 0 0;
-    min-width: 0px;
+    box-shadow: 0 0 8px 4px rgba(0, 163, 198, 1);
 }
 .mdl-snackbar__text {
     color: #fff;
     padding: 15px 20px 15px 20px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     text-align: justify;
 }
@@ -242,7 +263,7 @@ body {
 }
 #host-grid .host-title {
     color: #fff;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.6);
     width: 100%;
     padding: 10px 15px;
     font-size: 16px;
@@ -264,7 +285,7 @@ body {
 }
 #game-grid .game-title {
     color: #fff;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.6);
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -286,30 +307,30 @@ body {
     background: url('../res/ic_tv_white_48px.svg') center no-repeat #3E4454;
 }
 .hovered {
-    background-color: rgba(158, 158, 158, 0.2);
+    background: rgba(158, 158, 158, 0.2);
 }
 #host-grid p {
     margin: 0;
 }
 #host-grid .mdl-textfield {
     width: 200px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     margin-right: 20px;
 }
 #host-grid #GFEHostIPField {
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 #host-grid #selectHost {
     background: none;
     height: 20px;
     line-height: 20px;
-    padding: 0px;
+    padding: 0;
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 20px;
 }
 #host-grid .button-holder {
-    padding: 0px;
+    padding: 0;
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -353,17 +374,14 @@ body {
 }
 .ip-address-select-field.hovered, .ip-address-select-field:hover {
     color: #fff;
-    background-color: #404354;
+    background-color: #585D75;
     box-shadow: 0 0 2px 2px rgba(0, 163, 198, 1);
 }
 #pairButton, #showAppsButton {
     margin: 3px;
 }
 .remove-host {
-    background-image: url('../res/ic_remove_circle_outline_white_48px.svg');
-    background-repeat: no-repeat;
-    background-size: 20px 20px;
-    background-position: center;
+    background: url('../res/ic_remove_circle_outline_white_48px.svg') no-repeat center / 20px 20px;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -412,12 +430,14 @@ body {
 }
 #settingsBtn, #supportBtn {
     margin: 0 10px;
-    box-shadow: rgba(0, 0, 0, 0.40) 0px 1px 4px;
 }
 #goBackBtn {
     position: fixed;
     left: 30px;
-    box-shadow: rgba(0, 0, 0, 0.40) 0px 1px 4px;
+}
+#settingsBtn, #supportBtn, #goBackBtn,
+#restoreDefaultsBtn, #quitRunningAppBtn {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.40);
 }
 #settings-container {
     width: 100%;
@@ -457,11 +477,18 @@ body {
     border-radius: 8px;
     cursor: pointer;
 }
+.category.hovered, .category:hover, .category:focus {
+    background-color: #484C5F;
+}
 .category.selected {
     color: #ececec;
-    background-color: #484C5F;
+    background: rgba(0, 163, 198, 0.8);
     transform: scale(1.02);
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 5px 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+}
+.category.selected:hover, .category.selected:focus {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 3px rgba(64, 67, 84, 1);
 }
 .category label {
     position: relative;
@@ -492,14 +519,14 @@ body {
     font-size: 1.3em;
     text-align: left;
 }
-#selectResolution, #selectFramerate, #selectBitrate,
-#removeAllHostsBtn, #selectCodec, #restartAppBtn, #exitAppBtn {
+#selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
+#selectCodec, #navigationGuideBtn, #restartAppBtn, #exitAppBtn {
     font-size: 1.4em;
     text-indent: 36px;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #ipAddressFieldModeBtn,
 #optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn, #selectCodec,
-#framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
+#framePacingBtn, #audioSyncBtn, #navigationGuideBtn, #restartAppBtn, #exitAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -525,20 +552,11 @@ body {
 #bitrateHighestValue {
     margin: 0 12px 0 -10px;
 }
-#resolutionMenu > #selectResolution {
-    color: #fff;
-    background: url('../res/ic_arrow_drop_down_48px.svg') 94.6% 50% no-repeat #404354;
+#bitrateLowestValue.hovered, #bitrateHighestValue.hovered {
+    background-color: #404354;
 }
-#framerateMenu > #selectFramerate {
-    color: #fff;
-    background: url('../res/ic_arrow_drop_down_48px.svg') 94.6% 50% no-repeat #404354;
-}
-#bitrateMenu > #selectBitrate {
-    color: #fff;
-    background: url('../res/ic_arrow_drop_down_48px.svg') 94.6% 50% no-repeat #404354;
-}
-#codecMenu > #selectCodec {
-    color: #fff;
+#resolutionMenu > #selectResolution, #framerateMenu > #selectFramerate,
+#bitrateMenu > #selectBitrate, #codecMenu > #selectCodec {
     background: url('../res/ic_arrow_drop_down_48px.svg') 94.6% 50% no-repeat #404354;
 }
 .resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__container {
@@ -552,7 +570,6 @@ body {
 #restoreDefaultsBtn, #quitRunningAppBtn {
     margin: 0 10px;
     border-radius: 6px;
-    box-shadow: rgba(0, 0, 0, 0.40) 0px 1px 4px;
 }
 #supportQrCode {
     width: 50%;
@@ -562,12 +579,6 @@ body {
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
-}
-#removeAllHostsIcon {
-    width: 35px;
-    height: 35px;
-    margin: 0 46px 2px 25em;
-	float: right;
 }
 #systemInfoBtn {
     color: #ececec;
@@ -582,19 +593,69 @@ body {
     white-space: pre-line;
     box-sizing: border-box;
 }
+.navGuideContainer {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 20px 5px 20px;
+}
+.navGuideLabel {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
+}
+.navGuideRemoteColor {
+    background-color: #00A3C6;
+}
+.navGuideKeyboardColor {
+    background-color: #F44336;
+}
+.navGuideGamepadColor {
+    background-color: #8BC34A;
+}
+.navGuideLabelText {
+    color: #ececec;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+#navGuideDialogText {
+    list-style-type: none;
+    padding: 5px 20px 5px 20px;
+}
+.navGuideDialogControls {
+    padding: 5px 0 5px 0;
+}
+.navGuideRemoteText {
+    color: #00A3C6;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+.navGuideKeyboardText {
+    color: #F44336;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+.navGuideGamepadText {
+    color: #8BC34A;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+#removeAllHostsIcon, #navigationGuideIcon,
 #restartApplicationIcon, #exitApplicationIcon {
+    float: right;
     width: 35px;
     height: 35px;
     margin: 0 46px 2px 25em;
-	float: right;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.40));
 }
 #settingsBtn, #supportBtn, #goBackBtn, #ipAddressFieldModeBtn, #optimizeGamesBtn, #externalAudioBtn,
-#removeAllHostsBtn, #framePacingBtn, #audioSyncBtn, #restartAppBtn, #exitAppBtn {
+#removeAllHostsBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn, #restartAppBtn, #exitAppBtn {
     background-color: #404354;
     border-radius: 6px;
 }
-#pairingDialogText, #deleteHostDialogText, #supportDialogText, #restoreDefaultsDialogText,
-#quitAppDialogText, #restartAppDialogText, #exitAppDialogText {
+#pairingDialogText, #deleteHostDialogText, #supportDialogText, #navGuideDialogText,
+#restoreDefaultsDialogText, #quitAppDialogText, #restartAppDialogText, #exitAppDialogText {
     font-size: 1.2rem;
 }
 #continueAddHost, #cancelAddHost, #continueDeleteHost, #cancelDeleteHost,
@@ -603,12 +664,12 @@ body {
     width: 48%;
 }
 #cancelAddHost, #cancelPairingDialog, #cancelDeleteHost, #closeSupportDialog,
-#cancelRestoreDefaults, #cancelQuitApp, #cancelRestartApp, #cancelExitApp {
+#closeNavGuideDialog, #cancelRestoreDefaults, #cancelQuitApp, #cancelRestartApp, #cancelExitApp {
     margin: 0 10px 20px 0;
 }
-#continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost, #cancelDeleteHost,
-#closeSupportDialog, #restoreDefaultsBtn, #continueRestoreDefaults, #cancelRestoreDefaults, #quitRunningAppBtn,
-#continueQuitApp, #cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
+#settingsBtn, #supportBtn, #continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost, #cancelDeleteHost,
+#closeSupportDialog, #closeNavGuideDialog, #restoreDefaultsBtn, #continueRestoreDefaults, #cancelRestoreDefaults,
+#quitRunningAppBtn, #continueQuitApp, #cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
     text-transform: uppercase;
 }
 #continueAddHost[disabled], #continueAddHost.mdl-button--disabled {
@@ -625,22 +686,21 @@ body {
     box-shadow: 0 0 2px 3px rgba(147, 149, 159, 1);
     cursor: pointer;
 }
-.category.hovered, .category:hover, .category:focus, .mdl-switch.is-focused,
-#continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus,
-#cancelPairingDialog:hover, #cancelPairingDialog:focus, #continueDeleteHost:hover, #continueDeleteHost:focus,
-#cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
-#continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover, #cancelRestoreDefaults:focus,
-#continueQuitApp:hover, #continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus,
-#continueRestartApp:hover, #continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus,
-#continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover, #cancelExitApp:focus,
-#settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,
-#restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus,
-#selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus,
-#selectBitrate:hover, #selectBitrate:focus, #ipAddressFieldModeBtn:hover, #ipAddressFieldModeBtn:focus,
-#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover, #externalAudioBtn:focus, 
-#removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #selectCodec:hover, #selectCodec:focus,
-#framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus,
-#restartAppBtn:hover, #restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
+#continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairingDialog:hover, #cancelPairingDialog:focus,
+#continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
+#closeNavGuideDialog:hover, #closeNavGuideDialog:focus, #continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover,
+#cancelRestoreDefaults:focus, #continueQuitApp:hover, #continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #continueRestartApp:hover,
+#continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus, #continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover,
+#cancelExitApp:focus, #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,
+#restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus {
+    background-color: #00A3C6;
+    box-shadow: 0 0 0 3px rgba(64, 67, 84, 1);
+}
+#selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover, #selectBitrate:focus,
+#ipAddressFieldModeBtn:hover, #ipAddressFieldModeBtn:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover,
+#externalAudioBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #selectCodec:hover, #selectCodec:focus, #framePacingBtn:hover,
+#framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #navigationGuideBtn:hover,
+#navigationGuideBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }

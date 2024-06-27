@@ -454,7 +454,12 @@ const Views = {
   PairingDialog: {
     isActive: () => isDialogActive('pairingDialog'),
     view: new ListView(() => ['cancelPairingDialog']),
-    up: function() {},
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('cancelPairingDialog').blur();
+      }, navigationDelay);
+    },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
@@ -1279,7 +1284,12 @@ const Views = {
   SupportDialog: {
     isActive: () => isDialogActive('supportDialog'),
     view: new ListView(() => ['closeSupportDialog']),
-    up: function() {},
+    up: function() {
+      clearTimeout(navigationTimer);
+      navigationTimer = setTimeout(() => {
+        document.getElementById('closeSupportDialog').blur();
+      }, navigationDelay);
+    },
     down: function() {
       clearTimeout(navigationTimer);
       navigationTimer = setTimeout(() => {
