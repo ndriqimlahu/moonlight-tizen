@@ -255,8 +255,8 @@ body {
 #host-grid .mdl-card:focus, #host-grid .mdl-card:active,
 #game-grid .mdl-card.hovered, #game-grid .mdl-card:hover,
 #game-grid .mdl-card:focus, #game-grid .mdl-card:active {
-    transform: scale(1.2);
     outline: #00A3C6 solid 3px;
+    transform: scale(1.2);
 }
 #host-grid .mdl-card__title {
     padding: 0;

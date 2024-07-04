@@ -1,27 +1,29 @@
+// Initialize variables and constants
 var hosts = {}; // Hosts is an associative array of NvHTTP objects, keyed by server UID
 var activePolls = {}; // Hosts currently being polled. An associated array of polling IDs, keyed by server UID
-var pairingCert;
+var pairingCert; // Loads the generated certificate
 var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clients to allow them to quit each other's games
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
-var isInGame = false; // Flag indicating whether the game has started, so the initial value should always be false
-var isDialogOpen = false; // Flag indicating whether the dialog is open, so the initial value should always be false
-var appName = null; // Flag indicating whether the application name is set, so the initial value should always be null
-var appVer = null; // Flag indicating whether the application version is set, so the initial value should always be null
-var platformVer = null; // Flag indicating whether the platform version is set, so the initial value should always be null
-var tvModelName = null; // Flag indicating whether the TV model name is set, so the initial value should always be null
-var tvModelCode = null; // Flag indicating whether the TV model code is set, so the initial value should always be null
+var isInGame = false; // Flag indicating whether the game has started, initial value is false
+var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
+var appName = null; // Flag indicating whether the application name is set, initial value is null
+var appVer = null; // Flag indicating whether the application version is set, initial value is null
+var platformVer = null; // Flag indicating whether the platform version is set, initial value is null
+var tvModelName = null; // Flag indicating whether the TV model name is set, initial value is null
+var tvModelCode = null; // Flag indicating whether the TV model code is set, initial value is null
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
 var repeatTimeout = null; // Flag indicating whether the repeat timeout is set, initial value is null
 var navigationTimeout = null; // Flag indicating whether the navigation timeout is set, initial value is null
 const REPEAT_DELAY = 350; // Repeat delay set to 350ms (milliseconds)
 const REPEAT_INTERVAL = 100; // Repeat interval set to 100ms (milliseconds)
+const ACTION_THRESHOLD = 0.5; // Threshold for initial navigation set to 0.5
 const NAVIGATION_DELAY = 150; // Navigation delay set to 150ms (milliseconds)
 
 // Called by the common.js module
 function attachListeners() {
   changeUiModeForWasmLoad();
-  initializeIpAddressFields();
+  initIpAddressFields();
 
   $('#addHostCell').on('click', addHost);
   $('#settingsBtn').on('click', showSettingsContainer);
@@ -63,7 +65,7 @@ function attachListeners() {
   Controller.startWatching();
   window.addEventListener('gamepadinputchanged', (e) => {
     const changes = e.detail.changes;
-
+    // Iterate through each change in the gamepad input
     changes.forEach((change) => {
       const { type, index, pressed, value } = change;
       if (type === 'button') {
@@ -95,15 +97,15 @@ function attachListeners() {
       } else if (type === 'axis') {
         // Handle axis mapping
         const axisMapping = {
-          0: (value) => value < -0.5 ? (delayedNavigation(() => Navigation.left()), () => Navigation.left()) : 
-            value > 0.5 ? (delayedNavigation(() => Navigation.right()), () => Navigation.right()) : null,
-          1: (value) => value < -0.5 ? (delayedNavigation(() => Navigation.up()), () => Navigation.up()) : 
-            value > 0.5 ? (delayedNavigation(() => Navigation.down()), () => Navigation.down()) : null,
+          0: (value) => value < -ACTION_THRESHOLD ? (delayedNavigation(() => Navigation.left()), () => Navigation.left()) : 
+            value > ACTION_THRESHOLD ? (delayedNavigation(() => Navigation.right()), () => Navigation.right()) : null,
+          1: (value) => value < -ACTION_THRESHOLD ? (delayedNavigation(() => Navigation.up()), () => Navigation.up()) : 
+            value > ACTION_THRESHOLD ? (delayedNavigation(() => Navigation.down()), () => Navigation.down()) : null,
         };
         // Handle axis value
         if (axisMapping[index]) {
           const axisValue = axisMapping[index](value);
-          if (axisValue && Math.abs(value) > 0.5) {
+          if (axisValue && Math.abs(value) > ACTION_THRESHOLD) {
             // Set repeat action and timeout to the mapped axis
             repeatAction = axisValue;
             lastInvokeTime = Date.now();
@@ -412,7 +414,7 @@ function populateSelectFields(element, start, end, selectedValue) {
 }
 
 // Initialize the IP address select fields with predefined values
-function initializeIpAddressFields() {
+function initIpAddressFields() {
   // Find the existing select fields elements and set the values
   const ipAddressFields = [
     { element: 'ipAddressField1', selectedValue: 192 },
@@ -462,7 +464,7 @@ function addHost() {
     $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
     // Clear the input field after canceling the operation
     $('#ipAddressTextInput').val('');
-    initializeIpAddressFields();
+    initIpAddressFields();
   });
 
   // Send a connection request if the Continue button is pressed
@@ -523,7 +525,7 @@ function addHost() {
       $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
       // Clear the input field after successful processing
       $('#ipAddressTextInput').val('');
-      initializeIpAddressFields();
+      initIpAddressFields();
     }.bind(this), function(failure) {
       console.error('%c[index.js, addHost]', 'color: green;', 'Error: Failed API object: ', _nvhttpHost, _nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLog('Failed to connect with ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
@@ -531,7 +533,7 @@ function addHost() {
       $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
       // Clear the input field after failure processing
       $('#ipAddressTextInput').val('');
-      initializeIpAddressFields();
+      initIpAddressFields();
     }.bind(this));
   });
 }
@@ -737,7 +739,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.switch();
+          setTimeout(() => Navigation.switch(), 5);
         }
         break;
       case 'hostSettings':
@@ -748,7 +750,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.switch();
+          setTimeout(() => Navigation.switch(), 5);
         }
         break;
       case 'decoderSettings':
@@ -759,7 +761,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.switch();
+          setTimeout(() => Navigation.switch(), 5);
         }
         break;
       case 'aboutSettings':
@@ -770,7 +772,7 @@ function handleCategoryClick(category) {
           // Set focus on the current settings option
           currentSettingsOption.focus();
           // Simulate navigation to set focus on the settings item
-          Navigation.switch();
+          setTimeout(() => Navigation.switch(), 5);
         }
         break;
       default:
@@ -1802,9 +1804,9 @@ function restoreDefaultsSettingsValues() {
 function initSamsungKeys() {
   console.log('%c[index.js, initSamsungKeys]', 'color: green;', 'Initializing TV keys');
 
+  // For explanation on ordering, see: https://developer.samsung.com/smarttv/develop/guides/user-interaction/keyboardime.html
   var handler = {
     initRemoteController: true,
-    // For explanation on ordering, see: https://developer.samsung.com/smarttv/develop/guides/user-interaction/keyboardime.html
     buttonsToRegister: [
       'ColorF0Red',      // F1
       'ColorF1Green',    // F2
