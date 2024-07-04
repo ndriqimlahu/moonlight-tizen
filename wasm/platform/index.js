@@ -10,6 +10,13 @@ var appVer = null; // Flag indicating whether the application version is set, so
 var platformVer = null; // Flag indicating whether the platform version is set, so the initial value should always be null
 var tvModelName = null; // Flag indicating whether the TV model name is set, so the initial value should always be null
 var tvModelCode = null; // Flag indicating whether the TV model code is set, so the initial value should always be null
+var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
+var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
+var repeatTimeout = null; // Flag indicating whether the repeat timeout is set, initial value is null
+var navigationTimeout = null; // Flag indicating whether the navigation timeout is set, initial value is null
+const REPEAT_DELAY = 350; // Repeat delay set to 350ms (milliseconds)
+const REPEAT_INTERVAL = 100; // Repeat interval set to 100ms (milliseconds)
+const NAVIGATION_DELAY = 150; // Navigation delay set to 150ms (milliseconds)
 
 // Called by the common.js module
 function attachListeners() {
@@ -59,9 +66,8 @@ function attachListeners() {
 
     changes.forEach((change) => {
       const { type, index, pressed, value } = change;
-
-      if (type === 'button' && pressed) {
-        // Handle button press
+      if (type === 'button') {
+        // Handle button mapping
         const buttonMapping = {
           0: () => Navigation.accept(),
           1: () => Navigation.back(),
@@ -72,17 +78,41 @@ function attachListeners() {
           14: () => Navigation.left(),
           15: () => Navigation.right(),
         };
-        if (buttonMapping[index]) {
-          buttonMapping[index]();
+        // Handle button press
+        if (pressed) {
+          if (buttonMapping[index]) {
+            buttonMapping[index]();
+            // Set repeat action and timeout to the mapped button
+            repeatAction = buttonMapping[index];
+            lastInvokeTime = Date.now();
+            repeatTimeout = setTimeout(() => requestAnimationFrame(repeatActionHandler), REPEAT_DELAY);
+          }
+        } else {
+          // Clear repeat action and timeout if button is released
+          repeatAction = null;
+          clearTimeout(repeatTimeout);
         }
       } else if (type === 'axis') {
-        // Handle axis change
+        // Handle axis mapping
         const axisMapping = {
-          0: () => value < -0.5 ? Navigation.left() : value > 0.5 ? Navigation.right() : null,
-          1: () => value < -0.5 ? Navigation.up() : value > 0.5 ? Navigation.down() : null,
+          0: (value) => value < -0.5 ? (delayedNavigation(() => Navigation.left()), () => Navigation.left()) : 
+            value > 0.5 ? (delayedNavigation(() => Navigation.right()), () => Navigation.right()) : null,
+          1: (value) => value < -0.5 ? (delayedNavigation(() => Navigation.up()), () => Navigation.up()) : 
+            value > 0.5 ? (delayedNavigation(() => Navigation.down()), () => Navigation.down()) : null,
         };
+        // Handle axis value
         if (axisMapping[index]) {
-          axisMapping[index]();
+          const axisValue = axisMapping[index](value);
+          if (axisValue && Math.abs(value) > 0.5) {
+            // Set repeat action and timeout to the mapped axis
+            repeatAction = axisValue;
+            lastInvokeTime = Date.now();
+            repeatTimeout = setTimeout(() => requestAnimationFrame(repeatActionHandler), REPEAT_DELAY);
+          } else {
+            // Clear repeat action and timeout if axis is released
+            repeatAction = null;
+            clearTimeout(repeatTimeout);
+          }
         }
       }
     });
@@ -95,6 +125,28 @@ function changeUiModeForWasmLoad() {
   $("#main-content").children().not("#listener, #wasmSpinner").hide();
   $('#wasmSpinnerMessage').text('Loading Moonlight plugins...');
   $('#wasmSpinner').css('display', 'inline-block');
+}
+
+// Handles repeated execution of the current action based on a specified interval
+function repeatActionHandler() {
+  // Check if repeat action is set and enough time has passed since the last invocation
+  if (repeatAction && Date.now() - lastInvokeTime > REPEAT_INTERVAL) {
+    repeatAction();
+    // Update the last invocation time
+    lastInvokeTime = Date.now();
+  }
+  // Check if repeat action is still set, then schedule the next execution frame
+  if (repeatAction) {
+    requestAnimationFrame(repeatActionHandler);
+  }
+}
+
+// Delays navigation-related callback execution after a specified delay
+function delayedNavigation(callback) {
+  // Clear any existing navigation timeout
+  clearTimeout(navigationTimeout);
+  // Set a new navigation timeout with the provided callback and delay
+  navigationTimeout = setTimeout(callback, NAVIGATION_DELAY);
 }
 
 function startPollingHosts() {
