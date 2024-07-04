@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.5
+
+### Added
+- Implemented functionality to handle repeat actions and navigation delay for gamepad while in-app
+- Implemented a workaround to send the escape key to the host by pressing the ESC key twice on the keyboard
+
+### Removed
+- Removed global navigation delay from remote control while in-app
+
+### Fixed
+- Minor bug fixes and refactored code for improved readability
+
+### Dependencies
+- Updated 'tizen-studio' tool to the latest version
+
 ## v1.2.4
 
 ### Added
