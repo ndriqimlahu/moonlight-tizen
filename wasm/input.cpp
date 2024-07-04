@@ -195,3 +195,12 @@ void MoonlightInstance::DidLockMouse(int32_t result) {
 void MoonlightInstance::MouseLockLost() {
   m_MouseLocked = false;
 }
+
+// FIXME: This is a workaround to send the escape key to the host
+void sendLiSendKeyboardEvent(uint32_t keyCode, uint16_t action, char modifiers) {
+  LiSendKeyboardEvent(KEY_PREFIX << 8 | keyCode, action, modifiers);
+}
+
+EMSCRIPTEN_BINDINGS(input) {
+  emscripten::function("sendLiSendKeyboardEvent", &sendLiSendKeyboardEvent);
+}

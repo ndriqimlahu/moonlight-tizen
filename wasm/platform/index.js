@@ -1394,6 +1394,12 @@ function fullscreenWasmModule() {
   module.style.marginTop = ((screenHeight - module.height) / 2) + "px";
 }
 
+// FIXME: This is a workaround to send the escape key to the host
+function sendEscapeKeyToHost() {
+  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0);
+  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0);
+}
+
 // Show a confirmation with the Quit App dialog before stopping the running game
 function quitRunningApp() {
   if (api.currentGame === 0) {
@@ -1820,6 +1826,22 @@ function initSamsungKeys() {
   platformOnLoad(handler);
 }
 
+function initSpecialKeys() {
+  console.log('%c[index.js, initSpecialKeys]', 'color: green;', 'Initializing special keys');
+
+  var videoElement = document.getElementById('wasm_module');
+  videoElement.addEventListener('keydown', function(e) {
+    if (e.key === 'XF86Back') {
+      if (isInGame === true) {
+        sendEscapeKeyToHost();
+        videoElement.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
+      } else {
+        console.error('%c[index.js, initSpecialKeys]', 'color: green;', 'Error: Failed to send escape key to host');
+      }
+    }
+  });
+}
+
 function loadSystemInfo() {
   console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'Loading system information');
   const systemInfoPlaceholder = document.getElementById("systemInfoBtn");
@@ -2019,6 +2041,7 @@ function onWindowLoad() {
   $('#gameSelection').css('display', 'none');
 
   initSamsungKeys();
+  initSpecialKeys();
   loadSystemInfo();
   loadUserData();
 }
