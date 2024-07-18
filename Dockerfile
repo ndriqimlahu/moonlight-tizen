@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as base
+FROM ubuntu:22.04 AS base
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
