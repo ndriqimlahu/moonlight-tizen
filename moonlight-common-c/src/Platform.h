@@ -43,6 +43,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <fcntl.h>
+#include <emscripten.h>
 #endif
 
 #ifdef _WIN32
@@ -71,11 +72,21 @@
 #include "Limelight.h"
 
 #ifdef LC_LOG
-#define Limelog(s, ...) \
-    if (ListenerCallbacks.logMessage) \
-        ListenerCallbacks.logMessage(s, ##__VA_ARGS__)
+#define Limelog(format, ...) \
+    do { \
+        if (ListenerCallbacks.logMessage) { \
+            char message[1024]; \
+            snprintf(message, sizeof(message), format, ##__VA_ARGS__); \
+            ListenerCallbacks.logMessage(message); \
+        } \
+    } while(0)
 #else
-#define Limelog(s, ...)
+#define Limelog(format, ...) \
+    do { \
+        if (EM_LOG_CONSOLE) { \
+            emscripten_log(EM_LOG_CONSOLE, format, ##__VA_ARGS__); \
+        } \
+    } while(0)
 #endif
 
 #if defined(LC_WINDOWS)

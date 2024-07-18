@@ -143,6 +143,10 @@
 #ifndef NO_MSGAPI
 #define NO_MSGAPI 1
 #endif
+#elif defined(__HAIKU__)
+#ifndef HAS_POLL
+#define HAS_POLL 1
+#endif
 #else
 #ifndef HAS_IOCTL
 #define HAS_IOCTL 1
@@ -164,7 +168,7 @@
 #include <poll.h>
 #endif
 
-#if !defined(HAS_SOCKLEN_T) && !defined(__socklen_t_defined)
+#if !defined(HAS_SOCKLEN_T) && !defined(__socklen_t_defined) && !defined(__HAIKU__)
 typedef int socklen_t;
 #endif
 
@@ -670,6 +674,8 @@ enet_socket_send (ENetSocket socket,
     if (sentLength == -1)
     {
 #if defined(__EMSCRIPTEN__)
+// Workaround - with newer Emscripten, errno codes are not
+// compatible with POSIX ones
        if (errno == __WASI_ERRNO_AGAIN)
 #else
         switch (errno)
@@ -720,6 +726,8 @@ enet_socket_receive (ENetSocket socket,
     if (recvLength == -1)
     {
 #if defined(__EMSCRIPTEN__)
+// Workaround - with newer Emscripten, errno codes are not
+// compatible with POSIX ones
        if (errno == __WASI_ERRNO_AGAIN)
 #else
        if (errno == EWOULDBLOCK)
@@ -752,6 +760,8 @@ enet_socket_receive (ENetSocket socket,
     if (recvLength == -1)
     {
 #if defined(__EMSCRIPTEN__)
+// Workaround - with newer Emscripten, errno codes are not
+// compatible with POSIX ones
        if (errno == __WASI_ERRNO_AGAIN)
 #else
        if (errno == EWOULDBLOCK)
