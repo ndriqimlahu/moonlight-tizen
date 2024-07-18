@@ -35,6 +35,7 @@ function attachListeners() {
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', updateBitrateField);
   $("#ipAddressFieldModeSwitch").on('click', saveIpAddressFieldMode);
+  $("#sortAppsListSwitch").on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $("#externalAudioSwitch").on('click', saveExternalAudio);
   $('#removeAllHostsBtn').on('click', removeAllHosts);
@@ -1011,7 +1012,7 @@ function sortTitles(list, sortOrder) {
     const titleA = a.title.toLowerCase();
     const titleB = b.title.toLowerCase();
 
-    // Alphabetically (A - Z)
+    // Ascending order (A - Z)
     if (sortOrder === 'ASC') {
       if (titleA < titleB) {
         return -1;
@@ -1022,7 +1023,7 @@ function sortTitles(list, sortOrder) {
       return 0;
     }
 
-    // Alphabetically (Z - A)
+    // Descending order (Z - A)
     if (sortOrder === 'DESC') {
       if (titleA < titleB) {
         return 1;
@@ -1076,8 +1077,12 @@ function showApps(host) {
       return; // We stop the function right here
     }
 
-    // If game grid is populated, empty it
-    const sortedAppList = sortTitles(appList, 'ASC');
+    // Find the existing switch element
+    const sortAppsListSwitch = document.getElementById('sortAppsListSwitch');
+    // Defines the sort order based on the state of the switch
+    const sortOrder = sortAppsListSwitch.checked ? 'DESC' : 'ASC';
+    // If game grid is populated, sort the app list
+    const sortedAppList = sortTitles(appList, sortOrder);
 
     sortedAppList.forEach(function(app) {
       if ($('#game-' + app.id).length === 0) {
@@ -1723,6 +1728,14 @@ function saveIpAddressFieldMode() {
   }, 100);
 }
 
+function saveSortAppsList() {
+  setTimeout(function() {
+    const chosenSortAppsList = $("#sortAppsListSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveSortAppsList]', 'color: green;', 'Saving sort apps list state: ' + chosenSortAppsList);
+    storeData('sortAppsList', chosenSortAppsList, null);
+  }, 100);
+}
+
 function saveOptimizeGames() {
   setTimeout(function() {
     const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
@@ -1779,6 +1792,10 @@ function restoreDefaultsSettingsValues() {
   const defaultIpAddressFieldMode = false;
   document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
   storeData('ipAddressFieldMode', defaultIpAddressFieldMode, null);
+
+  const defaultSortAppsList = false;
+  document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
+  storeData('sortAppsList', defaultSortAppsList, null);
 
   const defaultOptimizeGames = false;
   document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
@@ -1917,6 +1934,17 @@ function loadUserDataCb() {
     }
     // Handle the display of the IP address field mode based on the loaded state
     handleIpAddressFieldMode();
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored sortAppsList prefs');
+  getData('sortAppsList', function(previousValue) {
+    if (previousValue.sortAppsList == null) {
+      document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
+    } else if (previousValue.sortAppsList == false) {
+      document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#sortAppsListBtn').MaterialSwitch.on();
+    }
   });
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored optimizeGames prefs');
