@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.6
+
+### Added
+- Introduced a new 'Sort apps and games' setting to change the sorting order of apps and games
+- Implemented functionality to change the sort order for the list of apps and games
+
+### Fixed
+- Fixed a warning issue where casing did not match for 'as' and 'FROM' keywords
+
+### Dependencies
+- Updated 'moonlight-common-c' module to the latest version
+
 ## v1.2.5
 
 ### Added
