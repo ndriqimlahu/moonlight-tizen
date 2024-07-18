@@ -785,6 +785,7 @@ const Views = {
   HostSettings: {
     view: new ListView(() => [
       'ipAddressFieldModeBtn',
+      'sortAppsListBtn',
       'optimizeGamesBtn',
       'externalAudioBtn',
       'removeAllHostsBtn']),
