@@ -844,7 +844,8 @@ const Views = {
   },
   InputSettings: {
     view: new ListView(() => [
-      'rumbleFeedbackBtn']),
+      'rumbleFeedbackBtn',
+      'mouseEmulationBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();

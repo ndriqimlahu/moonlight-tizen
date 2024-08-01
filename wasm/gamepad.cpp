@@ -17,8 +17,9 @@ const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLA
 // Flag for gamepad to track controller rumble state
 bool rumbleFeedbackSwitch = false;
 
-// Define a flag to track whether mouse emulation is currently active
-bool isMouseEmulationActive = false;
+// Define flags to track whether mouse emulation is currently checked or active
+bool mouseEmulationSwitch = false;
+bool mouseEmulationActive = false;
 
 // For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
 // Enumeration for gamepad buttons
@@ -83,8 +84,9 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
 }
 
 // Function to handle the gamepad input state
-void MoonlightInstance::HandleGamepadInputState(bool rumbleFeedback) {
+void MoonlightInstance::HandleGamepadInputState(bool rumbleFeedback, bool mouseEmulation) {
   rumbleFeedbackSwitch = rumbleFeedback;
+  mouseEmulationSwitch = mouseEmulation;
 }
 
 // Function to poll gamepad input
@@ -147,34 +149,40 @@ void MoonlightInstance::PollGamepads() {
       return;
     }
 
-    static auto activatePressTime = std::chrono::steady_clock::now();
-    // Toggle mouse emulation on and off based on how long the PLAY/START button is pressed
-    if (buttonFlags & PLAY_FLAG) {
-      auto currentTime = std::chrono::steady_clock::now();
-      // Calculate the duration in milliseconds since the PLAY/START button was pressed
-      auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - activatePressTime).count();
-      // If the button has been pressed for at least 1000 milliseconds (1 second)
-      if (durationTime >= 1000) {
-        // Toggle mouse emulation state
-        if (!isMouseEmulationActive) {
-          // Activate mouse emulation and notify the user
-          isMouseEmulationActive = true;
-          PostToJs("mouseEmulation enabled");
-        } else {
-          // Deactivate mouse emulation and notify the user
-          isMouseEmulationActive = false;
-          PostToJs("mouseEmulation disabled");
+    // Check if the mouse emulation switch is checked
+    if (mouseEmulationSwitch) {
+      static auto activatePressTime = std::chrono::steady_clock::now();
+      // Toggle mouse emulation on and off based on how long the PLAY/START button is pressed
+      if (buttonFlags & PLAY_FLAG) {
+        auto currentTime = std::chrono::steady_clock::now();
+        // Calculate the duration in milliseconds since the PLAY/START button was pressed
+        auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - activatePressTime).count();
+        // If the button has been pressed for at least 1000 milliseconds (1 second)
+        if (durationTime >= 1000) {
+          // Toggle mouse emulation state
+          if (!mouseEmulationActive) {
+            // Activate mouse emulation and notify the user
+            mouseEmulationActive = true;
+            PostToJs("mouseEmulation enabled");
+          } else {
+            // Deactivate mouse emulation and notify the user
+            mouseEmulationActive = false;
+            PostToJs("mouseEmulation disabled");
+          }
+          // Reset the PLAY/START press time to the current time after toggling
+          activatePressTime = std::chrono::steady_clock::now();
         }
-        // Reset the PLAY/START press time to the current time after toggling
+      } else {
+        // If the PLAY/START button is not pressed, reset PLAY/START press time to the current time
         activatePressTime = std::chrono::steady_clock::now();
       }
     } else {
-      // If the PLAY/START button is not pressed, reset PLAY/START press time to the current time
-      activatePressTime = std::chrono::steady_clock::now();
+      // Deactivate mouse emulation if the mouse emulation switch is unchecked
+      mouseEmulationActive = false;
     }
 
-    // If mouse emulation is enabled, then send mouse input to the desired handler (acts as a mouse)
-    if (isMouseEmulationActive) {
+    // If mouse emulation is active, then send mouse input to the desired handler (acts as a mouse)
+    if (mouseEmulationActive) {
       // Left Stick values are mapped to horizontal and vertical mouse movements
       const float baseMouseSpeed = 10.0f;
       const float leftStickMagnitude = std::sqrt(leftStickX * leftStickX + leftStickY * leftStickY) / std::numeric_limits<short>::max();
@@ -219,7 +227,7 @@ void MoonlightInstance::PollGamepads() {
         LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_RIGHT);
       }
     } else {
-      // If mouse emulation is disabled, then send gamepad input to the desired handler (acts as a gamepad)
+      // If mouse emulation is inactive, then send gamepad input to the desired handler (acts as a gamepad)
       LiSendMultiControllerEvent(
         gamepadID, activeGamepadMask, buttonFlags, leftTrigger,
         rightTrigger, leftStickX, leftStickY, rightStickX, rightStickY);

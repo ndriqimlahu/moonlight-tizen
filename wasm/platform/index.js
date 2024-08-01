@@ -40,6 +40,7 @@ function attachListeners() {
   $("#externalAudioSwitch").on('click', saveExternalAudio);
   $('#removeAllHostsBtn').on('click', removeAllHosts);
   $("#rumbleFeedbackSwitch").on('click', saveRumbleFeedback);
+  $("#mouseEmulationSwitch").on('click', saveMouseEmulation);
   $('.codecMenu li').on('click', saveCodecMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
@@ -1301,6 +1302,7 @@ function startGame(host, appID) {
       const optimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const rumbleFeedback = $("#rumbleFeedbackSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      const mouseEmulation = $("#mouseEmulationSwitch").parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -1308,7 +1310,7 @@ function startGame(host, appID) {
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + '\n Host address: ' + host.address + 
         '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + '\n Stream frame rate: ' + frameRate + ' FPS' + 
         '\n Stream bitrate: ' + bitrate + ' Kbps' + '\n Optimize games: ' + optimizeGames + '\n External audio: ' + externalAudio + 
-        '\n Rumble feedback: ' + rumbleFeedback + 
+        '\n Rumble feedback: ' + rumbleFeedback + '\n Mouse emulation: ' + mouseEmulation + 
         '\n Codec mode: ' + codecMode + '\n Frame pacing: ' + framePacing + '\n Audio sync: ' + audioSync);
 
       var rikey = generateRemoteInputKey();
@@ -1335,7 +1337,7 @@ function startGame(host, appID) {
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
             bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim(), rumbleFeedback, codecMode,
+            $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, codecMode,
             host.serverCodecMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
@@ -1372,7 +1374,7 @@ function startGame(host, appID) {
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
           bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim(), rumbleFeedback, codecMode,
+          $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, codecMode,
           host.serverCodecMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
@@ -1776,6 +1778,14 @@ function saveRumbleFeedback() {
   }, 100);
 }
 
+function saveMouseEmulation() {
+  setTimeout(function() {
+    const chosenMouseEmulation = $("#mouseEmulationSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveMouseEmulation]', 'color: green;', 'Saving mouse emulation state: ' + chosenMouseEmulation);
+    storeData('mouseEmulation', chosenMouseEmulation, null);
+  }, 100);
+}
+
 function saveCodecMode() {
   var chosenCodecMode = $(this).data('value');
   $('#selectCodec').text($(this).text()).data('value', chosenCodecMode);
@@ -1832,6 +1842,10 @@ function restoreDefaultsSettingsValues() {
   const defaultRumbleFeedback = false;
   document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
   storeData('rumbleFeedback', defaultRumbleFeedback, null);
+
+  const defaultMouseEmulation = false;
+  document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
+  storeData('mouseEmulation', defaultMouseEmulation, null);
 
   const defaultCodecMode = '0x0001';
   $('#selectCodec').text('H.264').data('value', defaultCodecMode);
@@ -2005,6 +2019,17 @@ function loadUserDataCb() {
       document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored mouseEmulation prefs');
+  getData('mouseEmulation', function(previousValue) {
+    if (previousValue.mouseEmulation == null) {
+      document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
+    } else if (previousValue.mouseEmulation == false) {
+      document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#mouseEmulationBtn').MaterialSwitch.on();
     }
   });
 

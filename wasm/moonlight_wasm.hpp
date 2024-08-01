@@ -62,7 +62,7 @@ class MoonlightInstance {
 
   MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps,
     std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-    bool rumbleFeedback, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
+    bool rumbleFeedback, bool mouseEmulation, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -81,7 +81,7 @@ class MoonlightInstance {
 
   void ReportMouseMovement();
 
-  void HandleGamepadInputState(bool rumbleFeedback);
+  void HandleGamepadInputState(bool rumbleFeedback, bool mouseEmulation);
   void PollGamepads();
 
   void MouseLockLost();
@@ -184,6 +184,7 @@ class MoonlightInstance {
   std::string m_GfeVersion;
   std::string m_RtspUrl;
   bool m_RumbleFeedbackEnabled;
+  bool m_MouseEmulationEnabled;
   int m_SupportedVideoCodecs;
   bool m_FramePacingEnabled;
   bool m_AudioSyncEnabled;
@@ -239,7 +240,7 @@ void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryRe
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps,
   std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  bool rumbleFeedback, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
+  bool rumbleFeedback, bool mouseEmulation, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
 MessageResult stopStream();
 
 void stun(int callbackId);
