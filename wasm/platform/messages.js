@@ -110,19 +110,24 @@ function handleMessage(msg) {
     snackbarLogLong("Mouse emulation is enabled");
   } else if (msg.indexOf('mouseEmulation disabled') === 0) {
     snackbarLogLong("Mouse emulation is disabled");
-  } else if (msg.indexOf('controllerRumble: ' ) === 0) {
-    const eventData = msg.split( ' ' )[1].split(',');
+  } else if (msg.indexOf('controllerRumble: ') === 0) {
+    const eventData = msg.split(' ')[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);
     const weakMagnitude = parseFloat(eventData[1]);
     const strongMagnitude = parseFloat(eventData[2]);
-    console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Playing rumble on gamepad ' + gamepadIdx + ' with weakMagnitude ' + weakMagnitude + ' and strongMagnitude ' + strongMagnitude);
-    // We may not actually have a gamepad at this index
-    // Even if we do have a gamepad, it may not have a vibrationActuator associated with it
-    navigator.getGamepads()[gamepadIdx].vibrationActuator.playEffect('dual-rumble', {
-      startDelay: 0,
-      duration: 5000, // Moonlight should be sending another rumble event when stopping
-      weakMagnitude: weakMagnitude,
-      strongMagnitude: strongMagnitude,
-    });
+    const gamepads = navigator.getGamepads();
+    const gamepad = gamepads[gamepadIdx];
+    // Check if the gamepad exists and if it has a vibrationActuator associated with it
+    if (gamepad && gamepad.vibrationActuator) {
+      console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Playing rumble on gamepad ' + gamepadIdx + ' with weak magnitude ' + weakMagnitude + ' and strong magnitude ' + strongMagnitude + '...');
+      gamepad.vibrationActuator.playEffect('dual-rumble', {
+        startDelay: 0,
+        duration: 5000, // Moonlight should be sending another rumble event when stopping
+        weakMagnitude: weakMagnitude,
+        strongMagnitude: strongMagnitude,
+      });
+    } else {
+      console.warn('%c[messages.js, handleMessage]', 'color: gray;', 'Gamepad ' + gamepadIdx + ' does not support the rumble feature!');
+    }
   }
 }

@@ -39,6 +39,7 @@ function attachListeners() {
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $("#externalAudioSwitch").on('click', saveExternalAudio);
   $('#removeAllHostsBtn').on('click', removeAllHosts);
+  $("#rumbleFeedbackSwitch").on('click', saveRumbleFeedback);
   $('.codecMenu li').on('click', saveCodecMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
@@ -1299,6 +1300,7 @@ function startGame(host, appID) {
       var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
       const optimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      const rumbleFeedback = $("#rumbleFeedbackSwitch").parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -1306,6 +1308,7 @@ function startGame(host, appID) {
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + '\n Host address: ' + host.address + 
         '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + '\n Stream frame rate: ' + frameRate + ' FPS' + 
         '\n Stream bitrate: ' + bitrate + ' Kbps' + '\n Optimize games: ' + optimizeGames + '\n External audio: ' + externalAudio + 
+        '\n Rumble feedback: ' + rumbleFeedback + 
         '\n Codec mode: ' + codecMode + '\n Frame pacing: ' + framePacing + '\n Audio sync: ' + audioSync);
 
       var rikey = generateRemoteInputKey();
@@ -1332,7 +1335,8 @@ function startGame(host, appID) {
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
             bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim(), codecMode, host.serverCodecMode, framePacing, audioSync
+            $root.find('sessionUrl0').text().trim(), rumbleFeedback, codecMode,
+            host.serverCodecMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp);
@@ -1368,7 +1372,8 @@ function startGame(host, appID) {
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
           bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim(), codecMode, host.serverCodecMode, framePacing, audioSync
+          $root.find('sessionUrl0').text().trim(), rumbleFeedback, codecMode,
+          host.serverCodecMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp);
@@ -1763,6 +1768,14 @@ function saveExternalAudio() {
   }, 100);
 }
 
+function saveRumbleFeedback() {
+  setTimeout(function() {
+    const chosenRumbleFeedback = $("#rumbleFeedbackSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveRumbleFeedback]', 'color: green;', 'Saving rumble feedback state: ' + chosenRumbleFeedback);
+    storeData('rumbleFeedback', chosenRumbleFeedback, null);
+  }, 100);
+}
+
 function saveCodecMode() {
   var chosenCodecMode = $(this).data('value');
   $('#selectCodec').text($(this).text()).data('value', chosenCodecMode);
@@ -1815,6 +1828,10 @@ function restoreDefaultsSettingsValues() {
   const defaultExternalAudio = false;
   document.querySelector('#externalAudioBtn').MaterialSwitch.off();
   storeData('externalAudio', defaultExternalAudio, null);
+
+  const defaultRumbleFeedback = false;
+  document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
+  storeData('rumbleFeedback', defaultRumbleFeedback, null);
 
   const defaultCodecMode = '0x0001';
   $('#selectCodec').text('H.264').data('value', defaultCodecMode);
@@ -1980,6 +1997,17 @@ function loadUserDataCb() {
     }
   });
 
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored rumbleFeedback prefs');
+  getData('rumbleFeedback', function(previousValue) {
+    if (previousValue.rumbleFeedback == null) {
+      document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
+    } else if (previousValue.rumbleFeedback == false) {
+      document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.on();
+    }
+  });
+
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored codecMode prefs');
   getData('codecMode', function(previousValue) {
     if (previousValue.codecMode != null) {
@@ -2092,20 +2120,24 @@ window.onload = onWindowLoad;
 // Gamepad connected events
 window.addEventListener('gamepadconnected', function(e) {
   const connectedGamepad = e.gamepad;
+  const gamepadIndex = connectedGamepad.index;
+  const rumbleFeedbackSwitch = document.getElementById('rumbleFeedbackSwitch');
   console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Gamepad connected: ' + JSON.stringify(connectedGamepad), connectedGamepad);
   snackbarLog('Gamepad connected');
-  // If the connected gamepad supports rumble, then play a rumble effect
-  if (connectedGamepad.vibrationActuator) {
-    console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Gamepad supports the rumble. Vibrating now...');
-    // Specify the vibration parameters and play the rumble effect
-    connectedGamepad.vibrationActuator.playEffect('dual-rumble', {
-      startDelay: 0,
-      duration: 200, // 200ms (milliseconds)
-      weakMagnitude: 0.5,
-      strongMagnitude: 0.5,
-    });
-  } else {
-    console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Gamepad does not support the rumble feature!');
+  // Check if the rumble feedback switch is checked
+  if (rumbleFeedbackSwitch.checked) {
+    // Check if the connected gamepad has a vibrationActuator associated with it
+    if (connectedGamepad.vibrationActuator) {
+      console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Playing rumble on the connected gamepad ' + gamepadIndex + '...');
+      connectedGamepad.vibrationActuator.playEffect('dual-rumble', {
+        startDelay: 0,
+        duration: 500,
+        weakMagnitude: 0.5,
+        strongMagnitude: 0.5,
+      });
+    } else {
+      console.warn('%c[index.js, gamepadconnected]', 'color: green;', 'Connected gamepad ' + gamepadIndex + ' does not support the rumble feature!');
+    }
   }
 });
 

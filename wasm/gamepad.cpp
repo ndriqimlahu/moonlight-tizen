@@ -14,6 +14,9 @@
 // Define a combination of buttons on the gamepad to stop streaming session
 const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
+// Flag for gamepad to track controller rumble state
+bool rumbleFeedbackSwitch = false;
+
 // Define a flag to track whether mouse emulation is currently active
 bool isMouseEmulationActive = false;
 
@@ -77,6 +80,11 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
   }
 
   return result;
+}
+
+// Function to handle the gamepad input state
+void MoonlightInstance::HandleGamepadInputState(bool rumbleFeedback) {
+  rumbleFeedbackSwitch = rumbleFeedback;
 }
 
 // Function to poll gamepad input
@@ -224,7 +232,10 @@ void MoonlightInstance::ClControllerRumble(unsigned short controllerNumber, unsi
   const float weakMagnitude = static_cast<float>(highFreqMotor) / static_cast<float>(UINT16_MAX);
   const float strongMagnitude = static_cast<float>(lowFreqMotor) / static_cast<float>(UINT16_MAX);
   
-  std::ostringstream ss;
-  ss << controllerNumber << "," << weakMagnitude << "," << strongMagnitude;
-  PostToJs(std::string("controllerRumble: ") + ss.str());
+  // Check if the rumble feedback switch is checked
+  if (rumbleFeedbackSwitch) {
+    std::ostringstream ss;
+    ss << controllerNumber << "," << weakMagnitude << "," << strongMagnitude;
+    PostToJs(std::string("controllerRumble: ") + ss.str());
+  }
 }

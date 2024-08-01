@@ -173,8 +173,8 @@ static void HexStringToBytes(const char* str, char* output) {
 }
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps,
-  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
-  std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
+  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
+  bool rumbleFeedback, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
   PostToJs("Streaming session has started");
   PostToJs("Setting stream host to: " + host);
   PostToJs("Setting stream resolution to: " + width + "x" + height);
@@ -185,6 +185,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting appversion to: " + appversion);
   PostToJs("Setting gfeversion to: " + gfeversion);
   PostToJs("Setting RTSP URL to: " + rtspurl);
+  PostToJs("Setting rumble feedback to: " + std::to_string(rumbleFeedback));
   PostToJs("Setting codec mode to: " + codecMode);
   PostToJs("Setting server codec mode to: " + serverCodecMode);
   PostToJs("Setting frame pacing to: " + std::to_string(framePacing));
@@ -201,6 +202,8 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
   m_StreamConfig.supportedVideoFormats = stoi(codecMode,0,16);
 
+  HandleGamepadInputState(rumbleFeedback);
+
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);
   int rikeyiv = htonl(stoi(rikeyid));
@@ -211,6 +214,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
   m_RtspUrl = rtspurl;
+  m_RumbleFeedbackEnabled = rumbleFeedback;
   m_SupportedVideoCodecs = stoi(serverCodecMode,0,16);
   m_FramePacingEnabled = framePacing;
   m_AudioSyncEnabled = audioSync;
@@ -302,11 +306,11 @@ int main(int argc, char** argv) {
 }
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps,
-  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion,
-  std::string rtspurl, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
+  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
+  bool rumbleFeedback, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
-  return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid,
-  appversion, gfeversion, rtspurl, codecMode, serverCodecMode, framePacing, audioSync);
+  return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion,
+  gfeversion, rtspurl, rumbleFeedback, codecMode, serverCodecMode, framePacing, audioSync);
 }
 
 MessageResult stopStream() {
