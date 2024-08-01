@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.7
+
+### Added
+- Introduced a new 'Input Settings' category which will be used to hold input settings
+- Introduced a new 'Rumble feedback' setting that allows changing the state of the rumble feature for the gamepad
+- Introduced a new 'Mouse emulation' setting that allows changing the state of the mouse feature for the gamepad
+
+### Changed
+- Minor bug fixes, improved visual styling and general improvements
+
+### Dependencies
+- Updated 'material-icons' library to the latest version
+
 ## v1.2.6
 
 ### Added
