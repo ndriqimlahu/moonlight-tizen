@@ -11,13 +11,13 @@
 #include <Limelight.h>
 #include <emscripten/emscripten.h>
 
-// Define a combination of buttons on the gamepad to stop streaming session
+// Bitmask for gamepad buttons to stop the streaming session
 const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
 // Flag for gamepad to track controller rumble state
 bool rumbleFeedbackSwitch = false;
 
-// Define flags to track whether mouse emulation is currently checked or active
+// Flags for gamepad to track mouse emulation state
 bool mouseEmulationSwitch = false;
 bool mouseEmulationActive = false;
 
@@ -140,10 +140,8 @@ void MoonlightInstance::PollGamepads() {
     const auto rightStickY = -gamepad.axis[GamepadAxis::RightY]
       * std::numeric_limits<short>::max();
 
-    // Check if the currently pressed gamepad buttons match the combination defined by "STOP_STREAM_BUTTONS_FLAGS" to stop streaming.
-    // If it matches, call the "stopStream" function to stop the streaming session and return to the applications list.
+    // Check if the current button flags match the stop stream buttons flags
     if (buttonFlags == STOP_STREAM_BUTTONS_FLAGS) {
-      PostToJs(std::string("stopping stream, button flags are ") + std::to_string(buttonFlags));
       // Terminate the connection
       stopStream();
       return;
@@ -235,7 +233,7 @@ void MoonlightInstance::PollGamepads() {
   }
 }
 
-// Send gamepad rumble for active gamepads
+// Function to send controller rumble feedback for gamepad
 void MoonlightInstance::ClControllerRumble(unsigned short controllerNumber, unsigned short lowFreqMotor, unsigned short highFreqMotor) {
   const float weakMagnitude = static_cast<float>(highFreqMotor) / static_cast<float>(UINT16_MAX);
   const float strongMagnitude = static_cast<float>(lowFreqMotor) / static_cast<float>(UINT16_MAX);

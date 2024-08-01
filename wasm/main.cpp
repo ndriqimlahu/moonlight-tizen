@@ -18,13 +18,13 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-// Requests the Wasm module to connection to the server specified after the:
+// Requests the Wasm module to connect to the specified server
 #define MSG_START_REQUEST "startRequest"
-// Requests the Wasm module stop streaming
+// Requests the Wasm module to stop streaming
 #define MSG_STOP_REQUEST "stopRequest"
-// Sent by the Wasm module when the stream has stopped whether user-requested or not
+// Sent by the Wasm module when streaming has stopped, whether requested by the user or not
 #define MSG_STREAM_TERMINATED "streamTerminated: "
-
+// Requests the Wasm module to open the specified URL
 #define MSG_OPENURL "openUrl"
 
 MoonlightInstance* g_Instance;

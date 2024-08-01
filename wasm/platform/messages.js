@@ -5,7 +5,8 @@ const SyncFunctions = {
   'makeCert': (...args) => Module.makeCert(...args),
   // cert, privateKey, myUniqueid
   'httpInit': (...args) => Module.httpInit(...args),
-  // host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion
+  /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl,
+  rumbleFeedback, mouseEmulation, codecMode, serverCodecMode, framePacing, audioSync */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),
@@ -94,8 +95,8 @@ function handleMessage(msg) {
   } else if (msg === 'Connection Established') {
     $('#loadingSpinner').css('display', 'none');
     $('body').css('backgroundColor', 'transparent');
-    $("#wasm_module").css("display", "");
-    $("#wasm_module").focus();
+    $('#wasm_module').css('display', '');
+    $('#wasm_module').focus();
   } else if (msg.indexOf('ProgressMsg: ') === 0) {
     $('#loadingMessage').text(msg.replace('ProgressMsg: ', ''));
   } else if (msg.indexOf('TransientMsg: ') === 0) {
@@ -105,7 +106,7 @@ function handleMessage(msg) {
     snackbarLogLong(msg.replace('DialogMsg: ', ''));
   } else if (msg === 'displayVideo') {
     // Show the video stream now
-    $("#listener").addClass("fullscreen");
+    $('#listener').addClass('fullscreen');
   } else if (msg.indexOf('controllerRumble: ') === 0) {
     const eventData = msg.split(' ')[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);

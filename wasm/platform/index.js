@@ -34,13 +34,13 @@ function attachListeners() {
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', updateBitrateField);
-  $("#ipAddressFieldModeSwitch").on('click', saveIpAddressFieldMode);
-  $("#sortAppsListSwitch").on('click', saveSortAppsList);
+  $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
+  $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
-  $("#externalAudioSwitch").on('click', saveExternalAudio);
+  $('#externalAudioSwitch').on('click', saveExternalAudio);
   $('#removeAllHostsBtn').on('click', removeAllHosts);
-  $("#rumbleFeedbackSwitch").on('click', saveRumbleFeedback);
-  $("#mouseEmulationSwitch").on('click', saveMouseEmulation);
+  $('#rumbleFeedbackSwitch').on('click', saveRumbleFeedback);
+  $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
   $('.codecMenu li').on('click', saveCodecMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
@@ -1307,11 +1307,18 @@ function startGame(host, appID) {
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
-      console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + '\n Host address: ' + host.address + 
-        '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + '\n Stream frame rate: ' + frameRate + ' FPS' + 
-        '\n Stream bitrate: ' + bitrate + ' Kbps' + '\n Optimize games: ' + optimizeGames + '\n External audio: ' + externalAudio + 
-        '\n Rumble feedback: ' + rumbleFeedback + '\n Mouse emulation: ' + mouseEmulation + 
-        '\n Codec mode: ' + codecMode + '\n Frame pacing: ' + framePacing + '\n Audio sync: ' + audioSync);
+      console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
+        '\n Host address: ' + host.address + 
+        '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + 
+        '\n Stream frame rate: ' + frameRate + ' FPS' + 
+        '\n Stream bitrate: ' + bitrate + ' Kbps' + 
+        '\n Optimize games: ' + optimizeGames + 
+        '\n External audio: ' + externalAudio + 
+        '\n Rumble feedback: ' + rumbleFeedback + 
+        '\n Mouse emulation: ' + mouseEmulation + 
+        '\n Codec mode: ' + codecMode + 
+        '\n Frame pacing: ' + framePacing + 
+        '\n Audio sync: ' + audioSync);
 
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
@@ -2168,6 +2175,9 @@ window.addEventListener('gamepadconnected', function(e) {
 
 // Gamepad disconnected events
 window.addEventListener('gamepaddisconnected', function(e) {
-  console.log('%c[index.js, gamepaddisconnected]', 'color: green;', 'Gamepad disconnected: ' + JSON.stringify(e.gamepad), e.gamepad);
+  const disconnectedGamepad = e.gamepad;
+  const gamepadIndex = disconnectedGamepad.index;
+  console.log('%c[index.js, gamepaddisconnected]', 'color: green;', 'Gamepad disconnected: ' + JSON.stringify(disconnectedGamepad), disconnectedGamepad);
   snackbarLog('Gamepad disconnected');
+  console.warn('%c[index.js, gamepaddisconnected]', 'color: green;', 'Lost connection with gamepad ' + gamepadIndex);
 });
