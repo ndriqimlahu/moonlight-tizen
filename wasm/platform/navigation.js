@@ -842,6 +842,61 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  InputSettings: {
+    view: new ListView(() => []),
+    up: function() {
+      this.view.prevOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    down: function() {
+      this.view.nextOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
+      const toggleSwitches = document.querySelectorAll('.mdl-switch');
+      toggleSwitches.forEach(function (toggleSwitch) {
+        toggleSwitch.classList.remove('hovered', 'is-focused');
+      });
+      // Hide the right settings pane which includes settings options
+      const settingsOptions = document.querySelectorAll('.settings-options');
+      settingsOptions.forEach(function (settingsOption) {
+        settingsOption.style.display = 'none';
+      });
+      // Remove the 'selected' class from all categories
+      const settingsCategories = document.querySelectorAll('.category');
+      settingsCategories.forEach(function (settingsCategory) {
+        settingsCategory.classList.remove('selected');
+      });
+      // Navigate to the Settings view
+      Navigation.change(Views.Settings);
+      // Set focus on the category item in Settings view when transitioning from InputSettings view
+      const navItem = document.getElementById(Views.Settings.view.current());
+      if (navItem) {
+        navItem.focus();
+      }
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   DecoderSettings: {
     view: new ListView(() => [
       'selectCodec',

@@ -754,6 +754,17 @@ function handleCategoryClick(category) {
           setTimeout(() => Navigation.switch(), 5);
         }
         break;
+      case 'inputSettings':
+        // Navigate to the InputSettings view
+        Navigation.pop();
+        Navigation.push(Views.InputSettings);
+        if (currentSettingsOption) {
+          // Set focus on the current settings option
+          currentSettingsOption.focus();
+          // Simulate navigation to set focus on the settings item
+          setTimeout(() => Navigation.switch(), 5);
+        }
+        break;
       case 'decoderSettings':
         // Navigate to the DecoderSettings view
         Navigation.pop();
