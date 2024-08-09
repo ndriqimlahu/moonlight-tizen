@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.8
+
+### Added
+- Introduced a new 'Flip A/B face buttons' setting that swaps the 'A' and 'B' button mapping for the gamepad
+- Introduced a new 'Flip X/Y face buttons' setting that swaps the 'X' and 'Y' button mapping for the gamepad
+- Implemented logic to handle different layouts of gamepad face buttons based on toggle state
+
+### Changed
+- Optimized functionality to save and load box arts to internal storage for better performance
+
 ## v1.2.7
 
 ### Added
