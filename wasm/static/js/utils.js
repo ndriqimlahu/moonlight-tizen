@@ -440,28 +440,53 @@ NvHTTP.prototype = {
     return this.getAppListWithCacheFlush();
   },
 
-  // Returns the box art of the given appID
-  // Three layers of response time are possible: memory cached, storage cached, and streamed (host sends binary over the network)
-  getBoxArt: function(appId) {
-    return new Promise(function(resolve, reject) {
-      sendMessage('openUrl', [
-        this._baseUrlHttps + '/appasset?' + this._buildUidStr() + '&appid=' + appId + '&AssetType=2&AssetIdx=0', this.ppkstr, true
-      ]).then(function(boxArtBuffer) {
+  // Returns the box art based on the the given appId
+  // Three layers of response time are possible: memory-cached (in JavaScript), storage-cached (in tizen.filesystem), and network-fetched (host sends binary over the network)
+  // For explanations on the file system, see: https://developer.samsung.com/smarttv/develop/api-references/tizen-web-device-api-references/filesystem-api.html
+  getBoxArt: function (appId) {
+    return new Promise(function (resolve, reject) {
+      var boxArtFileName = 'boxart-' + appId;
+      var boxArtDir = 'wgt-private/' + this.hostname; // Widget private storage directory is r/w (read/write)
+
+      try {
+        var fileHandleRead = tizen.filesystem.openFile(boxArtDir + "/" + boxArtFileName, "r");
+        var fileContentInBlob = fileHandleRead.readBlob();
+        fileHandleRead.close();
+        console.log('%c[utils.js, getBoxArt]', 'color: gray;', 'Returning storage-cached box art: ', appId);
+
         var reader = new FileReader();
-        reader.onloadend = function() {
-          var obj = {};
-          obj['boxart-' + appId] = this.result;
-          console.log('%c[utils.js, getBoxArt]', 'color: gray;', 'Returning network-fetched box art');
-          resolve(this.result);
-        }
-        reader.readAsDataURL(new Blob([boxArtBuffer], {
-          type: "image/png"
-        }));
-      }.bind(this), function(error) {
-        console.error('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Box-art request failed: ', error);
-        reject(error);
-        return;
-      }.bind(this));
+        reader.onloadend = function () {
+          var dataUrl = reader.result;
+          resolve(dataUrl);
+        };
+        reader.readAsDataURL(fileContentInBlob);
+      } catch (readError) {
+        console.warn('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Cannot find or read box art from internal storage: ', readError);
+        return sendMessage('openUrl', [
+          this._baseUrlHttps + '/appasset?' + this._buildUidStr() + '&appid=' + appId + '&AssetType=2&AssetIdx=0', this.ppkstr, true
+        ]).then(function (boxArtBuffer) {
+          var reader = new FileReader();
+          reader.onloadend = function () {
+            var dataUrl = reader.result;
+            try {
+              var fileHandleWrite = tizen.filesystem.openFile(boxArtDir + "/" + boxArtFileName, "w");
+              fileHandleWrite.writeData(boxArtBuffer);
+              fileHandleWrite.close();
+              console.log('%c[utils.js, getBoxArt]', 'color: gray;', 'Returning network-fetched box art: ', appId);
+              resolve(dataUrl);
+            } catch (writeError) {
+              console.error('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Unable to save or write box art to internal storage: ', writeError);
+              reject(writeError);
+            }
+          };
+
+          var blob = new Blob([boxArtBuffer], { type: "image/png" });
+          reader.readAsDataURL(blob);
+        }.bind(this), function (error) {
+          console.error('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Failed to retrieve box art from network: ', error);
+          reject(error);
+        }.bind(this));
+      }
     }.bind(this));
   },
 
