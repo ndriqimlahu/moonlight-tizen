@@ -5,8 +5,8 @@ const SyncFunctions = {
   'makeCert': (...args) => Module.makeCert(...args),
   // cert, privateKey, myUniqueid
   'httpInit': (...args) => Module.httpInit(...args),
-  /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl,
-  rumbleFeedback, mouseEmulation, codecMode, serverCodecMode, framePacing, audioSync */
+  /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, rumbleFeedback,
+  mouseEmulation, flipABfaceButtons, codecMode, serverCodecMode, framePacing, audioSync */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),

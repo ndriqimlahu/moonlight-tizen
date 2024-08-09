@@ -845,7 +845,8 @@ const Views = {
   InputSettings: {
     view: new ListView(() => [
       'rumbleFeedbackBtn',
-      'mouseEmulationBtn']),
+      'mouseEmulationBtn',
+      'flipABfaceButtonsBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();

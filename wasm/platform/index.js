@@ -41,6 +41,7 @@ function attachListeners() {
   $('#removeAllHostsBtn').on('click', removeAllHosts);
   $('#rumbleFeedbackSwitch').on('click', saveRumbleFeedback);
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
+  $('#flipABfaceButtonsSwitch').on('click', saveFlipABfaceButtons);
   $('.codecMenu li').on('click', saveCodecMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
@@ -1303,6 +1304,7 @@ function startGame(host, appID) {
       const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const rumbleFeedback = $("#rumbleFeedbackSwitch").parent().hasClass('is-checked') ? 1 : 0;
       const mouseEmulation = $("#mouseEmulationSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      const flipABfaceButtons = $("#flipABfaceButtonsSwitch").parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -1316,6 +1318,7 @@ function startGame(host, appID) {
         '\n External audio: ' + externalAudio + 
         '\n Rumble feedback: ' + rumbleFeedback + 
         '\n Mouse emulation: ' + mouseEmulation + 
+        '\n Flip A/B face buttons: ' + flipABfaceButtons + 
         '\n Codec mode: ' + codecMode + 
         '\n Frame pacing: ' + framePacing + 
         '\n Audio sync: ' + audioSync);
@@ -1344,8 +1347,8 @@ function startGame(host, appID) {
 
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
             bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, codecMode,
-            host.serverCodecMode, framePacing, audioSync
+            $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, flipABfaceButtons,
+            codecMode, host.serverCodecMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp);
@@ -1381,8 +1384,8 @@ function startGame(host, appID) {
 
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
           bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, codecMode,
-          host.serverCodecMode, framePacing, audioSync
+          $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, flipABfaceButtons,
+          codecMode, host.serverCodecMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp);
@@ -1793,6 +1796,14 @@ function saveMouseEmulation() {
   }, 100);
 }
 
+function saveFlipABfaceButtons() {
+  setTimeout(function() {
+    const chosenFlipABfaceButtons = $("#flipABfaceButtonsSwitch").parent().hasClass('is-checked');
+    console.log('%c[index.js, saveFlipABfaceButtons]', 'color: green;', 'Saving flip A/B face buttons state: ' + chosenFlipABfaceButtons);
+    storeData('flipABfaceButtons', chosenFlipABfaceButtons, null);
+  }, 100);
+}
+
 function saveCodecMode() {
   var chosenCodecMode = $(this).data('value');
   $('#selectCodec').text($(this).text()).data('value', chosenCodecMode);
@@ -1853,6 +1864,10 @@ function restoreDefaultsSettingsValues() {
   const defaultMouseEmulation = false;
   document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
   storeData('mouseEmulation', defaultMouseEmulation, null);
+
+  const defaultFlipABfaceButtons = false;
+  document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off();
+  storeData('flipABfaceButtons', defaultFlipABfaceButtons, null);
 
   const defaultCodecMode = '0x0001';
   $('#selectCodec').text('H.264').data('value', defaultCodecMode);
@@ -2037,6 +2052,17 @@ function loadUserDataCb() {
       document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#mouseEmulationBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored flipABfaceButtons prefs');
+  getData('flipABfaceButtons', function(previousValue) {
+    if (previousValue.flipABfaceButtons == null) {
+      document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off();
+    } else if (previousValue.flipABfaceButtons == false) {
+      document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.on();
     }
   });
 

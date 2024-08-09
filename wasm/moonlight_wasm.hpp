@@ -60,9 +60,10 @@ class MoonlightInstance {
   public:
   explicit MoonlightInstance();
 
-  MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps,
-    std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-    bool rumbleFeedback, bool mouseEmulation, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
+  MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
+    std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
+    bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, std::string codecMode,
+    std::string serverCodecMode, bool framePacing, bool audioSync);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -81,7 +82,7 @@ class MoonlightInstance {
 
   void ReportMouseMovement();
 
-  void HandleGamepadInputState(bool rumbleFeedback, bool mouseEmulation);
+  void HandleGamepadInputState(bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons);
   void PollGamepads();
 
   void MouseLockLost();
@@ -185,6 +186,7 @@ class MoonlightInstance {
   std::string m_RtspUrl;
   bool m_RumbleFeedbackEnabled;
   bool m_MouseEmulationEnabled;
+  bool m_FlipABfaceButtonsEnabled;
   int m_SupportedVideoCodecs;
   bool m_FramePacingEnabled;
   bool m_AudioSyncEnabled;
@@ -238,9 +240,10 @@ MessageResult makeCert();
 MessageResult httpInit(std::string cert, std::string privateKey, std::string myUniqueId);
 void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryResponse);
 
-MessageResult startStream(std::string host, std::string width, std::string height, std::string fps,
-  std::string bitrate, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  bool rumbleFeedback, bool mouseEmulation, std::string codecMode, std::string serverCodecMode, bool framePacing, bool audioSync);
+MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
+  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
+  bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, std::string codecMode,
+  std::string serverCodecMode, bool framePacing, bool audioSync);
 MessageResult stopStream();
 
 void stun(int callbackId);
