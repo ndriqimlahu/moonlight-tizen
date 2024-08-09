@@ -23,6 +23,7 @@ bool mouseEmulationActive = false;
 
 // Flags for gamepad to track face buttons state
 bool flipABfaceButtonsSwitch = false;
+bool flipXYfaceButtonsSwitch = false;
 
 // For explanation on ordering, see: https://www.w3.org/TR/gamepad/#remapping
 // Enumeration for gamepad buttons
@@ -87,10 +88,11 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
 }
 
 // Function to handle the gamepad input state
-void MoonlightInstance::HandleGamepadInputState(bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons) {
+void MoonlightInstance::HandleGamepadInputState(bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons) {
   rumbleFeedbackSwitch = rumbleFeedback;
   mouseEmulationSwitch = mouseEmulation;
   flipABfaceButtonsSwitch = flipABfaceButtons;
+  flipXYfaceButtonsSwitch = flipXYfaceButtons;
 }
 
 // Function to poll gamepad input

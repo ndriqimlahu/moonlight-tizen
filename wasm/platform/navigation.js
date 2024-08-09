@@ -846,7 +846,8 @@ const Views = {
     view: new ListView(() => [
       'rumbleFeedbackBtn',
       'mouseEmulationBtn',
-      'flipABfaceButtonsBtn']),
+      'flipABfaceButtonsBtn',
+      'flipXYfaceButtonsBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
