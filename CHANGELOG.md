@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.9
+
+### Added
+- Added a new 'Menu' icon for the 'Host Menu' button
+- Introduced a 'Host Menu' button to show host button options
+- Introduced a new 'Host Menu' dialog and its corresponding view
+- Implemented functionality to clear box arts from internal storage
+- Added a new 'Refresh apps' option to the 'Host Menu' dialog to refresh apps and games
+- Added a new 'Delete PC' option to the 'Host Menu' dialog to allow removing the host PC
+
 ## v1.2.8
 
 ### Added
