@@ -633,6 +633,14 @@ function hostMenu(host) {
         snackbarLogLong('Apps and games have been refreshed for ' + host.hostname);
       }
     },
+    {
+      id: 'removeHost-' + host.hostname,
+      text: 'Delete PC',
+      action: function() {
+        // Remove the selected host from the list
+        setTimeout(() => removeClicked(host), 100);
+      }
+    },
   ];
 
   // Loop through each option to create a button in the dialog
