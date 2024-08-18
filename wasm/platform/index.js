@@ -621,7 +621,19 @@ function hostMenu(host) {
   }).appendTo(hostMenuDialog);
 
   // Define the options for the menu with the corresponding attributes
-  var hostMenuDialogOptions = [];
+  var hostMenuDialogOptions = [
+    {
+      id: 'refreshApps-' + host.hostname,
+      text: 'Refresh apps',
+      action: function() {
+        // Refresh apps and games from the selected host
+        host.clearBoxArt();
+        host.getAppListWithCacheFlush();
+        // If apps and games have been refreshed, show snackbar message
+        snackbarLogLong('Apps and games have been refreshed for ' + host.hostname);
+      }
+    },
+  ];
 
   // Loop through each option to create a button in the dialog
   hostMenuDialogOptions.forEach(function(menuOption) {
