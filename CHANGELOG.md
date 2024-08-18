@@ -55,7 +55,7 @@ All notable changes to this project will be documented in this file.
 ## v1.2.4
 
 ### Added
-- Added a new 'Navigation' icon specifically for the 'Navigation Guide' button
+- Added a new 'Navigation' icon for the 'Navigation Guide' button
 - Introduced a new 'Navigation Guide' button to learn about navigation controls
 - Introduced a new 'Navigation Guide' dialog and its corresponding view
 - Implemented functionality for handling the 'Navigation Guide' dialog
@@ -91,7 +91,7 @@ All notable changes to this project will be documented in this file.
 ## v1.2.1
 
 ### Added
-- Introduced the 'Mouse Emulation' feature for gamepad controller
+- Introduced a new 'Mouse Emulation' feature for gamepad input
 - Added snackbar notifications for mouse emulation state changes
 - Implemented logic to handle mouse movements with the Left Stick
 - Implemented logic to handle mouse scrolls with the Right Stick
@@ -167,8 +167,8 @@ All notable changes to this project will be documented in this file.
 ## v1.1.15
 
 ### Added
-- Added a new 'Restart' icon specifically for the 'Restart App' button
-- Introduced an 'Restart App' button for instant application restart
+- Added a new 'Restart' icon for the 'Restart App' button
+- Introduced a 'Restart App' button for instant application restart
 - Added additional query parameters for launch and resume requests
 
 ### Fixed
@@ -234,8 +234,8 @@ All notable changes to this project will be documented in this file.
 ## v1.1.9
 
 ### Added
-- Added a new 'Power Off' icon specifically for the 'Exit App' button
-- Introduced an 'Exit App' button for immediate application termination
+- Added a new 'Power Off' icon for the 'Exit App' button
+- Introduced a 'Exit App' button for immediate application termination
 
 ### Changed
 - Enhanced the visual stylization of the 'Settings' container
@@ -361,7 +361,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added additional TV key buttons and associated key codes
-- Added and included a favicon specifically designed for the main page
+- Added and included a favicon created for the homepage
 - Added snackbar notifications for gamepad connection and disconnection events
 
 ### Changed
@@ -447,7 +447,7 @@ All notable changes to this project will be documented in this file.
 ## v1.0.12
 
 ### Added
-- Introduced a new feature: 'Rumble' gamepad support
+- Introduced a new 'Rumble Feedback' feature for gamepad input
 
 ### Changed
 - Updated video codecs to a newer version
@@ -479,7 +479,7 @@ All notable changes to this project will be documented in this file.
 ## v1.0.9
 
 ### Added
-- Introduced a new feature: 'Pointing Device' mouse support
+- Introduced a new 'Pointing Device' feature for mouse input
 - Added tooltip for 'Back' icon button
 - Enhancement the UI: Added 'Overlay' for all dialogs
 
