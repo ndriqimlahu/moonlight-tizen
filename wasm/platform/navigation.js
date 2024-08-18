@@ -281,11 +281,46 @@ const Views = {
       const currentCell = this.view.current();
       if (currentCell.id !== 'addHostCell') {
         currentCell.children[1].focus();
-        // Show the Delete Host dialog and push the view
-        setTimeout(() => currentCell.children[1].click(), 800);
+        // Show the Host Menu dialog and push the view
+        setTimeout(() => currentCell.children[1].click(), 100);
       }
     },
     switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  HostMenuDialog: {
+    view: new ListView(() => {
+      const actions = ['closeHostMenuDialog'];
+      return actions.map(action => action === 'closeHostMenuDialog' ? action : action + '-' + Views.HostMenuDialog.hostname);
+    }),
+    up: function() {
+      this.view.prevOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    down: function() {
+      this.view.nextOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeHostMenuDialog').click();
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -1341,9 +1376,12 @@ const Navigation = (function() {
   const Stack = (function() {
     const viewStack = [];
 
-    function push(view) {
+    function push(view, hostname) {
       if (get()) {
         get().leave();
+      }
+      if (hostname !== undefined) {
+        view.hostname = hostname;
       }
       viewStack.push(view);
       get().enter();

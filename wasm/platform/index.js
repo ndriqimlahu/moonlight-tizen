@@ -594,6 +594,92 @@ function addHostToGrid(host, ismDNSDiscovered) {
   }
 }
 
+// Show the Host Menu dialog with host button options
+function hostMenu(host) {
+  // Create an overlay for the dialog and append it to the body
+  var hostMenuDialogOverlay = $('<div>', {
+    id: 'hostMenuDialogOverlay-' + host.serverUid,
+    class: 'dialog-overlay'
+  }).appendTo(document.body);
+
+  // Create the dialog element and append it to the overlay
+  var hostMenuDialog = $('<dialog>', {
+    id: 'hostMenuDialog-' + host.serverUid,
+    class: 'mdl-dialog'
+  }).appendTo(hostMenuDialogOverlay);
+
+  // Add the dialog title with the host's name
+  $('<h3>', {
+    id: 'hostMenuDialogTitle-' + host.serverUid,
+    class: 'mdl-dialog__title',
+    text: host.hostname
+  }).appendTo(hostMenuDialog);
+
+  // Create a content section inside the dialog
+  var hostMenuDialogContent = $('<div>', {
+    class: 'mdl-dialog__content'
+  }).appendTo(hostMenuDialog);
+
+  // Define the options for the menu with the corresponding attributes
+  var hostMenuDialogOptions = [];
+
+  // Loop through each option to create a button in the dialog
+  hostMenuDialogOptions.forEach(function(menuOption) {
+    var hostMenuDialogOption = $('<button>', {
+      type: 'button',
+      id: menuOption.id,
+      class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+      text: menuOption.text
+    });
+    // Trigger the action if the Option button is pressed
+    hostMenuDialogOption.off('click');
+    hostMenuDialogOption.click(function() {
+      Navigation.pop();
+      menuOption.action();
+      $(hostMenuDialogOverlay).css('display', 'none');
+      hostMenuDialog[0].close();
+      hostMenuDialogOverlay.remove();
+      isDialogOpen = false;
+    });
+    // Append the button to the dialog content
+    hostMenuDialogOption.appendTo(hostMenuDialogContent);
+  });
+
+  // Create the actions section inside the dialog
+  var hostMenuDialogActions = $('<div>', {
+    class: 'mdl-dialog__actions'
+  }).appendTo(hostMenuDialog);
+
+  // Create and set up the Close button
+  var closeHostMenuDialog = $('<button>', {
+    type: 'button',
+    id: 'closeHostMenuDialog',
+    class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+    text: 'Close'
+  });
+  // Close the dialog if the Close button is pressed
+  closeHostMenuDialog.off('click');
+  closeHostMenuDialog.click(function() {
+    $(hostMenuDialogOverlay).css('display', 'none');
+    hostMenuDialog[0].close();
+    hostMenuDialogOverlay.remove();
+    isDialogOpen = false;
+    Navigation.pop();
+  }).appendTo(hostMenuDialogActions);
+
+  // If the dialog element doesn't support the showModal method, register it with dialogPolyfill
+  if (!hostMenuDialog[0].showModal) {
+    dialogPolyfill.registerDialog(hostMenuDialog[0]);
+  }
+
+  // Show the dialog and push the view
+  $(hostMenuDialogOverlay).css('display', 'flex');
+  hostMenuDialog[0].showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.HostMenuDialog, host.hostname);
+  setTimeout(() => Navigation.switch(), 5);
+}
+
 // Show a confirmation with the Delete Host dialog before removing the host object
 function removeClicked(host) {
   // Find the existing overlay and dialog elements
