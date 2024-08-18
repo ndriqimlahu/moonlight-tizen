@@ -560,16 +560,16 @@ function addHostToGrid(host, ismDNSDiscovered) {
     class: "host-title mdl-card__title-text",
     html: host.hostname
   }));
-  var removalButton = $("<div>", {
-    class: "remove-host",
-    id: "removeHostButton-" + host.serverUid,
+  var hostMenu = $('<div>', {
+    id: 'hostMenuButton-' + host.serverUid,
+    class: 'host-menu',
     role: 'button',
     tabindex: 0,
-    'aria-label': 'Remove host ' + host.hostname
+    'aria-label': host.hostname + ' menu'
   });
-  removalButton.off('click');
-  removalButton.click(function() {
-    removeClicked(host);
+  hostMenu.off('click');
+  hostMenu.click(function() {
+    hostMenu(host);
   });
   cell.off('click');
   cell.click(function() {
@@ -578,12 +578,14 @@ function addHostToGrid(host, ismDNSDiscovered) {
   outerDiv.keypress(function(e) {
     if (e.keyCode == 13) {
       hostChosen(host);
+    } else if (e.keyCode == 32) {
+      hostMenu(host);
     }
   });
   $(outerDiv).append(cell);
   if (!ismDNSDiscovered) {
     // We don't have the option to delete mDNS hosts, so don't show it to the user
-    $(outerDiv).append(removalButton);
+    $(outerDiv).append(hostMenu);
   }
   $('#host-grid').append(outerDiv);
   hosts[host.serverUid] = host;
