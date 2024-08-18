@@ -490,6 +490,21 @@ NvHTTP.prototype = {
     }.bind(this));
   },
 
+  clearBoxArt: function() {
+    return new Promise(function(resolve, reject) {
+      var boxArtDir = 'wgt-private/' + this.hostname; // Widget private storage directory is r/w (read/write)
+
+      try {
+        tizen.filesystem.deleteDirectory(boxArtDir);
+        console.log('%c[utils.js, clearBoxArt]', 'color: gray;', 'Clearing the box art files from ' + boxArtDir);
+        resolve();
+      } catch (error) {
+        console.error('%c[utils.js, clearBoxArt]', 'color: gray;', 'Error: Failed to clear box art files: ', error);
+        reject(error);
+      }
+    }.bind(this));
+  },
+
   launchApp: function(appId, mode, sops, rikey, rikeyid, localAudio, surroundAudioInfo, gamepadMask) {
     return sendMessage('openUrl', [
       this._baseUrlHttps + '/launch?' + this._buildUidStr() + '&appid=' + appId + '&mode=' + mode +
