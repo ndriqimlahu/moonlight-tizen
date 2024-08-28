@@ -825,6 +825,80 @@ function removeAllHosts() {
   }
 }
 
+// Show the Host Details dialog with host information details
+function hostDetails(host) {
+  // Create an overlay for the dialog and append it to the body
+  var hostDetailsDialogOverlay = $('<div>', {
+    id: 'hostDetailsDialogOverlay-' + host.serverUid,
+    class: 'dialog-overlay'
+  }).appendTo(document.body);
+
+  // Create the dialog element and append it to the overlay
+  var hostDetailsDialog = $('<dialog>', {
+    id: 'hostDetailsDialog-' + host.serverUid,
+    class: 'mdl-dialog'
+  }).appendTo(hostDetailsDialogOverlay);
+
+  // Add a dialog title named Host Details
+  $('<h3>', {
+    id: 'hostDetailsDialogTitle-' + host.serverUid,
+    class: 'mdl-dialog__title',
+    text: 'Host Details'
+  }).appendTo(hostDetailsDialog);
+
+  // Create a content section inside the dialog
+  var hostDetailsDialogContent = $('<div>', {
+    class: 'mdl-dialog__content'
+  }).appendTo(hostDetailsDialog);
+
+  // Add a paragraph with multiple lines of text
+  $('<p>', {
+    id: 'hostDetailsDialogText-' + host.serverUid,
+    html: 'Name: ' + host.hostname + '<br>' +
+          'State: ' + (host.online ? 'ONLINE' : 'OFFLINE') + '<br>' +
+          'Local Address: ' + host.address + '<br>' +
+          'UUID: ' + host.serverUid + '<br>' +
+          'MAC Address: ' + host.macAddress + '<br>' +
+          'Pair State: ' + (host.paired ? 'PAIRED' : 'UNPAIRED') + '<br>' +
+          'Running Game ID: ' + host.currentGame + '<br>' +
+          'HTTPS Port: ' + '47984'
+  }).css('font-size', '1.2rem').appendTo(hostDetailsDialogContent);
+
+  // Create the actions section inside the dialog
+  var hostDetailsDialogActions = $('<div>', {
+    class: 'mdl-dialog__actions'
+  }).appendTo(hostDetailsDialog);
+
+  // Create and set up the Close button
+  var closeHostDetailsDialog = $('<button>', {
+    type: 'button',
+    id: 'closeHostDetailsDialog',
+    class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+    text: 'Close'
+  });
+  // Close the dialog if the Close button is pressed
+  closeHostDetailsDialog.off('click');
+  closeHostDetailsDialog.click(function() {
+    $(hostDetailsDialogOverlay).css('display', 'none');
+    hostDetailsDialog[0].close();
+    hostDetailsDialogOverlay.remove();
+    isDialogOpen = false;
+    Navigation.pop();
+  }).appendTo(hostDetailsDialogActions);
+
+  // If the dialog element doesn't support the showModal method, register it with dialogPolyfill
+  if (!hostDetailsDialog[0].showModal) {
+    dialogPolyfill.registerDialog(hostDetailsDialog[0]);
+  }
+
+  // Show the dialog and push the view
+  $(hostDetailsDialogOverlay).css('display', 'flex');
+  hostDetailsDialog[0].showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.HostDetailsDialog);
+  setTimeout(() => Navigation.switch(), 5);
+}
+
 // Show the Settings container
 function showSettingsContainer() {
   // Show the container section

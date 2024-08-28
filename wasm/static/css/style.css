@@ -669,10 +669,10 @@ body {
 #closeNavGuideDialog, #cancelRestoreDefaults, #cancelQuitApp, #cancelRestartApp, #cancelExitApp {
     margin: 0 10px 20px 0;
 }
-#closeHostMenuDialog {
+#closeHostMenuDialog, #closeHostDetailsDialog {
     margin: 10px 15px 20px 0;
 }
-#settingsBtn, #supportBtn, #continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost, #closeHostMenuDialog,
+#settingsBtn, #supportBtn, #continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost, #closeHostMenuDialog, #closeHostDetailsDialog,
 #cancelDeleteHost, #closeSupportDialog, #closeNavGuideDialog, #restoreDefaultsBtn, #continueRestoreDefaults, #cancelRestoreDefaults,
 #quitRunningAppBtn, #continueQuitApp, #cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
     text-transform: uppercase;
@@ -692,12 +692,12 @@ body {
 }
 #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairingDialog:hover, #cancelPairingDialog:focus,
 #continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeHostMenuDialog:hover,
-#closeHostMenuDialog:focus, #closeSupportDialog:hover, #closeSupportDialog:focus, #closeNavGuideDialog:hover, #closeNavGuideDialog:focus,
-#continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover, #cancelRestoreDefaults:focus, #continueQuitApp:hover,
-#continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #continueRestartApp:hover, #continueRestartApp:focus, #cancelRestartApp:hover,
-#cancelRestartApp:focus, #continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover, #cancelExitApp:focus, #settingsBtn:hover,
-#settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus, #restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus,
-#quitRunningAppBtn:hover, #quitRunningAppBtn:focus {
+#closeHostMenuDialog:focus, #closeHostDetailsDialog:hover, #closeHostDetailsDialog:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
+#closeNavGuideDialog:hover, #closeNavGuideDialog:focus, #continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover,
+#cancelRestoreDefaults:focus, #continueQuitApp:hover, #continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #continueRestartApp:hover,
+#continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus, #continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover,
+#cancelExitApp:focus, #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,
+#restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus {
     background-color: #00A3C6;
 }
 #selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover, #selectBitrate:focus,

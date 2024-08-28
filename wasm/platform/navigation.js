@@ -328,6 +328,36 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  HostDetailsDialog: {
+    view: new ListView(() => ['closeHostDetailsDialog']),
+    up: function() {
+      document.getElementById('closeHostDetailsDialog').blur();
+    },
+    down: function() {
+      document.getElementById('closeHostDetailsDialog').focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeHostDetailsDialog').click();
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   HostsNav: {
     view: new ListView(() => [
       'settingsBtn',
