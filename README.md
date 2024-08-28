@@ -2,7 +2,7 @@
 
 [![Project Status](https://img.shields.io/badge/project-actively_maintained-brightgreen?style=for-the-badge&logo=github)](https://github.com/ndriqimlahu/moonlight-tizen)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/docker-publish.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/docker-publish.yml)
-[![Release Version](https://img.shields.io/badge/widget-V1.2.9-orange?style=for-the-badge&logo=windows)](https://github.com/ndriqimlahu/moonlight-tizen/pkgs/container/moonlight-tizen)
+[![Release Version](https://img.shields.io/badge/widget-V1.2.10-orange?style=for-the-badge&logo=pkgsrc)](https://github.com/ndriqimlahu/moonlight-tizen/pkgs/container/moonlight-tizen)
 
 ## About
 
@@ -109,7 +109,7 @@ To get started, make sure your setup meets the [Prerequisites](https://github.co
 - You can use the most popular Bluetooth or USB-wired controllers such as `Xbox Series X/S`, `Xbox One`, `Xbox 360`, `Xbox Elite Wireless Series 2`, `Xbox Adaptive`, `PlayStation DualShock 4`, `PlayStation DualSense`, `Amazon Luna Wireless`, `NVIDIA Shield`, `Logitech F310/F510/F710`, `PowerA MOGA XP5-X Plus Bluetooth` and `Joytron CYVOX DX`.
 
 7. Why am I having some problems with unsupported gamepad controllers on my TV?
-- If you use any Bluetooth or USB 2.0 controllers other than those mentioned in the previous question, then unfortunately due to the lack of a large number of unsupported gamepad controllers on Samsung TV, you may encounter such problems like unresponsive D-PAD and Guide button, Y and X button swapping, and other gamepad controller issues.
+- If you use any Bluetooth or USB 2.0 controllers other than those mentioned in the previous question, then unfortunately due to the lack of a large number of unsupported gamepad controllers on Samsung TV, you may encounter such problems like the unresponsive D-PAD and Guide button, face buttons swapped, and other gamepad controller issues.
 - We advise you to use one of the supported gamepad controllers to enjoy the best possible gaming experience.
 
 8. How do I connect my Bluetooth gamepad controller to my TV?
