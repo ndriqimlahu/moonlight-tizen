@@ -215,6 +215,11 @@ NvHTTP.prototype = {
       this._baseUrlHttps = 'https://' + successfulAddress + ':47984';
       this._baseUrlHttp = 'http://' + successfulAddress + ':47989';
 
+      // Poll for updated mac address only on first successful serverinfo poll
+      if (this.paired && this._pollCount === 0) {
+        updateMacAddress(this);
+      }
+
       // Poll for the app list every 10 successful serverinfo polls
       // Not including the first one to avoid PCs taking a while to show as online initially
       if (this.paired && this._pollCount++ % 10 == 1) {

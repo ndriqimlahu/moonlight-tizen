@@ -251,6 +251,20 @@ function stopBackgroundPollingOfHost(host) {
   delete activePolls[host.serverUid];
 }
 
+// FIXME: This is a workaround to correctly update and store valid host MAC address in IndexedDB
+function updateMacAddress(host) {
+  getData('hosts', function(previousValue) {
+    hosts = previousValue.hosts != null ? previousValue.hosts : {};
+    if (host.macAddress != '00:00:00:00:00:00') {
+      if (hosts[host.serverUid] && hosts[host.serverUid].macAddress != host.macAddress) {
+        console.log('%c[index.js, updateMacAddress]', 'color: green;', 'Updated MAC address for host ' + host.hostname + ' from ' + hosts[host.serverUid].macAddress + ' to ' + host.macAddress);
+        hosts[host.serverUid].macAddress = host.macAddress;
+        saveHosts();
+      }
+    }
+  });
+}
+
 function snackbarLog(givenMessage) {
   console.log('%c[index.js, snackbarLog]', 'color: green;', givenMessage);
   var data = {
