@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.10
+
+### Added
+- Introduced a new 'Wake On LAN' feature for waking up the host PC
+- Implemented functionality to update and store the valid MAC address for the host PC
+- Added a new 'Wake PC' option to the 'Host Menu' dialog to allow waking the host PC
+- Introduced a new 'Host Details' dialog and its corresponding view
+- Added a new 'View details' option to the 'Host Menu' dialog to view host details
+
+### Fixed
+- Minor bug fixes, code refactoring and general improvements
+
 ## v1.2.9
 
 ### Added
@@ -29,7 +41,7 @@ All notable changes to this project will be documented in this file.
 - Introduced a new 'Rumble feedback' setting that allows changing the state of the rumble feature for the gamepad
 - Introduced a new 'Mouse emulation' setting that allows changing the state of the mouse feature for the gamepad
 
-### Changed
+### Fixed
 - Minor bug fixes, improved visual styling and general improvements
 
 ### Dependencies
