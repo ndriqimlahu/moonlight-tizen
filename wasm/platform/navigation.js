@@ -406,7 +406,6 @@ const Views = {
     },
   },
   AddHostDialog: {
-    isActive: () => isDialogActive('addHostDialog'),
     view: new ListView(() => {
       if (document.getElementById('ipAddressFieldModeSwitch').checked) {
         return ['ipAddressField1', 'ipAddressField2', 'ipAddressField3', 'ipAddressField4', 'continueAddHost', 'cancelAddHost'];
@@ -479,7 +478,6 @@ const Views = {
     },
   },
   PairingDialog: {
-    isActive: () => isDialogActive('pairingDialog'),
     view: new ListView(() => ['cancelPairingDialog']),
     up: function() {
       document.getElementById('cancelPairingDialog').blur();
@@ -508,7 +506,6 @@ const Views = {
     },
   },
   DeleteHostDialog: {
-    isActive: () => isDialogActive('deleteHostDialog'),
     view: new ListView(() => [
       'continueDeleteHost',
       'cancelDeleteHost']),
@@ -613,7 +610,7 @@ const Views = {
         currentItem.click();
         // Navigate to the HostsNav view
         Navigation.change(Views.HostsNav);
-        document.getElementById('settingsBtn').focus();
+        document.getElementById('settingsBtn').focus(); // FIXME: Focus should be set on the Settings button after navigating back to the HostsNav view
       } else {
         this.view.current().click();
       }
@@ -647,7 +644,6 @@ const Views = {
     },
   },
   RestoreDefaultsDialog: {
-    isActive: () => isDialogActive('restoreDefaultsDialog'),
     view: new ListView(() => [
       'continueRestoreDefaults',
       'cancelRestoreDefaults']),
@@ -1210,7 +1206,6 @@ const Views = {
     },
   },
   QuitAppDialog: {
-    isActive: () => isDialogActive('quitAppDialog'),
     view: new ListView(() => [
       'continueQuitApp',
       'cancelQuitApp']),
@@ -1243,7 +1238,6 @@ const Views = {
     },
   },
   SupportDialog: {
-    isActive: () => isDialogActive('supportDialog'),
     view: new ListView(() => ['closeSupportDialog']),
     up: function() {
       document.getElementById('closeSupportDialog').blur();
@@ -1272,7 +1266,6 @@ const Views = {
     },
   },
   NavigationGuideDialog: {
-    isActive: () => isDialogActive('navGuideDialog'),
     view: new ListView(() => ['closeNavGuideDialog']),
     up: function() {
       document.getElementById('closeNavGuideDialog').blur();
@@ -1301,7 +1294,6 @@ const Views = {
     },
   },
   RestartMoonlightDialog: {
-    isActive: () => isDialogActive('restartAppDialog'),
     view: new ListView(() => [
       'continueRestartApp',
       'cancelRestartApp']),
@@ -1334,7 +1326,6 @@ const Views = {
     },
   },
   ExitMoonlightDialog: {
-    isActive: () => isDialogActive('exitAppDialog'),
     view: new ListView(() => [
       'continueExitApp',
       'cancelExitApp']),
@@ -1406,6 +1397,10 @@ const Navigation = (function() {
   const Stack = (function() {
     const viewStack = [];
 
+    function get() {
+      return viewStack[viewStack.length - 1];
+    }
+
     function push(view, hostname) {
       if (get()) {
         get().leave();
@@ -1429,10 +1424,6 @@ const Navigation = (function() {
         viewStack.pop();
         get().enter();
       }
-    }
-
-    function get() {
-      return viewStack[viewStack.length - 1];
     }
 
     return {

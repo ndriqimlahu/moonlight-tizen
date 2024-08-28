@@ -1,4 +1,9 @@
 // Initialize variables and constants
+var appName = null; // Flag indicating whether the application name is set, initial value is null
+var appVer = null; // Flag indicating whether the application version is set, initial value is null
+var platformVer = null; // Flag indicating whether the platform version is set, initial value is null
+var tvModelName = null; // Flag indicating whether the TV model name is set, initial value is null
+var tvModelCode = null; // Flag indicating whether the TV model code is set, initial value is null
 var hosts = {}; // Hosts is an associative array of NvHTTP objects, keyed by server UID
 var activePolls = {}; // Hosts currently being polled. An associated array of polling IDs, keyed by server UID
 var pairingCert; // Loads the generated certificate
@@ -6,11 +11,6 @@ var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clie
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
-var appName = null; // Flag indicating whether the application name is set, initial value is null
-var appVer = null; // Flag indicating whether the application version is set, initial value is null
-var platformVer = null; // Flag indicating whether the platform version is set, initial value is null
-var tvModelName = null; // Flag indicating whether the TV model name is set, initial value is null
-var tvModelCode = null; // Flag indicating whether the TV model code is set, initial value is null
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
 var repeatTimeout = null; // Flag indicating whether the repeat timeout is set, initial value is null
@@ -129,7 +129,7 @@ function attachListeners() {
 function changeUiModeForWasmLoad() {
   $('#main-navigation').hide();
   $('#main-navigation').children().hide();
-  $("#main-content").children().not("#listener, #wasmSpinner").hide();
+  $('#main-content').children().not('#listener, #wasmSpinner').hide();
   $('#wasmSpinnerMessage').text('Loading Moonlight plugins...');
   $('#wasmSpinner').css('display', 'inline-block');
 }
@@ -169,8 +169,8 @@ function stopPollingHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
-  $('#main-navigation').children().not("#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn").show();
-  $("#main-content").children().not("#listener, #wasmSpinner, #settings-container, #game-grid").show();
+  $('#main-navigation').children().not('#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn').show();
+  $('#main-content').children().not('#listener, #wasmSpinner, #settings-container, #game-grid').show();
   $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
   Navigation.push(Views.Hosts);
@@ -183,19 +183,19 @@ function restoreUiAfterWasmLoad() {
         var ip = ips[i];
         if (finder.byService_['_nvstream._tcp'][ip]) {
           var mDnsDiscoveredHost = new NvHTTP(ip, myUniqueid);
-          mDnsDiscoveredHost.pollServer(function(returneMdnsDiscoveredHost) {
+          mDnsDiscoveredHost.pollServer(function(returnedDiscoveredHost) {
             // Just drop this if the host doesn't respond
-            if (!returneMdnsDiscoveredHost.online) {
+            if (!returnedDiscoveredHost.online) {
               return;
             }
-            if (hosts[returneMdnsDiscoveredHost.serverUid] != null) {
+            if (hosts[returnedDiscoveredHost.serverUid] != null) {
               // If we're seeing a host we've already seen before, update it for the current local IP
-              hosts[returneMdnsDiscoveredHost.serverUid].address = returneMdnsDiscoveredHost.address;
-              hosts[returneMdnsDiscoveredHost.serverUid].updateExternalAddressIP4();
+              hosts[returnedDiscoveredHost.serverUid].address = returnedDiscoveredHost.address;
+              hosts[returnedDiscoveredHost.serverUid].updateExternalAddressIP4();
             } else {
               // Host must be in the grid before starting background polling
-              addHostToGrid(returneMdnsDiscoveredHost, true);
-              beginBackgroundPollingOfHost(returneMdnsDiscoveredHost);
+              addHostToGrid(returnedDiscoveredHost, true);
+              beginBackgroundPollingOfHost(returnedDiscoveredHost);
             }
             saveHosts();
           });
@@ -206,14 +206,14 @@ function restoreUiAfterWasmLoad() {
 }
 
 function beginBackgroundPollingOfHost(host) {
-  console.log('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Starting background polling of host ' + host.serverUid + '\n', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  console.log('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Starting background polling of host ' + host.serverUid + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   var hostCell = document.querySelector('#hostgrid-' + host.serverUid);
   if (host.online) {
     hostCell.classList.remove('host-cell-inactive');
     // The host was already online, just start polling in the background now
     activePolls[host.serverUid] = window.setInterval(function() {
       // Every 5 seconds, poll at the address we know it was live at
-      host.pollServer(function() {
+      host.pollServer(function(returnedHost) {
         if (host.online) {
           hostCell.classList.remove('host-cell-inactive');
         } else {
@@ -224,7 +224,7 @@ function beginBackgroundPollingOfHost(host) {
   } else {
     hostCell.classList.add('host-cell-inactive');
     // The host was offline, so poll immediately
-    host.pollServer(function() {
+    host.pollServer(function(returnedHost) {
       if (host.online) {
         hostCell.classList.remove('host-cell-inactive');
       } else {
@@ -233,7 +233,7 @@ function beginBackgroundPollingOfHost(host) {
       // Now start background polling
       activePolls[host.serverUid] = window.setInterval(function() {
         // Every 5 seconds, poll at the address we know it was live at
-        host.pollServer(function() {
+        host.pollServer(function(returnedHost) {
           if (host.online) {
             hostCell.classList.remove('host-cell-inactive');
           } else {
@@ -246,7 +246,7 @@ function beginBackgroundPollingOfHost(host) {
 }
 
 function stopBackgroundPollingOfHost(host) {
-  console.log('%c[index.js, stopBackgroundPollingOfHost]', 'color: green;', 'Stopping background polling of host ' + host.serverUid + '\n', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  console.log('%c[index.js, stopBackgroundPollingOfHost]', 'color: green;', 'Stopping background polling of host ' + host.serverUid + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   window.clearInterval(activePolls[host.serverUid]);
   delete activePolls[host.serverUid];
 }
@@ -300,9 +300,9 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
     return;
   }
 
-  nvhttpHost.pollServer(function(ret) {
+  nvhttpHost.pollServer(function(returnedNvHTTPHost) {
     if (!nvhttpHost.online) {
-      console.error('%c[index.js, pairTo]', 'color: green;', 'Error: Failed to connect with ' + nvhttpHost.hostname + '\n', nvhttpHost, nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      console.error('%c[index.js, pairTo]', 'color: green;', 'Error: Failed to connect with ' + nvhttpHost.hostname + '\n', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLog('Failed to connect with ' + nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
       onFailure();
       return;
@@ -319,18 +319,17 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
       return;
     }
 
-    var randomNumber = String("0000" + (Math.random() * 10000 | 0)).slice(-4);
-
     // Find the existing overlay and dialog elements
     var pairingOverlay = document.querySelector('#pairingDialogOverlay');
     var pairingDialog = document.querySelector('#pairingDialog');
+    var randomNumber = String('0000' + (Math.random() * 10000 | 0)).slice(-4);
     $('#pairingDialogText').html('Please enter the following PIN on the target PC: ' + randomNumber + '<br><br>If your host PC is running Sunshine (all GPUs), navigate to the Sunshine Web UI to enter the PIN.<br><br>Alternatively, if your host PC has NVIDIA GameStream (NVIDIA-only), navigate to the GeForce Experience to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
     
     // Show the dialog and push the view
     pairingOverlay.style.display = 'flex';
     pairingDialog.showModal();
-    Navigation.push(Views.PairingDialog);
     isDialogOpen = true;
+    Navigation.push(Views.PairingDialog);
 
     // Cancel the operation if the Cancel button is pressed
     $('#cancelPairingDialog').off('click');
@@ -353,7 +352,7 @@ function pairTo(nvhttpHost, onSuccess, onFailure) {
       Navigation.pop();
       onSuccess();
     }, function(failedPairing) {
-      console.error('%c[index.js, pairTo]', 'color: green;', 'Error: Failed API object: ', nvhttpHost, nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      console.error('%c[index.js, pairTo]', 'color: green;', 'Error: Failed API object: ' + '\n', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLog('Failed to pair with ' + nvhttpHost.hostname);
       if (nvhttpHost.currentGame != 0) {
         $('#pairingDialogText').html('Error: ' + nvhttpHost.hostname + ' is currently busy!<br><br>You must stop streaming to pair with the host.');
@@ -459,8 +458,8 @@ function addHost() {
   // Show the dialog and push the view
   addHostOverlay.style.display = 'flex';
   addHostDialog.showModal();
-  Navigation.push(Views.AddHostDialog);
   isDialogOpen = true;
+  Navigation.push(Views.AddHostDialog);
 
   // Checks if the IP address field mode switch is checked
   if ($('#ipAddressFieldModeSwitch').prop('checked')) {
@@ -546,7 +545,7 @@ function addHost() {
       $('#ipAddressTextInput').val('');
       initIpAddressFields();
     }.bind(this), function(failure) {
-      console.error('%c[index.js, addHost]', 'color: green;', 'Error: Failed API object: ', _nvhttpHost, _nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      console.error('%c[index.js, addHost]', 'color: green;', 'Error: Failed API object: ' + '\n', _nvhttpHost, '\n' + _nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLog('Failed to connect with ' + _nvhttpHost.hostname + '! Ensure Sunshine is running on your host PC or GameStream is enabled in GeForce Experience SHIELD settings');
       // Re-enable the Continue button after failure processing
       $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
@@ -559,21 +558,28 @@ function addHost() {
 
 // Add the new NvHTTP Host object inside the host grid
 function addHostToGrid(host, ismDNSDiscovered) {
-  var outerDiv = $("<div>", {
-    class: 'host-container mdl-card mdl-shadow--4dp',
+  // Create a container div for the host, with relevant attributes
+  var hostContainer = $('<div>', {
     id: 'host-container-' + host.serverUid,
+    class: 'host-container mdl-card mdl-shadow--4dp',
     role: 'link',
     tabindex: 0,
     'aria-label': host.hostname
   });
-  var cell = $("<div>", {
-    class: 'mdl-card__title mdl-card--expand',
-    id: 'hostgrid-' + host.serverUid
+
+  // Create a cell div inside the container for displaying the host title
+  var hostCell = $('<div>', {
+    id: 'hostgrid-' + host.serverUid,
+    class: 'mdl-card__title mdl-card--expand'
   });
-  $(cell).prepend($("<h2>", {
-    class: "host-title mdl-card__title-text",
+
+  // Prepend an heading element inside the cell for the host's name
+  $(hostCell).prepend($('<h2>', {
+    class: 'host-title mdl-card__title-text',
     html: host.hostname
   }));
+
+  // Create a button div for the host menu, with relevant attributes
   var hostMenu = $('<div>', {
     id: 'hostMenuButton-' + host.serverUid,
     class: 'host-menu',
@@ -581,35 +587,52 @@ function addHostToGrid(host, ismDNSDiscovered) {
     tabindex: 0,
     'aria-label': host.hostname + ' menu'
   });
+
+  // Shows the Host Menu view if the Host Menu button is pressed
   hostMenu.off('click');
   hostMenu.click(function() {
-    hostMenu(host);
+    showHostMenu(host);
   });
-  cell.off('click');
-  cell.click(function() {
+
+  // Shows the Apps view if the Host Cell div is pressed
+  hostCell.off('click');
+  hostCell.click(function() {
     hostChosen(host);
   });
-  outerDiv.keypress(function(e) {
+
+  // Bind a keyboard event handler to the container for accessibility
+  hostContainer.keypress(function(e) {
+    // Shows the Apps view when the enter key is pressed
     if (e.keyCode == 13) {
       hostChosen(host);
     } else if (e.keyCode == 32) {
-      hostMenu(host);
+      // Shows the Host Menu view when the space key is pressed
+      showHostMenu(host);
     }
   });
-  $(outerDiv).append(cell);
+
+  // Append the host cell to the host container
+  $(hostContainer).append(hostCell);
+
+  // If the host is not discovered via mDNS, append the host menu to the host container
   if (!ismDNSDiscovered) {
-    // We don't have the option to delete mDNS hosts, so don't show it to the user
-    $(outerDiv).append(hostMenu);
+    $(hostContainer).append(hostMenu);
   }
-  $('#host-grid').append(outerDiv);
+
+  // Append the host container to the host grid
+  $('#host-grid').append(hostContainer);
+
+  // Store the host object in the hosts array using its server UID as the key
   hosts[host.serverUid] = host;
+
+  // If the host was discovered via mDNS, update its external IPv4 address
   if (ismDNSDiscovered) {
     hosts[host.serverUid].updateExternalAddressIP4();
   }
 }
 
 // Show the Host Menu dialog with host button options
-function hostMenu(host) {
+function showHostMenu(host) {
   // Create an overlay for the dialog and append it to the body
   var hostMenuDialogOverlay = $('<div>', {
     id: 'hostMenuDialogOverlay-' + host.serverUid,
@@ -662,7 +685,7 @@ function hostMenu(host) {
       text: 'Delete PC',
       action: function() {
         // Remove the selected host from the list
-        setTimeout(() => removeClicked(host), 100);
+        setTimeout(() => removeHost(host), 100);
       }
     },
     {
@@ -733,7 +756,7 @@ function hostMenu(host) {
 }
 
 // Show a confirmation with the Delete Host dialog before removing the host object
-function removeClicked(host) {
+function removeHost(host) {
   // Find the existing overlay and dialog elements
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
   var deleteHostDialog = document.querySelector('#deleteHostDialog');
@@ -742,13 +765,13 @@ function removeClicked(host) {
   // Show the dialog and push the view
   deleteHostOverlay.style.display = 'flex';
   deleteHostDialog.showModal();
-  Navigation.push(Views.DeleteHostDialog);
   isDialogOpen = true;
+  Navigation.push(Views.DeleteHostDialog);
 
   // Cancel the operation if the Cancel button is pressed
   $('#cancelDeleteHost').off('click');
   $('#cancelDeleteHost').on('click', function() {
-    console.log('%c[index.js, removeClicked]', 'color: green;', 'Closing app dialog, and returning');
+    console.log('%c[index.js, removeHost]', 'color: green;', 'Closing app dialog, and returning');
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
@@ -761,7 +784,7 @@ function removeClicked(host) {
   // This means we can re-add the host, and will still be paired
   $('#continueDeleteHost').off('click');
   $('#continueDeleteHost').on('click', function() {
-    console.log('%c[index.js, removeClicked]', 'color: green;', 'Removing host, and closing app dialog, and returning');
+    console.log('%c[index.js, removeHost]', 'color: green;', 'Removing host, and closing app dialog, and returning');
     // Remove the host container from the grid
     $('#host-container-' + host.serverUid).remove();
     // Remove the host from the hosts object
@@ -792,8 +815,8 @@ function removeAllHosts() {
     // Show the dialog and push the view
     deleteHostOverlay.style.display = 'flex';
     deleteHostDialog.showModal();
-    Navigation.push(Views.DeleteHostDialog);
     isDialogOpen = true;
+    Navigation.push(Views.DeleteHostDialog);
   
     // Cancel the operation if the Cancel button is pressed
     $('#cancelDeleteHost').off('click');
@@ -910,9 +933,9 @@ function hostDetails(host) {
 // Show the Settings container
 function showSettingsContainer() {
   // Show the container section
-  $("#settings-container").removeClass('hide-container');
-  $("#settings-container").css('display', 'flex');
-  $("#settings-container").show()
+  $('#settings-container').removeClass('hide-container');
+  $('#settings-container').css('display', 'flex');
+  $('#settings-container').show()
   
   // Navigate to the Settings view
   Navigation.push(Views.Settings);
@@ -1020,8 +1043,8 @@ function restoreDefaultSettings() {
   // Show the dialog and push the view
   restoreDefaultsDialogOverlay.style.display = 'flex';
   restoreDefaultsDialog.showModal();
-  Navigation.push(Views.RestoreDefaultsDialog);
   isDialogOpen = true;
+  Navigation.push(Views.RestoreDefaultsDialog);
 
   // Cancel the operation if the Cancel button is pressed
   $('#cancelRestoreDefaults').off('click');
@@ -1061,8 +1084,8 @@ function showSupportDialog() {
   // Show the dialog and push the view
   supportDialogOverlay.style.display = 'flex';
   supportDialog.showModal();
-  Navigation.push(Views.SupportDialog);
   isDialogOpen = true;
+  Navigation.push(Views.SupportDialog);
 
   // Close the dialog if the Close button is pressed
   $('#closeSupportDialog').off('click');
@@ -1085,8 +1108,8 @@ function showNavigationGuideDialog() {
   // Show the dialog and push the view
   navGuideDialogOverlay.style.display = 'flex';
   navGuideDialog.showModal();
-  Navigation.push(Views.NavigationGuideDialog);
   isDialogOpen = true;
+  Navigation.push(Views.NavigationGuideDialog);
 
   // Close the dialog if the Close button is pressed
   $('#closeNavGuideDialog').off('click');
@@ -1114,8 +1137,8 @@ function showRestartMoonlightDialog() {
   // Show the dialog and push the view
   restartAppDialogOverlay.style.display = 'flex';
   restartAppDialog.showModal();
-  Navigation.push(Views.RestartMoonlightDialog);
   isDialogOpen = true;
+  Navigation.push(Views.RestartMoonlightDialog);
 
   // Cancel the operation if the Cancel button is pressed
   $('#cancelRestartApp').off('click');
@@ -1152,44 +1175,11 @@ function showExitMoonlightDialog() {
   var exitAppOverlay = document.querySelector('#exitAppDialogOverlay');
   var exitAppDialog = document.querySelector('#exitAppDialog');
 
-  if (!exitAppOverlay && !exitAppDialog) {
-    // Check if the dialog element doesn't exist, create it
-    var exitAppDialog = document.createElement('dialog');
-    exitAppDialog.id = 'exitAppDialog';
-    exitAppDialog.classList.add('mdl-dialog');
-
-    // Create the dialog content
-    exitAppDialog.innerHTML = `
-      <h3 id="exitAppDialogTitle" class="mdl-dialog__title">Exit Moonlight</h3>
-      <div class="mdl-dialog__content">
-        <p id="exitAppDialogText">
-          Are you sure you want to exit Moonlight?
-        </p>
-      </div>
-      <div class="mdl-dialog__actions">
-        <button type="button" id="cancelExitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
-        <button type="button" id="continueExitApp" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Exit</button>
-      </div>
-    `;
-
-    // Create the dialog overlay
-    exitAppOverlay = document.createElement('div');
-    exitAppOverlay.id = 'exitAppDialogOverlay';
-    exitAppOverlay.classList.add('dialog-overlay');
-    exitAppOverlay.appendChild(exitAppDialog);
-
-    // Append the dialog overlay with dialog content to the DOM
-    document.body.appendChild(exitAppOverlay);
-
-    // Initialize the dialog
-    componentHandler.upgradeElements(exitAppDialog);
-  }
-
   // Show the dialog and push the view
   exitAppOverlay.style.display = 'flex';
   exitAppDialog.showModal();
-  Navigation.push(Views.ExitMoonlightDialog);
   isDialogOpen = true;
+  Navigation.push(Views.ExitMoonlightDialog);
 
   // Cancel the operation if the Cancel button is pressed
   $('#cancelExitApp').off('click');
@@ -1197,8 +1187,6 @@ function showExitMoonlightDialog() {
     console.log('%c[index.js, showExitMoonlightDialog]', 'color: green;', 'Closing app dialog, and returning');
     exitAppOverlay.style.display = 'none';
     exitAppDialog.close();
-    // Remove the dialog overlay and dialog content from the DOM if the dialog is open
-    document.body.removeChild(exitAppOverlay);
     isDialogOpen = false;
     Navigation.pop();
     Navigation.change(Views.Hosts);
@@ -1210,8 +1198,6 @@ function showExitMoonlightDialog() {
     console.log('%c[index.js, showExitMoonlightDialog]', 'color: green;', 'Exit application, and closing app dialog, and returning to Smart Hub');
     exitAppOverlay.style.display = 'none';
     exitAppDialog.close();
-    // Remove the dialog overlay and dialog content from the DOM if the dialog is open
-    document.body.removeChild(exitAppOverlay);
     isDialogOpen = false;
     Navigation.pop();
     exitApplication();
@@ -1225,7 +1211,7 @@ function showExitMoonlightDialog() {
 // not do N*N stylization of the box art, or make the code not flow very well
 function stylizeBoxArt(freshApi, appIdToStylize) {
   // If the app or game is currently running, then apply CSS stylization
-  var appBox = document.querySelector("#game-" + appIdToStylize);
+  var appBox = document.querySelector('#game-' + appIdToStylize);
   if (freshApi.currentGame === appIdToStylize) {
     appBox.classList.add('current-game');
     appBox.title += ' (Running)';
@@ -1269,12 +1255,12 @@ function sortTitles(list, sortOrder) {
 function showApps(host) {
   // Safety checking, shouldn't happen
   if (!host || !host.paired) {
-    console.error('%c[index.js, showApps]', 'color: green;', 'Error: Moved into showApps, but `host` was not initialized properly.\nHost object: ', host);
+    console.error('%c[index.js, showApps]', 'color: green;', 'Error: Moved into showApps, but `host` was not initialized properly.' + '\n Host object: ', host);
     return;
   }
 
-  console.log('%c[index.js, showApps]', 'color: green;', 'Current host object: ', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  $("#gameList .game-container").remove();
+  console.log('%c[index.js, showApps]', 'color: green;', 'Current host object: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  $('#gameList .game-container').remove();
 
   // Hide the main navigation before showing a loading screen
   $('#main-navigation').children().hide();
@@ -1284,7 +1270,7 @@ function showApps(host) {
   $('#wasmSpinnerMessage').text('Loading apps...');
   $('#wasmSpinner').css('display', 'inline-block');
 
-  $("div.game-container").remove();
+  $('div.game-container').remove();
 
   host.getAppList().then(function(appList) {
     // Hide the spinner after the host has successfully retrieved the app list
@@ -1295,10 +1281,10 @@ function showApps(host) {
     $('#main-navigation').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
     // Show the game list section
-    $("#game-grid").show();
+    $('#game-grid').show();
 
     if (appList.length == 0) {
-      console.error('%c[index.js, showApps]', 'Error: User\'s applist is empty');
+      console.error('%c[index.js, showApps]', 'Error: User\'s app list is empty');
       var img = new Image();
       img.src = 'static/res/applist_empty.svg';
       $('#game-grid').html(img);
@@ -1333,17 +1319,17 @@ function showApps(host) {
           gameCard.focus();
         });
         gameCard.addEventListener('keydown', e => {
-          if (e.key == "Enter") {
+          if (e.key == 'Enter') {
             startGame(host, app.id);
           }
-          if (e.key == "ArrowLeft") {
+          if (e.key == 'ArrowLeft') {
             let prev = gameCard.previousSibling;
             if (prev !== null) {
               gameCard.previousSibling.focus();
             }
             // TODO: Add a sound when limit reached
           }
-          if (e.key == "ArrowRight") {
+          if (e.key == 'ArrowRight') {
             let next = gameCard.nextSibling;
             if (next !== null) {
               gameCard.nextSibling.focus();
@@ -1359,7 +1345,7 @@ function showApps(host) {
       host.getBoxArt(app.id).then(function(resolvedPromise) {
         img.src = resolvedPromise;
       }, function(failedPromise) {
-        console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to retrieve box art for app ID: ' + app.id + '! Returned value was: ' + failedPromise, '\n Host object: ', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+        console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to retrieve box art for app ID: ' + app.id + '\n Returned value was: ' + failedPromise, '\n Host object: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
         img.src = 'static/res/placeholder_error.svg';
       });
       img.onload = e => img.classList.add('fade-in');
@@ -1373,10 +1359,10 @@ function showApps(host) {
     $('#main-navigation').children().show();
     $('#main-navigation').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
-    console.error('%c[index.js, showApps]', 'Error: Failed to get applist from ' + host.hostname + '!', '\n Host object: ', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+    console.error('%c[index.js, showApps]', 'Error: Failed to get app list from ' + host.hostname, '\n Host object: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
     var img = new Image();
     img.src = 'static/res/applist_error.svg';
-    $("#game-grid").html(img);
+    $('#game-grid').html(img);
     snackbarLog('Unable to retrieve your apps or games');
   });
 
@@ -1386,20 +1372,20 @@ function showApps(host) {
 // Set the layout to the initial mode when you open Hosts view
 function showHostsMode() {
   console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show hosts" mode');
-  $("#navigation-title").html("Hosts");
-  $("#navigation-logo").show();
-  $("#main-navigation").show();
-  $(".nav-menu-parent").show();
+  $('#navigation-title').html('Hosts');
+  $('#navigation-logo').show();
+  $('#main-navigation').show();
+  $('.nav-menu-parent').show();
   $('#settingsBtn').show();
   $('#supportBtn').show();
-  $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
   $('#settings-container').hide();
   $('#game-grid').hide();
   $('#goBackBtn').hide();
   $('#restoreDefaultsBtn').hide();
   $('#quitRunningAppBtn').hide();
-  $("#main-content").removeClass("fullscreen");
-  $("#listener").removeClass("fullscreen");
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
 
   Navigation.start();
   Navigation.pop();
@@ -1409,20 +1395,20 @@ function showHostsMode() {
 // Set the layout to the initial mode when you open Settings view
 function showSettingsMode() {
   console.log('%c[index.js, showSettingsMode]', 'color: green;', 'Entering "Show settings" mode');
-  $("#navigation-title").html("Settings");
-  $("#navigation-logo").show();
-  $("#main-navigation").show();
+  $('#navigation-title').html('Settings');
+  $('#navigation-logo').show();
+  $('#main-navigation').show();
   $('#goBackBtn').show();
   $('#restoreDefaultsBtn').show();
-  $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
-  $(".nav-menu-parent").hide();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('.nav-menu-parent').hide();
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
-  $("#host-grid").hide();
+  $('#host-grid').hide();
   $('#game-grid').hide();
   $('#quitRunningAppBtn').hide();
-  $("#main-content").removeClass("fullscreen");
-  $("#listener").removeClass("fullscreen");
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
 
   stopPollingHosts();
   Navigation.start();
@@ -1431,20 +1417,20 @@ function showSettingsMode() {
 // Set the layout to the initial mode when you open Apps view
 function showAppsMode() {
   console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show apps and games" mode');
-  $("#navigation-title").html("Apps & Games");
-  $("#navigation-logo").show();
-  $("#main-navigation").show();
+  $('#navigation-title').html('Apps & Games');
+  $('#navigation-logo').show();
+  $('#main-navigation').show();
   $('#goBackBtn').show();
   $('#quitRunningAppBtn').show();
-  $("#main-content").children().not("#listener, #loadingSpinner, #wasmSpinner").show();
-  $(".nav-menu-parent").hide();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('.nav-menu-parent').hide();
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
-  $("#host-grid").hide();
+  $('#host-grid').hide();
   $('#settings-container').hide();
   $('#restoreDefaultsBtn').hide();
-  $("#main-content").removeClass("fullscreen");
-  $("#listener").removeClass("fullscreen");
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
   $('#loadingSpinner').css('display', 'none');
   $('body').css('backgroundColor', '#282C38');
   $('#wasm_module').css('display', 'none');
@@ -1459,7 +1445,7 @@ function showAppsMode() {
 // Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
 function startGame(host, appID) {
   if (!host || !host.paired) {
-    console.error('%c[index.js, startGame]', 'color: green;', 'Error: Attempted to start a game, but `host` was not initialized properly.\nHost object: ', host);
+    console.error('%c[index.js, startGame]', 'color: green;', 'Error: Attempted to start a game, but `host` was not initialized properly.' + '\n Host object: ', host);
     return;
   }
 
@@ -1476,8 +1462,8 @@ function startGame(host, appID) {
           // Show the dialog and push the view
           quitAppOverlay.style.display = 'flex';
           quitAppDialog.showModal();
-          Navigation.push(Views.QuitAppDialog);
           isDialogOpen = true;
+          Navigation.push(Views.QuitAppDialog);
 
           // Cancel the operation if the Cancel button is pressed
           $('#cancelQuitApp').off('click');
@@ -1505,7 +1491,7 @@ function startGame(host, appID) {
 
           return;
         }, function(failedCurrentApp) {
-          console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to get the current running app from ' + host.hostname + '! Returned error was: ' + failedCurrentApp, '\n Host object: ', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+          console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to get the current running app from ' + host.hostname + '\n Returned error was: ' + failedCurrentApp, '\n Host object: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
           return;
         });
         return;
@@ -1514,13 +1500,13 @@ function startGame(host, appID) {
       var streamWidth = $('#selectResolution').data('value').split(':')[0];
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
       var frameRate = $('#selectFramerate').data('value').toString();
-      var bitrate = parseInt($("#bitrateSlider").val()) * 1000;
-      const optimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked') ? 1 : 0;
-      const externalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked') ? 1 : 0;
-      const rumbleFeedback = $("#rumbleFeedbackSwitch").parent().hasClass('is-checked') ? 1 : 0;
-      const mouseEmulation = $("#mouseEmulationSwitch").parent().hasClass('is-checked') ? 1 : 0;
-      const flipABfaceButtons = $("#flipABfaceButtonsSwitch").parent().hasClass('is-checked') ? 1 : 0;
-      const flipXYfaceButtons = $("#flipXYfaceButtonsSwitch").parent().hasClass('is-checked') ? 1 : 0;
+      var bitrate = parseInt($('#bitrateSlider').val()) * 1000;
+      const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const externalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -1576,7 +1562,7 @@ function startGame(host, appID) {
 
       // If user wants to launch the app, then we launch it
       host.launchApp(appID,
-        streamWidth + "x" + streamHeight + "x" + frameRate,
+        streamWidth + 'x' + streamHeight + 'x' + frameRate,
         optimizeGames, // Optimize game settings
         rikey, rikeyid, // Remote input key and key ID
         externalAudio, // Play audio on PC
@@ -1618,10 +1604,10 @@ function playGameMode() {
   console.log('%c[index.js, playGameMode]', 'color: green;', 'Entering "Play game" mode');
   isInGame = true;
 
-  $("#main-navigation").hide();
-  $("#main-content").children().not("#listener, #loadingSpinner").hide();
-  $("#main-content").addClass("fullscreen");
-  $("#listener").addClass("fullscreen");
+  $('#main-navigation').hide();
+  $('#main-content').children().not('#listener, #loadingSpinner').hide();
+  $('#main-content').addClass('fullscreen');
+  $('#listener').addClass('fullscreen');
 
   fullscreenWasmModule();
   $('#loadingSpinner').css('display', 'inline-block');
@@ -1640,10 +1626,10 @@ function fullscreenWasmModule() {
 
   var zoom = Math.min(xRatio, yRatio);
 
-  var module = $("#wasm_module")[0];
+  var module = $('#wasm_module')[0];
   module.width = zoom * streamWidth;
   module.height = zoom * streamHeight;
-  module.style.marginTop = ((screenHeight - module.height) / 2) + "px";
+  module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
 }
 
 // FIXME: This is a workaround to send the escape key to the host
@@ -1667,8 +1653,8 @@ function quitRunningApp() {
       // Show the dialog and push the view
       quitAppOverlay.style.display = 'flex';
       quitAppDialog.showModal();
-      Navigation.push(Views.QuitAppDialog);
       isDialogOpen = true;
+      Navigation.push(Views.QuitAppDialog);
 
       // Cancel the operation if the Cancel button is pressed
       $('#cancelQuitApp').off('click');
@@ -1717,7 +1703,7 @@ function stopGame(host, callbackFunction) {
           showApps(host);
           if (typeof(callbackFunction) === "function") callbackFunction();
         }, function(failedRefreshInfo2) {
-          console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + ' and failed server was: ', host, host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+          console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + ' and failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
         });
       }, function(failedQuitApp) {
         console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to quit app! Returned error was: ' + failedQuitApp);
@@ -1898,7 +1884,7 @@ function saveBitrate() {
 }
 
 function updateBitrateField() {
-  $('#selectBitrate').html($('#bitrateSlider').val() + " Mbps");
+  $('#selectBitrate').html($('#bitrateSlider').val() + ' Mbps');
   saveBitrate();
 }
 
@@ -1906,54 +1892,54 @@ function updateDefaultBitrate() {
   var res = $('#selectResolution').data('value');
   var frameRate = $('#selectFramerate').data('value').toString();
 
-  if (res === "858:480") {
-    if (frameRate === "30") { // 480p, 30 FPS
+  if (res === '858:480') {
+    if (frameRate === '30') { // 480p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('2');
-    } else if (frameRate === "60") { // 480p, 60 FPS
+    } else if (frameRate === '60') { // 480p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('4');
-    } else if (frameRate === "90") { // 480p, 90 FPS
+    } else if (frameRate === '90') { // 480p, 90 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('5');
-    } else if (frameRate === "120") { // 480p, 120 FPS
+    } else if (frameRate === '120') { // 480p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('6');
     }
-  } else if (res === "1280:720") {
-    if (frameRate === "30") { // 720p, 30 FPS
+  } else if (res === '1280:720') {
+    if (frameRate === '30') { // 720p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('5');
-    } else if (frameRate === "60") { // 720p, 60 FPS
+    } else if (frameRate === '60') { // 720p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('10');
-    } else if (frameRate === "90") { // 720p, 90 FPS
+    } else if (frameRate === '90') { // 720p, 90 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('12');
-    } else if (frameRate === "120") { // 720p, 120 FPS
+    } else if (frameRate === '120') { // 720p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('15');
     }
-  } else if (res === "1920:1080") {
-    if (frameRate === "30") { // 1080p, 30 FPS
+  } else if (res === '1920:1080') {
+    if (frameRate === '30') { // 1080p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('10');
-    } else if (frameRate === "60") { // 1080p, 60 FPS
+    } else if (frameRate === '60') { // 1080p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('20');
-    } else if (frameRate === "90") { // 1080p, 90 FPS
+    } else if (frameRate === '90') { // 1080p, 90 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('25');
-    } else if (frameRate === "120") { // 1080p, 120 FPS
+    } else if (frameRate === '120') { // 1080p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('30');
     }
-  } else if (res === "2560:1440") {
-    if (frameRate === "30") { // 1440p, 30 FPS
+  } else if (res === '2560:1440') {
+    if (frameRate === '30') { // 1440p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('20');
-    } else if (frameRate === "60") { // 1440p, 60 FPS
+    } else if (frameRate === '60') { // 1440p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('40');
-    } else if (frameRate === "90") { // 1440p, 90 FPS
+    } else if (frameRate === '90') { // 1440p, 90 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('50');
-    } else if (frameRate === "120") { // 1440p, 120 FPS
+    } else if (frameRate === '120') { // 1440p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('60');
     }
-  } else if (res === "3840:2160") {
-    if (frameRate === "30") { // 2160p, 30 FPS
+  } else if (res === '3840:2160') {
+    if (frameRate === '30') { // 2160p, 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('40');
-    } else if (frameRate === "60") { // 2160p, 60 FPS
+    } else if (frameRate === '60') { // 2160p, 60 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('80');
-    } else if (frameRate === "90") { // 2160p, 90 FPS
+    } else if (frameRate === '90') { // 2160p, 90 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('100');
-    } else if (frameRate === "120") { // 2160p, 120 FPS
+    } else if (frameRate === '120') { // 2160p, 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('120');
     }
   } else {
@@ -1967,7 +1953,7 @@ function updateDefaultBitrate() {
 
 function saveIpAddressFieldMode() {
   setTimeout(function() {
-    const chosenIpAddressFieldMode = $("#ipAddressFieldModeSwitch").parent().hasClass('is-checked');
+    const chosenIpAddressFieldMode = $('#ipAddressFieldModeSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveIpAddressFieldMode]', 'color: green;', 'Saving IP address field mode state: ' + chosenIpAddressFieldMode);
     storeData('ipAddressFieldMode', chosenIpAddressFieldMode, null);
   }, 100);
@@ -1975,7 +1961,7 @@ function saveIpAddressFieldMode() {
 
 function saveSortAppsList() {
   setTimeout(function() {
-    const chosenSortAppsList = $("#sortAppsListSwitch").parent().hasClass('is-checked');
+    const chosenSortAppsList = $('#sortAppsListSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveSortAppsList]', 'color: green;', 'Saving sort apps list state: ' + chosenSortAppsList);
     storeData('sortAppsList', chosenSortAppsList, null);
   }, 100);
@@ -1983,7 +1969,7 @@ function saveSortAppsList() {
 
 function saveOptimizeGames() {
   setTimeout(function() {
-    const chosenOptimizeGames = $("#optimizeGamesSwitch").parent().hasClass('is-checked');
+    const chosenOptimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state: ' + chosenOptimizeGames);
     storeData('optimizeGames', chosenOptimizeGames, null);
   }, 100);
@@ -1991,7 +1977,7 @@ function saveOptimizeGames() {
 
 function saveExternalAudio() {
   setTimeout(function() {
-    const chosenExternalAudio = $("#externalAudioSwitch").parent().hasClass('is-checked');
+    const chosenExternalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state: ' + chosenExternalAudio);
     storeData('externalAudio', chosenExternalAudio, null);
   }, 100);
@@ -1999,7 +1985,7 @@ function saveExternalAudio() {
 
 function saveRumbleFeedback() {
   setTimeout(function() {
-    const chosenRumbleFeedback = $("#rumbleFeedbackSwitch").parent().hasClass('is-checked');
+    const chosenRumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveRumbleFeedback]', 'color: green;', 'Saving rumble feedback state: ' + chosenRumbleFeedback);
     storeData('rumbleFeedback', chosenRumbleFeedback, null);
   }, 100);
@@ -2007,7 +1993,7 @@ function saveRumbleFeedback() {
 
 function saveMouseEmulation() {
   setTimeout(function() {
-    const chosenMouseEmulation = $("#mouseEmulationSwitch").parent().hasClass('is-checked');
+    const chosenMouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveMouseEmulation]', 'color: green;', 'Saving mouse emulation state: ' + chosenMouseEmulation);
     storeData('mouseEmulation', chosenMouseEmulation, null);
   }, 100);
@@ -2015,7 +2001,7 @@ function saveMouseEmulation() {
 
 function saveFlipABfaceButtons() {
   setTimeout(function() {
-    const chosenFlipABfaceButtons = $("#flipABfaceButtonsSwitch").parent().hasClass('is-checked');
+    const chosenFlipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFlipABfaceButtons]', 'color: green;', 'Saving flip A/B face buttons state: ' + chosenFlipABfaceButtons);
     storeData('flipABfaceButtons', chosenFlipABfaceButtons, null);
   }, 100);
@@ -2023,7 +2009,7 @@ function saveFlipABfaceButtons() {
 
 function saveFlipXYfaceButtons() {
   setTimeout(function() {
-    const chosenFlipXYfaceButtons = $("#flipXYfaceButtonsSwitch").parent().hasClass('is-checked');
+    const chosenFlipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFlipXYfaceButtons]', 'color: green;', 'Saving flip X/Y face buttons state: ' + chosenFlipXYfaceButtons);
     storeData('flipXYfaceButtons', chosenFlipXYfaceButtons, null);
   }, 100);
@@ -2037,7 +2023,7 @@ function saveCodecMode() {
 
 function saveFramePacing() {
   setTimeout(function() {
-    const chosenFramePacing = $("#framePacingSwitch").parent().hasClass('is-checked');
+    const chosenFramePacing = $('#framePacingSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state: ' + chosenFramePacing);
     storeData('framePacing', chosenFramePacing, null);
   }, 100);
@@ -2045,7 +2031,7 @@ function saveFramePacing() {
 
 function saveAudioSync() {
   setTimeout(function() {
-    const chosenAudioSync = $("#audioSyncSwitch").parent().hasClass('is-checked');
+    const chosenAudioSync = $('#audioSyncSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state: ' + chosenAudioSync);
     storeData('audioSync', chosenAudioSync, null);
   }, 100);
@@ -2062,7 +2048,7 @@ function restoreDefaultsSettingsValues() {
   storeData('frameRate', defaultFramerate, null);
 
   const defaultBitrate = '20';
-  $('#selectBitrate').html(defaultBitrate + " Mbps");
+  $('#selectBitrate').html(defaultBitrate + ' Mbps');
   $('#bitrateSlider')[0].MaterialSlider.change(defaultBitrate);
   storeData('bitrate', defaultBitrate, null);
 
@@ -2156,7 +2142,7 @@ function initSpecialKeys() {
 
 function loadSystemInfo() {
   console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'Loading system information');
-  const systemInfoPlaceholder = document.getElementById("systemInfoBtn");
+  const systemInfoPlaceholder = document.getElementById('systemInfoBtn');
 
   if (systemInfoPlaceholder) {
     appName = tizen.application.getAppInfo();
@@ -2171,14 +2157,14 @@ function loadSystemInfo() {
     console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'TV Model Code: ', tvModelCode);
 
     systemInfoPlaceholder.innerText =
-      "App Name: " + (appName.name ? appName.name : "Unknown") + " Game Streaming" + "\n" +
-      "App Version: " + (appVer.version ? appVer.version : "Unknown") + "\n" +
-      "Platform Version: Tizen " + (platformVer ? platformVer : "Unknown") + "\n" +
-      "TV Model: " + (tvModelName ? tvModelName : "Unknown") + "\n" +
-      "TV Model Code: " + (tvModelCode ? tvModelCode : "Unknown");
+      'App Name: ' + (appName.name ? appName.name : 'Unknown') + ' Game Streaming' + '\n' +
+      'App Version: ' + (appVer.version ? appVer.version : 'Unknown') + '\n' +
+      'Platform Version: Tizen ' + (platformVer ? platformVer : 'Unknown') + '\n' +
+      'TV Model: ' + (tvModelName ? tvModelName : 'Unknown') + '\n' +
+      'TV Model Code: ' + (tvModelCode ? tvModelCode : 'Unknown');
   } else {
     console.error('%c[index.js, loadSystemInfo]', 'color: green;', 'Error: Failed to load system information!');
-    systemInfoPlaceholder.innerText = "Failed to load system information!";
+    systemInfoPlaceholder.innerText = 'Failed to load system information!';
   }
 }
 

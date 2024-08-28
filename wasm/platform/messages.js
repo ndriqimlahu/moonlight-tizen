@@ -77,13 +77,13 @@ function handleMessage(msg) {
       case 0: // ML_ERROR_GRACEFUL_TERMINATION
         break;
       case -100: // ML_ERROR_NO_VIDEO_TRAFFIC
-        snackbarLogLong("No video received from host. Check the host PC's firewall and port forwarding rules.");
+        snackbarLogLong('No video received from host. Check the host PC\'s firewall and port forwarding rules.');
         break;
       case -101: // ML_ERROR_NO_VIDEO_FRAME
-        snackbarLogLong("Your network connection isn't performing well. Reduce your video bitrate setting or try a faster connection.");
+        snackbarLogLong('Your network connection isn\'t performing well. Reduce your video bitrate setting or try a faster connection.');
         break;
       default:
-        snackbarLogLong("Connection terminated");
+        snackbarLogLong('Connection terminated');
         break;
     }
     // Refresh the server info
@@ -129,8 +129,8 @@ function handleMessage(msg) {
       console.warn('%c[messages.js, handleMessage]', 'color: gray;', 'Gamepad ' + gamepadIdx + ' does not support the rumble feature!');
     }
   } else if (msg.indexOf('mouseEmulation enabled') === 0) {
-    snackbarLogLong("Mouse emulation is enabled");
+    snackbarLogLong('Mouse emulation is enabled');
   } else if (msg.indexOf('mouseEmulation disabled') === 0) {
-    snackbarLogLong("Mouse emulation is disabled");
+    snackbarLogLong('Mouse emulation is disabled');
   }
 }

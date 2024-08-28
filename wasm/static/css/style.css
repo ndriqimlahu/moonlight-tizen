@@ -117,6 +117,7 @@ body {
     width: 100%;
     margin-bottom: 10px;
     border-radius: 6px;
+    text-transform: capitalize;
 }
 .large-dialog {
     color: #fff;
@@ -679,7 +680,7 @@ body {
 }
 #continueAddHost[disabled], #continueAddHost.mdl-button--disabled {
     color: #fff;
-    background-color: #666875;
+    background-color: #838593;
     pointer-events: auto;
     cursor: pointer;
 }
@@ -687,7 +688,7 @@ body {
 #continueAddHost[disabled]:focus, #continueAddHost[disabled]:active,
 #continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus,
 #continueAddHost.mdl-button--disabled:active {
-    background-color: #838593;
+    background-color: #666875;
     cursor: pointer;
 }
 #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairingDialog:hover, #cancelPairingDialog:focus,

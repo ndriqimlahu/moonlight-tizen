@@ -81,27 +81,26 @@ String.prototype.toHex = function() {
 
 function NvHTTP(address, clientUid, userEnteredAddress = '', macAddress) {
   console.log('%c[utils.js, NvHTTP]', 'color: gray;', 'NvHTTP Object: \n' + this);
+  this.hostname = address;
   this.address = address;
+  this.userEnteredAddress = userEnteredAddress; // if the user entered an address, we keep it on hand to try when polling
+  this.externalIP = '';
   this.macAddress = macAddress;
-  this.ppkstr = null;
-  this.paired = false;
-  this.currentGame = 0;
-  this.serverMajorVersion = 0;
-  this.appVersion = '';
   this.clientUid = clientUid;
+  this.serverUid = '';
+  this.ppkstr = null;
   this._pollCount = 0;
   this._consecutivePollFailures = 0;
-  this.online = false;
-
-  this.userEnteredAddress = userEnteredAddress; // if the user entered an address, we keep it on hand to try when polling
-  this.serverUid = '';
-  this.gfeVersion = '';
-  this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported framerates
-  this.gputype = '';
-  this.numofapps = 0;
-  this.hostname = address;
-  this.externalIP = '';
   this._pollCompletionCallbacks = [];
+  this.paired = false;
+  this.online = false;
+  this.numofapps = 0;
+  this.currentGame = 0;
+  this.appVersion = '';
+  this.gfeVersion = '';
+  this.serverMajorVersion = 0;
+  this.gputype = '';
+  this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported framerates
 
   _self = this;
 };
@@ -135,7 +134,6 @@ NvHTTP.prototype = {
         this._parseServerInfo(retHttp);
       }.bind(this));
     }
-
     // Try HTTPS first
     return sendMessage('openUrl', [
       this._baseUrlHttps + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
@@ -149,16 +147,16 @@ NvHTTP.prototype = {
         }.bind(this));
       }
     }.bind(this), function(error) {
-        if (error == -100) { // GS_CERT_MISMATCH
-          // Retry over HTTP
-          console.warn('%c[utils.js, refreshServerInfo]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
-          return sendMessage('openUrl', [
-            this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
-          ]).then(function(retHttp) {
-            this._parseServerInfo(retHttp);
-          }.bind(this));
-        }
-      }.bind(this));
+      if (error == -100) { // GS_CERT_MISMATCH
+        // Retry over HTTP
+        console.warn('%c[utils.js, refreshServerInfo]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
+        return sendMessage('openUrl', [
+          this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+        ]).then(function(retHttp) {
+          this._parseServerInfo(retHttp);
+        }.bind(this));
+      }
+    }.bind(this));
   },
 
   // Refreshes the server info using a given address. This is useful for testing whether we can successfully ping a host at a given address
@@ -171,7 +169,6 @@ NvHTTP.prototype = {
         return this._parseServerInfo(retHttp);
       }.bind(this));
     }
-
     // Try HTTPS first
     return sendMessage('openUrl', [
       'https://' + givenAddress + ':47984' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
@@ -186,16 +183,16 @@ NvHTTP.prototype = {
         }.bind(this));
       }
     }.bind(this), function(error) {
-        if (error == -100) { // GS_CERT_MISMATCH
-          // Retry over HTTP
-          console.warn('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
-          return sendMessage('openUrl', [
-            'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
-          ]).then(function(retHttp) {
-            return this._parseServerInfo(retHttp);
-          }.bind(this));
-        }
-      }.bind(this));
+      if (error == -100) { // GS_CERT_MISMATCH
+        // Retry over HTTP
+        console.warn('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
+        return sendMessage('openUrl', [
+          'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
+        ]).then(function(retHttp) {
+          return this._parseServerInfo(retHttp);
+        }.bind(this));
+      }
+    }.bind(this));
   },
 
   // Called every few seconds to poll the server for updated info
@@ -272,16 +269,19 @@ NvHTTP.prototype = {
 
   toString: function() {
     var string = '';
-    string += 'server address: ' + this.address + '\r\n';
+    string += 'host name: ' + this.hostname + '\r\n';
+    string += 'host address: ' + this.address + '\r\n';
     string += 'mac address: ' + this.macAddress + '\r\n';
+    string += 'client UID: ' + this.clientUid + '\r\n';
     string += 'server UID: ' + this.serverUid + '\r\n';
     string += 'is paired: ' + this.paired + '\r\n';
-    string += 'current game: ' + this.currentGame + '\r\n';
-    string += 'server major version: ' + this.serverMajorVersion + '\r\n';
-    string += 'appversion: ' + this.appVersion + '\r\n';
-    string += 'GFE version: ' + this.gfeVersion + '\r\n';
-    string += 'gpu type: ' + this.gputype + '\r\n';
+    string += 'is online: ' + this.online + '\r\n';
     string += 'number of apps: ' + this.numofapps + '\r\n';
+    string += 'current game: ' + this.currentGame + '\r\n';
+    string += 'app version: ' + this.appVersion + '\r\n';
+    string += 'gfe version: ' + this.gfeVersion + '\r\n';
+    string += 'server major version: ' + this.serverMajorVersion + '\r\n';
+    string += 'gpu type: ' + this.gputype + '\r\n';
     string += 'supported display modes: ' + '\r\n';
 
     for (var displayMode in this.supportedDisplayModes) {
@@ -295,7 +295,7 @@ NvHTTP.prototype = {
     $xml = this._parseXML(xmlStr);
     $root = $xml.find('root');
 
-    if ($root.attr("status_code") != 200) {
+    if ($root.attr('status_code') != 200) {
       return false;
     }
 
@@ -411,26 +411,27 @@ NvHTTP.prototype = {
       this._baseUrlHttps + '/applist?' + this._buildUidStr(), this.ppkstr, false
     ]).then(function(ret) {
       $xml = this._parseXML(ret);
-      $root = $xml.find("root");
+      $root = $xml.find('root');
 
-      if ($root.attr("status_code") != 200) {
+      if ($root.attr('status_code') != 200) {
         // TODO: Bubble up an error here
-        console.error('%c[utils.js, getAppListWithCacheFlush]', 'color: gray;', 'Error: App list request failed: ', $root.attr("status_code"));
+        console.error('%c[utils.js, getAppListWithCacheFlush]', 'color: gray;', 'Error: Failed to request app list: ', $root.attr('status_code'));
         return [];
       }
 
-      var rootElement = $xml.find("root")[0];
-      var appElements = rootElement.getElementsByTagName("App");
+      var rootElement = $xml.find('root')[0];
+      var appElements = rootElement.getElementsByTagName('App');
       var appList = [];
 
       for (var i = 0, len = appElements.length; i < len; i++) {
         appList.push({
-          title: appElements[i].getElementsByTagName("AppTitle")[0].innerHTML.trim(),
-          id: parseInt(appElements[i].getElementsByTagName("ID")[0].innerHTML.trim(), 10)
+          id: parseInt(appElements[i].getElementsByTagName('ID')[0].innerHTML.trim(), 10),
+          title: appElements[i].getElementsByTagName('AppTitle')[0].innerHTML.trim(),
         });
       }
 
       this._memCachedApplist = appList;
+      console.log('%c[utils.js, getAppListWithCacheFlush]', 'color: gray;', 'App list requested successfully');
 
       return appList;
     }.bind(this));
@@ -451,33 +452,36 @@ NvHTTP.prototype = {
   // Returns the box art based on the the given appId
   // Three layers of response time are possible: memory-cached (in JavaScript), storage-cached (in tizen.filesystem), and network-fetched (host sends binary over the network)
   // For explanations on the file system, see: https://developer.samsung.com/smarttv/develop/api-references/tizen-web-device-api-references/filesystem-api.html
-  getBoxArt: function (appId) {
-    return new Promise(function (resolve, reject) {
+  getBoxArt: function(appId) {
+    return new Promise(function(resolve, reject) {
       var boxArtFileName = 'boxart-' + appId;
       var boxArtDir = 'wgt-private/' + this.hostname; // Widget private storage directory is r/w (read/write)
 
+      // Read the cached box art from the storage
       try {
-        var fileHandleRead = tizen.filesystem.openFile(boxArtDir + "/" + boxArtFileName, "r");
+        var fileHandleRead = tizen.filesystem.openFile(boxArtDir + '/' + boxArtFileName, 'r');
         var fileContentInBlob = fileHandleRead.readBlob();
         fileHandleRead.close();
         console.log('%c[utils.js, getBoxArt]', 'color: gray;', 'Returning storage-cached box art: ', appId);
 
         var reader = new FileReader();
-        reader.onloadend = function () {
+        reader.onloadend = function() {
           var dataUrl = reader.result;
           resolve(dataUrl);
         };
         reader.readAsDataURL(fileContentInBlob);
       } catch (readError) {
         console.warn('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Cannot find or read box art from internal storage: ', readError);
+        // Fetch the new box art from the network
         return sendMessage('openUrl', [
           this._baseUrlHttps + '/appasset?' + this._buildUidStr() + '&appid=' + appId + '&AssetType=2&AssetIdx=0', this.ppkstr, true
-        ]).then(function (boxArtBuffer) {
+        ]).then(function(boxArtBuffer) {
           var reader = new FileReader();
-          reader.onloadend = function () {
+          reader.onloadend = function() {
             var dataUrl = reader.result;
             try {
-              var fileHandleWrite = tizen.filesystem.openFile(boxArtDir + "/" + boxArtFileName, "w");
+              // Save the new box art file to the storage
+              var fileHandleWrite = tizen.filesystem.openFile(boxArtDir + '/' + boxArtFileName, 'w');
               fileHandleWrite.writeData(boxArtBuffer);
               fileHandleWrite.close();
               console.log('%c[utils.js, getBoxArt]', 'color: gray;', 'Returning network-fetched box art: ', appId);
@@ -487,10 +491,11 @@ NvHTTP.prototype = {
               reject(writeError);
             }
           };
-
-          var blob = new Blob([boxArtBuffer], { type: "image/png" });
+          var blob = new Blob([boxArtBuffer], {
+            type: 'image/png'
+          });
           reader.readAsDataURL(blob);
-        }.bind(this), function (error) {
+        }.bind(this), function(error) {
           console.error('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Failed to retrieve box art from network: ', error);
           reject(error);
         }.bind(this));
@@ -502,6 +507,7 @@ NvHTTP.prototype = {
     return new Promise(function(resolve, reject) {
       var boxArtDir = 'wgt-private/' + this.hostname; // Widget private storage directory is r/w (read/write)
 
+      // Delete the cached box art directory from the storage
       try {
         tizen.filesystem.deleteDirectory(boxArtDir);
         console.log('%c[utils.js, clearBoxArt]', 'color: gray;', 'Clearing the box art files from ' + boxArtDir);
@@ -540,7 +546,7 @@ NvHTTP.prototype = {
     console.log('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Finding external IPv4 address for ' + this.hostname);
     return sendMessage('STUN').then(function(addr) {
       if (addr) {
-        this.externalIP = addr
+        this.externalIP = addr;
         console.log('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Found external IPv4 address of ' + this.hostname + ' -> ' + this.externalIP);
       } else {
         console.error('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Error: External IPv4 address lookup failed');
@@ -561,7 +567,7 @@ NvHTTP.prototype = {
           this._baseUrlHttps + '/pair?uniqueid=' + this.clientUid + '&devicename=roth&updateState=1&phrase=pairchallenge', this.ppkstr, false
         ]).then(function(ret) {
           $xml = this._parseXML(ret);
-          this.paired = $xml.find('paired').html() == "1";
+          this.paired = $xml.find('paired').html() == '1';
           return this.paired;
         }.bind(this));
       }.bind(this));
