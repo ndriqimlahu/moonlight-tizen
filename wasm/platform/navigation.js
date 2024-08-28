@@ -295,7 +295,7 @@ const Views = {
   },
   HostMenuDialog: {
     view: new ListView(() => {
-      const actions = ['refreshApps', 'wakeHost', 'removeHost', 'closeHostMenuDialog'];
+      const actions = ['refreshApps', 'wakeHost', 'removeHost', 'viewDetails', 'closeHostMenuDialog'];
       return actions.map(action => action === 'closeHostMenuDialog' ? action : action + '-' + Views.HostMenuDialog.hostname);
     }),
     up: function() {

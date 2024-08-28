@@ -665,6 +665,14 @@ function hostMenu(host) {
         setTimeout(() => removeClicked(host), 100);
       }
     },
+    {
+      id: 'viewDetails-' + host.hostname,
+      text: 'View Details',
+      action: function() {
+        // View the details of the selected host
+        setTimeout(() => hostDetails(host), 100);
+      }
+    },
   ];
 
   // Loop through each option to create a button in the dialog
