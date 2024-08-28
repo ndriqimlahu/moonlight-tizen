@@ -333,6 +333,57 @@ void pair(int callbackId, std::string serverMajorVersion, std::string address, s
   g_Instance->Pair(callbackId, serverMajorVersion, address, randomNumber);
 }
 
+void wakeOnLan(int callbackId, std::string macAddress) {
+  unsigned char magicPacket[102];
+  unsigned char mac[6];
+
+  // Validate and parse the MAC address
+  if (sscanf(macAddress.c_str(), "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]) != 6) {
+    printf("Invalid MAC address format: %s\n", macAddress.c_str());
+    return;
+  }
+
+  // Fill magic packet with the MAC address
+  for (int i = 0; i < 6; i++) {
+    magicPacket[i] = 0xFF;
+  }
+  for (int i = 1; i <= 16; i++) {
+    memcpy(&magicPacket[i * 6], &mac, 6 * sizeof(unsigned char));
+  }
+
+  // Create UDP socket
+  int udpSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  if (udpSocket == -1) {
+    printf("Failed to create socket");
+    return;
+  }
+
+  // Enable broadcasting
+  int broadcast = 1;
+  if (setsockopt(udpSocket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) == -1) {
+    printf("Failed to enable broadcast");
+    close(udpSocket);
+    return;
+  }
+
+  // Set up destination address for the magic packet
+  struct sockaddr_in addr;
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = INADDR_BROADCAST;
+  addr.sin_port = htons(9); // Wake-on-LAN typically uses port 9
+
+  // Send the magic packet
+  if (sendto(udpSocket, magicPacket, sizeof(magicPacket), 0, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
+    printf("Failed to send magic packet");
+  } else {
+    printf("Magic packet sent successfully to MAC address: %s\n", macAddress.c_str());
+  }
+
+  // Close the socket
+  close(udpSocket);
+}
+
 void PostToJs(std::string msg) {
   MAIN_THREAD_EM_ASM(
       {
@@ -371,4 +422,5 @@ EMSCRIPTEN_BINDINGS(handle_message) {
   emscripten::function("stopStream", &stopStream);
   emscripten::function("stun", &stun);
   emscripten::function("pair", &pair);
+  emscripten::function("wakeOnLan", &wakeOnLan);
 }

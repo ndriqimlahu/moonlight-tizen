@@ -2282,7 +2282,7 @@ function loadHTTPCertsCb() {
       getData('hosts', function(previousValue) {
         hosts = previousValue.hosts != null ? previousValue.hosts : {};
         for (var hostUID in hosts) { // Programmatically add each new host
-          var revivedHost = new NvHTTP(hosts[hostUID].address, myUniqueid, hosts[hostUID].userEnteredAddress);
+          var revivedHost = new NvHTTP(hosts[hostUID].address, myUniqueid, hosts[hostUID].userEnteredAddress, hosts[hostUID].macAddress);
           revivedHost.serverUid = hosts[hostUID].serverUid;
           revivedHost.externalIP = hosts[hostUID].externalIP;
           revivedHost.hostname = hosts[hostUID].hostname;
