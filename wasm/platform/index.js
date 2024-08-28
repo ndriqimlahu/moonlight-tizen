@@ -648,6 +648,16 @@ function hostMenu(host) {
       }
     },
     {
+      id: 'wakeHost-' + host.hostname,
+      text: 'Wake PC',
+      action: function() {
+        // Send a Wake-on-LAN request to the selected host
+        host.sendWOL();
+        // If the request has been sent, show snackbar message
+        snackbarLogLong('Sending Wake On LAN request to ' + host.hostname);
+      }
+    },
+    {
       id: 'removeHost-' + host.hostname,
       text: 'Delete PC',
       action: function() {
