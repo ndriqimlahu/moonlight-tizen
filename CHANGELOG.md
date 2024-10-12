@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.11
+
+### Added
+- Introduced a new 'HDR mode' setting that allows HDR streaming on HDR-capable devices
+- Implemented logic to load the stored HDR value and start the stream in HDR mode
+- Implemented functionality to update and save the video codec value and the HDR state
+
+### Changed
+- Handled switching between standard and Main10 codec profiles based on selected codec and HDR state
+- Improved the 'Video codec' setting to better handle codec switching during HDR state changes
+- Updated the QR code in the 'Support' dialog that redirects to the new guide
+
 ## v1.2.10
 
 ### Added
