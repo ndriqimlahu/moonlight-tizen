@@ -88,7 +88,7 @@ All notable changes to this project will be documented in this file.
 ## v1.2.3
 
 ### Added
-- Introduced a new 'Tizen' metadata: 'Game Mode' which enables the app to use game mode
+- Added a new 'Tizen' metadata: 'Game Mode' which enables the app to use game mode
 - Added the 'Buy Me a Coffee' platform for developer support
 
 ### Changed
@@ -101,7 +101,7 @@ All notable changes to this project will be documented in this file.
 ## v1.2.2
 
 ### Added
-- Introduced a new 'Tizen' privilege: 'Media Storage' that gives access to the TV's internal storage
+- Added a new 'Tizen' privilege: 'Media Storage' that gives access to the TV's internal storage
 - Added additional detailed logging for debugging purposes
 
 ### Changed
@@ -132,7 +132,7 @@ All notable changes to this project will be documented in this file.
 ## v1.1.20
 
 ### Added
-- Introduced a new 'Tizen' metadata: 'Voice Guide' which disables the voice guide in the app
+- Added a new 'Tizen' metadata: 'Voice Guide' which disables the voice guide in the app
 - Implemented navigation to go to the previous or next row in 'Hosts' view
 - Added a navigation delay for the bitrate slider when adjusting the value
 - Implemented navigation to go to the previous or next option in 'Settings' view
@@ -143,7 +143,7 @@ All notable changes to this project will be documented in this file.
 ## v1.1.19
 
 ### Added
-- Introduced a new 'Tizen' privilege: 'Fullscreen' which allows the application to use the full screen view
+- Added a new 'Tizen' privilege: 'Fullscreen' which allows the application to use the full screen view
 - Disabled the 'Continue' button to prevent multiple connection requests when adding a host
 - Re-enabled the 'Continue' button upon successful, failed or cancel processing when adding a host
 
@@ -277,7 +277,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Introduced a new 'About' category that contains a 'System Info' button as a placeholder
-- Introduced three new 'Tizen' privileges that grant access to app and system information
+- Added three new 'Tizen' privileges that grant access to app and system information
 - Implemented functionality to load system information in the 'System Info' button
 - Implemented all navigation views for full interaction within the 'Settings' container
 - Implemented navigation to go to the previous or next category in 'Settings' view
@@ -299,7 +299,7 @@ All notable changes to this project will be documented in this file.
 ## v1.1.5
 
 ### Added
-- Introduced a new option to stop the streaming session using the 'Red' button on the remote control
+- Introduced a new way to stop the streaming session using the 'Red' button on the remote control
 - Implemented a reusable function for terminating the application
 
 ### Changed
@@ -409,7 +409,7 @@ All notable changes to this project will be documented in this file.
 ## v1.0.17
 
 ### Added
-- Introduced a new 'Tizen' privilege: 'IME' which allows entering characters and symbols into text field
+- Added a new 'Tizen' privilege: 'IME' which allows entering characters and symbols into text field
 - Implemented navigation to go to the previous or next row in 'Apps' view
 
 ### Changed
@@ -592,6 +592,6 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Expanded settings: Introduced '1440p' resolution option
 - Added bitrate presets for '1440p' resolution option
-- Introduced a new 'Tizen' privilege: 'TV.AUDIO' which allows the application to change the volume
+- Added a new 'Tizen' privilege: 'TV.AUDIO' which allows to change the volume in the application
 - Expanded TV key functionality to allow changing the volume from the remote control
 - Implemented 'STOP_STREAM_BUTTONS_FLAGS' condition to specify a combination of buttons on the gamepad for stopping streaming sessions
