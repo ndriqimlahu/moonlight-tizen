@@ -2020,8 +2020,34 @@ function saveFlipXYfaceButtons() {
 
 function saveCodecMode() {
   var chosenCodecMode = $(this).data('value');
-  $('#selectCodec').text($(this).text()).data('value', chosenCodecMode);
-  storeData('codecMode', chosenCodecMode, null);
+  const selectedH264Codec = $('#h264').data('value');
+  const selectedHevcCodec = $('#hevc').data('value');
+  const selectedHevcMain10Codec = $('#hevc-main10').data('value');
+  const selectedAv1Codec = $('#av1').data('value');
+  const selectedAv1Main10Codec = $('#av1-main10').data('value');
+  const enabledHdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked');
+
+  // Check if HDR mode is enabled
+  if (enabledHdrMode) {
+    // Ensure that only HDR-compatible codecs can be selected when HDR mode is enabled
+    if (chosenCodecMode === selectedH264Codec) {
+      // H.264 does not support HDR, so stay on H.264
+      updateCodecMode('#h264', selectedH264Codec);
+      snackbarLog('HDR has been disabled for unsupported H.264 codec');
+      // Turn off the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().removeClass('is-checked');
+      updateHdrMode();
+    } else if (chosenCodecMode === selectedHevcCodec) {
+      // Switch to HEVC Main10 when HDR is enabled
+      updateCodecMode('#hevc-main10', selectedHevcMain10Codec);
+    } else if (chosenCodecMode === selectedAv1Codec) {
+      // Switch to AV1 Main10 when HDR is enabled
+      updateCodecMode('#av1-main10', selectedAv1Main10Codec);
+    }
+  } else {
+    // Continue to select standard video codecs when HDR mode is disabled
+    updateCodecMode(this, chosenCodecMode);
+  }
 }
 
 function updateCodecMode(chosenCodecId, chosenCodecValue) {
