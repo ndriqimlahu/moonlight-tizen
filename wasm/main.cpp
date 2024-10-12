@@ -175,7 +175,7 @@ static void HexStringToBytes(const char* str, char* output) {
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
   bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
-  std::string serverCodecMode, bool framePacing, bool audioSync) {
+  std::string serverCodecMode, bool hdrMode, bool framePacing, bool audioSync) {
   PostToJs("Streaming session has started");
   PostToJs("Setting stream host to: " + host);
   PostToJs("Setting stream resolution to: " + width + "x" + height);
@@ -192,6 +192,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
   PostToJs("Setting codec mode to: " + codecMode);
   PostToJs("Setting server codec mode to: " + serverCodecMode);
+  PostToJs("Setting HDR mode to: " + std::to_string(hdrMode));
   PostToJs("Setting frame pacing to: " + std::to_string(framePacing));
   PostToJs("Setting audio syncing to: " + std::to_string(audioSync));
 
@@ -223,6 +224,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_FlipABfaceButtonsEnabled = flipABfaceButtons;
   m_FlipXYfaceButtonsEnabled = flipXYfaceButtons;
   m_SupportedVideoCodecs = stoi(serverCodecMode,0,16);
+  m_HdrModeEnabled = hdrMode;
   m_FramePacingEnabled = framePacing;
   m_AudioSyncEnabled = audioSync;
 
@@ -315,10 +317,10 @@ int main(int argc, char** argv) {
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
   bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
-  std::string serverCodecMode, bool framePacing, bool audioSync) {
+  std::string serverCodecMode, bool hdrMode, bool framePacing, bool audioSync) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl,
-  rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, codecMode, serverCodecMode, framePacing, audioSync);
+  rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, codecMode, serverCodecMode, hdrMode, framePacing, audioSync);
 }
 
 MessageResult stopStream() {

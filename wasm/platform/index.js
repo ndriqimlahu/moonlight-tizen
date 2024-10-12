@@ -2097,6 +2097,10 @@ function restoreDefaultsSettingsValues() {
   $('#selectCodec').text('H.264').data('value', defaultCodecMode);
   storeData('codecMode', defaultCodecMode, null);
 
+  const defaultHdrMode = false;
+  document.querySelector('#hdrModeBtn').MaterialSwitch.off();
+  storeData('hdrMode', defaultHdrMode, null);
+
   const defaultFramePacing = false;
   document.querySelector('#framePacingBtn').MaterialSwitch.off();
   storeData('framePacing', defaultFramePacing, null);
@@ -2309,6 +2313,17 @@ function loadUserDataCb() {
           $('#selectCodec').text($(this).text()).data('value', previousValue.codecMode);
         }
       });
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored hdrMode prefs');
+  getData('hdrMode', function(previousValue) {
+    if (previousValue.hdrMode == null) {
+      document.querySelector('#hdrModeBtn').MaterialSwitch.off();
+    } else if (previousValue.hdrMode == false) {
+      document.querySelector('#hdrModeBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#hdrModeBtn').MaterialSwitch.on();
     }
   });
 
