@@ -2024,9 +2024,23 @@ function saveCodecMode() {
   storeData('codecMode', chosenCodecMode, null);
 }
 
+function updateCodecMode(chosenCodecId, chosenCodecValue) {
+  $('#selectCodec').text($(chosenCodecId).text()).data('value', chosenCodecValue);
+  console.log('%c[index.js, updateCodecMode]', 'color: green;', 'Saving codec mode value: ' + chosenCodecValue);
+  storeData('codecMode', chosenCodecValue, null);
+}
+
 function saveHdrMode() {
   setTimeout(function() {
     // TODO: Implement logic to handle HDR mode state based on selected codec
+  }, 100);
+}
+
+function updateHdrMode() {
+  setTimeout(function() {
+    const chosenHdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, updateHdrMode]', 'color: green;', 'Saving HDR mode state: ' + chosenHdrMode);
+    storeData('hdrMode', chosenHdrMode, null);
   }, 100);
 }
 
