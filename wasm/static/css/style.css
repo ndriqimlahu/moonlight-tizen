@@ -557,6 +557,9 @@ body {
 #bitrateLowestValue.hovered, #bitrateHighestValue.hovered {
     background-color: #404354;
 }
+#hevc-main10, #av1-main10 {
+    display: none !important;
+}
 #resolutionMenu > #selectResolution, #framerateMenu > #selectFramerate,
 #bitrateMenu > #selectBitrate, #codecMenu > #selectCodec {
     background: url('../res/ic_arrow_drop_down_48px.svg') 94.6% 50% no-repeat #404354;

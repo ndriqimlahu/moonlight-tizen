@@ -2032,7 +2032,50 @@ function updateCodecMode(chosenCodecId, chosenCodecValue) {
 
 function saveHdrMode() {
   setTimeout(function() {
-    // TODO: Implement logic to handle HDR mode state based on selected codec
+    var selectedCodecMode = $('#selectCodec').data('value');
+    const chosenH264Codec = $('#h264').data('value');
+    const chosenHevcCodec = $('#hevc').data('value');
+    const chosenHevcMain10Codec = $('#hevc-main10').data('value');
+    const chosenAv1Codec = $('#av1').data('value');
+    const chosenAv1Main10Codec = $('#av1-main10').data('value');
+
+    if (selectedCodecMode === chosenH264Codec) { // H.264
+      // H.264 does not support HDR, so stay on H.264
+      snackbarLog('H.264 codec does not support the HDR10 profile');
+      // Turn off the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().removeClass('is-checked');
+      updateHdrMode();
+    } else if (selectedCodecMode === chosenHevcCodec) { // HEVC
+      // Switch from HEVC to HEVC Main10
+      updateCodecMode('#hevc-main10', chosenHevcMain10Codec);
+      // Turn on the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().addClass('is-checked');
+      updateHdrMode();
+    } else if (selectedCodecMode === chosenHevcMain10Codec) { // HEVC Main10
+      // Switch from HEVC Main10 to HEVC
+      updateCodecMode('#hevc', chosenHevcCodec);
+      // Turn off the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().removeClass('is-checked');
+      updateHdrMode();
+    } else if (selectedCodecMode === chosenAv1Codec) { // AV1
+      // Switch from AV1 to AV1 Main10
+      updateCodecMode('#av1-main10', chosenAv1Main10Codec);
+      // Turn on the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().addClass('is-checked');
+      updateHdrMode();
+    } else if (selectedCodecMode === chosenAv1Main10Codec) { // AV1 Main10
+      // Switch from AV1 Main10 to AV1
+      updateCodecMode('#av1', chosenAv1Codec);
+      // Turn off the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().removeClass('is-checked');
+      updateHdrMode();
+    } else { // Unknown
+      // Unknown codec does not support HDR
+      snackbarLog('Selected codec does not support the HDR10 profile');
+      // Turn off the HDR mode switch and save the state
+      $('#hdrModeSwitch').parent().removeClass('is-checked');
+      updateHdrMode();
+    }
   }, 100);
 }
 
