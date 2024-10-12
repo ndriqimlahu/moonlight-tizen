@@ -44,6 +44,7 @@ function attachListeners() {
   $('#flipABfaceButtonsSwitch').on('click', saveFlipABfaceButtons);
   $('#flipXYfaceButtonsSwitch').on('click', saveFlipXYfaceButtons);
   $('.codecMenu li').on('click', saveCodecMode);
+  $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#navigationGuideBtn').on('click', showNavigationGuideDialog);
@@ -1508,6 +1509,7 @@ function startGame(host, appID) {
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
+      const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
@@ -1523,6 +1525,7 @@ function startGame(host, appID) {
         '\n Flip A/B face buttons: ' + flipABfaceButtons + 
         '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
         '\n Codec mode: ' + codecMode + 
+        '\n HDR mode: ' + hdrMode + 
         '\n Frame pacing: ' + framePacing + 
         '\n Audio sync: ' + audioSync);
 
@@ -1551,7 +1554,7 @@ function startGame(host, appID) {
           sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
             bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
             $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, flipABfaceButtons,
-            flipXYfaceButtons, codecMode, host.serverCodecMode, framePacing, audioSync
+            flipXYfaceButtons, codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp);
@@ -1588,7 +1591,7 @@ function startGame(host, appID) {
         sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
           bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
           $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, flipABfaceButtons,
-          flipXYfaceButtons, codecMode, host.serverCodecMode, framePacing, audioSync
+          flipXYfaceButtons, codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, launchApp]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp);
@@ -2019,6 +2022,12 @@ function saveCodecMode() {
   var chosenCodecMode = $(this).data('value');
   $('#selectCodec').text($(this).text()).data('value', chosenCodecMode);
   storeData('codecMode', chosenCodecMode, null);
+}
+
+function saveHdrMode() {
+  setTimeout(function() {
+    // TODO: Implement logic to handle HDR mode state based on selected codec
+  }, 100);
 }
 
 function saveFramePacing() {

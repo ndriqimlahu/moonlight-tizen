@@ -965,6 +965,7 @@ const Views = {
   DecoderSettings: {
     view: new ListView(() => [
       'selectCodec',
+      'hdrModeBtn',
       'framePacingBtn',
       'audioSyncBtn']),
     up: function() {
