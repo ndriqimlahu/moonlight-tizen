@@ -177,33 +177,34 @@ function restoreUiAfterWasmLoad() {
   Navigation.push(Views.Hosts);
   showHostsMode();
 
-  findNvService(function(finder, opt_error) {
-    if (finder.byService_['_nvstream._tcp']) {
-      var ips = Object.keys(finder.byService_['_nvstream._tcp']);
-      for (var i in ips) {
-        var ip = ips[i];
-        if (finder.byService_['_nvstream._tcp'][ip]) {
-          var mDnsDiscoveredHost = new NvHTTP(ip, myUniqueid);
-          mDnsDiscoveredHost.pollServer(function(returnedDiscoveredHost) {
-            // Just drop this if the host doesn't respond
-            if (!returnedDiscoveredHost.online) {
-              return;
-            }
-            if (hosts[returnedDiscoveredHost.serverUid] != null) {
-              // If we're seeing a host we've already seen before, update it for the current local IP
-              hosts[returnedDiscoveredHost.serverUid].address = returnedDiscoveredHost.address;
-              hosts[returnedDiscoveredHost.serverUid].updateExternalAddressIP4();
-            } else {
-              // Host must be in the grid before starting background polling
-              addHostToGrid(returnedDiscoveredHost, true);
-              beginBackgroundPollingOfHost(returnedDiscoveredHost);
-            }
-            saveHosts();
-          });
-        }
-      }
-    }
-  });
+  // Find mDNS host discovered using ServiceFinder (network service discovery)
+  // findNvService(function(finder, opt_error) {
+  //   if (finder.byService_['_nvstream._tcp']) {
+  //     var ips = Object.keys(finder.byService_['_nvstream._tcp']);
+  //     for (var i in ips) {
+  //       var ip = ips[i];
+  //       if (finder.byService_['_nvstream._tcp'][ip]) {
+  //         var mDnsDiscoveredHost = new NvHTTP(ip, myUniqueid);
+  //         mDnsDiscoveredHost.pollServer(function(returnedDiscoveredHost) {
+  //           // Just drop this if the host doesn't respond
+  //           if (!returnedDiscoveredHost.online) {
+  //             return;
+  //           }
+  //           if (hosts[returnedDiscoveredHost.serverUid] != null) {
+  //             // If we're seeing a host we've already seen before, update it for the current local IP
+  //             hosts[returnedDiscoveredHost.serverUid].address = returnedDiscoveredHost.address;
+  //             hosts[returnedDiscoveredHost.serverUid].updateExternalAddressIP4();
+  //           } else {
+  //             // Host must be in the grid before starting background polling
+  //             addHostToGrid(returnedDiscoveredHost, true);
+  //             beginBackgroundPollingOfHost(returnedDiscoveredHost);
+  //           }
+  //           saveHosts();
+  //         });
+  //       }
+  //     }
+  //   }
+  // });
 }
 
 function beginBackgroundPollingOfHost(host) {
