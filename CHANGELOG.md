@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.12
+
+### Added
+- Added the 'Tizen' profile: 'TV Samsung' to determine the type of device used in the application
+
+### Changed
+- Disabled the 'ChromeOS' network service discovery feature, which is not compatible with Tizen OS
+
+### Removed
+- Removed the 'Exit app' button from 'Settings' that was used to immediately terminate the app
+- Removed the 'Game Mode' metadata to prevent app crash issue when starting streaming on newer Tizen OS
+
+### Fixed
+- Fixed an issue with the application icon file path causing a configuration error
+- Fixed an issue during address polling when the host status is online or offline
+- Fixed a focus issue on the 'Settings' button when returning to the 'Hosts' navigation bar
+
 ## v1.2.11
 
 ### Added
@@ -604,6 +621,6 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Expanded settings: Introduced '1440p' resolution option
 - Added bitrate presets for '1440p' resolution option
-- Added a new 'Tizen' privilege: 'TV.AUDIO' which allows to change the volume in the application
+- Added a new 'Tizen' privilege: 'TV Audio' which allows to change the volume in the application
 - Expanded TV key functionality to allow changing the volume from the remote control
 - Implemented 'STOP_STREAM_BUTTONS_FLAGS' condition to specify a combination of buttons on the gamepad for stopping streaming sessions
