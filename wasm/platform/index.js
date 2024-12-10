@@ -28,7 +28,7 @@ function attachListeners() {
   $('#addHostCell').on('click', addHost);
   $('#settingsBtn').on('click', showSettingsContainer);
   $('#supportBtn').on('click', showSupportDialog);
-  $('#goBackBtn').on('click', showHostsMode);
+  $('#goBackBtn').on('click', showHosts);
   $('#restoreDefaultsBtn').on('click', restoreDefaultSettings);
   $('#quitRunningAppBtn').on('click', quitRunningApp);
   $('.resolutionMenu li').on('click', saveResolution);
@@ -937,6 +937,12 @@ function hostDetails(host) {
   hostDetailsDialog[0].showModal();
   isDialogOpen = true;
   Navigation.push(Views.HostDetailsDialog);
+  setTimeout(() => Navigation.switch(), 5);
+}
+
+// Show the Hosts grid
+function showHosts() {
+  showHostsMode();
   setTimeout(() => Navigation.switch(), 5);
 }
 

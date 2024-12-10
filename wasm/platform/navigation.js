@@ -610,7 +610,7 @@ const Views = {
         currentItem.click();
         // Navigate to the HostsNav view
         Navigation.change(Views.HostsNav);
-        document.getElementById('settingsBtn').focus(); // FIXME: Focus should be set on the Settings button after navigating back to the HostsNav view
+        document.getElementById('settingsBtn').focus();
       } else {
         this.view.current().click();
       }
