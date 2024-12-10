@@ -208,13 +208,19 @@ function restoreUiAfterWasmLoad() {
 
 function beginBackgroundPollingOfHost(host) {
   console.log('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Starting background polling of host ' + host.serverUid + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  // Assign methods of NvHTTP to the host object
+  Object.assign(host, NvHTTP.prototype);
+
   var hostCell = document.querySelector('#hostgrid-' + host.serverUid);
+  // Check if the host is currently online
   if (host.online) {
+    // If the host is online, show it as active
     hostCell.classList.remove('host-cell-inactive');
-    // The host was already online, just start polling in the background now
+    // The host was already online, so start polling in the background now
     activePolls[host.serverUid] = window.setInterval(function() {
-      // Every 5 seconds, poll at the address we know it was live at
+      // Every 5 seconds, poll at the address to check for any status changes
       host.pollServer(function(returnedHost) {
+        // Check if the host is currently online
         if (host.online) {
           hostCell.classList.remove('host-cell-inactive');
         } else {
@@ -223,18 +229,21 @@ function beginBackgroundPollingOfHost(host) {
       });
     }, 5000);
   } else {
+    // If the host is offline, show it as inactive
     hostCell.classList.add('host-cell-inactive');
-    // The host was offline, so poll immediately
+    // The host was offline, so poll immediately to check the host's status
     host.pollServer(function(returnedHost) {
+      // Check if the host is currently online
       if (host.online) {
         hostCell.classList.remove('host-cell-inactive');
       } else {
         hostCell.classList.add('host-cell-inactive');
       }
-      // Now start background polling
+      // Now that the initial poll is done, start the background polling
       activePolls[host.serverUid] = window.setInterval(function() {
-        // Every 5 seconds, poll at the address we know it was live at
+        // Every 5 seconds, poll at the address to check for any status changes
         host.pollServer(function(returnedHost) {
+          // Check if the host is currently online
           if (host.online) {
             hostCell.classList.remove('host-cell-inactive');
           } else {
