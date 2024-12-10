@@ -60,7 +60,7 @@ RUN cmake \
 RUN cmake --build build
 RUN cmake --install build --prefix build
 
-RUN cp moonlight-tizen/icons/icon.png build/widget/
+RUN cp moonlight-tizen/res/icon.png build/widget/
 
 # Build the package and then sign the application
 # It effectively runs `tizen package -t wgt -- build/widget`, but uses an expected cmd file to automate the password prompt
