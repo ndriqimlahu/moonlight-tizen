@@ -1067,8 +1067,7 @@ const Views = {
     view: new ListView(() => [
       'systemInfoBtn',
       'navigationGuideBtn',
-      'restartAppBtn',
-      'exitAppBtn']),
+      'restartAppBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();

@@ -49,7 +49,6 @@ function attachListeners() {
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#navigationGuideBtn').on('click', showNavigationGuideDialog);
   $('#restartAppBtn').on('click', restartApplication);
-  $('#exitAppBtn').on('click', exitApplication);
 
   const registerMenu = (elementId, view) => {
     $(`#${elementId}`).on('click', () => {

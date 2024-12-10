@@ -522,13 +522,13 @@ body {
     text-align: left;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
-#selectCodec, #navigationGuideBtn, #restartAppBtn, #exitAppBtn {
+#selectCodec, #navigationGuideBtn, #restartAppBtn {
     font-size: 1.4em;
     text-indent: 36px;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #ipAddressFieldModeBtn, #sortAppsListBtn, #optimizeGamesBtn,
 #externalAudioBtn, #removeAllHostsBtn, #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn, #flipXYfaceButtonsBtn,
-#selectCodec, #hdrModeBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn, #restartAppBtn, #exitAppBtn {
+#selectCodec, #hdrModeBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn, #restartAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -647,7 +647,7 @@ body {
     text-transform: uppercase;
 }
 #removeAllHostsIcon, #navigationGuideIcon,
-#restartApplicationIcon, #exitApplicationIcon {
+#restartApplicationIcon {
     float: right;
     width: 35px;
     height: 35px;
@@ -656,7 +656,7 @@ body {
 }
 #settingsBtn, #supportBtn, #goBackBtn, #ipAddressFieldModeBtn, #sortAppsListBtn, #optimizeGamesBtn,
 #externalAudioBtn, #removeAllHostsBtn, #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn,
-#flipXYfaceButtonsBtn, #hdrModeBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn, #restartAppBtn, #exitAppBtn {
+#flipXYfaceButtonsBtn, #hdrModeBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn, #restartAppBtn {
     background-color: #404354;
     border-radius: 6px;
 }
@@ -710,6 +710,6 @@ body {
 #rumbleFeedbackBtn:focus, #mouseEmulationBtn:hover, #mouseEmulationBtn:focus, #flipABfaceButtonsBtn:hover, #flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover,
 #flipXYfaceButtonsBtn:focus, #selectCodec:hover, #selectCodec:focus, #framePacingBtn:hover, #framePacingBtn:focus, #hdrModeBtn:hover, #hdrModeBtn:focus,
 #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus, #restartAppBtn:hover,
-#restartAppBtn:focus, #exitAppBtn:hover, #exitAppBtn:focus {
+#restartAppBtn:focus {
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
