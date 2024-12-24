@@ -170,25 +170,31 @@ body {
     overflow: hidden;
 }
 #wasmSpinner {
+    width: 35%;
+    height: 10px;
+    display: none;
     position: fixed;
-    left: 50%;
     bottom: 50%;
+    left: 50%;
     margin: 0 auto;
     z-index: 2;
-    display: none;
-    text-align: center;
     transform: translate(-50%, -50%);
 }
 #loadingSpinner {
-    color: #fff;
+    width: 35%;
+    height: 10px;
+    display: none;
     position: fixed;
-    left: 50%;
     bottom: 50%;
+    left: 50%;
     margin: 0 auto;
     z-index: 1;
-    display: none;
-    text-align: center;
     transform: translate(-50%, -50%);
+}
+.mdl-progress > .progressbar,
+.mdl-progress > .bufferbar,
+.mdl-progress > .auxbar {
+    border-radius: 8px;
 }
 #wasmSpinnerLogo {
     width: 30%;
@@ -198,6 +204,15 @@ body {
     right: 25%;
     margin: 0 auto;
     animation: fadeInOut 3s infinite;
+}
+#wasmSpinnerMessage, #loadingSpinnerMessage {
+    color: #fff;
+    margin: 35px;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 0.5px;
+    text-align: center;
 }
 #snackButton {
     width: 0;

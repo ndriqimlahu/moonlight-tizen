@@ -130,9 +130,9 @@ function changeUiModeForWasmLoad() {
   $('#main-navigation').hide();
   $('#main-navigation').children().hide();
   $('#main-content').children().not('#listener, #wasmSpinner').hide();
-  $('#wasmSpinnerMessage').text('Loading Moonlight plugins...');
   $('#wasmSpinner').css('display', 'inline-block');
   $('#wasmSpinnerLogo').show();
+  $('#wasmSpinnerMessage').text('Loading Moonlight...');
 }
 
 // Handles repeated execution of the current action based on a specified interval
@@ -1284,9 +1284,9 @@ function showApps(host) {
   $('#main-navigation').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
   // Show a spinner while the app list loads
-  $('#wasmSpinnerMessage').text('Loading apps...');
   $('#wasmSpinner').css('display', 'inline-block');
   $('#wasmSpinnerLogo').hide();
+  $('#wasmSpinnerMessage').text('Loading apps and games...');
 
   $('div.game-container').remove();
 
