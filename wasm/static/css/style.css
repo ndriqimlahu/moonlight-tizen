@@ -190,6 +190,15 @@ body {
     text-align: center;
     transform: translate(-50%, -50%);
 }
+#wasmSpinnerLogo {
+    width: 30%;
+    position: fixed;
+    bottom: 350%;
+    left: 25%;
+    right: 25%;
+    margin: 0 auto;
+    animation: fadeInOut 3s infinite;
+}
 #snackButton {
     width: 0;
     height: 0;
@@ -712,4 +721,12 @@ body {
 #audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus, #restartAppBtn:hover,
 #restartAppBtn:focus {
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
+}
+@keyframes fadeInOut {
+    0%, 100% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1);
+    }
 }

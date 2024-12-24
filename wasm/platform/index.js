@@ -132,6 +132,7 @@ function changeUiModeForWasmLoad() {
   $('#main-content').children().not('#listener, #wasmSpinner').hide();
   $('#wasmSpinnerMessage').text('Loading Moonlight plugins...');
   $('#wasmSpinner').css('display', 'inline-block');
+  $('#wasmSpinnerLogo').show();
 }
 
 // Handles repeated execution of the current action based on a specified interval
@@ -1285,6 +1286,7 @@ function showApps(host) {
   // Show a spinner while the app list loads
   $('#wasmSpinnerMessage').text('Loading apps...');
   $('#wasmSpinner').css('display', 'inline-block');
+  $('#wasmSpinnerLogo').hide();
 
   $('div.game-container').remove();
 
