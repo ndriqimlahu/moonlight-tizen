@@ -301,6 +301,9 @@ body {
 #game-grid .mdl-card img.fade-in {
     opacity: 1;
 }
+#game-grid .mdl-shadow--4dp {
+    box-shadow: unset;
+}
 #game-grid .game-title {
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
