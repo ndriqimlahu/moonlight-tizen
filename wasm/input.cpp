@@ -88,7 +88,7 @@ EM_BOOL MoonlightInstance::HandleKeyDown(const EmscriptenKeyboardEvent &event) {
   if (modifiers == (MODIFIER_ALT | MODIFIER_CTRL | MODIFIER_SHIFT)) {
     if (keyCode == 0x51) {  // Q key
       // Terminate the connection
-      StopConnection();
+      stopStream();
       return EM_TRUE;
     } else {
       // Wait until these keys come up to unlock the mouse
