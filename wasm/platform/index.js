@@ -611,17 +611,6 @@ function addHostToGrid(host, ismDNSDiscovered) {
     hostChosen(host);
   });
 
-  // Bind a keyboard event handler to the container for accessibility
-  hostContainer.keypress(function(e) {
-    // Shows the Apps view when the enter key is pressed
-    if (e.keyCode == 13) {
-      hostChosen(host);
-    } else if (e.keyCode == 32) {
-      // Shows the Host Menu view when the space key is pressed
-      showHostMenu(host);
-    }
-  });
-
   // Append the host cell to the host container
   $(hostContainer).append(hostCell);
 
@@ -1332,28 +1321,6 @@ function showApps(host) {
 
         gameCard.addEventListener('click', e => {
           startGame(host, app.id);
-        });
-        gameCard.addEventListener('mouseover', e => {
-          gameCard.focus();
-        });
-        gameCard.addEventListener('keydown', e => {
-          if (e.key == 'Enter') {
-            startGame(host, app.id);
-          }
-          if (e.key == 'ArrowLeft') {
-            let prev = gameCard.previousSibling;
-            if (prev !== null) {
-              gameCard.previousSibling.focus();
-            }
-            // TODO: Add a sound when limit reached
-          }
-          if (e.key == 'ArrowRight') {
-            let next = gameCard.nextSibling;
-            if (next !== null) {
-              gameCard.nextSibling.focus();
-            }
-            // TODO: Add a sound when limit reached
-          }
         });
         document.querySelector('#game-grid').appendChild(gameCard);
         // Apply CSS stylization to indicate whether the app is active

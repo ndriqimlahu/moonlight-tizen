@@ -7,14 +7,6 @@ body {
     -moz-user-select: none;
     user-select: none;
 }
-.page-title {
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 30px;
-    font-weight: 300;
-    font-size: 26px;
-    text-align: center;
-}
 #main-navigation {
     background-color: #333846;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 1);
@@ -335,31 +327,6 @@ body {
 .hovered {
     background: rgba(158, 158, 158, 0.2);
 }
-#host-grid p {
-    margin: 0;
-}
-#host-grid .mdl-textfield {
-    width: 200px;
-    margin-bottom: 0;
-    margin-right: 20px;
-}
-#host-grid #GFEHostIPField {
-    padding-bottom: 0;
-}
-#host-grid #selectHost {
-    background: none;
-    height: 20px;
-    line-height: 20px;
-    padding: 0;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-right: 20px;
-}
-#host-grid .button-holder {
-    padding: 0;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
 #ipAddressInputField {
     display: block;
     margin: 15px 0 15px 0;
@@ -426,26 +393,8 @@ body {
 .host-cell-inactive {
     outline: #F44336 solid 3px;
 }
-.host-cell:hover {
-    color: #000;
-    cursor: pointer;
-}
 .current-game {
     outline: #8BC34A solid 3px;
-}
-.cancel-current {
-    padding: 5px;
-    border: 2px solid #fff;
-    border-radius: 6px;
-}
-.cancel-current:hover {
-    cursor: pointer;
-}
-.cancel-current img {
-    margin-right: 5px;
-}
-.cancel-current .game-title {
-    color: #fff;
 }
 .fullscreen {
     height: 100vh !important;
