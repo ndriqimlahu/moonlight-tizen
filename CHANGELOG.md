@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.13
+
+### Added
+- Added the application logo with animation to the splash screen
+
+### Changed
+- Increased the spinner size with rounded corners and enhanced text visibility
+- Adjusted the size of the 'Add Host' and 'Host Container' icons for better visibility
+- Moved the 'icons' folder to the 'static' directory for better organization of assets
+- Replaced the function to stop the streaming session with the correct one for keyboard input
+
+### Removed
+- Removed unused styling properties and incompatible event listeners
+
+### Fixed
+- Fixed a performance issue when navigating game cards in the 'Apps' view
+
 ## v1.2.12
 
 ### Added
