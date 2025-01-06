@@ -18,7 +18,7 @@
     <header id="main-navigation" class="mdl-layout__header">
       <div class="mdl-layout__header-row">
         <button type="button" id="goBackBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" role="link" aria-label="Go back">
-          <i class="material-icons">keyboard_arrow_left</i>
+          <i class="button-icons material-icons">keyboard_arrow_left</i>
         </button>
         <div id="goBackTooltip" class="mdl-tooltip" for="goBackBtn">Back</div>
         <!-- Navigation logo and title -->
@@ -36,12 +36,14 @@
             <i class="button-icons material-icons">help</i>
           </button>
           <div id="supportTooltip" class="mdl-tooltip" for="supportBtn">Support</div>
-          <button type="button" id="restoreDefaultsBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Restore Defaults">
-            <i class="button-icons material-icons">settings_backup_restore</i> Restore Defaults
+          <button type="button" id="restoreDefaultsBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Restore Defaults">
+            <i class="button-icons material-icons">settings_backup_restore</i>
           </button>
-          <button type="button" id="quitRunningAppBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" aria-label="Quit Running App">
-            <i class="button-icons material-icons">highlight_off</i> Quit Running App
+          <div id="restoreDefaultsTooltip" class="mdl-tooltip" for="restoreDefaultsBtn">Restore Defaults</div>
+          <button type="button" id="quitRunningAppBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Quit Running App">
+            <i class="button-icons material-icons">highlight_off</i>
           </button>
+          <div id="quitRunningAppTooltip" class="mdl-tooltip" for="quitRunningAppBtn">Quit Running App</div>
         </nav>
       </div>
     </header>
