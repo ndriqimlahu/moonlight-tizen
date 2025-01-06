@@ -50,10 +50,16 @@ body {
 .mdl-tooltip {
     color: #fff;
     background-color: #3E4454;
-    padding: 14px;
-    border-radius: 6px;
-    font-size: 18px;
+    display: inline !important;
+    position: fixed;
+    top: 72px !important;
+    max-width: 200px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1.65rem;
     font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.5px;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
 }
 .mdl-button {
@@ -94,35 +100,44 @@ body {
 .mdl-dialog {
     color: #fff;
     background-color: #333846;
-    width: 500px;
+    width: 30%;
     height: auto;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 5px rgba(0, 163, 198, 1);
-}
-.mdl-dialog__title {
-    margin: 0;
-    padding: 24px 24px 14px;
-    font-size: 2.5rem;
-}
-.mdl-dialog__content {
-    color: rgba(255, 255, 255, 0.90);
-    padding: 20px 24px 14px 24px;
-}
-.mdl-dialog__content button, .mdl-dialog__actions button {
-    width: 100%;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    text-transform: capitalize;
+    border-radius: 16px;
+    box-shadow: 0 0 12px 6px rgba(0, 163, 198, 1);
 }
 .large-dialog {
     color: #fff;
     background-color: #333846;
-    width: 85%;
+    width: 90%;
     height: auto;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 5px rgba(0, 163, 198, 1);
+    border-radius: 16px;
+    box-shadow: 0 0 12px 6px rgba(0, 163, 198, 1);
+}
+.mdl-dialog__title {
+    margin: 0;
+    padding: 24px 24px 14px;
+    font-size: 2.8rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+.mdl-dialog__content {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 20px 24px 14px 24px;
+}
+.mdl-dialog__content p, .mdl-dialog__content ul {
+    line-height: normal;
+    letter-spacing: 0.5px;
+}
+.mdl-dialog__content button {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+.mdl-dialog__content button, .mdl-dialog__actions button {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 8px;
 }
 .mdl-textfield__input {
     width: 152%;
@@ -210,23 +225,25 @@ body {
     letter-spacing: 0.5px;
     text-align: center;
 }
-#snackButton {
-    width: 0;
-    height: 0;
-    display: none;
-}
 .mdl-snackbar {
-    background: rgba(62, 68, 84, 0.90);
+    background: rgba(62, 68, 84, 0.9);
     min-width: 0;
-    border-radius: 6px 6px 0 0;
+    border-radius: 12px 12px 0 0;
     box-shadow: 0 0 8px 4px rgba(0, 163, 198, 1);
 }
 .mdl-snackbar__text {
     color: #fff;
     padding: 15px 20px 15px 20px;
-    font-size: 18px;
+    font-size: 1.45rem;
     font-weight: 500;
-    text-align: justify;
+    line-height: normal;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+#snackButton {
+    width: 0;
+    height: 0;
+    display: none;
 }
 #host-grid {
     margin: 15px 0 15px 0;
