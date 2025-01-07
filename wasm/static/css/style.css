@@ -145,17 +145,6 @@ body {
     margin-bottom: 10px;
     border-radius: 8px;
 }
-.mdl-textfield__input {
-    width: 152%;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.60);
-}
-.mdl-textfield__input.hovered, .mdl-textfield__input:hover, .mdl-textfield__input:focus {
-    background-color: #404354;
-}
-.mdl-textfield__label {
-    color: rgba(255, 255, 255, 0.90);
-    font-size: 1.2rem;
-}
 .mdl-switch__label {
     margin-top: 17px;
     font-size: 1.0em !important;
@@ -362,10 +351,41 @@ body {
     margin: 15px 0 15px 0;
 }
 #ipAddressInputField .mdl-textfield__label {
-    top: -5px;
+    top: -12px;
+}
+.mdl-textfield__label {
+    font-size: 1.65rem;
+    font-weight: 200;
+    letter-spacing: 0.5px;
+}
+.mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
+    font-size: 1.65rem;
+    font-weight: 200;
+    letter-spacing: 0.5px;
 }
 #ipAddressTextInput {
-    font-size: 18px;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+}
+.mdl-textfield__input {
+    width: 178%;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    text-indent: 10px;
+}
+.mdl-textfield__input.hovered, #ipAddressTextInput {
+    color: #fff;
+    background-color: #585D75;
+}
+.mdl-textfield__input.hovered, .mdl-textfield__input:hover, .mdl-textfield__input:focus {
+    box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
+}
+.mdl-textfield.is-invalid .mdl-textfield__input:hover, .mdl-textfield.is-invalid .mdl-textfield__input:focus {
+    box-shadow: 0 0 1px 2px rgba(244, 67, 54, 1);
+}
+#ipAddressTextInput::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 #ipAddressSelectFields {
     display: none;
@@ -377,28 +397,39 @@ body {
 .select-option-field {
     position: relative;
     display: inline-block;
-    box-sizing: border-box;
-    width: 460px;
-    max-width: 112%;
+    width: 105%;
+    max-width: max-content;
     margin: 0;
     padding: 20px 0;
-    font-size: 16px;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 .select-option-field-floating-label .mdl-textfield__label {
     color: #00A3C6;
-    font-size: 20px;
+    font-size: 1.65rem;
+    font-weight: 200;
+    letter-spacing: 0.5px;
+}
+#ipAddressSelectFields .mdl-textfield__label {
+    top: -12px;
 }
 .ip-address-select-field {
-    width: 112px;
-    height: 32px;
-    border-radius: 4px;
-    font-size: 18px;
+    width: 131px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    text-indent: 10px;
     cursor: pointer;
 }
-.ip-address-select-field.hovered, .ip-address-select-field:hover {
+.ip-address-select-field.hovered, #ipAddressField1, #ipAddressField2,
+#ipAddressField3, #ipAddressField4 {
     color: #fff;
     background-color: #585D75;
-    box-shadow: 0 0 2px 2px rgba(0, 163, 198, 1);
+}
+.ip-address-select-field.hovered, .ip-address-select-field:hover {
+    box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
 }
 #pairButton, #showAppsButton {
     margin: 3px;
