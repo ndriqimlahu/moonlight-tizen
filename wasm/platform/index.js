@@ -661,6 +661,7 @@ function showHostMenu(host) {
   var hostMenuDialogOptions = [
     {
       id: 'refreshApps-' + host.hostname,
+      class: 'host-menu-button',
       text: 'Refresh apps',
       action: function() {
         // Refresh apps and games from the selected host
@@ -672,6 +673,7 @@ function showHostMenu(host) {
     },
     {
       id: 'wakeHost-' + host.hostname,
+      class: 'host-menu-button',
       text: 'Wake PC',
       action: function() {
         // Send a Wake-on-LAN request to the selected host
@@ -682,6 +684,7 @@ function showHostMenu(host) {
     },
     {
       id: 'removeHost-' + host.hostname,
+      class: 'host-menu-button',
       text: 'Delete PC',
       action: function() {
         // Remove the selected host from the list
@@ -690,6 +693,7 @@ function showHostMenu(host) {
     },
     {
       id: 'viewDetails-' + host.hostname,
+      class: 'host-menu-button',
       text: 'View Details',
       action: function() {
         // View the details of the selected host
@@ -885,6 +889,7 @@ function hostDetails(host) {
   // Add a paragraph with multiple lines of text
   $('<p>', {
     id: 'hostDetailsDialogText-' + host.serverUid,
+    class: 'host-details-text',
     html: 'Name: ' + host.hostname + '<br>' +
           'State: ' + (host.online ? 'ONLINE' : 'OFFLINE') + '<br>' +
           'Local Address: ' + host.address + '<br>' +
@@ -893,7 +898,7 @@ function hostDetails(host) {
           'Pair State: ' + (host.paired ? 'PAIRED' : 'UNPAIRED') + '<br>' +
           'Running Game ID: ' + host.currentGame + '<br>' +
           'HTTPS Port: ' + '47984'
-  }).css('font-size', '1.2rem').appendTo(hostDetailsDialogContent);
+  }).appendTo(hostDetailsDialogContent);
 
   // Create the actions section inside the dialog
   var hostDetailsDialogActions = $('<div>', {
