@@ -40,9 +40,10 @@ body {
 }
 .mdl-menu__item {
     color: #ececec;
-    font-size: 1.1em;
-    text-align: left;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
     text-indent: 40px;
+    text-align: left;
 }
 .mdl-menu__item.hovered, .mdl-menu__item:hover, .mdl-menu__item:focus {
     background-color: #484C5F;
@@ -147,14 +148,13 @@ body {
 }
 .mdl-switch__label {
     margin-top: 17px;
-    font-size: 1.0em !important;
 }
 .mdl-switch__input, .mdl-switch__track, .mdl-switch__thumb {
-    margin: 18px 0 0 53.2em;
+    margin: 1.2rem 0 1.2rem 74.5rem;
 }
 .mdl-switch.is-checked .mdl-switch__track {
     background: rgba(0, 163, 198, 1);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.40);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 .mdl-switch.is-checked .mdl-switch__thumb {
     background-color: #fff;
@@ -499,19 +499,14 @@ body {
     flex: 1;
     max-width: 30%;
     padding: 20px;
-    border-right: 3px solid #1D1D1D;
-    overflow: auto;
-}
-#settings-right-panel {
-    flex: 1;
-    padding: 20px;
+    border-right: 4px solid rgba(29, 29, 29, 0.8);
     overflow: auto;
 }
 .settings-categories {
-    height: 100%;
-    margin: 0 25px 0 25px;
-    font-size: 1.6em;
-    font-weight: bold;
+    width: auto;
+    height: auto;
+    margin: 5px 25px 5px 25px;
+    font-weight: 600;
     text-align: left;
     overflow: hidden;
 }
@@ -520,32 +515,44 @@ body {
     margin: 25px;
     padding: 25px;
     border-bottom: 2px solid #666666;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
 }
 .category.hovered, .category:hover, .category:focus {
     background-color: #484C5F;
+    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
 .category.selected {
     color: #ececec;
     background: rgba(0, 163, 198, 0.8);
     transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 .category.selected:hover, .category.selected:focus {
     transform: scale(1.04);
 }
+.category-icons {
+    margin: 0 30px 0 15px;
+    font-size: 32px !important;
+}
 .category label {
     position: relative;
-    bottom: 4px;
+    bottom: 6.5px;
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
     cursor: pointer;
 }
-.category-icons {
-    margin: 0 15px 0 15px;
+#settings-right-panel {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
 }
 .settings-options {
+    width: auto;
+    height: auto;
     display: none;
-    margin: 0 35px 0 35px;
+    margin: 10px 35px 10px 35px;
     overflow: hidden;
 }
 .setting-option {
@@ -555,14 +562,27 @@ body {
     color: #cfcfcf;
     display: inline-block;
     margin-bottom: 12px;
-    font-size: 1.4em;
+    font-size: 1.7rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
     text-align: left;
 }
-.settings-options span {
+.settings-options .mdl-list__item-text-body {
     color: #ececec;
     display: block;
     margin-bottom: 12px;
-    font-size: 1.3em;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+.settings-options .mdl-switch__label {
+    color: #ececec;
+    display: block;
+    margin-bottom: 12px;
+    font-size: 1.45rem;
+    line-height: normal;
+    letter-spacing: 0.5px;
     text-align: left;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
@@ -585,31 +605,43 @@ body {
     cursor: pointer;
 }
 .bitrateMenu {
-    background-color: #404354;
+    background-color: #333846;
     display: flex;
     align-items: center;
 }
-.bitrateMenu input {
-    flex: 1;
+.bitrateMenu, .mdl-menu__container {
+    height: 20% !important;
 }
-#bitrateSlider {
-    width: 78em;
+.mdl-slider {
+    width: 74rem;
+}
+.mdl-slider__background-flex {
+    top: 25%;
+    height: 12px;
+    border-radius: 8px;
 }
 #bitrateLowestValue {
-    margin: 0 -8px 0 18px;
+    color: #ececec;
+    margin: 0 -12px 0 14px;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
 }
 #bitrateHighestValue {
-    margin: 0 12px 0 -10px;
+    color: #ececec;
+    margin: 0 12px 0 -14px;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
 }
 #bitrateLowestValue.hovered, #bitrateHighestValue.hovered {
-    background-color: #404354;
+    background-color: #333846;
 }
 #hevc-main10, #av1-main10 {
     display: none !important;
 }
 #resolutionMenu > #selectResolution, #framerateMenu > #selectFramerate,
 #bitrateMenu > #selectBitrate, #codecMenu > #selectCodec {
-    background: url('../res/ic_arrow_drop_down_48px.svg') 94.6% 50% no-repeat #404354;
+    color: #ececec;
+    background: url('../res/ic_arrow_drop_down_48px.svg') 94.8% 50% no-repeat rgba(64, 67, 84, 1);
 }
 .resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__container {
     width: 59.4% !important;
@@ -617,7 +649,7 @@ body {
 .resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__outline {
     width: 100% !important;
     top: 2.5px !important;
-    border-radius: 3px;
+    border-radius: 0 0 8px 8px;
 }
 #restoreDefaultsBtn, #quitRunningAppBtn {
     margin: 0 10px;
@@ -628,7 +660,7 @@ body {
     height: 50%;
     margin: 5px 25% 5px 25%;
     border-radius: 12px;
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4);
     align-items: center;
     justify-content: center;
 }
@@ -702,13 +734,12 @@ body {
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
-#removeAllHostsIcon, #navigationGuideIcon,
-#restartApplicationIcon {
+#removeAllHostsIcon, #navigationGuideIcon, #restartApplicationIcon {
     float: right;
     width: 35px;
     height: 35px;
-    margin: 0 46px 2px 25em;
-    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.40));
+    margin: 2px 46px;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
 }
 #pairingDialogText, #deleteHostDialogText, .host-details-text, #supportDialogText, #navGuideDialogText,
 #restoreDefaultsDialogText, #quitAppDialogText, #restartAppDialogText, #exitAppDialogText {
