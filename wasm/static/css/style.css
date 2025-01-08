@@ -650,6 +650,8 @@ body {
     display: inline-flex;
     align-items: center;
     padding: 5px 20px 5px 20px;
+    font-size: 1.35rem;
+    letter-spacing: 2px;
 }
 .navGuideLabel {
     width: 20px;
@@ -669,7 +671,8 @@ body {
 }
 .navGuideLabelText {
     color: #ececec;
-    font-size: 1.4rem;
+    font-size: 1.65rem;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 #navGuideDialogText {
@@ -678,20 +681,25 @@ body {
 }
 .navGuideDialogControls {
     padding: 5px 0 5px 0;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
 }
 .navGuideRemoteText {
     color: #00A3C6;
-    font-size: 1.2rem;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 .navGuideKeyboardText {
     color: #F44336;
-    font-size: 1.2rem;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 .navGuideGamepadText {
     color: #8BC34A;
-    font-size: 1.2rem;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 #removeAllHostsIcon, #navigationGuideIcon,
