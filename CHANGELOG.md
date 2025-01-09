@@ -103,7 +103,7 @@ All notable changes to this project will be documented in this file.
 - Fixed a warning issue where casing did not match for 'as' and 'FROM' keywords
 
 ### Dependencies
-- Updated 'moonlight-common-c' module to the latest version
+- Updated 'moonlight-common-c' module from `48d7f1a` to `8599b60`
 
 ## v1.2.5
 
@@ -118,7 +118,7 @@ All notable changes to this project will be documented in this file.
 - Minor bug fixes and refactored code for improved readability
 
 ### Dependencies
-- Updated 'tizen-studio' tool to the latest version
+- Updated 'tizen-studio' tool from v5.5 to v5.6
 
 ## v1.2.4
 
@@ -356,7 +356,7 @@ All notable changes to this project will be documented in this file.
 - Refactored code for improved structure and readability
 
 ### Dependencies
-- Updated 'moonlight-common-c' module to the latest version
+- Updated 'moonlight-common-c' module from `3ed3ba6` to `48d7f1a`
 
 ## v1.1.4
 
@@ -403,7 +403,7 @@ All notable changes to this project will be documented in this file.
 - Improved the stream settings structure for better clarity
 
 ### Dependencies
-- Updated 'tizen-studio' tool to the latest version
+- Updated 'tizen-studio' tool from v5.1 to v5.5
 
 ## v1.1.0
 
@@ -411,8 +411,8 @@ All notable changes to this project will be documented in this file.
 - Updated stream configurations to align with the latest versions of modules
 
 ### Dependencies
-- Updated 'moonlight-common-c' module to the latest version
-- Updated 'opus' module to the latest version
+- Updated 'moonlight-common-c' module from `50c0a51` to `3ed3ba6`
+- Updated 'opus' module from v1.4 `82ac57d` to v1.4 `c854997`
 
 ## v1.0.20
 
@@ -510,7 +510,7 @@ All notable changes to this project will be documented in this file.
 - Updated all core implementation files for 'Tizen'
 
 ### Dependencies
-- Updated 'opus' module to the latest version
+- Updated 'opus' module from v1.1.3 `f6f8487` to v1.4 `82ac57d`
 
 ## v1.0.12
 
