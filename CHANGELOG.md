@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.14
+
+### Changed
+- Enhanced styling and visibility for the header, navigation bar, and buttons
+- Improved size and styling of snackbar logs, tooltips, and dialogs for better readability
+- Enhanced button styling across the app and refined dialog text appearance
+- Improved styling in the 'Add Host' dialog for both IP address field modes to ensure clarity
+- Updated the content and style of the 'Navigation Guide' dialog for better readability
+- Enhanced visibility and styling in the 'Settings' view for categories, options, menus, and icons
+
 ## v1.2.13
 
 ### Added
