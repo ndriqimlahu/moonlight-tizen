@@ -241,78 +241,127 @@ body {
     display: none;
 }
 #host-grid {
-    margin: 15px 0 15px 0;
-    padding: 15px 80px 15px 80px;
-    flex: 1;
     display: flex;
+    flex: 1;
+    margin: 15px 0;
+    padding: 15px 80px 15px 80px;
     flex-flow: row wrap;
     align-items: center;
     justify-content: center;
 }
-#game-grid {
-    margin: 15px 0 15px 0;
-    padding: 15px 68px 15px 95px;
-    flex: 1;
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: flex-start;
-}
 #host-grid .mdl-card {
-    flex-basis: 16.5%;
-}
-#game-grid .mdl-card {
     position: relative;
-    background: url('../res/placeholder_game.svg') rgba(29, 29, 29, 1) center/cover no-repeat;
-}
-#host-grid .mdl-card {
-    width: 200px;
-    height: 220px;
-    min-height: 200px;
-    margin: 25px 30px 30px 25px;
-    transition: all .2s ease-in-out;
-    will-change: transform;
+    width: 285px;
+    height: 235px;
+    min-height: 235px;
+    margin: 20px 28px 45px 28px;
+    border-radius: 8px;
+    flex-basis: 16.2%;
     cursor: pointer;
     text-align: center;
-}
-#game-grid .mdl-card {
-    width: 225px;
-    height: 300px;
-    min-height: 280px;
-    margin: 25px 35px 30px 30px;
-    transition: all .2s ease-in-out;
     will-change: transform;
-    cursor: pointer;
-    text-align: center;
+    transition: all .2s ease-in-out;
+}
+#host-grid .mdl-shadow--4dp {
+    box-shadow: unset;
 }
 #host-grid .mdl-card.hovered, #host-grid .mdl-card:hover,
-#host-grid .mdl-card:focus, #host-grid .mdl-card:active,
-#game-grid .mdl-card.hovered, #game-grid .mdl-card:hover,
-#game-grid .mdl-card:focus, #game-grid .mdl-card:active {
-    outline: #00A3C6 solid 3px;
+#host-grid .mdl-card:focus, #host-grid .mdl-card:active {
+    border-radius: 0;
+    z-index: 2;
     transform: scale(1.2);
+    outline: #00A3C6 solid 3px;
+}
+#host-grid .host-cell-inactive {
+    box-shadow: 0 0 0 2px rgba(244, 67, 54, 1);
+}
+#host-grid .host-cell-inactive.hovered, #host-grid .host-cell-inactive:hover,
+#host-grid .host-cell-inactive:focus, #host-grid .host-cell-inactive:active {
+    border-radius: 0;
+    z-index: 2;
+    transform: scale(1.2);
+    outline: #F44336 solid 3px;
 }
 #host-grid .mdl-card__title {
     padding: 0;
 }
+.host-add-container > .mdl-card__title {
+    color: #fff;
+    background: url('../res/ic_add_to_queue_white_48px.svg') center no-repeat rgba(62, 68, 84, 1);
+}
+.host-container > .mdl-card__title {
+    color: #fff;
+    background: url('../res/ic_tv_white_48px.svg') center no-repeat rgba(62, 68, 84, 1);
+}
+#addHostContainer .host-title {
+    text-transform: uppercase;
+}
 #host-grid .host-title {
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    bottom: 0;
     width: 100%;
-    padding: 10px 15px;
-    font-size: 16px;
-    font-weight: 300;
+    padding: 10px 0;
     justify-content: center;
 }
-#host-grid .mdl-shadow--4dp {
-    box-shadow: unset;
+#host-grid .host-text {
+    padding: 0 15px;
+    font-size: 1.35rem;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 0.5px;
+}
+.host-menu {
+    background: url('../res/ic_menu_white_48px.svg') center / 22px 22px no-repeat rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    padding: 2px;
+    z-index: 5;
+    border-radius: 0 0 0 28px;
+    cursor: pointer;
+    will-change: transform;
+    transform: scale(1.2);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.host-menu.hovered, .host-menu:hover, .host-menu:focus, .host-menu:active {
+    background-color: rgba(0, 163, 198, 0.6);
+    transform: scale(1.3);
+    box-shadow: 0 1px 4px rgba(0, 163, 198, 0.4);
+}
+#game-grid {
+    display: flex;
+    flex: 1;
+    margin: 15px 0;
+    padding: 15px 80px 15px 80px;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+#game-grid .mdl-card {
+    background: url('../res/placeholder_game.svg') center / cover no-repeat rgba(29, 29, 29, 1);
+    position: relative;
+    width: 215px;
+    height: 275px;
+    min-height: 275px;
+    margin: 20px 38px 20px 38px;
+    border-radius: 8px;
+    flex-basis: 12.2%;
+    cursor: pointer;
+    text-align: center;
+    will-change: transform;
+    transition: all .2s ease-in-out;
 }
 #game-grid .mdl-card img {
     width: 100%;
     height: 100%;
     z-index: -1;
     opacity: 0;
-    transition: opacity .2s;
+    transition: opacity .3s;
 }
 #game-grid .mdl-card img.fade-in {
     opacity: 1;
@@ -320,28 +369,41 @@ body {
 #game-grid .mdl-shadow--4dp {
     box-shadow: unset;
 }
+#game-grid .mdl-card.hovered, #game-grid .mdl-card:hover,
+#game-grid .mdl-card:focus, #game-grid .mdl-card:active {
+    border-radius: 0;
+    z-index: 2;
+    transform: scale(1.2);
+    outline: #00A3C6 solid 3px;
+}
+#game-grid .current-game {
+    box-shadow: 0 0 0 2px rgba(139, 195, 74, 1);
+}
+#game-grid .current-game.hovered, #game-grid .current-game:hover,
+#game-grid .current-game:focus, #game-grid .current-game:active {
+    border-radius: 0;
+    z-index: 2;
+    transform: scale(1.2);
+    outline: #8BC34A solid 3px;
+}
+#game-grid .mdl-card__title {
+    padding: 0;
+}
 #game-grid .game-title {
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
     position: absolute;
     bottom: 0;
     width: 100%;
-    min-height: 20px;
-    padding: 5px 0;
-    font-size: 14px;
+    padding: 10px 0;
+    justify-content: center;
+}
+#game-grid .game-text {
+    padding: 0 15px;
+    font-size: 1.25rem;
     font-weight: 300;
-    text-align: center;
-}
-#game-grid .game-title span {
-    padding: 0 10px;
-}
-.host-add-container > .mdl-card__title {
-    color: #fff;
-    background: url('../res/ic_add_to_queue_white_48px.svg') center no-repeat #3E4454;
-}
-.host-container > .mdl-card__title {
-    color: #fff;
-    background: url('../res/ic_tv_white_48px.svg') center no-repeat #3E4454;
+    line-height: normal;
+    letter-spacing: 0.5px;
 }
 .hovered {
     background: rgba(158, 158, 158, 0.2);
@@ -433,29 +495,6 @@ body {
 }
 #pairButton, #showAppsButton {
     margin: 3px;
-}
-.host-menu {
-    background: url('../res/ic_menu_white_48px.svg') no-repeat center / 20px 20px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 24px;
-    height: 24px;
-    z-index: 5;
-    border: 0;
-    cursor: pointer;
-    transform: scale(1.2);
-}
-.host-menu:hover, .host-menu:focus, .host-menu:active {
-    border-radius: 50%;
-    transform: scale(1.3);
-    box-shadow: 0 0 2px 2px rgba(0, 163, 198, 1);
-}
-.host-cell-inactive {
-    outline: #F44336 solid 3px;
-}
-.current-game {
-    outline: #8BC34A solid 3px;
 }
 .fullscreen {
     height: 100vh !important;
