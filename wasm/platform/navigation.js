@@ -258,19 +258,19 @@ const Views = {
       document.getElementById(this.view.current()).focus();
     },
     select: function() {
-      const currentCell = this.view.current();
-      if (currentCell.id === 'addHostCell') {
-        currentCell.click();
+      const currentItem = this.view.current();
+      if (currentItem.id === 'addHostContainer') {
+        currentItem.click();
       } else {
-        currentCell.children[0].click();
+        currentItem.children[0].click();
       }
     },
     accept: function() {
-      const currentCell = this.view.current();
-      if (currentCell.id === 'addHostCell') {
-        currentCell.click();
+      const currentItem = this.view.current();
+      if (currentItem.id === 'addHostContainer') {
+        currentItem.click();
       } else {
-        currentCell.children[0].click();
+        currentItem.children[0].click();
       }
     },
     back: function() {
@@ -278,11 +278,11 @@ const Views = {
       showExitMoonlightDialog();
     },
     press: function() {
-      const currentCell = this.view.current();
-      if (currentCell.id !== 'addHostCell') {
-        currentCell.children[1].focus();
+      const currentItem = this.view.current();
+      if (currentItem.id !== 'addHostContainer') {
+        currentItem.children[1].focus();
         // Show the Host Menu dialog and push the view
-        setTimeout(() => currentCell.children[1].click(), 100);
+        setTimeout(() => currentItem.children[1].click(), 100);
       }
     },
     switch: function() {},

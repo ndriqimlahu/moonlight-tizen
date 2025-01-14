@@ -25,7 +25,7 @@ function attachListeners() {
   changeUiModeForWasmLoad();
   initIpAddressFields();
 
-  $('#addHostCell').on('click', addHost);
+  $('#addHostContainer').on('click', addHost);
   $('#settingsBtn').on('click', showSettingsContainer);
   $('#supportBtn').on('click', showSupportDialog);
   $('#goBackBtn').on('click', showHosts);
@@ -212,7 +212,7 @@ function beginBackgroundPollingOfHost(host) {
   // Assign methods of NvHTTP to the host object
   Object.assign(host, NvHTTP.prototype);
 
-  var hostCell = document.querySelector('#hostgrid-' + host.serverUid);
+  var hostCell = document.querySelector('#host-' + host.serverUid);
   // Check if the host is currently online
   if (host.online) {
     // If the host is online, show it as active
@@ -569,7 +569,7 @@ function addHost() {
 
 // Add the new NvHTTP Host object inside the host grid
 function addHostToGrid(host, ismDNSDiscovered) {
-  // Create a container div for the host, with relevant attributes
+  // Create the host container with the appropriate attributes for the host card
   var hostContainer = $('<div>', {
     id: 'host-container-' + host.serverUid,
     class: 'host-container mdl-card mdl-shadow--4dp',
@@ -578,19 +578,24 @@ function addHostToGrid(host, ismDNSDiscovered) {
     'aria-label': host.hostname
   });
 
-  // Create a cell div inside the container for displaying the host title
+  // Create the host cell to serve as a holder for the host box
   var hostCell = $('<div>', {
-    id: 'hostgrid-' + host.serverUid,
+    id: 'host-' + host.serverUid,
     class: 'mdl-card__title mdl-card--expand'
   });
 
-  // Prepend an heading element inside the cell for the host's name
-  $(hostCell).prepend($('<h2>', {
-    class: 'host-title mdl-card__title-text',
-    html: host.hostname
-  }));
+  // Create the host title wrapper to hold the host title text
+  var hostTitle = $('<div>', {
+    class: 'host-title mdl-card__title-text'
+  });
 
-  // Create a button div for the host menu, with relevant attributes
+  // Create the host text placeholder that will contain the host name
+  var hostText = $('<span>', {
+    class: 'host-text',
+    html: host.hostname
+  });
+
+  // Create the host menu button with the appropriate attributes for the host menu
   var hostMenu = $('<div>', {
     id: 'hostMenuButton-' + host.serverUid,
     class: 'host-menu',
@@ -599,25 +604,33 @@ function addHostToGrid(host, ismDNSDiscovered) {
     'aria-label': host.hostname + ' menu'
   });
 
-  // Shows the Host Menu view if the Host Menu button is pressed
-  hostMenu.off('click');
-  hostMenu.click(function() {
-    showHostMenu(host);
-  });
+  // Append the host text to the host title wrapper
+  hostTitle.append(hostText);
 
-  // Shows the Apps view if the Host Cell div is pressed
-  hostCell.off('click');
-  hostCell.click(function() {
+  // Append the host title to the host cell
+  hostCell.append(hostTitle);
+
+  // Append the host cell to the host container
+  hostContainer.append(hostCell);
+
+  // Append the host menu button to the host container
+  hostContainer.append(hostMenu);
+
+  // Attach the click event listener to the host container
+  hostContainer.off('click');
+  hostContainer.on('click', function() {
+    // Select the host when the Click key is pressed
     hostChosen(host);
   });
 
-  // Append the host cell to the host container
-  $(hostContainer).append(hostCell);
-
-  // If the host is not discovered via mDNS, append the host menu to the host container
-  if (!ismDNSDiscovered) {
-    $(hostContainer).append(hostMenu);
-  }
+  // Attach the click event listener to the host menu button
+  hostMenu.off('click');
+  hostMenu.on('click', function(e) {
+    // Prevent the click event from propagating to the host container
+    e.stopPropagation();
+    // Select the host menu button when the Click key is pressed
+    showHostMenu(host);
+  });
 
   // Append the host container to the host grid
   $('#host-grid').append(hostContainer);
@@ -625,7 +638,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
   // Store the host object in the hosts array using its server UID as the key
   hosts[host.serverUid] = host;
 
-  // If the host was discovered via mDNS, update its external IPv4 address
+  // Update the host's external IPv4 address if it was discovered via mDNS
   if (ismDNSDiscovered) {
     hosts[host.serverUid].updateExternalAddressIP4();
   }
@@ -1222,7 +1235,7 @@ function showExitMoonlightDialog() {
 // not do N*N stylization of the box art, or make the code not flow very well
 function stylizeBoxArt(freshApi, appIdToStylize) {
   // If the app or game is currently running, then apply CSS stylization
-  var appBox = document.querySelector('#game-' + appIdToStylize);
+  var appBox = document.querySelector('#game-container-' + appIdToStylize);
   if (freshApi.currentGame === appIdToStylize) {
     appBox.classList.add('current-game');
     appBox.title += ' (Running)';
@@ -1312,23 +1325,56 @@ function showApps(host) {
     const sortedAppList = sortTitles(appList, sortOrder);
 
     sortedAppList.forEach(function(app) {
-      if ($('#game-' + app.id).length === 0) {
-        // Double clicking the button will cause multiple box arts to appear.
-        // To mitigate this, we ensure that we don't add a duplicate box art.
-        // This isn't perfect: there's lots of RTTs before the logic prevents anything.
-        var gameCard = document.createElement('div');
-        gameCard.id = 'game-' + app.id;
-        gameCard.className = 'game-container mdl-card mdl-shadow--4dp';
-        gameCard.setAttribute('role', 'link');
-        gameCard.tabIndex = 0;
-        gameCard.title = app.title;
-        gameCard.innerHTML = `<div class="game-title">${app.title}</div>`;
+      // Double clicking the button will cause multiple box arts to appear.
+      // To mitigate this, we ensure that we don't add a duplicate box art.
+      // This isn't perfect: there's lots of RTTs before the logic prevents anything.
+      if ($('#game-container-' + app.id).length === 0) {
+        // Create the game container with the appropriate attributes for the game card
+        var gameContainer = $('<div>', {
+          id: 'game-container-' + app.id,
+          class: 'game-container mdl-card mdl-shadow--4dp',
+          role: 'link',
+          tabindex: 0,
+          'aria-label': app.title
+        });
 
-        gameCard.addEventListener('click', e => {
+        // Create the game cell to serve as a holder for the game box
+        var gameCell = $('<div>', {
+          id: 'game-' + app.id,
+          class: 'mdl-card__title mdl-card--expand'
+        });
+
+        // Create the game title wrapper to hold the game title text
+        var gameTitle = $('<div>', {
+          class: 'game-title mdl-card__title-text'
+        });
+
+        // Create the game text placeholder that will contain the game name
+        var gameText = $('<span>', {
+          class: 'game-text',
+          html: app.title
+        });
+
+        // Append the game text to the game title wrapper
+        gameTitle.append(gameText);
+
+        // Append the game title to the game cell
+        gameCell.append(gameTitle);
+
+        // Append the game cell to the game container
+        gameContainer.append(gameCell);
+
+        // Attach the click event listener to the game container
+        gameContainer.off('click');
+        gameContainer.on('click', function() {
+          // Start the game when the Click key is pressed
           startGame(host, app.id);
         });
-        document.querySelector('#game-grid').appendChild(gameCard);
-        // Apply CSS stylization to indicate whether the app is active
+
+        // Append the game container to the game grid
+        $('#game-grid').append(gameContainer);
+
+        // Apply style to the game container to indicate whether the game is active or not
         stylizeBoxArt(host, app.id);
       }
       var img = new Image();
@@ -1339,7 +1385,7 @@ function showApps(host) {
         img.src = 'static/res/placeholder_error.svg';
       });
       img.onload = e => img.classList.add('fade-in');
-      $(gameCard).append(img);
+      gameContainer.append(img);
     });
   }, function(failedAppList) {
     // Hide the spinner if the host has failed to retrieve the app list

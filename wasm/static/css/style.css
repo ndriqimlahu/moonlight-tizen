@@ -335,7 +335,7 @@ body {
 #game-grid .game-title span {
     padding: 0 10px;
 }
-.add-host-card > .mdl-card__title {
+.host-add-container > .mdl-card__title {
     color: #fff;
     background: url('../res/ic_add_to_queue_white_48px.svg') center no-repeat #3E4454;
 }
