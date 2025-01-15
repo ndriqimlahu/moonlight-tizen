@@ -305,12 +305,25 @@ body {
     padding: 10px 0;
     justify-content: center;
 }
+#addHostContainer .host-text {
+    animation: none !important;
+}
 #host-grid .host-text {
     padding: 0 15px;
     font-size: 1.35rem;
     font-weight: 300;
     line-height: normal;
     letter-spacing: 0.5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: transform .2s ease-in-out;
+}
+#host-grid .mdl-card.hovered .host-text, #host-grid .mdl-card:hover .host-text,
+#host-grid .mdl-card:focus .host-text, #host-grid .mdl-card:active .host-text {
+    animation: scrollText 10s linear infinite;
+    overflow: visible;
+    text-overflow: unset;
 }
 .host-menu {
     background: url('../res/ic_menu_white_48px.svg') center / 22px 22px no-repeat rgba(0, 0, 0, 0.6);
@@ -404,6 +417,19 @@ body {
     font-weight: 300;
     line-height: normal;
     letter-spacing: 0.5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: transform .2s ease-in-out;
+}
+#game-grid .mdl-card.hovered .game-text, #game-grid .mdl-card:hover .game-text,
+#game-grid .mdl-card:focus .game-text, #game-grid .mdl-card:active .game-text {
+    animation: scrollText 10s linear infinite;
+    overflow: visible;
+    text-overflow: unset;
+}
+.disable-animation {
+    animation: none !important;
 }
 .hovered {
     background: rgba(158, 158, 158, 0.2);
@@ -858,5 +884,13 @@ body {
     }
     50% {
         transform: scale(1);
+    }
+}
+@keyframes scrollText {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
     }
 }

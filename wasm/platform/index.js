@@ -607,6 +607,15 @@ function addHostToGrid(host, ismDNSDiscovered) {
   // Append the host text to the host title wrapper
   hostTitle.append(hostText);
 
+  // Handle animation state based on host title text length
+  if (host.hostname.length <= 26) {
+    // For host title text of 26 characters or less, disable scrolling text animation
+    hostText.addClass('disable-animation');
+  } else {
+    // For host title text longer than 26 characters, enable scrolling text animation
+    hostText.removeClass('disable-animation');
+  }
+
   // Append the host title to the host cell
   hostCell.append(hostTitle);
 
@@ -1357,6 +1366,15 @@ function showApps(host) {
 
         // Append the game text to the game title wrapper
         gameTitle.append(gameText);
+
+        // Handle animation state based on game title text length
+        if (app.title.length <= 20) {
+          // For game title text of 20 characters or less, disable scrolling text animation
+          gameText.addClass('disable-animation');
+        } else {
+          // For game title text longer than 20 characters, enable scrolling text animation
+          gameText.removeClass('disable-animation');
+        }
 
         // Append the game title to the game cell
         gameCell.append(gameTitle);
