@@ -58,11 +58,13 @@ function changeIpAddressFieldValue(adjust) {
 }
 
 class ListView {
-  constructor (func, hostCardsPerRow, gameCardsPerRow) {
+  constructor(func) {
     this.index = 0;
     this.func = func;
-    this.hostCardsPerRow = hostCardsPerRow || 5;
-    this.gameCardsPerRow = gameCardsPerRow || 6;
+  }
+
+  current() {
+    return this.func()[this.index];
   }
 
   prev() {
@@ -85,52 +87,6 @@ class ListView {
     return array[this.index];
   }
 
-  prevHostRow() {
-    const array = this.func();
-    const currentRow = Math.floor(this.index / this.hostCardsPerRow);
-    // Check if there is a previous row and if the previous index is within array bounds
-    if (currentRow > 0 && this.index - this.hostCardsPerRow >= 0) {
-      unmark(array[this.index]);
-      this.index -= this.hostCardsPerRow;
-      mark(array[this.index]);
-      this.scrollToHostRow(currentRow - 1);
-      // Indicate that there are more host rows
-      return true;
-    } else {
-      // Indicate that there are no more host rows
-      return false;
-    }
-  }
-
-  nextHostRow() {
-    const array = this.func();
-    const rows = Math.ceil(array.length / this.hostCardsPerRow);
-    const currentRow = Math.floor(this.index / this.hostCardsPerRow);
-    // Check if there is a next row and if the next index is within array bounds
-    if (currentRow < rows - 1 && this.index + this.hostCardsPerRow < array.length) {
-      unmark(array[this.index]);
-      this.index += this.hostCardsPerRow;
-      mark(array[this.index]);
-      this.scrollToHostRow(currentRow + 1);
-      // Indicate that there are more host rows
-      return true;
-    } else {
-      // Indicate that there are no more host rows
-      return false;
-    }
-  }
-
-  scrollToHostRow(row) {
-    const array = this.func();
-    const targetCard = array[row * this.hostCardsPerRow];
-    if (targetCard) {
-      targetCard.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }
-  }
-
   prevCategory() {
     const array = this.func();
     if (this.index > 0) {
@@ -139,10 +95,9 @@ class ListView {
       mark(array[this.index]);
       // Indicate that there are more categories
       return true;
-    } else {
-      // Indicate that there are no more categories
-      return false;
     }
+    // Indicate that there are no more categories
+    return false;
   }
 
   nextCategory() {
@@ -153,10 +108,9 @@ class ListView {
       mark(array[this.index]);
       // Indicate that there are more categories
       return true;
-    } else {
-      // Indicate that there are no more categories
-      return false;
     }
+    // Indicate that there are no more categories
+    return false;
   }
 
   prevOption() {
@@ -175,54 +129,48 @@ class ListView {
     return array[this.index];
   }
 
-  prevGameRow() {
+  prevCardRow(cardsPerRow) {
     const array = this.func();
-    const currentRow = Math.floor(this.index / this.gameCardsPerRow);
-    // Check if there is a previous row and if the previous index is within array bounds
-    if (currentRow > 0 && this.index - this.gameCardsPerRow >= 0) {
+    const currentRow = Math.floor(this.index / cardsPerRow);
+    // Check if a previous card row exists
+    if (currentRow > 0) {
       unmark(array[this.index]);
-      this.index -= this.gameCardsPerRow;
+      this.index = Math.max(0, this.index - cardsPerRow);
       mark(array[this.index]);
-      this.scrollToGameRow(currentRow - 1);
-      // Indicate that there are more game rows
+      this.scrollToCardRow(currentRow - 1, cardsPerRow);
+      // Indicate that there are more card rows
       return true;
-    } else {
-      // Indicate that there are no more game rows
-      return false;
     }
+    // Indicate that there are no more card rows
+    return false;
   }
 
-  nextGameRow() {
+  nextCardRow(cardsPerRow) {
     const array = this.func();
-    const rows = Math.ceil(array.length / this.gameCardsPerRow);
-    const currentRow = Math.floor(this.index / this.gameCardsPerRow);
-    // Check if there is a next row and if the next index is within array bounds
-    if (currentRow < rows - 1 && this.index + this.gameCardsPerRow < array.length) {
+    const rows = Math.ceil(array.length / cardsPerRow);
+    const currentRow = Math.floor(this.index / cardsPerRow);
+    // Check if a next card row exists
+    if (currentRow < rows - 1) {
       unmark(array[this.index]);
-      this.index += this.gameCardsPerRow;
+      this.index = Math.min(array.length - 1, this.index + cardsPerRow);
       mark(array[this.index]);
-      this.scrollToGameRow(currentRow + 1);
-      // Indicate that there are more game rows
+      this.scrollToCardRow(currentRow + 1, cardsPerRow);
+      // Indicate that there are more card rows
       return true;
-    } else {
-      // Indicate that there are no more game rows
-      return false;
     }
+    // Indicate that there are no more card rows
+    return false;
   }
 
-  scrollToGameRow(row) {
+  scrollToCardRow(row, cardsPerRow) {
     const array = this.func();
-    const targetCard = array[row * this.gameCardsPerRow];
+    const targetCard = array[row * cardsPerRow];
     if (targetCard) {
       targetCard.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
     }
-  }
-
-  current() {
-    return this.func()[this.index];
   }
 };
 
@@ -231,7 +179,7 @@ const Views = {
     view: new ListView(() => document.getElementById('host-grid').children),
     up: function() {
       // If there are more rows behind, then go to the previous row
-      if (this.view.prevHostRow()) {
+      if (this.view.prevCardRow(5)) {
         document.getElementById(this.view.current()).focus();
       } else {
         // If there are no more rows, navigate to the HostsNav view
@@ -245,7 +193,7 @@ const Views = {
     },
     down: function() {
       // If there are more rows after, then go to the next row
-      if (this.view.nextHostRow()) {
+      if (this.view.nextCardRow(5)) {
         document.getElementById(this.view.current()).focus();
       }
     },
@@ -1120,7 +1068,7 @@ const Views = {
     view: new ListView(() => document.getElementById('game-grid').children),
     up: function() {
       // If there are more rows behind, then go to the previous row
-      if (this.view.prevGameRow()) {
+      if (this.view.prevCardRow(6)) {
         document.getElementById(this.view.current()).focus();
       } else {
         // If there are no more rows, navigate to the AppsNav view
@@ -1134,7 +1082,7 @@ const Views = {
     },
     down: function() {
       // If there are more rows after, then go to the next row
-      if (this.view.nextGameRow()) {
+      if (this.view.nextCardRow(6)) {
         document.getElementById(this.view.current()).focus();
       }
     },
