@@ -64,7 +64,8 @@ class ListView {
   }
 
   current() {
-    return this.func()[this.index];
+    const array = this.func();
+    return array[this.index];
   }
 
   prev() {
@@ -232,10 +233,17 @@ const Views = {
       if (currentItem.id !== 'addHostContainer') {
         currentItem.children[1].focus();
         // Show the Host Menu dialog and push the view
-        setTimeout(() => currentItem.children[1].click(), 100);
+        setTimeout(() => currentItem.children[1].click(), 600);
       }
     },
-    switch: function() {},
+    switch: function() {
+      const currentItem = this.view.current();
+      if (currentItem.id === 'addHostContainer') {
+        currentItem.focus();
+      } else {
+        currentItem.children[0].focus();
+      }
+    },
     enter: function() {
       mark(this.view.current());
     },
@@ -366,15 +374,11 @@ const Views = {
     up: function() {
       if (document.getElementById('ipAddressFieldModeSwitch').checked) {
         changeIpAddressFieldValue.call(this, 1);
-      } else {
-        document.getElementById('ipAddressTextInput').focus();
       }
     },
     down: function() {
       if (document.getElementById('ipAddressFieldModeSwitch').checked) {
         changeIpAddressFieldValue.call(this, -1);
-      } else {
-        document.getElementById('continueAddHost').focus();
       }
     },
     left: function() {
@@ -389,7 +393,7 @@ const Views = {
         }
       } else {
         this.view.prev();
-        document.getElementById('continueAddHost').focus();
+        document.getElementById(this.view.current()).focus();
       }
     },
     right: function() {
@@ -404,7 +408,7 @@ const Views = {
         }
       } else {
         this.view.next();
-        document.getElementById('cancelAddHost').focus();
+        document.getElementById(this.view.current()).focus();
       }
     },
     select: function() {
@@ -524,7 +528,9 @@ const Views = {
       document.getElementById('settingsBtn').focus();
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      this.view.current().focus();
+    },
     enter: function() {
       mark(this.view.current());
     },

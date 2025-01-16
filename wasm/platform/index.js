@@ -1222,7 +1222,7 @@ function showExitMoonlightDialog() {
     exitAppDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    Navigation.change(Views.Hosts);
+    Navigation.switch();
   });
 
   // Exit the application if the Exit button is pressed
