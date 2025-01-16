@@ -166,9 +166,11 @@ class ListView {
     const array = this.func();
     const targetCard = array[row * cardsPerRow];
     if (targetCard) {
-      targetCard.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
+      requestAnimationFrame(() => {
+        targetCard.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
       });
     }
   }
