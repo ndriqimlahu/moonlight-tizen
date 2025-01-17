@@ -4,8 +4,6 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/docker-publish.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/docker-publish.yml)
 [![Release Version](https://img.shields.io/github/v/release/ndriqimlahu/moonlight-tizen?style=for-the-badge&logo=github)](https://github.com/ndriqimlahu/moonlight-tizen/releases/latest)
 
-## About
-
 Moonlight Tizen is a port of [Moonlight ChromeOS](https://github.com/moonlight-stream/moonlight-chrome), which is an open source client for NVIDIA GameStream and [Sunshine](https://app.lizardbyte.dev/Sunshine/).
 
 Moonlight it allows you to stream your collection of games, programs, or your full desktop from your powerful PC to your Samsung TV running **Tizen OS 5.5 or higher**.
@@ -49,7 +47,7 @@ Contributions are welcome! Fork the repo, create pull requests, or open issues. 
 
 This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/LICENSE) file for more information.
 
-## Credits
+## Acknowledgements
 - Thanks to [Moonlight Game Streaming Project](https://github.com/moonlight-stream/moonlight-chrome) for developing and maintaining Moonlight for Chrome OS.
 - Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for adapting the code and implementing Moonlight for Tizen OS.
 - Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
