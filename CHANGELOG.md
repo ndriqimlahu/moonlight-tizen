@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.15
+
+### Added
+- Added a scrolling text animation for host and game titles when focusing on the card
+
+### Changed
+- Improved the structure of the host and game containers by refining all their elements
+- Enhanced styling and visibility in the 'Hosts' and 'Apps' views for rows, cards, and titles
+- Improved navigation in the 'Hosts' and 'Apps' views while reducing repetitive code
+
+### Fixed
+- Fixed a scrolling issue with host and game cards due to navigation delay
+- Fixed minor navigation issues across different views to improve stability
+
 ## v1.2.14
 
 ### Changed
