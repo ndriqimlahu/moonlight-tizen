@@ -130,6 +130,38 @@ class ListView {
     return array[this.index];
   }
 
+  prevCard(cardsPerRow) {
+    const array = this.func();
+    const currentRow = Math.floor(this.index / cardsPerRow);
+    // Check if a previous card exists
+    if (this.index > 0) {
+      unmark(array[this.index]);
+      --this.index;
+      const newRow = Math.floor(this.index / cardsPerRow);
+      mark(array[this.index]);
+      if (newRow !== currentRow) {
+        this.scrollToCardRow(newRow, cardsPerRow);
+      }
+    }
+    return array[this.index];
+  }
+
+  nextCard(cardsPerRow) {
+    const array = this.func();
+    const currentRow = Math.floor(this.index / cardsPerRow);
+    // Check if a next card exists
+    if (this.index < array.length - 1) {
+      unmark(array[this.index]);
+      ++this.index;
+      const newRow = Math.floor(this.index / cardsPerRow);
+      mark(array[this.index]);
+      if (newRow !== currentRow) {
+        this.scrollToCardRow(newRow, cardsPerRow);
+      }
+    }
+    return array[this.index];
+  }
+
   prevCardRow(cardsPerRow) {
     const array = this.func();
     const currentRow = Math.floor(this.index / cardsPerRow);
@@ -201,11 +233,11 @@ const Views = {
       }
     },
     left: function() {
-      this.view.prev();
+      this.view.prevCard(5);
       document.getElementById(this.view.current()).focus();
     },
     right: function() {
-      this.view.next();
+      this.view.nextCard(5);
       document.getElementById(this.view.current()).focus();
     },
     select: function() {
@@ -1095,11 +1127,11 @@ const Views = {
       }
     },
     left: function() {
-      this.view.prev();
+      this.view.prevCard(6);
       document.getElementById(this.view.current()).focus();
     },
     right: function() {
-      this.view.next();
+      this.view.nextCard(6);
       document.getElementById(this.view.current()).focus();
     },
     select: function() {
