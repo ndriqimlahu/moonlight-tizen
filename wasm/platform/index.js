@@ -393,6 +393,10 @@ function hostChosen(host) {
       showApps(host);
       saveHosts();
       Navigation.push(Views.Apps);
+      setTimeout(() => {
+        // Switch to Apps view
+        Navigation.change(Views.Apps);
+      }, 1000);
     },
     function() {
       startPollingHosts();
@@ -401,6 +405,10 @@ function hostChosen(host) {
     // When we queried again, it was paired, so show apps
     showApps(host);
     Navigation.push(Views.Apps);
+    setTimeout(() => {
+      // Switch to Apps view
+      Navigation.change(Views.Apps);
+    }, 1000);
   }
 }
 

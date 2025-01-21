@@ -90,9 +90,17 @@ function handleMessage(msg) {
     api.refreshServerInfo().then(function(ret) {
       // Return to app list with new current game
       showApps(api);
+      setTimeout(() => {
+        // Switch to Apps view
+        Navigation.change(Views.Apps);
+      }, 1000);
     }, function() {
       // Return to app list anyway
       showApps(api);
+      setTimeout(() => {
+        // Switch to Apps view
+        Navigation.change(Views.Apps);
+      }, 1000);
     });
   } else if (msg === 'Connection Established') {
     $('#loadingSpinner').css('display', 'none');
