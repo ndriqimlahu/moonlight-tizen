@@ -162,6 +162,18 @@ class ListView {
     return array[this.index];
   }
 
+  currentCardRow(cardsPerRow) {
+    const array = this.func();
+    // Check if there are any card in the current row
+    if (!array || array.length === 0) {
+      return;
+    }
+    // Determine the current row based on the index
+    const currentRow = Math.floor(this.index / cardsPerRow);
+    // Scroll to the row containing the current card
+    this.scrollToCardRow(currentRow, cardsPerRow);
+  }
+
   prevCardRow(cardsPerRow) {
     const array = this.func();
     const currentRow = Math.floor(this.index / cardsPerRow);
@@ -273,6 +285,7 @@ const Views = {
       if (currentItem.id === 'addHostContainer') {
         currentItem.focus();
       } else {
+        this.view.currentCardRow(5);
         currentItem.children[0].focus();
       }
     },
@@ -1144,7 +1157,9 @@ const Views = {
       document.getElementById('goBackBtn').click();
     },
     press: function() {},
-    switch: function() {},
+    switch: function() {
+      this.view.currentCardRow(6);
+    },
     enter: function() {
       mark(this.view.current());
     },
