@@ -394,6 +394,8 @@ function hostChosen(host) {
       saveHosts();
       Navigation.push(Views.Apps);
       setTimeout(() => {
+        // Scroll to the current game row
+        Navigation.switch();
         // Switch to Apps view
         Navigation.change(Views.Apps);
       }, 1000);
@@ -406,6 +408,8 @@ function hostChosen(host) {
     showApps(host);
     Navigation.push(Views.Apps);
     setTimeout(() => {
+      // Scroll to the current game row
+      Navigation.switch();
       // Switch to Apps view
       Navigation.change(Views.Apps);
     }, 1000);
@@ -968,6 +972,7 @@ function hostDetails(host) {
 // Show the Hosts grid
 function showHosts() {
   showHostsMode();
+  // Set focus to current item and/or scroll to the current host row
   setTimeout(() => Navigation.switch(), 5);
 }
 

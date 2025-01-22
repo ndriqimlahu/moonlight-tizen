@@ -91,6 +91,8 @@ function handleMessage(msg) {
       // Return to app list with new current game
       showApps(api);
       setTimeout(() => {
+        // Scroll to the current game row
+        Navigation.switch();
         // Switch to Apps view
         Navigation.change(Views.Apps);
       }, 1000);
@@ -98,6 +100,8 @@ function handleMessage(msg) {
       // Return to app list anyway
       showApps(api);
       setTimeout(() => {
+        // Scroll to the current game row
+        Navigation.switch();
         // Switch to Apps view
         Navigation.change(Views.Apps);
       }, 1000);
