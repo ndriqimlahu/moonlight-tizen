@@ -388,9 +388,13 @@ function hostChosen(host) {
 
   api = host;
   if (!host.paired) {
-    // Still not paired, go to the pairing flow
+    // If the host is not paired yet, then go to the pairing flow. After that, we refresh the server info, show the apps, and save the host.
     pairTo(host, function() {
-      showApps(host);
+      host.refreshServerInfo().then(function(ret) {
+        showApps(host);
+      }, function(failedRefreshInfo) {
+        console.error('%c[index.js, hostChosen]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '! Failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      });
       saveHosts();
       Navigation.push(Views.Apps);
       setTimeout(() => {
@@ -404,8 +408,12 @@ function hostChosen(host) {
       startPollingHosts();
     });
   } else {
-    // When we queried again, it was paired, so show apps
-    showApps(host);
+    // But if the host is already paired. Then, we refresh the server info and show the apps as usual.
+    host.refreshServerInfo().then(function(ret2) {
+      showApps(host);
+    }, function(failedRefreshInfo2) {
+      console.error('%c[index.js, hostChosen]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo2 + '!');
+    });
     Navigation.push(Views.Apps);
     setTimeout(() => {
       // Scroll to the current game row
