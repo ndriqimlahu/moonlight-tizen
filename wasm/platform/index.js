@@ -1720,6 +1720,7 @@ function quitRunningApp() {
   if (api.currentGame === 0) {
     // If no app or game is running, show snackbar message
     snackbarLog('Nothing was running');
+    return;
   } else {
     api.getAppById(api.currentGame).then(function(currentGame) {
       // Find the existing overlay and dialog elements
