@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.16
+
+### Added
+- Implemented scrolling navigation to the previous or next card in the 'Hosts' and 'Apps' views
+- Implemented scrolling navigation to the current card row in the 'Hosts' and 'Apps' views
+
+### Fixed
+- Fixed an issue where the game card was not focused when entering or returning to the 'Apps' view
+- Fixed an issue where the focused card row did not scroll when entering or returning to the 'Hosts' and 'Apps' views
+- Fixed an issue where the app list was not refreshed after selecting the host container
+- Fixed an issue where the 'Quit App' dialog would appear even if no app or game was running
+
 ## v1.2.15
 
 ### Added
