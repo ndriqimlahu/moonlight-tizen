@@ -82,6 +82,15 @@ function handleMessage(msg) {
       case -101: // ML_ERROR_NO_VIDEO_FRAME
         snackbarLogLong('Your network connection isn\'t performing well. Reduce your video bitrate setting or try a faster connection.');
         break;
+      case -102: // ML_ERROR_UNEXPECTED_EARLY_TERMINATION
+        snackbarLogLong('Something went wrong on your host PC when starting the stream. Restart your host PC and try again.');
+        break;
+      case -103: // ML_ERROR_PROTECTED_CONTENT
+        snackbarLogLong('An issue occurred on your host PC while starting the stream. Make sure you don\'t have any DRM-protected content open on your host PC.');
+        break;
+      case -104: // ML_ERROR_FRAME_CONVERSION
+        snackbarLogLong('The host PC reported a fatal video encoding error. Try disabling HDR mode, changing the streaming resolution, or changing your host PC\'s display resolution.');
+        break;
       default:
         snackbarLogLong('Connection terminated');
         break;
