@@ -122,7 +122,7 @@ class MoonlightInstance {
   static void VidDecCleanup(void);
   static int VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit);
 
-  static int AudDecInit(int audioConfiguration, const POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags);
+  static int AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags);
   static void AudDecCleanup(void);
   static void AudDecDecodeAndPlaySample(char* sampleData, int sampleLength);
 

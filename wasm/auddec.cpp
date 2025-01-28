@@ -6,29 +6,23 @@
 
 using std::chrono_literals::operator""s;
 using std::chrono_literals::operator""ms;
-
 using TimeStamp = samsung::wasm::Seconds;
 
 #define MAX_CHANNEL_COUNT 2
 #define FRAME_SIZE 240
 
-static constexpr TimeStamp kAudioBufferMargin = 0.5ms;
-static constexpr TimeStamp kTimeWindow = 1s;
-
-static bool s_AudioSyncEnabled = false;
+static constexpr TimeStamp kAudioBufferMargin = 100ms;
 
 static std::vector<opus_int16> s_DecodeBuffer;
 
 static TimeStamp s_frameDuration;
 static TimeStamp s_pktPts;
-
-static TimeStamp s_ptsDiff;
 static TimeStamp s_estimatedAudioEnd;
 
 static std::chrono::time_point<std::chrono::steady_clock> s_firstAppend;
-static std::chrono::time_point<std::chrono::steady_clock> s_lastTime;
 
 static bool s_hasFirstFrame = false;
+static bool s_AudioSyncEnabled = false;
 
 static inline TimeStamp FrameDuration(double samplesPerFrame, double sampleRate) {
   // Calculate the duration of a frame based on the number of samples per frame and the sample rate
@@ -40,13 +34,14 @@ static void DecodeAndAppendPacket(samsung::wasm::ElementaryMediaTrack* track, sa
   int decodeLen;
   
   // Decode the incoming audio packet using Opus decoder
-  decodeLen = opus_multistream_decode(decoder, sampleData, sampleLength, s_DecodeBuffer.data(), FRAME_SIZE, 0);
+  decodeLen = opus_multistream_decode(
+    decoder, sampleData, sampleLength,
+    s_DecodeBuffer.data(), FRAME_SIZE, 0
+  );
 
+  // Check if decoding failed
   if (decodeLen <= 0) {
-    // Use a full memory barrier
-    __sync_synchronize();
-    
-    // Clear the buffer only when decoding fails
+    // Reset the buffer contents to zero when decoding fails
     s_DecodeBuffer.assign(s_DecodeBuffer.size(), 0);
   }
 
@@ -71,41 +66,45 @@ static void DecodeAndAppendPacket(samsung::wasm::ElementaryMediaTrack* track, sa
   }
 }
 
-int MoonlightInstance::AudDecInit(int audioConfiguration, const POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags) {
-  int error;
+int MoonlightInstance::AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags) {
+  int rc;
 
-  ClLogMessage("MoonlightInstance::AudDecSetup\n");
+  ClLogMessage("MoonlightInstance::AudDecInit\n");
 
-  // Resize the decode buffer
-  s_DecodeBuffer.resize(FRAME_SIZE * MAX_CHANNEL_COUNT);
-  
-  s_frameDuration = FrameDuration(opusConfig->samplesPerFrame, opusConfig->sampleRate);
+  // Initialize packet timestamp to zero
   s_pktPts = 0s;
-  s_hasFirstFrame = false;
-  s_estimatedAudioEnd = 0s;
-  s_ptsDiff = 0s;
 
-  // Set the audio synchronization flag
+  // Resize the decode buffer based on frame size and max channels
+  s_DecodeBuffer.resize(FRAME_SIZE * MAX_CHANNEL_COUNT);
+
+  // Calculate the frame duration based on the samples per frame and sample rate
+  s_frameDuration = FrameDuration(opusConfig->samplesPerFrame, opusConfig->sampleRate);
+
+  // Create the Opus decoder with the provided configuration parameters
+  g_Instance->m_OpusDecoder = opus_multistream_decoder_create(
+    opusConfig->sampleRate, opusConfig->channelCount,
+    opusConfig->streams, opusConfig->coupledStreams,
+    opusConfig->mapping, &rc
+  );
+
+  // Initialize the estimated audio end time
+  s_estimatedAudioEnd = 0s;
+
+  // Flag indicating whether this is the first frame of audio to be decoded
+  s_hasFirstFrame = false;
+
+  // Set the audio synchronization flag based on instance configuration
   s_AudioSyncEnabled = g_Instance->m_AudioSyncEnabled;
 
-  // Create the Opus decoder
-  g_Instance->m_OpusDecoder = opus_multistream_decoder_create(opusConfig->sampleRate, opusConfig->channelCount, 
-    opusConfig->streams, opusConfig->coupledStreams, opusConfig->mapping, &error);
-  
   return 0;
 }
 
 void MoonlightInstance::AudDecCleanup(void) {
   // Clear the decode buffer
   s_DecodeBuffer.clear();
-  
+
   // Shrink the decode buffer to fit its contents
   s_DecodeBuffer.shrink_to_fit();
-
-  // Destroy the Opus decoder
-  if (g_Instance->m_OpusDecoder) {
-    opus_multistream_decoder_destroy(g_Instance->m_OpusDecoder);
-  }
 }
 
 void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLength) {
@@ -114,45 +113,32 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
     return;
   }
 
-  // Get the current time
-  auto now = std::chrono::steady_clock::now();
-
-  // Check if it's the first audio frame
+  // Check if this is the first audio frame
   if (!s_hasFirstFrame) {
     // Record the time of the first frame
     s_firstAppend = std::chrono::steady_clock::now();
-
     // Update the flag to indicate that the first frame has been processed
     s_hasFirstFrame = true;
-  } else if (s_AudioSyncEnabled) {
-    // Calculate the time elapsed from the start
-    TimeStamp fromStart = now - s_firstAppend;
-
-    // Wait until the packet presentation timestamp is within the audio buffer margin
-    while (s_pktPts > fromStart - s_ptsDiff + kAudioBufferMargin) {
-      // Update the current time and recalculate the elapsed time
-      now = std::chrono::steady_clock::now();
-
-      // Calculate the time elapsed from the start of the frame presentation
-      fromStart = now - s_firstAppend;
-    }
-
-    // If the elapsed time exceeds the estimated audio end plus the time window
-    if (fromStart > s_estimatedAudioEnd + kTimeWindow) {
-      // Update the estimated audio end to the current time plus the time window
-      s_estimatedAudioEnd += kTimeWindow;
-
-      // Update the time difference to synchronize with the packet presentation time
-      s_ptsDiff = fromStart - s_pktPts;
-    }
   }
 
-  // Update the last time to the current time
-  s_lastTime = now;
+  // Get the current time and calculate the time elapsed since the first frame
+  auto now = std::chrono::steady_clock::now();
+  TimeStamp ntp = now - s_firstAppend;
 
-  // Decode and append the audio packet to the track
-  DecodeAndAppendPacket(&g_Instance->m_AudioTrack, g_Instance->m_AudioSessionId.load(),
-    g_Instance->m_OpusDecoder, reinterpret_cast<unsigned char*>(sampleData), sampleLength);
+  // Check if audio synchronization is enabled and if dropping a packet is needed to avoid overflow
+  if (s_AudioSyncEnabled && ntp + kAudioBufferMargin < s_estimatedAudioEnd) {
+    ClLogMessage("Dropping audio packet to avoid overflow: PTS: %.03f NTP: %.03f\n", s_pktPts.count(), ntp.count());
+    return;
+  }
+
+  // Decode and append the audio packet to the audio track
+  DecodeAndAppendPacket(&g_Instance->m_AudioTrack,
+    g_Instance->m_AudioSessionId.load(), g_Instance->m_OpusDecoder,
+    reinterpret_cast<unsigned char*>(sampleData), sampleLength
+  );
+
+  // Update the estimated audio end time to prevent future overflow
+  s_estimatedAudioEnd = std::max(s_estimatedAudioEnd, ntp) + s_frameDuration;
 }
 
 AUDIO_RENDERER_CALLBACKS MoonlightInstance::s_ArCallbacks = {

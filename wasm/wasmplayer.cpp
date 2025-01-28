@@ -18,7 +18,6 @@
 
 using std::chrono_literals::operator""s;
 using std::chrono_literals::operator""ms;
-
 using EmssReadyState = samsung::wasm::ElementaryMediaStreamSource::ReadyState;
 using EmssOperationResult = samsung::wasm::OperationResult;
 using EmssAsyncResult = samsung::wasm::OperationResult;
@@ -28,8 +27,6 @@ using TimeStamp = samsung::wasm::Seconds;
 static constexpr TimeStamp kFrameTimeMargin = 0.5ms;
 static constexpr TimeStamp kTimeWindow = 1s;
 static constexpr uint32_t kSampleRate = 48000;
-
-static bool s_FramePacingEnabled = false;
 
 static uint32_t s_Width = 0;
 static uint32_t s_Height = 0;
@@ -47,6 +44,7 @@ static std::chrono::time_point<std::chrono::steady_clock> s_firstAppend;
 static std::chrono::time_point<std::chrono::steady_clock> s_lastTime;
 
 static bool s_hasFirstFrame = false;
+static bool s_FramePacingEnabled = false;
 
 MoonlightInstance::SourceListener::SourceListener(MoonlightInstance* instance) : m_Instance(instance) {}
 
@@ -98,8 +96,8 @@ void MoonlightInstance::VideoTrackListener::OnTrackOpen() {
   ClLogMessage("VIDEO ElementaryMediaTrack::OnTrackOpen\n");
   std::unique_lock<std::mutex> lock(m_Instance->m_Mutex);
   m_Instance->m_VideoStarted = true;
-  LiRequestIdrFrame();
   m_Instance->m_EmssVideoStateChanged.notify_all();
+  LiRequestIdrFrame();
 }
 
 void MoonlightInstance::VideoTrackListener::OnTrackClosed(samsung::wasm::ElementaryMediaTrack::CloseReason) {
@@ -129,6 +127,7 @@ bool MoonlightInstance::InitializeRenderingSurface(int width, int height) {
 int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags) {
   g_Instance->m_MediaElement.SetSrc(&g_Instance->m_Source);
   ClLogMessage("Waiting to close\n");
+
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
     return g_Instance->m_EmssReadyState == EmssReadyState::kClosed;
   });
@@ -137,11 +136,11 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   {
     auto add_track_result = g_Instance->m_Source.AddTrack(
       samsung::wasm::ElementaryAudioTrackConfig {
-        "audio/webm; codecs=\"pcm\"",                            // Audio Codec: Pulse Code Modulation (PCM) Profile
-        {},                                                      // Extradata: Empty
-        samsung::wasm::SampleFormat::kS16,                       // Sample Format: 16-bit signed integer (S16)
-        samsung::wasm::ChannelLayout::kStereo,                   // Channel Layout: Stereo (2 channels)
-        kSampleRate,                                             // Sample Rate: 48 kHz (48000 Hz)
+        "audio/webm; codecs=\"pcm\"", // Audio Codec: Pulse Code Modulation (PCM) Profile
+        {}, // Extradata: Empty
+        samsung::wasm::SampleFormat::kS16, // Sample Format: 16-bit signed integer (S16)
+        samsung::wasm::ChannelLayout::kStereo, // Channel Layout: Stereo (2 channels)
+        kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
       });
     if (add_track_result) {
       g_Instance->m_AudioTrack = std::move(*add_track_result);
@@ -150,21 +149,21 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   }
 
   {
-    const char *mimetype = "video/mp4";                          // MIME-type: Video MP4 Container
+    const char *mimetype = "video/mp4"; // MIME-type: Video MP4 Container
     if (videoFormat & VIDEO_FORMAT_H264) {
-      mimetype = "video/mp4; codecs=\"avc1.640033\"";            // Video Codec: H.264 High Level 5.1 Profile
+      mimetype = "video/mp4; codecs=\"avc1.640033\""; // Video Codec: H.264 High Level 5.1 Profile
       ClLogMessage("Selected mimeType for H.264 codec\n");
     } else if (videoFormat & VIDEO_FORMAT_H265) {
-      mimetype = "video/mp4; codecs=\"hev1.1.6.L153.B0\"";       // Video Codec: HEVC Main Level 5.1 Profile
+      mimetype = "video/mp4; codecs=\"hev1.1.6.L153.B0\""; // Video Codec: HEVC Main Level 5.1 Profile
       ClLogMessage("Selected mimeType for HEVC codec\n");
     } else if (videoFormat & VIDEO_FORMAT_H265_MAIN10) {
-      mimetype = "video/mp4; codecs=\"hev1.2.4.L153.B0\"";       // Video Codec: HEVC Main10 Level 5.1 Profile
+      mimetype = "video/mp4; codecs=\"hev1.2.4.L153.B0\""; // Video Codec: HEVC Main10 Level 5.1 Profile
       ClLogMessage("Selected mimeType for HEVC Main10 codec\n");
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN8) {
-      mimetype = "video/mp4; codecs=\"av01.0.13M.08\"";          // Video Codec: AV1 Main Level 5.1 Profile
+      mimetype = "video/mp4; codecs=\"av01.0.13M.08\""; // Video Codec: AV1 Main Level 5.1 Profile
       ClLogMessage("Selected mimeType for AV1 codec\n");
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN10) {
-      mimetype = "video/mp4; codecs=\"av01.0.13M.10\"";          // Video Codec: AV1 Main10 Level 5.1 Profile
+      mimetype = "video/mp4; codecs=\"av01.0.13M.10\""; // Video Codec: AV1 Main10 Level 5.1 Profile
       ClLogMessage("Selected mimeType for AV1 Main10 codec\n");
     } else {
       ClLogMessage("Cannot select mimeType for videoFormat=0x%x\n", videoFormat);
@@ -174,12 +173,12 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
     ClLogMessage("Using mimeType %s\n", mimetype);
     auto add_track_result = g_Instance->m_Source.AddTrack(
       samsung::wasm::ElementaryVideoTrackConfig {
-        mimetype,                                                // MIME-type: Auto-Detect Video Codec
-        {},                                                      // Extradata: Empty
-        static_cast<uint32_t>(width),                            // Width: Video in Pixels
-        static_cast<uint32_t>(height),                           // Height: Video in Pixels
-        static_cast<uint32_t>(redrawRate),                       // Framerate: Numerator
-        1,                                                       // Framerate: Denominator
+        mimetype, // MIME-type: Auto-Detect Video Codec
+        {}, // Extradata: Empty
+        static_cast<uint32_t>(width), // Width: Video in Pixels
+        static_cast<uint32_t>(height), // Height: Video in Pixels
+        static_cast<uint32_t>(redrawRate), // Framerate: Numerator
+        1, // Framerate: Denominator
       });
     if (add_track_result) {
       g_Instance->m_VideoTrack = std::move(*add_track_result);
@@ -192,6 +191,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
     return g_Instance->m_EmssReadyState == EmssReadyState::kOpenPending;
   });
+
   ClLogMessage("Source ready to open\n");
   g_Instance->m_MediaElement.Play([](EmssOperationResult err) {
     if (err != EmssOperationResult::kSuccess) {
@@ -205,34 +205,46 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   g_Instance->WaitFor(&g_Instance->m_EmssAudioStateChanged, [] {
     return g_Instance->m_AudioStarted.load();
   });
-
   g_Instance->WaitFor(&g_Instance->m_EmssVideoStateChanged, [] {
     return g_Instance->m_VideoStarted.load();
   });
+
   ClLogMessage("Started\n");
   return 0;
 }
 
 int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags) {
+  static std::once_flag once_flag;
+
   ClLogMessage("MoonlightInstance::VidDecSetup\n");
 
-  // Resize the decode buffer
+  // Resize the decode buffer based on initial decode buffer length
   s_DecodeBuffer.resize(INITIAL_DECODE_BUFFER_LEN);
 
+  // Set the video dimensions and frame rate based on the input parameters
   s_Width = width;
   s_Height = height;
   s_Framerate = redrawRate;
 
+  // Calculate frame duration from the frame rate
   s_frameDuration = TimeStamp(1.0 / redrawRate);
+
+  // Initialize packet timestamp to zero
   s_pktPts = 0s;
+
+  // Flag indicating whether this is the first frame of video to be decoded
   s_hasFirstFrame = false;
+
+  // Initialize the last second timestamp to zero
   s_lastSec = 0s;
+
+  // Initialize the timestamp difference to zero
   s_ptsDiff = 0s;
 
-  // Set the frame pacing flag
+  // Set the frame pacing flag based on instance configuration
   s_FramePacingEnabled = g_Instance->m_FramePacingEnabled;
 
-  static std::once_flag once_flag;
+  // Ensure that StartupVidDecSetup is called only once regardless of how many times VidDecSetup is invoked
   std::call_once(once_flag, &MoonlightInstance::StartupVidDecSetup, videoFormat, width, height, redrawRate, context, drFlags);
 
   return DR_OK;
@@ -252,6 +264,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
     return DR_OK;
   }
 
+  // Declare variables for entry data, offset, and total length
   PLENTRY entry;
   unsigned int offset;
   unsigned int totalLength;
@@ -261,56 +274,49 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
 
   // Check if the total length of the video data exceeds the current size of the decode buffer
   if (totalLength > s_DecodeBuffer.size()) {
-    // If so, resize the decode buffer to accommodate the larger data
+    // Resize the decode buffer to accommodate the larger data
     s_DecodeBuffer.resize(totalLength);
   }
 
-  // Initialize the entry pointer to the start of the linked list
+  // Initialize the entry pointer to the start of the buffer list
   entry = decodeUnit->bufferList;
 
   // Initialize the offset to 0 before starting to copy data
   offset = 0;
 
-  // Iterate through the linked list of video data entries
+  // Iterate through the buffer list of video data entries
   while (entry != NULL) {
     // Copy the data of the current entry to the decode buffer at the specified offset
     memcpy(&s_DecodeBuffer[offset], entry->data, entry->length);
-    
     // Update the offset based on the length of the copied data
     offset += entry->length;
-
-    // Move to the next entry in the linked list
+    // Move to the next entry in the buffer list
     entry = entry->next;
   }
 
   // Get the current time
   auto now = std::chrono::steady_clock::now();
 
-  // Check if it's the first video frame
+  // Check if this is the first video frame
   if (!s_hasFirstFrame) {
     // Record the time of the first frame
     s_firstAppend = std::chrono::steady_clock::now();
-
     // Update the flag to indicate that the first frame has been processed
     s_hasFirstFrame = true;
   } else if (s_FramePacingEnabled) {
-    // Calculate the time elapsed from the start
+    // Calculate the time elapsed since the first frame
     TimeStamp fromStart = now - s_firstAppend;
-
-    // Wait until the packet presentation timestamp is within the frame time margin
+    // Wait until the packet timestamp is within the frame time margin
     while (s_pktPts > fromStart - s_ptsDiff + kFrameTimeMargin) {
       // Update the current time and recalculate the elapsed time
       now = std::chrono::steady_clock::now();
-
       // Calculate the time elapsed from the start of the frame presentation
       fromStart = now - s_firstAppend;
     }
-    
     // If the elapsed time exceeds the last second plus the time window
     if (fromStart > s_lastSec + kTimeWindow) {
       // Update the last second to the current time plus the time window
       s_lastSec += kTimeWindow;
-
       // Update the time difference to synchronize with the packet presentation time
       s_ptsDiff = fromStart - s_pktPts;
     }
