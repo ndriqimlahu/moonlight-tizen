@@ -10,7 +10,7 @@ var common = (function() {
   function createWASMModule() {
     Module = {
       onRuntimeInitialized: () => {
-        console.log('%c[common.js, createWASMModule]', 'color: gray;', 'WASM runtime initialized');
+        console.log('%c[common.js, createWASMModule]', 'color: gray;', 'WASM runtime initialized.');
         updateStatus('RUNNING');
 
         if (typeof window.moduleDidLoad !== 'undefined') {
@@ -18,10 +18,10 @@ var common = (function() {
         }
       },
       onAbort: () => {
-        console.warn('%c[common.js, createWASMModule]', 'color: gray;', 'WASM abort called');
+        console.warn('%c[common.js, createWASMModule]', 'color: gray;', 'Warning: WASM abort called!');
       },
       onExit: (status) => {
-        console.log('%c[common.js, createWASMModule]', 'color: gray;', 'WASM exit called status: ' + status);
+        console.log('%c[common.js, createWASMModule]', 'color: gray;', 'WASM exit called. Status: ' + status + '.');
       },
     }; // Module
 
@@ -123,7 +123,7 @@ var common = (function() {
   function updateStatus(opt_message) {
     if (opt_message) {
       statusText = opt_message;
-      console.log('%c[common.js, updateStatus]', 'color: gray;', 'Update status: ', statusText);
+      console.log('%c[common.js, updateStatus]', 'color: gray;', 'Update status: ' + statusText);
     }
     var statusField = document.getElementById('statusField');
     if (statusField) {

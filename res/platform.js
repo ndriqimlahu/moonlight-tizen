@@ -174,7 +174,7 @@ function platformOnLoad(handler) {
   tvKey = tvKeyButtons;
 
   if (!handler) {
-    console.error('%c[platform.js, platformOnLoad]', 'color: gray;', 'Error: Failed to load input handler');
+    console.error('%c[platform.js, platformOnLoad]', 'color: gray;', 'Error: Failed to load input handler!');
     return;
   }
 

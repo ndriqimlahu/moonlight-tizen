@@ -67,7 +67,7 @@ function getConnectedGamepadMask() {
     }
   }
 
-  console.log('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Detected: ' + count + ' gamepads');
+  console.log('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Detected: ' + count + ' gamepads.');
   return mask;
 }
 
@@ -149,7 +149,7 @@ NvHTTP.prototype = {
     }.bind(this), function(error) {
       if (error == -100) { // GS_CERT_MISMATCH
         // Retry over HTTP
-        console.warn('%c[utils.js, refreshServerInfo]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
+        console.warn('%c[utils.js, refreshServerInfo]', 'color: gray;', 'Warning: Certificate mismatch. Retrying over HTTP...', this);
         return sendMessage('openUrl', [
           this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
         ]).then(function(retHttp) {
@@ -174,7 +174,7 @@ NvHTTP.prototype = {
       'https://' + givenAddress + ':47984' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
     ]).then(function(ret) {
       if (!this._parseServerInfo(ret)) { // If that fails
-        console.error('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Error: Failed to parse server info from HTTPS, falling back to HTTP');
+        console.error('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Error: Failed to parse server info from HTTPS, falling back to HTTP...');
         // Try HTTP as a failover. Useful to clients who aren't paired yet
         return sendMessage('openUrl', [
           'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
@@ -185,7 +185,7 @@ NvHTTP.prototype = {
     }.bind(this), function(error) {
       if (error == -100) { // GS_CERT_MISMATCH
         // Retry over HTTP
-        console.warn('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Certificate mismatch. Retrying over HTTP', this);
+        console.warn('%c[utils.js, refreshServerInfoAtAddress]', 'color: gray;', 'Warning: Certificate mismatch. Retrying over HTTP...', this);
         return sendMessage('openUrl', [
           'http://' + givenAddress + ':47989' + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
         ]).then(function(retHttp) {
@@ -212,12 +212,12 @@ NvHTTP.prototype = {
       this._baseUrlHttps = 'https://' + successfulAddress + ':47984';
       this._baseUrlHttp = 'http://' + successfulAddress + ':47989';
 
-      // Poll for updated mac address only on first successful serverinfo poll
+      // Poll for updated mac address only on first successful server info poll
       if (this.paired && this._pollCount === 0) {
         updateMacAddress(this);
       }
 
-      // Poll for the app list every 10 successful serverinfo polls
+      // Poll for the app list every 10 successful server info polls
       // Not including the first one to avoid PCs taking a while to show as online initially
       if (this.paired && this._pollCount++ % 10 == 1) {
         this.getAppListWithCacheFlush();
@@ -259,7 +259,7 @@ NvHTTP.prototype = {
           this.refreshServerInfoAtAddress(this.userEnteredAddress).then(function(successUserEntered) {
             onSuccess(this.userEnteredAddress);
           }.bind(this), function(failureUserEntered) {
-            console.error('%c[utils.js, selectServerAddress]', 'color: gray;', 'Error: Failed to contact the ' + this.hostname, this);
+            console.error('%c[utils.js, selectServerAddress]', 'color: gray;', 'Error: Failed to contact the ' + this.hostname + '!', this);
             onFailure();
           }.bind(this));
         }.bind(this));
@@ -335,7 +335,7 @@ NvHTTP.prototype = {
       // Set serverCodecMode to either serverCodecModeSupport or selectedServerCodecMode based on the match
       this.serverCodecMode = selectedServerCodecMode === serverCodecModeSupport ? serverCodecModeSupport : selectedServerCodecMode;
     } else {
-      console.error('%c[utils.js, _parseServerInfo]', 'color: gray;', 'Error: Failed to select server codec mode value');
+      console.error('%c[utils.js, _parseServerInfo]', 'color: gray;', 'Error: Failed to select server codec mode value!');
     }
 
     var externIP = $root.find('ExternalIP').text().trim();
@@ -431,7 +431,7 @@ NvHTTP.prototype = {
       }
 
       this._memCachedApplist = appList;
-      console.log('%c[utils.js, getAppListWithCacheFlush]', 'color: gray;', 'App list requested successfully');
+      console.log('%c[utils.js, getAppListWithCacheFlush]', 'color: gray;', 'App list requested successfully.');
 
       return appList;
     }.bind(this));
@@ -440,7 +440,7 @@ NvHTTP.prototype = {
   getAppList: function() {
     if (this._memCachedApplist) {
       return new Promise(function(resolve, reject) {
-        console.log('%c[utils.js, getAppList]', 'color: gray;', 'Returning memory-cached apps list');
+        console.log('%c[utils.js, getAppList]', 'color: gray;', 'Returning memory-cached apps list.');
         resolve(this._memCachedApplist);
         return;
       }.bind(this));
@@ -471,7 +471,7 @@ NvHTTP.prototype = {
         };
         reader.readAsDataURL(fileContentInBlob);
       } catch (readError) {
-        console.warn('%c[utils.js, getBoxArt]', 'color: gray;', 'Error: Cannot find or read box art from internal storage: ', readError);
+        console.warn('%c[utils.js, getBoxArt]', 'color: gray;', 'Warning: Cannot find or read box art from internal storage: ', readError);
         // Fetch the new box art from the network
         return sendMessage('openUrl', [
           this._baseUrlHttps + '/appasset?' + this._buildUidStr() + '&appid=' + appId + '&AssetType=2&AssetIdx=0', this.ppkstr, true
@@ -543,13 +543,13 @@ NvHTTP.prototype = {
   },
 
   updateExternalAddressIP4: function() {
-    console.log('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Finding external IPv4 address for ' + this.hostname);
+    console.log('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Looking for the external IPv4 address of ' + this.hostname + '...');
     return sendMessage('STUN').then(function(addr) {
       if (addr) {
         this.externalIP = addr;
-        console.log('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Found external IPv4 address of ' + this.hostname + ' -> ' + this.externalIP);
+        console.log('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'External IPv4 address of ' + this.hostname + ' is ' + this.externalIP);
       } else {
-        console.error('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Error: External IPv4 address lookup failed');
+        console.error('%c[utils.js, updateExternalAddressIP4]', 'color: gray;', 'Error: External IPv4 address lookup failed!');
       }
     }.bind(this))
   },

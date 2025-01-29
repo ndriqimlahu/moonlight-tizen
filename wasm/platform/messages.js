@@ -5,8 +5,9 @@ const SyncFunctions = {
   'makeCert': (...args) => Module.makeCert(...args),
   // cert, privateKey, myUniqueid
   'httpInit': (...args) => Module.httpInit(...args),
-  /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, rumbleFeedback,
-  mouseEmulation, flipABfaceButtons, flipXYfaceButtons, codecMode, serverCodecMode, framePacing, audioSync */
+  /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl,
+  rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+  codecMode, serverCodecMode, hdrMode, framePacing, audioSync */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),
@@ -147,11 +148,11 @@ function handleMessage(msg) {
         strongMagnitude: strongMagnitude,
       });
     } else {
-      console.warn('%c[messages.js, handleMessage]', 'color: gray;', 'Gamepad ' + gamepadIdx + ' does not support the rumble feature!');
+      console.warn('%c[messages.js, handleMessage]', 'color: gray;', 'Warning: Gamepad ' + gamepadIdx + ' does not support the rumble feature!');
     }
   } else if (msg.indexOf('mouseEmulation enabled') === 0) {
-    snackbarLogLong('Mouse emulation is enabled');
+    snackbarLogLong('Mouse emulation has been enabled.');
   } else if (msg.indexOf('mouseEmulation disabled') === 0) {
-    snackbarLogLong('Mouse emulation is disabled');
+    snackbarLogLong('Mouse emulation has been disabled.');
   }
 }
