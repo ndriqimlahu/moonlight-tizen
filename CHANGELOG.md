@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.17
+
+### Added
+- Added new snackbar messages for additional cases of unexpected streaming termination
+
+### Changed
+- Partially reverted audio sync and video player changes to their original implementation
+- Enhanced comments, console logs, and snackbar messages for improved debugging and clarity
+
+### Dependencies
+- Updated 'opus' module from v1.4 `c854997` to v1.5.2 `ddbe483`
+
 ## v1.2.16
 
 ### Added
