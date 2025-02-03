@@ -173,8 +173,8 @@ static void HexStringToBytes(const char* str, char* output) {
 }
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
+  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
+  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
   std::string serverCodecMode, bool hdrMode, bool framePacing, bool audioSync) {
   PostToJs("Streaming session has started");
   PostToJs("Setting stream host to: " + host);
@@ -186,6 +186,8 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting appversion to: " + appversion);
   PostToJs("Setting gfeversion to: " + gfeversion);
   PostToJs("Setting RTSP URL to: " + rtspurl);
+  PostToJs("Setting optimize games to: " + std::to_string(optimizeGames));
+  PostToJs("Setting external audio to: " + std::to_string(externalAudio));
   PostToJs("Setting rumble feedback to: " + std::to_string(rumbleFeedback));
   PostToJs("Setting mouse emulation to: " + std::to_string(mouseEmulation));
   PostToJs("Setting flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
@@ -219,6 +221,8 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
   m_RtspUrl = rtspurl;
+  m_OptimizeGamesEnabled = optimizeGames;
+  m_ExternalAudioEnabled = externalAudio;
   m_RumbleFeedbackEnabled = rumbleFeedback;
   m_MouseEmulationEnabled = mouseEmulation;
   m_FlipABfaceButtonsEnabled = flipABfaceButtons;
@@ -316,11 +320,13 @@ int main(int argc, char** argv) {
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
-  std::string serverCodecMode, bool hdrMode, bool framePacing, bool audioSync) {
+  bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons,
+  bool flipXYfaceButtons, std::string codecMode, std::string serverCodecMode, bool hdrMode, bool framePacing,
+  bool audioSync) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl,
-  rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, codecMode, serverCodecMode, hdrMode, framePacing, audioSync);
+  optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, codecMode,
+  serverCodecMode, hdrMode, framePacing, audioSync);
 }
 
 MessageResult stopStream() {

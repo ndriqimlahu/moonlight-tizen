@@ -1631,10 +1631,10 @@ function startGame(host, appID) {
             return;
           }
           // Start stream request
-          sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
-            bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-            $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, flipABfaceButtons,
-            flipXYfaceButtons, codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
+          sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate, bitrate.toString(),
+            rikey, rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
+            optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+            codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -1669,10 +1669,10 @@ function startGame(host, appID) {
           return;
         }
         // Start stream request
-        sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate,
-          bitrate.toString(), rikey, rikeyid.toString(), host.appVersion, host.gfeVersion,
-          $root.find('sessionUrl0').text().trim(), rumbleFeedback, mouseEmulation, flipABfaceButtons,
-          flipXYfaceButtons, codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
+        sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate, bitrate.toString(),
+          rikey, rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
+          optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+          codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
