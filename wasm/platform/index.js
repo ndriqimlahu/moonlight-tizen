@@ -1620,8 +1620,12 @@ function startGame(host, appID) {
       if (host.currentGame == appID) {
         // If the app is already running, we can just resume it
         return host.resumeApp(
+          streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
+          optimizeGames, // Optimize game settings
           rikey, rikeyid, // Remote input key and key ID
-          0x030002 // Surround channel mask << 16 | Surround channel count
+          externalAudio, // Play audio on host and client device
+          0x030002, // Surround channel mask << 16 | Surround channel count
+          gamepadMask // Connect gamepad mask
         ).then(function(launchResult) {
           $xml = $($.parseXML(launchResult.toString()));
           $root = $xml.find('root');

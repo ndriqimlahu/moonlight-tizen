@@ -527,10 +527,11 @@ NvHTTP.prototype = {
     ]);
   },
 
-  resumeApp: function(rikey, rikeyid, surroundAudioInfo) {
+  resumeApp: function(mode, sops, rikey, rikeyid, localAudio, surroundAudioInfo, gamepadMask) {
     return sendMessage('openUrl', [
-      this._baseUrlHttps + '/resume?' + this._buildUidStr() + '&rikey=' + rikey +
-      '&rikeyid=' + rikeyid + '&surroundAudioInfo=' + surroundAudioInfo, this.ppkstr, false
+      this._baseUrlHttps + '/resume?' + this._buildUidStr() + '&mode=' + mode +
+      '&additionalStates=1&sops=' + sops + '&rikey=' + rikey + '&rikeyid=' + rikeyid + '&localAudioPlayMode=' + localAudio +
+      '&surroundAudioInfo=' + surroundAudioInfo + '&remoteControllersBitmap=' + gamepadMask + '&gcmap=' + gamepadMask, this.ppkstr, false
     ]);
   },
 
