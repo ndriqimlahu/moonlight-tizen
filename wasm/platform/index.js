@@ -1522,6 +1522,20 @@ function showAppsMode() {
   Navigation.start();
 }
 
+// Handle layout elements when displaying the Stream view
+function showStreamMode() {
+  console.log('%c[index.js, showStreamMode]', 'color: green;', 'Entering "Show Stream" mode.');
+  $('#main-navigation').hide();
+  $('#main-content').children().not('#listener, #loadingSpinner').hide();
+  $('#main-content').addClass('fullscreen');
+  $('#listener').addClass('fullscreen');
+  $('#loadingSpinner').css('display', 'inline-block');
+
+  isInGame = true;
+  fullscreenWasmModule();
+  Navigation.stop();
+}
+
 // Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
 function startGame(host, appID) {
   if (!host || !host.paired) {
@@ -1614,7 +1628,7 @@ function startGame(host, appID) {
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingMessage').text('Starting ' + appToStart.title + '...');
-      playGameMode();
+      showStreamMode();
 
       // Check if user wants to resume the already-running app
       if (host.currentGame == appID) {
@@ -1688,21 +1702,6 @@ function startGame(host, appID) {
   }, function(failedRefreshInfo) {
     console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + ' and failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   });
-}
-
-// Handle layout elements when displaying the Stream view
-function playGameMode() {
-  console.log('%c[index.js, showStreamMode]', 'color: green;', 'Entering "Show Stream" mode.');
-  isInGame = true;
-
-  $('#main-navigation').hide();
-  $('#main-content').children().not('#listener, #loadingSpinner').hide();
-  $('#main-content').addClass('fullscreen');
-  $('#listener').addClass('fullscreen');
-
-  fullscreenWasmModule();
-  $('#loadingSpinner').css('display', 'inline-block');
-  Navigation.stop();
 }
 
 // Maximize the size of the Wasm module by scaling and resizing appropriately
