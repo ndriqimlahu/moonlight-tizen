@@ -11,6 +11,7 @@ var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clie
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
+var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
 var repeatTimeout = null; // Flag indicating whether the repeat timeout is set, initial value is null
@@ -652,8 +653,16 @@ function addHostToGrid(host, ismDNSDiscovered) {
   // Attach the click event listener to the host container
   hostContainer.off('click');
   hostContainer.on('click', function() {
+    // Prevent further clicks
+    if (isClickPrevented) {
+      return;
+    }
+    // Block subsequent clicks immediately
+    isClickPrevented = true;
     // Select the host when the Click key is pressed
     hostChosen(host);
+    // Reset the click flag after a 2 second delay
+    setTimeout(() => isClickPrevented = false, 2000);
   });
 
   // Attach the click event listener to the host menu button
@@ -1409,8 +1418,16 @@ function showApps(host) {
         // Attach the click event listener to the game container
         gameContainer.off('click');
         gameContainer.on('click', function() {
+          // Prevent further clicks
+          if (isClickPrevented) {
+            return;
+          }
+          // Block subsequent clicks immediately
+          isClickPrevented = true;
           // Start the game when the Click key is pressed
           startGame(host, app.id);
+          // Reset the click flag after a 2 second delay
+          setTimeout(() => isClickPrevented = false, 2000);
         });
 
         // Append the game container to the game grid
