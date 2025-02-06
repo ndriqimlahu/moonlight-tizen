@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.18
+
+### Added
+- Added a new 'Tizen' metadata: 'Floating Navigation' to disable the floating menu in the app
+- Added 'Optimize Games Settings' and 'Play Audio on PC' settings to the stream start request
+
+### Changed
+- Improved handling of layout elements for displaying the stream view
+
+### Fixed
+- Fixed an issue where stream settings and parameters did not apply when resuming an app
+- Fixed an issue where repeated clicks on host and game containers caused multiple instances of streaming sessions
+
 ## v1.2.17
 
 ### Added
