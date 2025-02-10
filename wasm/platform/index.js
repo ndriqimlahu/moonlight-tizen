@@ -1,9 +1,4 @@
 // Initialize global variables and constants
-var appName = null; // Flag indicating whether the application name is set, initial value is null
-var appVer = null; // Flag indicating whether the application version is set, initial value is null
-var platformVer = null; // Flag indicating whether the platform version is set, initial value is null
-var tvModelName = null; // Flag indicating whether the TV model name is set, initial value is null
-var tvModelCode = null; // Flag indicating whether the TV model code is set, initial value is null
 var hosts = {}; // Hosts is an associative array of NvHTTP objects, keyed by server UID
 var activePolls = {}; // Hosts currently being polled. An associated array of polling IDs, keyed by server UID
 var pairingCert; // Loads the generated certificate
@@ -2354,24 +2349,33 @@ function loadSystemInfo() {
 
   // Get the system information from the TV
   if (systemInfoPlaceholder) {
-    appName = tizen.application.getAppInfo();
-    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'App Name: ', appName.name + ' Game Streaming');
-    appVer = tizen.application.getAppInfo();
-    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'App Version: ', appVer.version);
-    platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version");
-    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'Platform Version: Tizen ', platformVer);
-    tvModelName = webapis.productinfo.getRealModel();
-    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'TV Model Name: ', tvModelName);
-    tvModelCode = webapis.productinfo.getModelCode();
-    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'TV Model Code: ', tvModelCode);
+    var appName = tizen.application.getAppInfo();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'App Name: ' + (appName.name ? appName.name : 'Unknown') + ' Game Streaming');
+    var appVer = tizen.application.getAppInfo();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'App Version: ' + (appVer.version ? appVer.version : 'Unknown'));
+    var platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version");
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'Platform Version: Tizen ' + (platformVer ? platformVer : 'Unknown'));
+    var tvModelName = webapis.productinfo.getModel();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'TV Model Name: ' + (tvModelName ? tvModelName : 'Unknown'));
+    var tvModelFullName = webapis.productinfo.getRealModel();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'TV Model Full Name: ' + (tvModelFullName ? tvModelFullName : 'Unknown'));
+    var tvModelCode = webapis.productinfo.getModelCode();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'TV Model Code: ' + (tvModelCode ? tvModelCode : 'Unknown'));
+    var is4kPanelSupported = webapis.productinfo.isUdPanelSupported();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', '4K Panel: ' + (is4kPanelSupported ? 'Supported' : 'Unsupported'));
+    var isHdrCapabilitySupported = webapis.avinfo.isHdrTvSupport();
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'HDR Capability: ' + (isHdrCapabilitySupported ? 'Supported' : 'Unsupported'));
 
     // Insert the system information into the placeholder
     systemInfoPlaceholder.innerText =
       'App Name: ' + (appName.name ? appName.name : 'Unknown') + ' Game Streaming' + '\n' +
       'App Version: ' + (appVer.version ? appVer.version : 'Unknown') + '\n' +
       'Platform Version: Tizen ' + (platformVer ? platformVer : 'Unknown') + '\n' +
-      'TV Model: ' + (tvModelName ? tvModelName : 'Unknown') + '\n' +
-      'TV Model Code: ' + (tvModelCode ? tvModelCode : 'Unknown');
+      'TV Model Name: ' + (tvModelName ? tvModelName : 'Unknown') + '\n' +
+      'TV Model Full Name: ' + (tvModelFullName ? tvModelFullName : 'Unknown') + '\n' +
+      'TV Model Code: ' + (tvModelCode ? tvModelCode : 'Unknown') + '\n' +
+      '4K Panel: ' + (is4kPanelSupported ? 'Supported' : 'Unsupported') + '\n' +
+      'HDR Capability: ' + (isHdrCapabilitySupported ? 'Supported' : 'Unsupported');
   } else {
     console.error('%c[index.js, loadSystemInfo]', 'color: green;', 'Error: Failed to load system information!');
     systemInfoPlaceholder.innerText = 'Failed to load system information!';
