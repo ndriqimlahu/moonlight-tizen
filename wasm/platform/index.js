@@ -2238,8 +2238,8 @@ function saveAudioSync() {
 
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
-  const defaultResolution = '1920:1080';
-  $('#selectResolution').text('1920 x 1080 (1080p)').data('value', defaultResolution);
+  const defaultResolution = '1280:720';
+  $('#selectResolution').text('1280 x 720 (720p)').data('value', defaultResolution);
   storeData('resolution', defaultResolution, null);
 
   const defaultFramerate = '60';
