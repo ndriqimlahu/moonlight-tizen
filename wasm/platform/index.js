@@ -2053,7 +2053,7 @@ function updateDefaultBitrate() {
     }
   } else {
     // Unrecognized option! In case someone screws with the JS to add custom resolutions.
-    $('#bitrateSlider')[0].MaterialSlider.change('20');
+    $('#bitrateSlider')[0].MaterialSlider.change('10');
   }
 
   updateBitrateField();
@@ -2246,7 +2246,7 @@ function restoreDefaultsSettingsValues() {
   $('#selectFramerate').text('60 FPS').data('value', defaultFramerate);
   storeData('frameRate', defaultFramerate, null);
 
-  const defaultBitrate = '20';
+  const defaultBitrate = '10';
   $('#selectBitrate').html(defaultBitrate + ' Mbps');
   $('#bitrateSlider')[0].MaterialSlider.change(defaultBitrate);
   storeData('bitrate', defaultBitrate, null);
@@ -2414,7 +2414,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored bitrate preferences.');
   getData('bitrate', function(previousValue) {
-    $('#bitrateSlider')[0].MaterialSlider.change(previousValue.bitrate != null ? previousValue.bitrate : '20');
+    $('#bitrateSlider')[0].MaterialSlider.change(previousValue.bitrate != null ? previousValue.bitrate : '10');
     // Update the video bitrate field based on the given value
     updateBitrateField();
   });
