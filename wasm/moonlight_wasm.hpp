@@ -40,7 +40,7 @@ struct MessageResult {
   emscripten::val ret;
 
   MessageResult(std::string t = "", emscripten::val r = emscripten::val::null())
-      : type(t), ret(r) {}
+    : type(t), ret(r) {}
 
   static MessageResult Resolve(emscripten::val r = emscripten::val::null()) {
     return {"resolve", r};
@@ -138,7 +138,7 @@ class MoonlightInstance {
     using EmssReadyState = samsung::wasm::ElementaryMediaStreamSource::ReadyState;
     using EmssTrackCloseReason = samsung::wasm::ElementaryMediaTrack::CloseReason;
   class SourceListener
-      : public samsung::wasm::ElementaryMediaStreamSourceListener {
+    : public samsung::wasm::ElementaryMediaStreamSourceListener {
   public:
     SourceListener(MoonlightInstance* instance);
     void OnSourceOpen() override;
@@ -148,7 +148,7 @@ class MoonlightInstance {
     MoonlightInstance* m_Instance;
   };
   class AudioTrackListener
-      : public samsung::wasm::ElementaryMediaTrackListener {
+    : public samsung::wasm::ElementaryMediaTrackListener {
   public:
     AudioTrackListener(MoonlightInstance* instance);
     void OnTrackOpen() override;
@@ -158,7 +158,7 @@ class MoonlightInstance {
     MoonlightInstance* m_Instance;
   };
   class VideoTrackListener
-      : public samsung::wasm::ElementaryMediaTrackListener {
+    : public samsung::wasm::ElementaryMediaTrackListener {
   public:
     VideoTrackListener(MoonlightInstance* instance);
     void OnTrackOpen() override;

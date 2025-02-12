@@ -177,26 +177,26 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
   std::string serverCodecMode, bool hdrMode, bool framePacing, bool audioSync) {
   PostToJs("Streaming session has started");
-  PostToJs("Setting stream host to: " + host);
-  PostToJs("Setting stream resolution to: " + width + "x" + height);
-  PostToJs("Setting stream frame rate to: " + fps + " FPS");
-  PostToJs("Setting stream bitrate to: " + bitrate + " Kbps");
-  PostToJs("Setting rikey to: " + rikey);
-  PostToJs("Setting rikeyid to: " + rikeyid);
-  PostToJs("Setting appversion to: " + appversion);
-  PostToJs("Setting gfeversion to: " + gfeversion);
-  PostToJs("Setting RTSP URL to: " + rtspurl);
-  PostToJs("Setting optimize games to: " + std::to_string(optimizeGames));
-  PostToJs("Setting external audio to: " + std::to_string(externalAudio));
-  PostToJs("Setting rumble feedback to: " + std::to_string(rumbleFeedback));
-  PostToJs("Setting mouse emulation to: " + std::to_string(mouseEmulation));
-  PostToJs("Setting flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
-  PostToJs("Setting flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
-  PostToJs("Setting codec mode to: " + codecMode);
-  PostToJs("Setting server codec mode to: " + serverCodecMode);
-  PostToJs("Setting HDR mode to: " + std::to_string(hdrMode));
-  PostToJs("Setting frame pacing to: " + std::to_string(framePacing));
-  PostToJs("Setting audio syncing to: " + std::to_string(audioSync));
+  PostToJs("Setting the stream host address to: " + host);
+  PostToJs("Setting the stream resolution to: " + width + "x" + height);
+  PostToJs("Setting the stream frame rate to: " + fps + " FPS");
+  PostToJs("Setting the stream bitrate to: " + bitrate + " Kbps");
+  PostToJs("Setting the remote input key to: " + rikey);
+  PostToJs("Setting the remote input key ID to: " + rikeyid);
+  PostToJs("Setting the app version to: " + appversion);
+  PostToJs("Setting the GFE version to: " + gfeversion);
+  PostToJs("Setting the RTSP URL to: " + rtspurl);
+  PostToJs("Setting the optimize games to: " + std::to_string(optimizeGames));
+  PostToJs("Setting the external audio to: " + std::to_string(externalAudio));
+  PostToJs("Setting the rumble feedback to: " + std::to_string(rumbleFeedback));
+  PostToJs("Setting the mouse emulation to: " + std::to_string(mouseEmulation));
+  PostToJs("Setting the flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
+  PostToJs("Setting the flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
+  PostToJs("Setting the codec mode to: " + codecMode);
+  PostToJs("Setting the server codec mode to: " + serverCodecMode);
+  PostToJs("Setting the HDR mode to: " + std::to_string(hdrMode));
+  PostToJs("Setting the frame pacing to: " + std::to_string(framePacing));
+  PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
 
   // Populate the stream configuration
   LiInitializeStreamConfiguration(&m_StreamConfig);
@@ -209,12 +209,13 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
   m_StreamConfig.supportedVideoFormats = stoi(codecMode,0,16);
 
-  HandleGamepadInputState(rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons);
-
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);
   int rikeyiv = htonl(stoi(rikeyid));
   memcpy(m_StreamConfig.remoteInputAesIv, &rikeyiv, sizeof(rikeyiv));
+
+  // Manage gamepad input states based on selected settings
+  HandleGamepadInputState(rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons);
 
   // Store the parameters from the start message
   m_Host = host;
@@ -393,39 +394,30 @@ void wakeOnLan(int callbackId, std::string macAddress) {
 }
 
 void PostToJs(std::string msg) {
-  MAIN_THREAD_EM_ASM(
-      {
-        const msg = UTF8ToString($0);
-        handleMessage(msg);
-      },
-      msg.c_str());
+  MAIN_THREAD_EM_ASM({
+    const msg = UTF8ToString($0);
+    handleMessage(msg);
+  }, msg.c_str());
 }
 
 void PostPromiseMessage(int callbackId, const std::string& type, const std::string& response) {
-  MAIN_THREAD_EM_ASM(
-      {
-        const type = UTF8ToString($1);
-        const response = UTF8ToString($2);
-        handlePromiseMessage($0, type, response);
-      },
-      callbackId, type.c_str(), response.c_str());
+  MAIN_THREAD_EM_ASM({
+    const type = UTF8ToString($1);
+    const response = UTF8ToString($2);
+    handlePromiseMessage($0, type, response);
+  }, callbackId, type.c_str(), response.c_str());
 }
 
 void PostPromiseMessage(int callbackId, const std::string& type, const std::vector<uint8_t>& response) {
-  MAIN_THREAD_EM_ASM(
-      {
-        const type = UTF8ToString($1);
-        const response = HEAPU8.slice($2, $2 + $3);
-        handlePromiseMessage($0, type, response);
-      },
-      callbackId, type.c_str(), response.data(), response.size());
+  MAIN_THREAD_EM_ASM({
+    const type = UTF8ToString($1);
+    const response = HEAPU8.slice($2, $2 + $3);
+    handlePromiseMessage($0, type, response);
+  }, callbackId, type.c_str(), response.data(), response.size());
 }
 
 EMSCRIPTEN_BINDINGS(handle_message) {
-  emscripten::value_object<MessageResult>("MessageResult")
-    .field("type", &MessageResult::type)
-    .field("ret", &MessageResult::ret);
-
+  emscripten::value_object<MessageResult>("MessageResult").field("type", &MessageResult::type).field("ret", &MessageResult::ret);
   emscripten::function("startStream", &startStream);
   emscripten::function("stopStream", &stopStream);
   emscripten::function("stun", &stun);

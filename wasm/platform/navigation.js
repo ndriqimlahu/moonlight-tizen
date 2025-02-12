@@ -711,7 +711,7 @@ const Views = {
         settingsOption.style.display = 'none';
       });
       // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.category');
+      const settingsCategories = document.querySelectorAll('.settings-category');
       settingsCategories.forEach(function (settingsCategory) {
         settingsCategory.classList.remove('selected');
       });
@@ -881,7 +881,7 @@ const Views = {
         settingsOption.style.display = 'none';
       });
       // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.category');
+      const settingsCategories = document.querySelectorAll('.settings-category');
       settingsCategories.forEach(function (settingsCategory) {
         settingsCategory.classList.remove('selected');
       });
@@ -940,7 +940,7 @@ const Views = {
         settingsOption.style.display = 'none';
       });
       // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.category');
+      const settingsCategories = document.querySelectorAll('.settings-category');
       settingsCategories.forEach(function (settingsCategory) {
         settingsCategory.classList.remove('selected');
       });
@@ -999,7 +999,7 @@ const Views = {
         settingsOption.style.display = 'none';
       });
       // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.category');
+      const settingsCategories = document.querySelectorAll('.settings-category');
       settingsCategories.forEach(function (settingsCategory) {
         settingsCategory.classList.remove('selected');
       });
@@ -1094,7 +1094,7 @@ const Views = {
         settingsOption.style.display = 'none';
       });
       // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.category');
+      const settingsCategories = document.querySelectorAll('.settings-category');
       settingsCategories.forEach(function (settingsCategory) {
         settingsCategory.classList.remove('selected');
       });

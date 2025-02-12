@@ -122,7 +122,7 @@ function handleMessage(msg) {
     $('#wasm_module').css('display', '');
     $('#wasm_module').focus();
   } else if (msg.indexOf('ProgressMsg: ') === 0) {
-    $('#loadingMessage').text(msg.replace('ProgressMsg: ', ''));
+    $('#loadingSpinnerMessage').text(msg.replace('ProgressMsg: ', ''));
   } else if (msg.indexOf('TransientMsg: ') === 0) {
     snackbarLogLong(msg.replace('TransientMsg: ', ''));
   } else if (msg.indexOf('DialogMsg: ') === 0) {

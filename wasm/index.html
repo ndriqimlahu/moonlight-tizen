@@ -15,33 +15,33 @@
 </head>
 <body data-name="moonlight-tizen" data-tools="emscripten" data-configs="Debug Release" data-path="{tc}/{config}">
   <div class="mdl-layout mdl-js-layout">
-    <header id="main-navigation" class="mdl-layout__header">
+    <header id="main-header" class="mdl-layout__header">
       <div class="mdl-layout__header-row">
         <button type="button" id="goBackBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" role="link" aria-label="Go back">
-          <i class="button-icons material-icons">keyboard_arrow_left</i>
+          <i class="navigation-button-icons material-icons">keyboard_arrow_left</i>
         </button>
         <div id="goBackTooltip" class="mdl-tooltip" for="goBackBtn">Back</div>
-        <!-- Navigation logo and title -->
-        <img src="static/res/ic_moonlight_logo.svg" id="navigation-logo">
-        <span id="navigation-title" class="mdl-layout-title">Moonlight</span>
+        <!-- Header logo and title -->
+        <img src="static/res/ic_moonlight_logo.svg" id="header-logo">
+        <span id="header-title" class="mdl-layout-title">Moonlight</span>
         <!-- Add spacer to align navigation to the right -->
         <div class="mdl-layout-spacer"></div>
         <!-- Navigation bar -->
         <nav class="mdl-navigation">
           <button type="button" id="settingsBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" role="link" aria-label="Settings">
-            <i class="button-icons material-icons">settings</i>
+            <i class="navigation-button-icons material-icons">settings</i>
           </button>
           <div id="settingsTooltip" class="mdl-tooltip" for="settingsBtn">Settings</div>
           <button type="button" id="supportBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Support">
-            <i class="button-icons material-icons">help</i>
+            <i class="navigation-button-icons material-icons">help</i>
           </button>
           <div id="supportTooltip" class="mdl-tooltip" for="supportBtn">Support</div>
           <button type="button" id="restoreDefaultsBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Restore Defaults">
-            <i class="button-icons material-icons">settings_backup_restore</i>
+            <i class="navigation-button-icons material-icons">settings_backup_restore</i>
           </button>
           <div id="restoreDefaultsTooltip" class="mdl-tooltip" for="restoreDefaultsBtn">Restore Defaults</div>
           <button type="button" id="quitRunningAppBtn" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" aria-label="Quit Running App">
-            <i class="button-icons material-icons">highlight_off</i>
+            <i class="navigation-button-icons material-icons">highlight_off</i>
           </button>
           <div id="quitRunningAppTooltip" class="mdl-tooltip" for="quitRunningAppBtn">Quit Running App</div>
         </nav>
@@ -57,28 +57,28 @@
           </div>
         </div>
       </div>
-      <div id="settings-container" class="hide-container">
+      <div id="settings-list" class="hide-container">
         <!-- Left Panel: Settings Categories -->
         <div id="settings-left-panel">
           <div class="settings-categories">
-            <div class="category" onclick="handleCategoryClick('basicSettings')" data-category="basicSettings">
-              <i class="category-icons material-icons">tune</i>
+            <div class="settings-category" data-category="basicSettings" onclick="handleCategoryClick('basicSettings')">
+              <i class="settings-category-icons material-icons">tune</i>
               <label>Basic Settings</label>
             </div>
-            <div class="category" onclick="handleCategoryClick('hostSettings')" data-category="hostSettings">
-              <i class="category-icons material-icons">desktop_windows</i>
+            <div class="settings-category" data-category="hostSettings" onclick="handleCategoryClick('hostSettings')">
+              <i class="settings-category-icons material-icons">desktop_windows</i>
               <label>Host Settings</label>
             </div>
-            <div class="category" onclick="handleCategoryClick('inputSettings')" data-category="inputSettings">
-              <i class="category-icons material-icons">sports_esports</i>
+            <div class="settings-category" data-category="inputSettings" onclick="handleCategoryClick('inputSettings')">
+              <i class="settings-category-icons material-icons">sports_esports</i>
               <label>Input Settings</label>
             </div>
-            <div class="category" onclick="handleCategoryClick('decoderSettings')" data-category="decoderSettings">
-              <i class="category-icons material-icons">video_settings</i>
+            <div class="settings-category" data-category="decoderSettings" onclick="handleCategoryClick('decoderSettings')">
+              <i class="settings-category-icons material-icons">video_settings</i>
               <label>Decoder Settings</label>
             </div>
-            <div class="category" onclick="handleCategoryClick('aboutSettings')" data-category="aboutSettings">
-              <i class="category-icons material-icons">info</i>
+            <div class="settings-category" data-category="aboutSettings" onclick="handleCategoryClick('aboutSettings')">
+              <i class="settings-category-icons material-icons">info</i>
               <label>About</label>
             </div>
           </div>
@@ -179,7 +179,7 @@
               <label>Remove all hosts:</label>
               <div id="removeAllHostsMenu">
                 <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Remove All Hosts">
-                  Remove all existing hosts from the host list
+                  Remove all existing hosts from the list
                   <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
                 </button>
               </div>
@@ -282,7 +282,7 @@
               <label>Navigation guide:</label>
               <div id="navigationGuideMenu">
                 <button type="button" id="navigationGuideBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Navigation Guide">
-                  Learn about navigation controls
+                  Discover navigation controls for all input devices
                   <img src="static/res/ic_tv_remote_48px.svg" id="navigationGuideIcon">
                 </button>
               </div>
@@ -291,7 +291,7 @@
               <label>Restart the application:</label>
               <div id="restartApplicationMenu">
                 <button type="button" id="restartAppBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Restart Application">
-                  Restart the Moonlight app instantly
+                  Restart the Moonlight app immediately
                   <img src="static/res/ic_restart_alt_48px.svg" id="restartApplicationIcon">
                 </button>
               </div>
@@ -303,7 +303,7 @@
       <div id="listener"></div>
       <!-- Wasm module placeholder, Wasm gets thrown into here -->
       <div id="loadingSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
-        <h4 id="loadingMessage"></h4>
+        <h4 id="loadingSpinnerMessage"></h4>
       </div>
       <div id="wasmSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
         <img src="static/res/ic_moonlight_logo.svg" id="wasmSpinnerLogo">
@@ -335,10 +335,10 @@
       <div id="ipAddressSelectFields" class="mdl-dialog__content">
         <div class="select-option-field select-option-field-floating-label">
           <label class="mdl-textfield__label">IP address of host PC</label>
-          <select id="ipAddressField1" name="ipAddressField1" class="ip-address-select-field" tabindex="-1"></select>
-          <select id="ipAddressField2" name="ipAddressField2" class="ip-address-select-field" tabindex="-1"></select>
-          <select id="ipAddressField3" name="ipAddressField3" class="ip-address-select-field" tabindex="-1"></select>
-          <select id="ipAddressField4" name="ipAddressField4" class="ip-address-select-field" tabindex="-1"></select>
+          <select id="ipAddressField1" class="ip-address-select-field" name="ipAddressField1" tabindex="-1"></select>
+          <select id="ipAddressField2" class="ip-address-select-field" name="ipAddressField2" tabindex="-1"></select>
+          <select id="ipAddressField3" class="ip-address-select-field" name="ipAddressField3" tabindex="-1"></select>
+          <select id="ipAddressField4" class="ip-address-select-field" name="ipAddressField4" tabindex="-1"></select>
         </div>
       </div>
       <div class="mdl-dialog__actions">

@@ -7,7 +7,7 @@ body {
     -moz-user-select: none;
     user-select: none;
 }
-#main-navigation {
+#main-header {
     background-color: #333846;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 1);
 }
@@ -15,14 +15,14 @@ body {
     height: 80px;
     padding: 0 80px 0 80px;
 }
-#navigation-logo {
+#header-logo {
     width: 48px;
     height: 48px;
     margin: 2px 35px 2px 40px;
     border-radius: 50%;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
-#navigation-title {
+#header-title {
     color: #cfcfcf;
     font-size: 2.6rem;
     font-weight: 600;
@@ -80,7 +80,7 @@ body {
     background-color: #404354 !important;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
-.button-icons {
+.navigation-button-icons {
     margin: 0 8px 0 2px;
     font-size: 32px !important;
 }
@@ -389,11 +389,11 @@ body {
     transform: scale(1.2);
     outline: #00A3C6 solid 3px;
 }
-#game-grid .current-game {
+#game-grid .current-game-active {
     box-shadow: 0 0 0 2px rgba(139, 195, 74, 1);
 }
-#game-grid .current-game.hovered, #game-grid .current-game:hover,
-#game-grid .current-game:focus, #game-grid .current-game:active {
+#game-grid .current-game-active.hovered, #game-grid .current-game-active:hover,
+#game-grid .current-game-active:focus, #game-grid .current-game-active:active {
     border-radius: 0;
     z-index: 2;
     transform: scale(1.2);
@@ -479,9 +479,6 @@ body {
     display: none;
     margin: 15px 0 15px 0;
 }
-#ipAddressSelectFields .mdl-textfield__label {
-    top: -8px;
-}
 .select-option-field {
     position: relative;
     display: inline-block;
@@ -511,16 +508,13 @@ body {
     text-indent: 10px;
     cursor: pointer;
 }
-.ip-address-select-field.hovered, #ipAddressField1, #ipAddressField2,
-#ipAddressField3, #ipAddressField4 {
+.ip-address-select-field.hovered, #ipAddressField1,
+#ipAddressField2, #ipAddressField3, #ipAddressField4 {
     color: #fff;
     background-color: #585D75;
 }
 .ip-address-select-field.hovered, .ip-address-select-field:hover {
     box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
-}
-#pairButton, #showAppsButton {
-    margin: 3px;
 }
 .fullscreen {
     height: 100vh !important;
@@ -550,7 +544,7 @@ body {
 #restoreDefaultsBtn i, #quitRunningAppBtn i {
     margin: auto -4px;
 }
-#settings-container {
+#settings-list {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -575,7 +569,7 @@ body {
     text-align: left;
     overflow: hidden;
 }
-.category {
+.settings-category {
     color: #cfcfcf;
     margin: 25px;
     padding: 25px;
@@ -583,24 +577,24 @@ body {
     border-radius: 12px;
     cursor: pointer;
 }
-.category.hovered, .category:hover, .category:focus {
+.settings-category.hovered, .settings-category:hover, .settings-category:focus {
     background-color: #484C5F;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
-.category.selected {
+.settings-category.selected {
     color: #ececec;
     background: rgba(0, 163, 198, 0.8);
     transform: scale(1.02);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
-.category.selected:hover, .category.selected:focus {
+.settings-category.selected:hover, .settings-category.selected:focus {
     transform: scale(1.04);
 }
-.category-icons {
+.settings-category-icons {
     margin: 0 30px 0 15px;
     font-size: 32px !important;
 }
-.category label {
+.settings-category label {
     position: relative;
     bottom: 6.5px;
     font-size: 1.8rem;
@@ -716,10 +710,6 @@ body {
     top: 2.5px !important;
     border-radius: 0 0 8px 8px;
 }
-#restoreDefaultsBtn, #quitRunningAppBtn {
-    margin: 0 10px;
-    border-radius: 6px;
-}
 #supportQrCode {
     width: 50%;
     height: 50%;
@@ -806,8 +796,9 @@ body {
     margin: 2px 46px;
     filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
 }
-#pairingDialogText, #deleteHostDialogText, .host-details-text, #supportDialogText, #navGuideDialogText,
-#restoreDefaultsDialogText, #quitAppDialogText, #restartAppDialogText, #exitAppDialogText {
+#pairingDialogText, #deleteHostDialogText, .host-details-text, #supportDialogText,
+#navGuideDialogText, #restoreDefaultsDialogText, #quitAppDialogText, #restartAppDialogText,
+#exitAppDialogText {
     font-size: 1.45rem;
     line-height: normal;
     letter-spacing: 0.5px;
@@ -827,8 +818,10 @@ body {
     font-size: 1.4rem;
     letter-spacing: 0.5px;
 }
-#closeHostMenuDialog, #closeHostDetailsDialog {
+.host-menu-button, #closeHostMenuDialog, #closeHostDetailsDialog {
     margin: 10px 15px 20px 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
 }
 #continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost,
 #closeHostMenuDialog, #closeHostDetailsDialog, #cancelDeleteHost, #closeSupportDialog,
@@ -848,11 +841,6 @@ body {
 #continueAddHost.mdl-button--disabled:active {
     background-color: #666875;
     cursor: pointer;
-}
-.host-menu-button, #closeHostMenuDialog, #closeHostDetailsDialog {
-    margin: 10px 15px 20px 0;
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
 }
 #closeNavGuideDialog {
     width: 58%;

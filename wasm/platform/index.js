@@ -22,14 +22,14 @@ function attachListeners() {
   initIpAddressFields();
 
   $('#addHostContainer').on('click', addHost);
-  $('#settingsBtn').on('click', showSettingsContainer);
+  $('#settingsBtn').on('click', showSettings);
   $('#supportBtn').on('click', showSupportDialog);
   $('#goBackBtn').on('click', showHosts);
   $('#restoreDefaultsBtn').on('click', restoreDefaultSettings);
   $('#quitRunningAppBtn').on('click', quitRunningApp);
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
-  $('#bitrateSlider').on('input', updateBitrateField);
+  $('#bitrateSlider').on('input', saveBitrate);
   $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
@@ -123,8 +123,8 @@ function attachListeners() {
 }
 
 function changeUiModeForWasmLoad() {
-  $('#main-navigation').hide();
-  $('#main-navigation').children().hide();
+  $('#main-header').hide();
+  $('#main-header').children().hide();
   $('#main-content').children().not('#listener, #wasmSpinner').hide();
   $('#wasmSpinner').css('display', 'inline-block');
   $('#wasmSpinnerLogo').show();
@@ -161,13 +161,13 @@ function startPollingHosts() {
 
 function stopPollingHosts() {
   for (var hostUID in hosts) {
-    stopBackgroundPollingOfHost(hosts[hostUID]);
+    endBackgroundPollingOfHost(hosts[hostUID]);
   }
 }
 
 function restoreUiAfterWasmLoad() {
-  $('#main-navigation').children().not('#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn').show();
-  $('#main-content').children().not('#listener, #wasmSpinner, #settings-container, #game-grid').show();
+  $('#main-header').children().not('#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn').show();
+  $('#main-content').children().not('#listener, #wasmSpinner, #settings-list, #game-grid').show();
   $('#wasmSpinner').hide();
   $('#loadingSpinner').css('display', 'none');
 
@@ -254,7 +254,7 @@ function beginBackgroundPollingOfHost(host) {
   }
 }
 
-function stopBackgroundPollingOfHost(host) {
+function endBackgroundPollingOfHost(host) {
   console.log('%c[index.js, endBackgroundPollingOfHost]', 'color: green;', 'Stopping background polling of host ' + host.serverUid, host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   // Clear the host's polling interval and remove it from the activePolls object
   window.clearInterval(activePolls[host.serverUid]);
@@ -402,8 +402,7 @@ function hostChosen(host) {
         // Switch to Apps view
         Navigation.change(Views.Apps);
       }, 1000);
-    },
-    function() {
+    }, function() {
       // Start polling the host after pairing flow
       startPollingHosts();
     });
@@ -521,13 +520,11 @@ function addHost() {
   $('#continueAddHost').on('click', function() {
     console.log('%c[index.js, addHost]', 'color: green;', 'Adding host, closing app dialog, and returning.');
     // Disable the Continue button to prevent multiple connection requests
-    setTimeout(function() {
+    setTimeout(() => {
       // Add disabled state after 2 seconds
       $('#continueAddHost').addClass('mdl-button--disabled').prop('disabled', true);
       // Re-enable the Continue button after 12 seconds
-      setTimeout(function() {
-        $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
-      }, 12000);
+      setTimeout(() => $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false), 12000);
     }, 2000);
     
     // Get the IP address value from the input field
@@ -992,11 +989,11 @@ function showHosts() {
 }
 
 // Show the Settings list
-function showSettingsContainer() {
+function showSettings() {
   // Show the settings list section
-  $('#settings-container').removeClass('hide-container');
-  $('#settings-container').css('display', 'flex');
-  $('#settings-container').show()
+  $('#settings-list').removeClass('hide-container');
+  $('#settings-list').css('display', 'flex');
+  $('#settings-list').show();
   
   // Navigate to the Settings view
   Navigation.push(Views.Settings);
@@ -1012,7 +1009,7 @@ function handleCategoryClick(category) {
   });
 
   // Remove the 'selected' class from all categories
-  const settingsCategories = document.querySelectorAll('.category');
+  const settingsCategories = document.querySelectorAll('.settings-category');
   settingsCategories.forEach(function(settingsCategory) {
     settingsCategory.classList.remove('selected');
   });
@@ -1023,7 +1020,7 @@ function handleCategoryClick(category) {
     currentItem.style.display = 'block';
 
     // Add the 'selected' class to the clicked category and mark it as selected
-    const selectedCategory = document.querySelector('.category[data-category="' + category + '"]');
+    const selectedCategory = document.querySelector('.settings-category[data-category="' + category + '"]');
     if (selectedCategory) {
       selectedCategory.classList.add('selected');
     }
@@ -1186,7 +1183,8 @@ function showNavigationGuideDialog() {
 
 // Restart the application
 function restartApplication() {
-  window.location.reload(true);
+  var restartApplication = window.location;
+  restartApplication.reload(true);
 }
 
 // Show the Restart Moonlight dialog
@@ -1274,10 +1272,10 @@ function stylizeBoxArt(freshApi, appIdToStylize) {
   // If the app or game is currently running, then apply CSS stylization
   var appBox = document.querySelector('#game-container-' + appIdToStylize);
   if (freshApi.currentGame === appIdToStylize) {
-    appBox.classList.add('current-game');
+    appBox.classList.add('current-game-active');
     appBox.title += ' (Running)';
   } else {
-    appBox.classList.remove('current-game');
+    appBox.classList.remove('current-game-active');
     appBox.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
   }
 }
@@ -1321,11 +1319,11 @@ function showApps(host) {
   }
 
   console.log('%c[index.js, showApps]', 'color: green;', 'Current host object: \n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  $('#gameList .game-container').remove();
+  $('#game-grid .game-container').remove();
 
-  // Hide the main navigation before showing a loading screen
-  $('#main-navigation').children().hide();
-  $('#main-navigation').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
+  // Hide the main header before showing a loading screen
+  $('#main-header').children().hide();
+  $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
   // Show a spinner while the app list loads
   $('#wasmSpinner').css('display', 'inline-block');
@@ -1338,18 +1336,18 @@ function showApps(host) {
     // Hide the spinner after the host has successfully retrieved the app list
     $('#wasmSpinner').hide();
 
-    // Show the main navigation after the loading screen is complete
-    $('#main-navigation').children().show();
-    $('#main-navigation').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+    // Show the main header after the loading screen is complete
+    $('#main-header').children().show();
+    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
     // Show the game grid section
     $('#game-grid').show();
 
     if (appList.length == 0) {
       console.warn('%c[index.js, showApps]', 'Warning: Your app list is empty. Please add some apps or games to your list!');
-      var img = new Image();
-      img.src = 'static/res/applist_empty.svg';
-      $('#game-grid').html(img);
+      var emptyAppListImg = new Image();
+      emptyAppListImg.src = 'static/res/applist_empty.svg';
+      $('#game-grid').html(emptyAppListImg);
       snackbarLogLong('Your list is currently empty. Please add your favorite apps and games to the list.');
       return;
     }
@@ -1432,28 +1430,28 @@ function showApps(host) {
         stylizeBoxArt(host, app.id);
       }
       // Load box art
-      var img = new Image();
+      var boxArtPlaceholderImg = new Image();
       host.getBoxArt(app.id).then(function(resolvedPromise) {
-        img.src = resolvedPromise;
+        boxArtPlaceholderImg.src = resolvedPromise;
       }, function(failedPromise) {
         console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to retrieve box art for app ID: ' + app.id + '. Returned value was: ' + failedPromise + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-        img.src = 'static/res/placeholder_error.svg';
+        boxArtPlaceholderImg.src = 'static/res/placeholder_error.svg';
       });
-      img.onload = e => img.classList.add('fade-in');
-      gameContainer.append(img);
+      boxArtPlaceholderImg.onload = e => boxArtPlaceholderImg.classList.add('fade-in');
+      gameContainer.append(boxArtPlaceholderImg);
     });
   }, function(failedAppList) {
     // Hide the spinner if the host has failed to retrieve the app list
     $('#wasmSpinner').hide();
 
-    // Show the main navigation after the loading screen is complete
-    $('#main-navigation').children().show();
-    $('#main-navigation').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+    // Show the main header after the loading screen is complete
+    $('#main-header').children().show();
+    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
 
     console.error('%c[index.js, showApps]', 'Error: Failed to get app list from ' + host.hostname + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-    var img = new Image();
-    img.src = 'static/res/applist_error.svg';
-    $('#game-grid').html(img);
+    var errorAppListImg = new Image();
+    errorAppListImg.src = 'static/res/applist_error.svg';
+    $('#game-grid').html(errorAppListImg);
     snackbarLogLong('Unable to retrieve your list of apps and games at this time. Please refresh the app list or try again later.');
   });
 
@@ -1463,15 +1461,15 @@ function showApps(host) {
 
 // Handle layout elements when displaying the Hosts view
 function showHostsMode() {
-  console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show hosts" mode');
-  $('#navigation-title').html('Hosts');
-  $('#navigation-logo').show();
-  $('#main-navigation').show();
+  console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show Hosts" mode.');
+  $('#header-title').html('Hosts');
+  $('#header-logo').show();
+  $('#main-header').show();
   $('.nav-menu-parent').show();
   $('#settingsBtn').show();
   $('#supportBtn').show();
   $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
-  $('#settings-container').hide();
+  $('#settings-list').hide();
   $('#game-grid').hide();
   $('#goBackBtn').hide();
   $('#restoreDefaultsBtn').hide();
@@ -1486,18 +1484,18 @@ function showHostsMode() {
 
 // Handle layout elements when displaying the Settings view
 function showSettingsMode() {
-  console.log('%c[index.js, showSettingsMode]', 'color: green;', 'Entering "Show settings" mode');
-  $('#navigation-title').html('Settings');
-  $('#navigation-logo').show();
-  $('#main-navigation').show();
+  console.log('%c[index.js, showSettingsMode]', 'color: green;', 'Entering "Show Settings" mode.');
+  $('#header-title').html('Settings');
+  $('#header-logo').show();
+  $('#main-header').show();
   $('#goBackBtn').show();
   $('#restoreDefaultsBtn').show();
   $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('#host-grid').hide();
+  $('#game-grid').hide();
   $('.nav-menu-parent').hide();
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
-  $('#host-grid').hide();
-  $('#game-grid').hide();
   $('#quitRunningAppBtn').hide();
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
@@ -1508,18 +1506,18 @@ function showSettingsMode() {
 
 // Handle layout elements when displaying the Apps view
 function showAppsMode() {
-  console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show apps and games" mode');
-  $('#navigation-title').html('Apps & Games');
-  $('#navigation-logo').show();
-  $('#main-navigation').show();
+  console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show Apps" mode.');
+  $('#header-title').html('Apps & Games');
+  $('#header-logo').show();
+  $('#main-header').show();
   $('#goBackBtn').show();
   $('#quitRunningAppBtn').show();
   $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('#host-grid').hide();
+  $('#settings-list').hide();
   $('.nav-menu-parent').hide();
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
-  $('#host-grid').hide();
-  $('#settings-container').hide();
   $('#restoreDefaultsBtn').hide();
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
@@ -1537,7 +1535,7 @@ function showAppsMode() {
 // Handle layout elements when displaying the Stream view
 function showStreamMode() {
   console.log('%c[index.js, showStreamMode]', 'color: green;', 'Entering "Show Stream" mode.');
-  $('#main-navigation').hide();
+  $('#main-header').hide();
   $('#main-content').children().not('#listener, #loadingSpinner').hide();
   $('#main-content').addClass('fullscreen');
   $('#listener').addClass('fullscreen');
@@ -1614,32 +1612,35 @@ function startGame(host, appID) {
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
+      const codecFormats = {
+        '0x0001': 'H.264', '0x0100': 'HEVC', '0x0200': 'HEVC Main10', '0x1000': 'AV1', '0x2000': 'AV1 Main10'
+      };
+      var streamCodec = codecFormats[codecMode] || 'Unknown';
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
-
-      console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
-        '\n Host address: ' + host.address + 
-        '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + 
-        '\n Stream frame rate: ' + frameRate + ' FPS' + 
-        '\n Stream bitrate: ' + bitrate + ' Kbps' + 
-        '\n Optimize games: ' + optimizeGames + 
-        '\n External audio: ' + externalAudio + 
-        '\n Rumble feedback: ' + rumbleFeedback + 
-        '\n Mouse emulation: ' + mouseEmulation + 
-        '\n Flip A/B face buttons: ' + flipABfaceButtons + 
-        '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
-        '\n Codec mode: ' + codecMode + 
-        '\n HDR mode: ' + hdrMode + 
-        '\n Frame pacing: ' + framePacing + 
-        '\n Audio syncing: ' + audioSync);
-
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
       var gamepadMask = getConnectedGamepadMask();
 
+      console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
+      '\n Host address: ' + host.address + 
+      '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + 
+      '\n Stream frame rate: ' + frameRate + ' FPS' + 
+      '\n Stream bitrate: ' + bitrate + ' Kbps' + 
+      '\n Optimize games: ' + optimizeGames + 
+      '\n External audio: ' + externalAudio + 
+      '\n Rumble feedback: ' + rumbleFeedback + 
+      '\n Mouse emulation: ' + mouseEmulation + 
+      '\n Flip A/B face buttons: ' + flipABfaceButtons + 
+      '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
+      '\n Codec mode: ' + streamCodec + 
+      '\n HDR mode: ' + hdrMode + 
+      '\n Frame pacing: ' + framePacing + 
+      '\n Audio sync: ' + audioSync);
+
       // Shows a loading message to launch the application and start stream mode
-      $('#loadingMessage').text('Starting ' + appToStart.title + '...');
+      $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
       showStreamMode();
 
       // Check if user wants to resume the already-running app
@@ -1655,8 +1656,10 @@ function startGame(host, appID) {
         ).then(function(launchResult) {
           $xml = $($.parseXML(launchResult.toString()));
           $root = $xml.find('root');
-          if ($root.attr('status_code') != 200) {
-            snackbarLogLong('Error ' + $root.attr('status_code') + ': ' + $root.attr('status_message'));
+          var status_code = $root.attr('status_code');
+          var status_message = $root.attr('status_message');
+          if (status_code != 200) {
+            snackbarLogLong('Error ' + status_code + ': ' + status_message);
             showApps(host);
             return;
           }
@@ -1687,8 +1690,8 @@ function startGame(host, appID) {
         $xml = $($.parseXML(launchResult.toString()));
         $root = $xml.find('root');
         var status_code = $root.attr('status_code');
+        var status_message = $root.attr('status_message');
         if (status_code != 200) {
-          var status_message = $root.attr('status_message');
           if (status_code == 4294967295 && status_message == 'Invalid') {
             // Special case handling an audio capture error which GFE doesn't provide any useful status message
             status_code = 418;
@@ -1798,10 +1801,10 @@ function stopGame(host, callbackFunction) {
         snackbarLog('No app or game is currently running.');
         return;
       }
-      var appName = runningApp.title;
-      snackbarLog('Quitting ' + appName + '...');
+      var appTitle = runningApp.title;
+      snackbarLog('Quitting ' + appTitle + '...');
       host.quitApp().then(function(ret2) {
-        snackbarLog('Successfully quit ' + appName);
+        snackbarLog('Successfully quit ' + appTitle);
         host.refreshServerInfo().then(function(ret3) {
           // Refresh to show no app is currently running
           showApps(host);
@@ -1974,7 +1977,7 @@ function saveResolution() {
   storeData('resolution', chosenResolution, null);
 
   // Update the bitrate value based on the selected resolution
-  updateDefaultBitrate();
+  setBitratePresetValue();
 }
 
 function saveFramerate() {
@@ -1984,19 +1987,17 @@ function saveFramerate() {
   storeData('frameRate', chosenFramerate, null);
 
   // Update the bitrate value based on the selected frame rate
-  updateDefaultBitrate();
+  setBitratePresetValue();
 }
 
 function saveBitrate() {
-  storeData('bitrate', $('#bitrateSlider').val(), null);
+  var chosenBitrate = $('#bitrateSlider').val();
+  $('#selectBitrate').html(chosenBitrate + ' Mbps');
+  console.log('%c[index.js, saveBitrate]', 'color: green;', 'Saving bitrate value: ' + chosenBitrate);
+  storeData('bitrate', chosenBitrate, null);
 }
 
-function updateBitrateField() {
-  $('#selectBitrate').html($('#bitrateSlider').val() + ' Mbps');
-  saveBitrate();
-}
-
-function updateDefaultBitrate() {
+function setBitratePresetValue() {
   var res = $('#selectResolution').data('value');
   var frameRate = $('#selectFramerate').data('value').toString();
 
@@ -2056,12 +2057,12 @@ function updateDefaultBitrate() {
     $('#bitrateSlider')[0].MaterialSlider.change('10');
   }
 
-  updateBitrateField();
+  // Update the bitrate value
   saveBitrate();
 }
 
 function saveIpAddressFieldMode() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenIpAddressFieldMode = $('#ipAddressFieldModeSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveIpAddressFieldMode]', 'color: green;', 'Saving IP address field mode state: ' + chosenIpAddressFieldMode);
     storeData('ipAddressFieldMode', chosenIpAddressFieldMode, null);
@@ -2069,7 +2070,7 @@ function saveIpAddressFieldMode() {
 }
 
 function saveSortAppsList() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenSortAppsList = $('#sortAppsListSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveSortAppsList]', 'color: green;', 'Saving sort apps list state: ' + chosenSortAppsList);
     storeData('sortAppsList', chosenSortAppsList, null);
@@ -2077,7 +2078,7 @@ function saveSortAppsList() {
 }
 
 function saveOptimizeGames() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenOptimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state: ' + chosenOptimizeGames);
     storeData('optimizeGames', chosenOptimizeGames, null);
@@ -2085,7 +2086,7 @@ function saveOptimizeGames() {
 }
 
 function saveExternalAudio() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenExternalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state: ' + chosenExternalAudio);
     storeData('externalAudio', chosenExternalAudio, null);
@@ -2093,7 +2094,7 @@ function saveExternalAudio() {
 }
 
 function saveRumbleFeedback() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenRumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveRumbleFeedback]', 'color: green;', 'Saving rumble feedback state: ' + chosenRumbleFeedback);
     storeData('rumbleFeedback', chosenRumbleFeedback, null);
@@ -2101,7 +2102,7 @@ function saveRumbleFeedback() {
 }
 
 function saveMouseEmulation() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenMouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveMouseEmulation]', 'color: green;', 'Saving mouse emulation state: ' + chosenMouseEmulation);
     storeData('mouseEmulation', chosenMouseEmulation, null);
@@ -2109,7 +2110,7 @@ function saveMouseEmulation() {
 }
 
 function saveFlipABfaceButtons() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenFlipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFlipABfaceButtons]', 'color: green;', 'Saving flip A/B face buttons state: ' + chosenFlipABfaceButtons);
     storeData('flipABfaceButtons', chosenFlipABfaceButtons, null);
@@ -2117,7 +2118,7 @@ function saveFlipABfaceButtons() {
 }
 
 function saveFlipXYfaceButtons() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenFlipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFlipXYfaceButtons]', 'color: green;', 'Saving flip X/Y face buttons state: ' + chosenFlipXYfaceButtons);
     storeData('flipXYfaceButtons', chosenFlipXYfaceButtons, null);
@@ -2163,7 +2164,7 @@ function updateCodecMode(chosenCodecId, chosenCodecValue) {
 }
 
 function saveHdrMode() {
-  setTimeout(function() {
+  setTimeout(() => {
     var selectedCodecMode = $('#selectCodec').data('value');
     const chosenH264Codec = $('#h264').data('value');
     const chosenHevcCodec = $('#hevc').data('value');
@@ -2213,7 +2214,7 @@ function saveHdrMode() {
 }
 
 function updateHdrMode() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenHdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, updateHdrMode]', 'color: green;', 'Saving HDR mode state: ' + chosenHdrMode);
     storeData('hdrMode', chosenHdrMode, null);
@@ -2221,7 +2222,7 @@ function updateHdrMode() {
 }
 
 function saveFramePacing() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenFramePacing = $('#framePacingSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state: ' + chosenFramePacing);
     storeData('framePacing', chosenFramePacing, null);
@@ -2229,7 +2230,7 @@ function saveFramePacing() {
 }
 
 function saveAudioSync() {
-  setTimeout(function() {
+  setTimeout(() => {
     const chosenAudioSync = $('#audioSyncSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state: ' + chosenAudioSync);
     storeData('audioSync', chosenAudioSync, null);
@@ -2335,7 +2336,9 @@ function initSpecialKeys() {
     if (e.key === 'XF86Back') {
       if (isInGame === true) {
         sendEscapeKeyToHost();
-        videoElement.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0 }));
+        videoElement.dispatchEvent(new MouseEvent('mousedown', {
+          bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0
+        }));
       } else {
         console.error('%c[index.js, initSpecialKeys]', 'color: green;', 'Error: Failed to send the escape key (ESC) to the host!');
       }
@@ -2416,14 +2419,12 @@ function loadUserDataCb() {
   getData('bitrate', function(previousValue) {
     $('#bitrateSlider')[0].MaterialSlider.change(previousValue.bitrate != null ? previousValue.bitrate : '10');
     // Update the video bitrate field based on the given value
-    updateBitrateField();
+    $('#selectBitrate').html($('#bitrateSlider').val() + ' Mbps');
   });
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored ipAddressFieldMode preferences.');
   getData('ipAddressFieldMode', function(previousValue) {
-    if (previousValue.ipAddressFieldMode == null) {
-      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
-    } else if (previousValue.ipAddressFieldMode == false) {
+    if (previousValue.ipAddressFieldMode == null || previousValue.ipAddressFieldMode === false) {
       document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.on();
@@ -2434,9 +2435,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored sortAppsList preferences.');
   getData('sortAppsList', function(previousValue) {
-    if (previousValue.sortAppsList == null) {
-      document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
-    } else if (previousValue.sortAppsList == false) {
+    if (previousValue.sortAppsList == null || previousValue.sortAppsList === false) {
       document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#sortAppsListBtn').MaterialSwitch.on();
@@ -2445,9 +2444,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored optimizeGames preferences.');
   getData('optimizeGames', function(previousValue) {
-    if (previousValue.optimizeGames == null) {
-      document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
-    } else if (previousValue.optimizeGames == false) {
+    if (previousValue.optimizeGames == null || previousValue.optimizeGames === false) {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.on();
@@ -2456,9 +2453,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored externalAudio preferences.');
   getData('externalAudio', function(previousValue) {
-    if (previousValue.externalAudio == null) {
-      document.querySelector('#externalAudioBtn').MaterialSwitch.off();
-    } else if (previousValue.externalAudio == false) {
+    if (previousValue.externalAudio == null || previousValue.externalAudio === false) {
       document.querySelector('#externalAudioBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#externalAudioBtn').MaterialSwitch.on();
@@ -2467,9 +2462,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored rumbleFeedback preferences.');
   getData('rumbleFeedback', function(previousValue) {
-    if (previousValue.rumbleFeedback == null) {
-      document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
-    } else if (previousValue.rumbleFeedback == false) {
+    if (previousValue.rumbleFeedback == null || previousValue.rumbleFeedback === false) {
       document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.on();
@@ -2478,9 +2471,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored mouseEmulation preferences.');
   getData('mouseEmulation', function(previousValue) {
-    if (previousValue.mouseEmulation == null) {
-      document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
-    } else if (previousValue.mouseEmulation == false) {
+    if (previousValue.mouseEmulation == null || previousValue.mouseEmulation === false) {
       document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#mouseEmulationBtn').MaterialSwitch.on();
@@ -2489,9 +2480,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored flipABfaceButtons preferences.');
   getData('flipABfaceButtons', function(previousValue) {
-    if (previousValue.flipABfaceButtons == null) {
-      document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off();
-    } else if (previousValue.flipABfaceButtons == false) {
+    if (previousValue.flipABfaceButtons == null || previousValue.flipABfaceButtons === false) {
       document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.on();
@@ -2500,9 +2489,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored flipXYfaceButtons preferences.');
   getData('flipXYfaceButtons', function(previousValue) {
-    if (previousValue.flipXYfaceButtons == null) {
-      document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
-    } else if (previousValue.flipXYfaceButtons == false) {
+    if (previousValue.flipXYfaceButtons == null || previousValue.flipXYfaceButtons === false) {
       document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.on();
@@ -2523,9 +2510,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored hdrMode preferences.');
   getData('hdrMode', function(previousValue) {
-    if (previousValue.hdrMode == null) {
-      document.querySelector('#hdrModeBtn').MaterialSwitch.off();
-    } else if (previousValue.hdrMode == false) {
+    if (previousValue.hdrMode == null || previousValue.hdrMode === false) {
       document.querySelector('#hdrModeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#hdrModeBtn').MaterialSwitch.on();
@@ -2534,9 +2519,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored framePacing preferences.');
   getData('framePacing', function(previousValue) {
-    if (previousValue.framePacing == null) {
-      document.querySelector('#framePacingBtn').MaterialSwitch.off();
-    } else if (previousValue.framePacing == false) {
+    if (previousValue.framePacing == null || previousValue.framePacing === false) {
       document.querySelector('#framePacingBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#framePacingBtn').MaterialSwitch.on();
@@ -2545,9 +2528,7 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored audioSync preferences.');
   getData('audioSync', function(previousValue) {
-    if (previousValue.audioSync == null) {
-      document.querySelector('#audioSyncBtn').MaterialSwitch.off();
-    } else if (previousValue.audioSync == false) {
+    if (previousValue.audioSync == null || previousValue.audioSync === false) {
       document.querySelector('#audioSyncBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#audioSyncBtn').MaterialSwitch.on();
@@ -2619,8 +2600,6 @@ function loadHTTPCertsCb() {
 
 function onWindowLoad() {
   console.log('%c[index.js, onWindowLoad]', 'color: green;', 'Moonlight\'s main window loaded.');
-  // Don't show the game selection div
-  $('#gameSelection').css('display', 'none');
 
   initSamsungKeys();
   initSpecialKeys();
