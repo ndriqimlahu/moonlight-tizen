@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y \
 	python2 \
 	unzip \
 	wget \
+	nodejs \
+	npm \
+	zip \
+	default-jre \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Some of the Samsung Tizen scripts refer to `python`, but Ubuntu only provides `/usr/bin/python2`
@@ -76,7 +80,15 @@ RUN echo \
 
 RUN mv build/widget/Moonlight.wgt .
 
-# Optional: Remove unnecessary files
+# Clone and install the `wgt-to-usb` tool inside the workspace directory
+RUN git clone https://github.com/fingerartur/wgt-to-usb.git
+RUN cd /home/moonlight/wgt-to-usb/ && npm install wgt-to-usb
+
+# Converting the WGT application package file to a USB package installer
+RUN npm exec wgt-to-usb /home/moonlight/Moonlight.wgt
+RUN cd /home/moonlight/ && zip -r MoonlightUSB.zip ./userwidget
+
+# Optional: Remove unnecessary files and folders
 RUN rm -rf \
 	build \
 	emscripten-1.39.4.7-linux64.zip \
@@ -90,7 +102,9 @@ RUN rm -rf \
 	.emscripten_ports \
 	.emscripten_sanity \
 	.package-manager \
-	.wget-hsts
+	.wget-hsts \
+	/home/moonlight/.npm \
+	/home/moonlight/wgt-to-usb
 
 # Use a multi-stage build to reclaim space from deleted files
 FROM ubuntu:22.04
