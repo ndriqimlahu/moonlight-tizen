@@ -399,7 +399,7 @@ All notable changes to this project will be documented in this file.
 - Expanded settings: Reintroduced '120 FPS' frame rate option
 
 ### Changed
-- Increased the bitrate slider for the bandwidth menu from '100' to '120'
+- Increased the maximum bitrate slider for the bitrate menu from '100 Mbps' to '120 Mbps'
 - Grouped and migrated existing settings options to the right pane of the container
 - Converted all settings using 'Material Icon Toggle' to the 'Material Switch' for improved appearance
 
@@ -459,7 +459,7 @@ All notable changes to this project will be documented in this file.
 ## v1.1.1
 
 ### Changed
-- Decreased the bitrate slider for the bandwidth menu from '150' to '100'
+- Decreased the maximum bitrate slider for the bitrate menu from '150 Mbps' to '100 Mbps'
 - Improved text readability of the 'Pairing' and 'Support' dialogs
 - Improved the stream settings structure for better clarity
 
@@ -557,7 +557,7 @@ All notable changes to this project will be documented in this file.
 - Expanded settings: Introduced '90 FPS' and '120 FPS' frame rate options
 
 ### Changed
-- Increased the bitrate slider for the bandwidth menu from '100' to '150'
+- Increased the maximum bitrate slider for the bitrate menu from '100 Mbps' to '150 Mbps'
 - Updated server codec and video format
 
 ### Fixed
@@ -663,7 +663,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Updated '480p' resolution setting
-- Updated default bitrate setting to '20 Mbps'
+- Updated default bitrate setting from '10 Mbps' to '20 Mbps'
 - Reordered 'STOP_STREAM_BUTTONS_FLAGS' buttons
 
 ## v1.0.3
@@ -673,7 +673,7 @@ All notable changes to this project will be documented in this file.
 - Added bitrate presets for '480p' resolution option
 
 ### Changed
-- Changed default bitrate and resolution settings from '720p' to '1080p'
+- Changed default bitrate presets and resolution settings from '720p' to '1080p'
 
 ## v1.0.2
 
