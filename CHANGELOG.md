@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.19
+
+### Added
+- Added more system details and improved structure in the 'System Info' placeholder
+
+### Changed
+- Changed the default video resolution setting from '1080p' to '720p'
+- Increased the minimum bitrate slider for the bitrate menu from '0 Mbps' to '0.5 Mbps'
+- Changed the default video bitrate setting from '20 Mbps' to '10 Mbps'
+- Improved Dockerfile with the 'wgt-to-usb' tool for generating a USB installer
+
+### Fixed
+- Minor bug fixes, code refactoring and general improvements
+
 ## v1.2.18
 
 ### Added
