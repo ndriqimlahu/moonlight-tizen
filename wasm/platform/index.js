@@ -7,6 +7,9 @@ var api; // The `api` should only be set if we're in a host-specific screen, on 
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
 var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
+var resFpsWarning = false; // Flag indicating whether the resolution and frame rate warning message has shown, initial value is false
+var bitrateWarning = false; // Flag indicating whether the bitrate warning message has shown, initial value is false
+var codecWarning = false; // Flag indicating whether the codec warning message has shown, initial value is false
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
 var repeatTimeout = null; // Flag indicating whether the repeat timeout is set, initial value is null
@@ -1978,6 +1981,8 @@ function saveResolution() {
 
   // Update the bitrate value based on the selected resolution
   setBitratePresetValue();
+  // Trigger warning check after changing resolution
+  warnResolutionFramerate();
 }
 
 function saveFramerate() {
@@ -1988,6 +1993,25 @@ function saveFramerate() {
 
   // Update the bitrate value based on the selected frame rate
   setBitratePresetValue();
+  // Trigger warning check after changing frame rate
+  warnResolutionFramerate();
+}
+
+function warnResolutionFramerate() {
+  var chosenResolutionWidth = $('#selectResolution').data('value').split(':')[0];
+  var chosenResolutionHeight = $('#selectResolution').data('value').split(':')[1];
+  var chosenFramerate = $('#selectFramerate').data('value');
+
+  // Resolution and frame rate warning
+  if (!resFpsWarning && chosenResolutionWidth > '1920' && chosenResolutionHeight > '1080' && chosenFramerate > '60') {
+    // Warn only if resolution is greater than 1080p and frame rate is greater than 60 FPS
+    snackbarLogLong('Warning: This resolution and frame rate may not perform well on lower-end devices or slower connections.');
+    // Set flag for resolution and frame rate warning
+    resFpsWarning = true;
+  } else if (resFpsWarning && (chosenResolutionWidth <= '1920' || chosenResolutionHeight <= '1080' || chosenFramerate <= '60')) {
+    // Reset the flag for resolution and frame rate warning if the conditions go back to normal
+    resFpsWarning = false;
+  }
 }
 
 function saveBitrate() {
@@ -1995,6 +2019,24 @@ function saveBitrate() {
   $('#selectBitrate').html(chosenBitrate + ' Mbps');
   console.log('%c[index.js, saveBitrate]', 'color: green;', 'Saving bitrate value: ' + chosenBitrate);
   storeData('bitrate', chosenBitrate, null);
+
+  // Trigger warning check after changing bitrate
+  warnBitrate();
+}
+
+function warnBitrate() {
+  var chosenBitrate = $('#bitrateSlider').val();
+
+  // Bitrate warning
+  if (!bitrateWarning && chosenBitrate > 100) {
+    // Warn only if bitrate is greater than 100 Mbps
+    snackbarLogLong('Warning: Higher bitrate may cause playback interruptions and performance issues, please try with caution.');
+    // Set flag for bitrate warning
+    bitrateWarning = true;
+  } else if (bitrateWarning && chosenBitrate <= 100) {
+    // Reset the flag for bitrate warning if the condition goes back to normal
+    bitrateWarning = false;
+  }
 }
 
 function setBitratePresetValue() {
@@ -2161,6 +2203,24 @@ function updateCodecMode(chosenCodecId, chosenCodecValue) {
   $('#selectCodec').text($(chosenCodecId).text()).data('value', chosenCodecValue);
   console.log('%c[index.js, updateCodecMode]', 'color: green;', 'Saving codec mode value: ' + chosenCodecValue);
   storeData('codecMode', chosenCodecValue, null);
+
+  // Trigger warning check after changing codec
+  warnCodecMode();
+}
+
+function warnCodecMode() {
+  var chosenCodecMode = $('#selectCodec').data('value');
+
+  // Codec warning
+  if (!codecWarning && (chosenCodecMode === '0x1000' || chosenCodecMode === '0x2000')) {
+    // Warn only if codec is selected to AV1 or AV1 Main10
+    snackbarLogLong('Warning: This codec is only supported on high-end devices and can significantly slow down performance.');
+    // Set flag for codec warning
+    codecWarning = true;
+  } else if (codecWarning && (chosenCodecMode === '0x0100' || chosenCodecMode === '0x0200' || chosenCodecMode === '0x0001')) {
+    // Reset the flag for codec warning if the condition goes back to normal (HEVC, HEVC Main10 or H.264)
+    codecWarning = false;
+  }
 }
 
 function saveHdrMode() {
