@@ -1607,7 +1607,7 @@ function startGame(host, appID) {
       var streamWidth = $('#selectResolution').data('value').split(':')[0];
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
       var frameRate = $('#selectFramerate').data('value').toString();
-      var bitrate = parseInt($('#bitrateSlider').val()) * 1000;
+      var bitrate = parseFloat($('#bitrateSlider').val()) * 1000;
       const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const externalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
