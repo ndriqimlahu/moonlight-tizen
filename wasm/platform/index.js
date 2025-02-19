@@ -2044,7 +2044,7 @@ function setBitratePresetValue() {
   var frameRate = $('#selectFramerate').data('value').toString();
 
   // Set the bitrate based on the selected resolution and frame rate
-  if (res === '858:480') { // 480p
+  if (res === '854:480') { // 480p
     if (frameRate === '30') { // 30 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('2');
     } else if (frameRate === '60') { // 60 FPS
