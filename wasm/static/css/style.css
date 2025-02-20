@@ -1,3 +1,6 @@
+/* =============================
+   Global Styles
+============================= */
 body {
     color: #fff;
     background-color: #282C38;
@@ -7,6 +10,70 @@ body {
     -moz-user-select: none;
     user-select: none;
 }
+.mdl-grid {
+    width: 100%;
+}
+.mdl-cell {
+    color: #fff;
+    padding: 25px;
+    text-align: center;
+}
+/* =============================
+   Splash Screen
+============================= */
+#listener {
+    height: 0;
+    margin-top: 0;
+    overflow: hidden;
+}
+#wasmSpinner {
+    width: 35%;
+    height: 10px;
+    display: none;
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    margin: 0 auto;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+}
+#loadingSpinner {
+    width: 35%;
+    height: 10px;
+    display: none;
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    margin: 0 auto;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+}
+.mdl-progress > .progressbar,
+.mdl-progress > .bufferbar,
+.mdl-progress > .auxbar {
+    border-radius: 8px;
+}
+#wasmSpinnerLogo {
+    width: 30%;
+    position: fixed;
+    bottom: 350%;
+    left: 25%;
+    right: 25%;
+    margin: 0 auto;
+    animation: fadeInOut 3s infinite;
+}
+#wasmSpinnerMessage, #loadingSpinnerMessage {
+    color: #fff;
+    margin: 35px;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+/* =============================
+   Header Section
+============================= */
 #main-header {
     background-color: #333846;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 1);
@@ -30,23 +97,60 @@ body {
     text-transform: uppercase;
     text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
 }
+/* =============================
+   Navigation Menu
+============================= */
+#settingsBtn, #supportBtn, #restoreDefaultsBtn, #quitRunningAppBtn {
+    background-color: #404354;
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+#goBackBtn {
+    background-color: #404354;
+    position: fixed;
+    left: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.navigation-button-icons {
+    margin: 0 8px 0 2px;
+    font-size: 32px !important;
+}
+#settingsBtn i, #supportBtn i, #goBackBtn i,
+#restoreDefaultsBtn i, #quitRunningAppBtn i {
+    margin: auto -4px;
+}
 .nav-menu-parent {
     position: relative;
     margin: 0 10px;
 }
-.mdl-menu__outline {
+/* =============================
+   Helper Styles
+============================= */
+#snackButton {
+    width: 0;
+    height: 0;
+    display: none;
+}
+.mdl-snackbar {
+    background: rgba(62, 68, 84, 0.9);
+    min-width: 0;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 0 8px 4px rgba(0, 163, 198, 1);
+}
+.mdl-snackbar__text {
     color: #fff;
-    background-color: #333846;
-}
-.mdl-menu__item {
-    color: #ececec;
-    font-size: 1.25rem;
+    padding: 15px 20px 15px 20px;
+    font-size: 1.45rem;
+    font-weight: 500;
+    line-height: normal;
     letter-spacing: 0.5px;
-    text-indent: 40px;
-    text-align: left;
-}
-.mdl-menu__item.hovered, .mdl-menu__item:hover, .mdl-menu__item:focus {
-    background-color: #484C5F;
+    text-align: center;
 }
 .mdl-tooltip {
     color: #fff;
@@ -63,35 +167,18 @@ body {
     letter-spacing: 0.5px;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
 }
-.mdl-button {
-    color: #fff;
-    border-radius: 8px;
-    font-size: 1.15rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: none;
+.hovered {
+    background: rgba(158, 158, 158, 0.2);
 }
-.mdl-button--raised.mdl-button--colored {
-    color: #fff;
-    background-color: #404354 !important;
+.hide-container {
+    display: none !important;
 }
-.mdl-button--raised.mdl-button--colored:hover, .mdl-button--raised.mdl-button--colored:focus,
-.mdl-button--raised.mdl-button--colored:active {
-    background-color: #404354 !important;
-    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
+.disable-animation {
+    animation: none !important;
 }
-.navigation-button-icons {
-    margin: 0 8px 0 2px;
-    font-size: 32px !important;
-}
-.mdl-grid {
-    width: 100%;
-}
-.mdl-cell {
-    color: #fff;
-    padding: 25px;
-    text-align: center;
-}
+/* =============================
+   Dialog Styles
+============================= */
 .dialog-overlay {
     position: fixed;
     top: 0;
@@ -146,100 +233,209 @@ body {
     margin-bottom: 10px;
     border-radius: 8px;
 }
-.mdl-switch__label {
-    margin-top: 17px;
+#ipAddressInputField {
+    display: block;
+    margin: 15px 0 15px 0;
 }
-.mdl-switch__input, .mdl-switch__track, .mdl-switch__thumb {
-    margin: 1.2rem 0 1.2rem 74.5rem;
+#ipAddressInputField .mdl-textfield__label {
+    top: -12px;
 }
-.mdl-switch.is-checked .mdl-switch__track {
-    background: rgba(0, 163, 198, 1);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-.mdl-switch.is-checked .mdl-switch__thumb {
-    background-color: #fff;
-}
-.mdl-switch.is-focused {
-    background-color: #404354;
-    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
-}
-.mdl-icon-toggle__label.material-icons {
-    color: #818181;
-}
-.dropdown-items {
-    float: right;
-    margin: 5px 28px 5px 28px;
-}
-#listener {
-    height: 0;
-    margin-top: 0;
-    overflow: hidden;
-}
-#wasmSpinner {
-    width: 35%;
-    height: 10px;
-    display: none;
-    position: fixed;
-    bottom: 50%;
-    left: 50%;
-    margin: 0 auto;
-    z-index: 2;
-    transform: translate(-50%, -50%);
-}
-#loadingSpinner {
-    width: 35%;
-    height: 10px;
-    display: none;
-    position: fixed;
-    bottom: 50%;
-    left: 50%;
-    margin: 0 auto;
-    z-index: 1;
-    transform: translate(-50%, -50%);
-}
-.mdl-progress > .progressbar,
-.mdl-progress > .bufferbar,
-.mdl-progress > .auxbar {
-    border-radius: 8px;
-}
-#wasmSpinnerLogo {
-    width: 30%;
-    position: fixed;
-    bottom: 350%;
-    left: 25%;
-    right: 25%;
-    margin: 0 auto;
-    animation: fadeInOut 3s infinite;
-}
-#wasmSpinnerMessage, #loadingSpinnerMessage {
-    color: #fff;
-    margin: 35px;
-    font-size: 2rem;
-    font-weight: 300;
-    line-height: normal;
+.mdl-textfield__label {
+    font-size: 1.65rem;
+    font-weight: 200;
     letter-spacing: 0.5px;
-    text-align: center;
 }
-.mdl-snackbar {
-    background: rgba(62, 68, 84, 0.9);
-    min-width: 0;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 0 8px 4px rgba(0, 163, 198, 1);
+.mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
+    font-size: 1.65rem;
+    font-weight: 200;
+    letter-spacing: 0.5px;
 }
-.mdl-snackbar__text {
-    color: #fff;
-    padding: 15px 20px 15px 20px;
+#ipAddressTextInput {
     font-size: 1.45rem;
-    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+.mdl-textfield__input {
+    width: 178%;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    text-indent: 10px;
+}
+.mdl-textfield__input.hovered, #ipAddressTextInput {
+    color: #fff;
+    background-color: #585D75;
+}
+.mdl-textfield__input.hovered, .mdl-textfield__input:hover, .mdl-textfield__input:focus {
+    box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
+}
+.mdl-textfield.is-invalid .mdl-textfield__input:hover, .mdl-textfield.is-invalid .mdl-textfield__input:focus {
+    box-shadow: 0 0 1px 2px rgba(244, 67, 54, 1);
+}
+#ipAddressTextInput::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+#ipAddressSelectFields {
+    display: none;
+    margin: 15px 0 15px 0;
+}
+.select-option-field {
+    position: relative;
+    display: inline-block;
+    width: 105%;
+    max-width: max-content;
+    margin: 0;
+    padding: 20px 0;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+.select-option-field-floating-label .mdl-textfield__label {
+    color: #00A3C6;
+    font-size: 1.65rem;
+    font-weight: 200;
+    letter-spacing: 0.5px;
+}
+#ipAddressSelectFields .mdl-textfield__label {
+    top: -12px;
+}
+.ip-address-select-field {
+    width: 131px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    text-indent: 10px;
+    cursor: pointer;
+}
+.ip-address-select-field.hovered, #ipAddressField1,
+#ipAddressField2, #ipAddressField3, #ipAddressField4 {
+    color: #fff;
+    background-color: #585D75;
+}
+.ip-address-select-field.hovered, .ip-address-select-field:hover {
+    box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
+}
+#supportQrCode {
+    width: 50%;
+    height: 50%;
+    margin: 5px 25% 5px 25%;
+    border-radius: 12px;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: center;
+}
+.navGuideContainer {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 20px 5px 20px;
+    font-size: 1.35rem;
+    letter-spacing: 2px;
+}
+.navGuideLabel {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
+}
+.navGuideRemoteColor {
+    background-color: #00A3C6;
+}
+.navGuideKeyboardColor {
+    background-color: #F44336;
+}
+.navGuideGamepadColor {
+    background-color: #8BC34A;
+}
+.navGuideLabelText {
+    color: #ececec;
+    font-size: 1.65rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.navGuideDialogControls {
+    padding: 5px 0 5px 0;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+}
+.navGuideRemoteText {
+    color: #00A3C6;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.navGuideKeyboardText {
+    color: #F44336;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.navGuideGamepadText {
+    color: #8BC34A;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+#pairingDialogText, #deleteHostDialogText, .host-details-text, #supportDialogText,
+#navGuideDialogText, #restoreDefaultsDialogText, #quitAppDialogText, #restartAppDialogText,
+#exitAppDialogText {
+    font-size: 1.45rem;
     line-height: normal;
     letter-spacing: 0.5px;
-    text-align: center;
 }
-#snackButton {
-    width: 0;
-    height: 0;
-    display: none;
+#navGuideDialogText {
+    list-style-type: none;
+    padding: 5px 20px 5px 20px;
 }
+#continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost,
+#closeHostMenuDialog, #closeHostDetailsDialog, #cancelDeleteHost, #closeSupportDialog,
+#closeNavGuideDialog, #continueRestoreDefaults, #cancelRestoreDefaults, #continueQuitApp,
+#cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
+    text-transform: uppercase;
+}
+#continueAddHost, #cancelAddHost, #continueDeleteHost, #cancelDeleteHost,
+#continueRestoreDefaults, #cancelRestoreDefaults, #continueQuitApp, #cancelQuitApp,
+#continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
+    width: 48%;
+    height: 40px;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+#cancelAddHost, #cancelPairingDialog, #cancelDeleteHost, #closeSupportDialog,
+#cancelRestoreDefaults, #cancelQuitApp, #cancelRestartApp, #cancelExitApp {
+    height: 40px;
+    margin: 0 10px 20px 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+#continueAddHost[disabled], #continueAddHost.mdl-button--disabled {
+    color: #fff;
+    background-color: #838593;
+    pointer-events: auto;
+    cursor: pointer;
+}
+#continueAddHost[disabled].hovered, #continueAddHost[disabled]:hover,
+#continueAddHost[disabled]:focus, #continueAddHost[disabled]:active,
+#continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus,
+#continueAddHost.mdl-button--disabled:active {
+    background-color: #666875;
+    cursor: pointer;
+}
+.host-menu-button, #closeHostMenuDialog, #closeHostDetailsDialog {
+    margin: 10px 15px 20px 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+#closeNavGuideDialog {
+    width: 58%;
+    height: 40px;
+    margin: 0 25rem 1.3rem 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+/* =============================
+   Hosts Section
+============================= */
 #host-grid {
     display: flex;
     flex: 1;
@@ -346,6 +542,9 @@ body {
     transform: scale(1.3);
     box-shadow: 0 1px 4px rgba(0, 163, 198, 0.4);
 }
+/* =============================
+   Games Section
+============================= */
 #game-grid {
     display: flex;
     flex: 1;
@@ -428,94 +627,9 @@ body {
     overflow: visible;
     text-overflow: unset;
 }
-.disable-animation {
-    animation: none !important;
-}
-.hovered {
-    background: rgba(158, 158, 158, 0.2);
-}
-#ipAddressInputField {
-    display: block;
-    margin: 15px 0 15px 0;
-}
-#ipAddressInputField .mdl-textfield__label {
-    top: -12px;
-}
-.mdl-textfield__label {
-    font-size: 1.65rem;
-    font-weight: 200;
-    letter-spacing: 0.5px;
-}
-.mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
-    font-size: 1.65rem;
-    font-weight: 200;
-    letter-spacing: 0.5px;
-}
-#ipAddressTextInput {
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-}
-.mdl-textfield__input {
-    width: 178%;
-    height: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    text-indent: 10px;
-}
-.mdl-textfield__input.hovered, #ipAddressTextInput {
-    color: #fff;
-    background-color: #585D75;
-}
-.mdl-textfield__input.hovered, .mdl-textfield__input:hover, .mdl-textfield__input:focus {
-    box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
-}
-.mdl-textfield.is-invalid .mdl-textfield__input:hover, .mdl-textfield.is-invalid .mdl-textfield__input:focus {
-    box-shadow: 0 0 1px 2px rgba(244, 67, 54, 1);
-}
-#ipAddressTextInput::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-#ipAddressSelectFields {
-    display: none;
-    margin: 15px 0 15px 0;
-}
-.select-option-field {
-    position: relative;
-    display: inline-block;
-    width: 105%;
-    max-width: max-content;
-    margin: 0;
-    padding: 20px 0;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-.select-option-field-floating-label .mdl-textfield__label {
-    color: #00A3C6;
-    font-size: 1.65rem;
-    font-weight: 200;
-    letter-spacing: 0.5px;
-}
-#ipAddressSelectFields .mdl-textfield__label {
-    top: -12px;
-}
-.ip-address-select-field {
-    width: 131px;
-    height: 36px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-    text-indent: 10px;
-    cursor: pointer;
-}
-.ip-address-select-field.hovered, #ipAddressField1,
-#ipAddressField2, #ipAddressField3, #ipAddressField4 {
-    color: #fff;
-    background-color: #585D75;
-}
-.ip-address-select-field.hovered, .ip-address-select-field:hover {
-    box-shadow: 0 0 1px 2px rgba(0, 163, 198, 1);
-}
+/* =============================
+   Streaming Layout
+============================= */
 .fullscreen {
     height: 100vh !important;
     margin: auto !important;
@@ -523,36 +637,15 @@ body {
     border: none !important;
     overflow: hidden !important;
 }
-#settingsBtn, #supportBtn, #restoreDefaultsBtn, #quitRunningAppBtn {
-    background-color: #404354;
-    width: 50px;
-    height: 50px;
-    margin: 0 10px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-#goBackBtn {
-    background-color: #404354;
-    position: fixed;
-    left: 30px;
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-#settingsBtn i, #supportBtn i, #goBackBtn i,
-#restoreDefaultsBtn i, #quitRunningAppBtn i {
-    margin: auto -4px;
-}
+/* =============================
+   Settings Section
+============================= */
 #settings-list {
     width: 100%;
     height: 100%;
     margin: 0;
     display: flex;
     flex-flow: row wrap;
-}
-.hide-container {
-    display: none !important;
 }
 #settings-left-panel {
     flex: 1;
@@ -638,11 +731,48 @@ body {
 .settings-options .mdl-switch__label {
     color: #ececec;
     display: block;
-    margin-bottom: 12px;
+    margin: 18px 0 12px 0;
     font-size: 1.45rem;
     line-height: normal;
     letter-spacing: 0.5px;
     text-align: left;
+}
+/* =============================
+   Switch, Button, and Menu Styles
+============================= */
+.mdl-switch__input, .mdl-switch__track, .mdl-switch__thumb {
+    margin: 1.2rem 0 1.2rem 74.5rem;
+}
+.mdl-switch.is-checked .mdl-switch__track {
+    background: rgba(0, 163, 198, 1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.mdl-switch.is-checked .mdl-switch__thumb {
+    background-color: #fff;
+}
+.mdl-switch.is-focused {
+    background-color: #404354;
+    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
+}
+.mdl-icon-toggle__label.material-icons {
+    color: #818181;
+}
+.mdl-button {
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: none;
+}
+.mdl-button--raised.mdl-button--colored {
+    color: #fff;
+    background-color: #404354 !important;
+}
+.mdl-button--raised.mdl-button--colored:hover, .mdl-button--raised.mdl-button--colored:focus,
+.mdl-button--raised.mdl-button--colored:active {
+    background-color: #404354 !important;
+    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
 #selectCodec, #navigationGuideBtn, #restartAppBtn {
@@ -662,6 +792,42 @@ body {
     text-align: left;
     box-sizing: border-box;
     cursor: pointer;
+}
+#systemInfoBtn {
+    color: #ececec;
+    background-color: #404354;
+    width: 100%;
+    height: 100%;
+    padding: 15px 50px 20px 50px;
+    border-radius: 8px;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-align: left;
+    white-space: pre-line;
+    box-sizing: border-box;
+}
+.mdl-menu__outline {
+    color: #fff;
+    background-color: #333846;
+}
+.mdl-menu__item {
+    color: #ececec;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    text-indent: 40px;
+    text-align: left;
+}
+.mdl-menu__item.hovered, .mdl-menu__item:hover, .mdl-menu__item:focus {
+    background-color: #484C5F;
+}
+.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__container {
+    width: 59.4% !important;
+}
+.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__outline {
+    width: 100% !important;
+    top: 2.5px !important;
+    border-radius: 0 0 8px 8px;
 }
 .bitrateMenu {
     background-color: #333846;
@@ -697,97 +863,14 @@ body {
 #hevc-main10, #av1-main10 {
     display: none !important;
 }
+.dropdown-items {
+    float: right;
+    margin: 5px 28px 5px 28px;
+}
 #resolutionMenu > #selectResolution, #framerateMenu > #selectFramerate,
 #bitrateMenu > #selectBitrate, #codecMenu > #selectCodec {
     color: #ececec;
     background: url('../res/ic_arrow_drop_down_48px.svg') 94.8% 50% no-repeat rgba(64, 67, 84, 1);
-}
-.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__container {
-    width: 59.4% !important;
-}
-.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__outline {
-    width: 100% !important;
-    top: 2.5px !important;
-    border-radius: 0 0 8px 8px;
-}
-#supportQrCode {
-    width: 50%;
-    height: 50%;
-    margin: 5px 25% 5px 25%;
-    border-radius: 12px;
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4);
-    align-items: center;
-    justify-content: center;
-}
-#systemInfoBtn {
-    color: #ececec;
-    background-color: #404354;
-    width: 100%;
-    height: 100%;
-    padding: 15px 50px 20px 50px;
-    border-radius: 8px;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    text-align: left;
-    white-space: pre-line;
-    box-sizing: border-box;
-}
-.navGuideContainer {
-    display: inline-flex;
-    align-items: center;
-    padding: 5px 20px 5px 20px;
-    font-size: 1.35rem;
-    letter-spacing: 2px;
-}
-.navGuideLabel {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: 10px;
-    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.6);
-}
-.navGuideRemoteColor {
-    background-color: #00A3C6;
-}
-.navGuideKeyboardColor {
-    background-color: #F44336;
-}
-.navGuideGamepadColor {
-    background-color: #8BC34A;
-}
-.navGuideLabelText {
-    color: #ececec;
-    font-size: 1.65rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-#navGuideDialogText {
-    list-style-type: none;
-    padding: 5px 20px 5px 20px;
-}
-.navGuideDialogControls {
-    padding: 5px 0 5px 0;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-}
-.navGuideRemoteText {
-    color: #00A3C6;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-.navGuideKeyboardText {
-    color: #F44336;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-.navGuideGamepadText {
-    color: #8BC34A;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
 }
 #removeAllHostsIcon, #navigationGuideIcon, #restartApplicationIcon {
     float: right;
@@ -796,59 +879,9 @@ body {
     margin: 2px 46px;
     filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
 }
-#pairingDialogText, #deleteHostDialogText, .host-details-text, #supportDialogText,
-#navGuideDialogText, #restoreDefaultsDialogText, #quitAppDialogText, #restartAppDialogText,
-#exitAppDialogText {
-    font-size: 1.45rem;
-    line-height: normal;
-    letter-spacing: 0.5px;
-}
-#continueAddHost, #cancelAddHost, #continueDeleteHost, #cancelDeleteHost,
-#continueRestoreDefaults, #cancelRestoreDefaults, #continueQuitApp, #cancelQuitApp,
-#continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
-    width: 48%;
-    height: 40px;
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
-}
-#cancelAddHost, #cancelPairingDialog, #cancelDeleteHost, #closeSupportDialog,
-#cancelRestoreDefaults, #cancelQuitApp, #cancelRestartApp, #cancelExitApp {
-    height: 40px;
-    margin: 0 10px 20px 0;
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
-}
-.host-menu-button, #closeHostMenuDialog, #closeHostDetailsDialog {
-    margin: 10px 15px 20px 0;
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
-}
-#continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost,
-#closeHostMenuDialog, #closeHostDetailsDialog, #cancelDeleteHost, #closeSupportDialog,
-#closeNavGuideDialog, #continueRestoreDefaults, #cancelRestoreDefaults, #continueQuitApp,
-#cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp {
-    text-transform: uppercase;
-}
-#continueAddHost[disabled], #continueAddHost.mdl-button--disabled {
-    color: #fff;
-    background-color: #838593;
-    pointer-events: auto;
-    cursor: pointer;
-}
-#continueAddHost[disabled].hovered, #continueAddHost[disabled]:hover,
-#continueAddHost[disabled]:focus, #continueAddHost[disabled]:active,
-#continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus,
-#continueAddHost.mdl-button--disabled:active {
-    background-color: #666875;
-    cursor: pointer;
-}
-#closeNavGuideDialog {
-    width: 58%;
-    height: 40px;
-    margin: 0 25rem 1.3rem 0;
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
-}
+/* =============================
+   Interactive Elements
+============================= */
 #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairingDialog:hover, #cancelPairingDialog:focus,
 #continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeHostMenuDialog:hover,
 #closeHostMenuDialog:focus, #closeHostDetailsDialog:hover, #closeHostDetailsDialog:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
@@ -866,6 +899,9 @@ body {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
+/* =============================
+   Animations and Keyframes
+============================= */
 @keyframes fadeInOut {
     0%, 100% {
         transform: scale(0.8);

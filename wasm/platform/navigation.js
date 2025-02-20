@@ -296,71 +296,6 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  HostMenuDialog: {
-    view: new ListView(() => {
-      const actions = ['refreshApps', 'wakeHost', 'removeHost', 'viewDetails', 'closeHostMenuDialog'];
-      return actions.map(action => action === 'closeHostMenuDialog' ? action : action + '-' + Views.HostMenuDialog.hostname);
-    }),
-    up: function() {
-      this.view.prevOption();
-      document.getElementById(this.view.current()).focus();
-    },
-    down: function() {
-      this.view.nextOption();
-      document.getElementById(this.view.current()).focus();
-    },
-    left: function() {},
-    right: function() {},
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('closeHostMenuDialog').click();
-    },
-    press: function() {},
-    switch: function() {
-      document.getElementById(this.view.current()).focus();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  HostDetailsDialog: {
-    view: new ListView(() => ['closeHostDetailsDialog']),
-    up: function() {
-      document.getElementById('closeHostDetailsDialog').blur();
-    },
-    down: function() {
-      document.getElementById('closeHostDetailsDialog').focus();
-    },
-    left: function() {},
-    right: function() {},
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('closeHostDetailsDialog').click();
-    },
-    press: function() {},
-    switch: function() {
-      document.getElementById(this.view.current()).focus();
-    },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
   HostsNav: {
     view: new ListView(() => [
       'settingsBtn',
@@ -504,6 +439,41 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  HostMenuDialog: {
+    view: new ListView(() => {
+      const actions = ['refreshApps', 'wakeHost', 'removeHost', 'viewDetails', 'closeHostMenuDialog'];
+      return actions.map(action => action === 'closeHostMenuDialog' ? action : action + '-' + Views.HostMenuDialog.hostname);
+    }),
+    up: function() {
+      this.view.prevOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    down: function() {
+      this.view.nextOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeHostMenuDialog').click();
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   DeleteHostDialog: {
     view: new ListView(() => [
       'continueDeleteHost',
@@ -526,6 +496,64 @@ const Views = {
     },
     back: function() {
       document.getElementById('cancelDeleteHost').click();
+    },
+    press: function() {},
+    switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  HostDetailsDialog: {
+    view: new ListView(() => ['closeHostDetailsDialog']),
+    up: function() {
+      document.getElementById('closeHostDetailsDialog').blur();
+    },
+    down: function() {
+      document.getElementById('closeHostDetailsDialog').focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeHostDetailsDialog').click();
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  SupportDialog: {
+    view: new ListView(() => ['closeSupportDialog']),
+    up: function() {
+      document.getElementById('closeSupportDialog').blur();
+    },
+    down: function() {
+      document.getElementById('closeSupportDialog').focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeSupportDialog').click();
     },
     press: function() {},
     switch: function() {},
@@ -637,38 +665,6 @@ const Views = {
     switch: function() {
       document.getElementById(this.view.current()).focus();
     },
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  RestoreDefaultsDialog: {
-    view: new ListView(() => [
-      'continueRestoreDefaults',
-      'cancelRestoreDefaults']),
-    up: function() {},
-    down: function() {},
-    left: function() {
-      this.view.prev();
-      document.getElementById('continueRestoreDefaults').focus();
-    },
-    right: function() {
-      this.view.next();
-      document.getElementById('cancelRestoreDefaults').focus();
-    },
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('cancelRestoreDefaults').click();
-    },
-    press: function() {},
-    switch: function() {},
     enter: function() {
       mark(this.view.current());
     },
@@ -1117,6 +1113,66 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  NavigationGuideDialog: {
+    view: new ListView(() => ['closeNavGuideDialog']),
+    up: function() {
+      document.getElementById('closeNavGuideDialog').blur();
+    },
+    down: function() {
+      document.getElementById('closeNavGuideDialog').focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeNavGuideDialog').click();
+    },
+    press: function() {},
+    switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
+  RestoreDefaultsDialog: {
+    view: new ListView(() => [
+      'continueRestoreDefaults',
+      'cancelRestoreDefaults']),
+    up: function() {},
+    down: function() {},
+    left: function() {
+      this.view.prev();
+      document.getElementById('continueRestoreDefaults').focus();
+    },
+    right: function() {
+      this.view.next();
+      document.getElementById('cancelRestoreDefaults').focus();
+    },
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('cancelRestoreDefaults').click();
+    },
+    press: function() {},
+    switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   Apps: {
     view: new ListView(() => document.getElementById('game-grid').children),
     up: function() {
@@ -1231,62 +1287,6 @@ const Views = {
     },
     back: function() {
       document.getElementById('cancelQuitApp').click();
-    },
-    press: function() {},
-    switch: function() {},
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  SupportDialog: {
-    view: new ListView(() => ['closeSupportDialog']),
-    up: function() {
-      document.getElementById('closeSupportDialog').blur();
-    },
-    down: function() {
-      document.getElementById('closeSupportDialog').focus();
-    },
-    left: function() {},
-    right: function() {},
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('closeSupportDialog').click();
-    },
-    press: function() {},
-    switch: function() {},
-    enter: function() {
-      mark(this.view.current());
-    },
-    leave: function() {
-      unmark(this.view.current());
-    },
-  },
-  NavigationGuideDialog: {
-    view: new ListView(() => ['closeNavGuideDialog']),
-    up: function() {
-      document.getElementById('closeNavGuideDialog').blur();
-    },
-    down: function() {
-      document.getElementById('closeNavGuideDialog').focus();
-    },
-    left: function() {},
-    right: function() {},
-    select: function() {
-      this.view.current().click();
-    },
-    accept: function() {
-      document.getElementById(this.view.current()).click();
-    },
-    back: function() {
-      document.getElementById('closeNavGuideDialog').click();
     },
     press: function() {},
     switch: function() {},
