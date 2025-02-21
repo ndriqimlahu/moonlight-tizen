@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.2.20
+
+### Added
+- Added warning messages for resolution, frame rate, bitrate, and codec selection
+
+### Changed
+- Simplified setting descriptions to improve readability and reduce unnecessary details
+- Updated '480p' video resolution setting for better standardization and compatibility
+- Rearranged elements for better code structure, organization, and readability
+
+### Fixed
+- Fixed an issue where the bitrate slider was ignoring decimal values due to incorrect parsing
+
 ## v1.2.19
 
 ### Added
