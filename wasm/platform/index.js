@@ -47,6 +47,7 @@ function attachListeners() {
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#navigationGuideBtn').on('click', showNavigationGuideDialog);
+  $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartApplication);
 
   const registerMenu = (elementId, view) => {
@@ -1181,6 +1182,35 @@ function showNavigationGuideDialog() {
     isDialogOpen = false;
     Navigation.pop();
     Navigation.switch();
+  });
+}
+
+// Checks for application updates from the GitHub repository
+function checkForAppUpdates() {
+  // Get current app version
+  const currentVersion = tizen.application.getAppInfo().version;
+
+  // GitHub API endpoint to get the latest released version
+  const repoOwner = 'ndriqimlahu';
+  const repoName = 'moonlight-tizen';
+  const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`;
+
+  snackbarLog('Checking for available Moonlight updates...');
+
+  // Fetch the latest release data from the GitHub API
+  fetch(apiUrl).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response failed: ' + response.statusText);
+    }
+    // Parse JSON response
+    return response.json();
+  }).then(data => {
+    // Get the latest version and release notes from the released update
+    let latestVersion = data.tag_name;
+    const releaseNotes = data.body;
+  }).catch(error => {
+    console.log('%c[index.js, checkForAppUpdates]', 'color: green;', 'Error: Failed to fetch the release data!', error);
+    snackbarLogLong('Unable to check for updates right now. Please try again later!');
   });
 }
 

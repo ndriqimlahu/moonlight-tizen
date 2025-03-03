@@ -1064,6 +1064,7 @@ const Views = {
     view: new ListView(() => [
       'systemInfoBtn',
       'navigationGuideBtn',
+      'checkUpdatesBtn',
       'restartAppBtn']),
     up: function() {
       this.view.prevOption();
