@@ -1142,6 +1142,36 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  UpdateMoonlightDialog: {
+    view: new ListView(() => ['closeUpdateApp']),
+    up: function() {
+      document.getElementById('closeUpdateApp').blur();
+    },
+    down: function() {
+      document.getElementById('closeUpdateApp').focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeUpdateApp').click();
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   RestoreDefaultsDialog: {
     view: new ListView(() => [
       'continueRestoreDefaults',

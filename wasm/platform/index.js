@@ -1249,6 +1249,70 @@ function extractReleaseNotes(releaseNotes) {
   return match ? match[1].split('\n').map(line => line.replace(/^-\s/, '• ')).join('<br>') : null;
 }
 
+// Show the Update Moonlight dialog
+function showUpdateMoonlightDialog() {
+  // Create an overlay for the dialog and append it to the body
+  var updateAppDialogOverlay = $('<div>', {
+    id: 'updateAppDialogOverlay',
+    class: 'dialog-overlay'
+  }).appendTo(document.body);
+
+  // Create the dialog element and append it to the overlay
+  var updateAppDialog = $('<dialog>', {
+    id: 'updateAppDialog',
+    class: 'mdl-dialog'
+  }).appendTo(updateAppDialogOverlay);
+
+  // Add a dialog title named Update Moonlight
+  $('<h3>', {
+    id: 'updateAppDialogTitle',
+    class: 'mdl-dialog__title',
+    text: 'Update Moonlight'
+  }).appendTo(updateAppDialog);
+
+  // Create a content section inside the dialog
+  var updateAppDialogContent = $('<div>', {
+    class: 'mdl-dialog__content'
+  }).appendTo(updateAppDialog);
+
+  // Create the actions section inside the dialog
+  var updateAppDialogActions = $('<div>', {
+    class: 'mdl-dialog__actions'
+  }).appendTo(updateAppDialog);
+
+  // Create and set up the Close button
+  var closeUpdateApp = $('<button>', {
+    type: 'button',
+    id: 'closeUpdateApp',
+    class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+    text: 'Close'
+  });
+
+  // Close the dialog if the Close button is pressed
+  closeUpdateApp.off('click');
+  closeUpdateApp.click(function() {
+    console.log('%c[index.js, showUpdateMoonlightDialog]', 'color: green;', 'Closing app dialog and returning.');
+    $(updateAppDialogOverlay).css('display', 'none');
+    updateAppDialog[0].close();
+    updateAppDialogOverlay.remove();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  }).appendTo(updateAppDialogActions);
+
+  // If the dialog element doesn't support the showModal method, register it with dialogPolyfill
+  if (!updateAppDialog[0].showModal) {
+    dialogPolyfill.registerDialog(updateAppDialog[0]);
+  }
+
+  // Show the dialog and push the view
+  $(updateAppDialogOverlay).css('display', 'flex');
+  updateAppDialog[0].showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.UpdateMoonlightDialog);
+  setTimeout(() => Navigation.switch(), 5);
+}
+
 // Restart the application
 function restartApplication() {
   var restartApplication = window.location;
