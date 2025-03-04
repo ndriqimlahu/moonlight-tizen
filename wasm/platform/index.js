@@ -1206,12 +1206,47 @@ function checkForAppUpdates() {
     return response.json();
   }).then(data => {
     // Get the latest version and release notes from the released update
-    let latestVersion = data.tag_name;
-    const releaseNotes = data.body;
+    let latestVersion = data.tag_name.startsWith('v') ? data.tag_name.slice(1) : data.tag_name;
+    const releaseNotes = extractReleaseNotes(data.body) || 'No relevant changes found.';
+    setTimeout(() => {
+      // Check if a new version update is available or the app is already up to date
+      if (compareVersionParts(currentVersion, latestVersion)) {
+        // If a new version update is available, show a snackbar message to inform the user to update the app
+        snackbarLogLong(`Version ${latestVersion} is now available! Update manually to enjoy new features and improvements.`);
+      } else {
+        // Otherwise, show a snackbar message to inform the user that the app is already up to date
+        snackbarLogLong('Your app is already up to date with the latest version.');
+      }
+    }, 1000);
   }).catch(error => {
     console.log('%c[index.js, checkForAppUpdates]', 'color: green;', 'Error: Failed to fetch the release data!', error);
     snackbarLogLong('Unable to check for updates right now. Please try again later!');
   });
+}
+
+// Compares the current version of the app with the latest version to determine if an update is available
+function compareVersionParts(currentVersion, latestVersion) {
+  const currentVerParts = currentVersion.split('.').map(Number);
+  const latestVerParts = latestVersion.split('.').map(Number);
+
+  // Compare each part of the version numbers
+  for (let i = 0; i < latestVerParts.length; i++) {
+    if (latestVerParts[i] > currentVerParts[i]) {
+      // If latest version has a higher number in any part, an update is available
+      return true;
+    } else if (latestVerParts[i] < currentVerParts[i]) {
+      // If the current version has a higher number, no update is needed
+      return false;
+    }
+  }
+  // If all parts are equal, no update is available
+  return false;
+}
+
+// Extracts only the release notes section from the released update
+function extractReleaseNotes(releaseNotes) {
+  const match = releaseNotes.match(/## What's Changed:\r?\n\r?\n([\s\S]+?)(?:\r?\n\r?\n\*\*Full Changelog\*\*|$)/);
+  return match ? match[1].split('\n').map(line => line.replace(/^-\s/, '• ')).join('<br>') : null;
 }
 
 // Restart the application
