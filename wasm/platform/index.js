@@ -24,12 +24,12 @@ function attachListeners() {
   changeUiModeForWasmLoad();
   initIpAddressFields();
 
-  $('#addHostContainer').on('click', addHost);
+  $('#addHostContainer').on('click', addHostDialog);
   $('#settingsBtn').on('click', showSettings);
-  $('#supportBtn').on('click', showSupportDialog);
+  $('#supportBtn').on('click', appSupportDialog);
   $('#goBackBtn').on('click', showHosts);
-  $('#restoreDefaultsBtn').on('click', restoreDefaultSettings);
-  $('#quitRunningAppBtn').on('click', quitRunningApp);
+  $('#restoreDefaultsBtn').on('click', restoreDefaultsDialog);
+  $('#quitRunningAppBtn').on('click', quitAppDialog);
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', saveBitrate);
@@ -37,7 +37,7 @@ function attachListeners() {
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $('#externalAudioSwitch').on('click', saveExternalAudio);
-  $('#removeAllHostsBtn').on('click', removeAllHosts);
+  $('#removeAllHostsBtn').on('click', deleteAllHostsDialog);
   $('#rumbleFeedbackSwitch').on('click', saveRumbleFeedback);
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
   $('#flipABfaceButtonsSwitch').on('click', saveFlipABfaceButtons);
@@ -46,7 +46,7 @@ function attachListeners() {
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#audioSyncSwitch').on('click', saveAudioSync);
-  $('#navigationGuideBtn').on('click', showNavigationGuideDialog);
+  $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartApplication);
 
@@ -135,6 +135,10 @@ function changeUiModeForWasmLoad() {
   $('#wasmSpinnerMessage').text('Loading Moonlight...');
 }
 
+function moduleDidLoad() {
+  loadHTTPCerts();
+}
+
 // Handles repeated execution of the current action based on a specified interval
 function repeatActionHandler() {
   // Check if repeat action is set and enough time has passed since the last invocation
@@ -155,58 +159,6 @@ function delayedNavigation(callback) {
   clearTimeout(navigationTimeout);
   // Set a new navigation timeout with the provided callback and delay
   navigationTimeout = setTimeout(callback, NAVIGATION_DELAY);
-}
-
-function startPollingHosts() {
-  for (var hostUID in hosts) {
-    beginBackgroundPollingOfHost(hosts[hostUID]);
-  }
-}
-
-function stopPollingHosts() {
-  for (var hostUID in hosts) {
-    endBackgroundPollingOfHost(hosts[hostUID]);
-  }
-}
-
-function restoreUiAfterWasmLoad() {
-  $('#main-header').children().not('#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn').show();
-  $('#main-content').children().not('#listener, #wasmSpinner, #settings-list, #game-grid').show();
-  $('#wasmSpinner').hide();
-  $('#loadingSpinner').css('display', 'none');
-
-  // Navigate to the Hosts view
-  Navigation.push(Views.Hosts);
-  showHostsMode();
-
-  // Find mDNS host discovered using ServiceFinder (network service discovery)
-  // findNvService(function(finder, opt_error) {
-  //   if (finder.byService_['_nvstream._tcp']) {
-  //     var ips = Object.keys(finder.byService_['_nvstream._tcp']);
-  //     for (var i in ips) {
-  //       var ip = ips[i];
-  //       if (finder.byService_['_nvstream._tcp'][ip]) {
-  //         var mDnsDiscoveredHost = new NvHTTP(ip, myUniqueid);
-  //         mDnsDiscoveredHost.pollServer(function(returnedDiscoveredHost) {
-  //           // Just drop this if the host doesn't respond
-  //           if (!returnedDiscoveredHost.online) {
-  //             return;
-  //           }
-  //           if (hosts[returnedDiscoveredHost.serverUid] != null) {
-  //             // If we're seeing a host we've already seen before, update it for the current local IP
-  //             hosts[returnedDiscoveredHost.serverUid].address = returnedDiscoveredHost.address;
-  //             hosts[returnedDiscoveredHost.serverUid].updateExternalAddressIP4();
-  //           } else {
-  //             // Host must be in the grid before starting background polling
-  //             addHostToGrid(returnedDiscoveredHost, true);
-  //             beginBackgroundPollingOfHost(returnedDiscoveredHost);
-  //           }
-  //           saveHosts();
-  //         });
-  //       }
-  //     }
-  //   }
-  // });
 }
 
 function beginBackgroundPollingOfHost(host) {
@@ -258,6 +210,12 @@ function beginBackgroundPollingOfHost(host) {
   }
 }
 
+function startPollingHosts() {
+  for (var hostUID in hosts) {
+    beginBackgroundPollingOfHost(hosts[hostUID]);
+  }
+}
+
 function endBackgroundPollingOfHost(host) {
   console.log('%c[index.js, endBackgroundPollingOfHost]', 'color: green;', 'Stopping background polling of host ' + host.serverUid, host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   // Clear the host's polling interval and remove it from the activePolls object
@@ -265,18 +223,10 @@ function endBackgroundPollingOfHost(host) {
   delete activePolls[host.serverUid];
 }
 
-// FIXME: This is a workaround to correctly update and store valid host MAC address in IndexedDB
-function updateMacAddress(host) {
-  getData('hosts', function(previousValue) {
-    hosts = previousValue.hosts != null ? previousValue.hosts : {};
-    if (host.macAddress != '00:00:00:00:00:00') {
-      if (hosts[host.serverUid] && hosts[host.serverUid].macAddress != host.macAddress) {
-        console.log('%c[index.js, updateMacAddress]', 'color: green;', 'Updated MAC address for host ' + host.hostname + ' from ' + hosts[host.serverUid].macAddress + ' to ' + host.macAddress);
-        hosts[host.serverUid].macAddress = host.macAddress;
-        saveHosts();
-      }
-    }
-  });
+function stopPollingHosts() {
+  for (var hostUID in hosts) {
+    endBackgroundPollingOfHost(hosts[hostUID]);
+  }
 }
 
 function snackbarLog(givenMessage) {
@@ -297,85 +247,75 @@ function snackbarLogLong(givenMessage) {
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
 }
 
-function moduleDidLoad() {
-  loadHTTPCerts();
+// Handle layout elements when displaying the Hosts view
+function showHostsMode() {
+  console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show Hosts" mode.');
+  $('#header-title').html('Hosts');
+  $('#header-logo').show();
+  $('#main-header').show();
+  $('.nav-menu-parent').show();
+  $('#settingsBtn').show();
+  $('#supportBtn').show();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('#settings-list').hide();
+  $('#game-grid').hide();
+  $('#goBackBtn').hide();
+  $('#restoreDefaultsBtn').hide();
+  $('#quitRunningAppBtn').hide();
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
+
+  Navigation.start();
+  Navigation.pop();
+  startPollingHosts();
 }
 
-// Pair to the given NvHTTP host object. Returns whether pairing was successful
-function pairTo(nvhttpHost, onSuccess, onFailure) {
-  if (!onFailure) {
-    onFailure = function() {}
-  }
+// Show the Hosts grid
+function showHosts() {
+  // Navigate to the Hosts view
+  showHostsMode();
+  // Set focus to current item and/or scroll to the current host row
+  setTimeout(() => Navigation.switch(), 5);
+}
 
-  if (!pairingCert) {
-    console.warn('%c[index.js, pairTo]', 'color: green;', 'Warning: Pairing certificate is not generated yet. Please ensure Wasm is initialized properly!');
-    snackbarLogLong('Something went wrong with the pairing certificate. Please try pairing with the host PC again.');
-    onFailure();
-    return;
-  }
+function restoreUiAfterWasmLoad() {
+  $('#main-header').children().not('#goBackBtn, #restoreDefaultsBtn, #quitRunningAppBtn').show();
+  $('#main-content').children().not('#listener, #wasmSpinner, #settings-list, #game-grid').show();
+  $('#wasmSpinner').hide();
+  $('#loadingSpinner').css('display', 'none');
 
-  nvhttpHost.pollServer(function(returnedNvHTTPHost) {
-    if (!nvhttpHost.online) {
-      console.error('%c[index.js, pairTo]', 'color: green;', 'Error: Failed to connect to ' + nvhttpHost.hostname + '. Ensure your host PC is online!', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-      snackbarLogLong('Failed to connect to ' + nvhttpHost.hostname + '. Ensure Sunshine is running on your host PC or GameStream is enabled in the GeForce Experience SHIELD settings.');
-      onFailure();
-      return;
-    }
+  // Navigate to the Hosts view
+  Navigation.push(Views.Hosts);
+  showHostsMode();
 
-    if (nvhttpHost.paired) {
-      onSuccess();
-      return;
-    }
-
-    if (nvhttpHost.currentGame != 0) {
-      snackbarLogLong(nvhttpHost.hostname + ' is currently in a game session. Please quit the running app or restart the computer, then try again.');
-      onFailure();
-      return;
-    }
-
-    // Find the existing overlay and dialog elements
-    var pairingOverlay = document.querySelector('#pairingDialogOverlay');
-    var pairingDialog = document.querySelector('#pairingDialog');
-    var randomNumber = String('0000' + (Math.random() * 10000 | 0)).slice(-4);
-    $('#pairingDialogText').html('Please enter the following PIN on the target PC: ' + randomNumber + '<br><br>If your host PC is running Sunshine (all GPUs), navigate to the Sunshine Web UI to enter the PIN.<br><br>Alternatively, if your host PC has NVIDIA GameStream (NVIDIA-only), navigate to the GeForce Experience to enter the PIN.<br><br>This dialog will close once the pairing is complete.');
-    
-    // Show the dialog and push the view
-    pairingOverlay.style.display = 'flex';
-    pairingDialog.showModal();
-    isDialogOpen = true;
-    Navigation.push(Views.PairingDialog);
-
-    // Cancel the operation if the Cancel button is pressed
-    $('#cancelPairingDialog').off('click');
-    $('#cancelPairingDialog').on('click', function() {
-      console.log('%c[index.js, pairTo]', 'color: green;', 'Closing app dialog and returning.');
-      pairingOverlay.style.display = 'none';
-      pairingDialog.close();
-      isDialogOpen = false;
-      Navigation.pop();
-    });
-
-    console.log('%c[index.js, pairTo]', 'color: green;', 'Sending pairing request to ' + nvhttpHost.hostname + ' with PIN ' + randomNumber);
-    nvhttpHost.pair(randomNumber).then(function() {
-      snackbarLog('Successfully paired with ' + nvhttpHost.hostname);
-      // Close the dialog if the pairing was successful
-      console.log('%c[index.js, pairTo]', 'color: green;', 'Closing app dialog and returning.');
-      pairingOverlay.style.display = 'none';
-      pairingDialog.close();
-      isDialogOpen = false;
-      Navigation.pop();
-      onSuccess();
-    }, function(failedPairing) {
-      console.error('%c[index.js, pairTo]', 'color: green;', 'Error: Failed API object:\n', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-      snackbarLog('Failed to pair with ' + nvhttpHost.hostname + '.');
-      if (nvhttpHost.currentGame != 0) {
-        $('#pairingDialogText').html('Error: ' + nvhttpHost.hostname + ' is currently busy!<br><br>You must stop streaming to pair with the host.');
-      } else {
-        $('#pairingDialogText').html('Error: Failed to pair with ' + nvhttpHost.hostname + '<br><br>Please try pairing with the host again.');
-      }
-      onFailure();
-    });
-  });
+  // Find mDNS host discovered using ServiceFinder (network service discovery)
+  // findNvService(function(finder, opt_error) {
+  //   if (finder.byService_['_nvstream._tcp']) {
+  //     var ips = Object.keys(finder.byService_['_nvstream._tcp']);
+  //     for (var i in ips) {
+  //       var ip = ips[i];
+  //       if (finder.byService_['_nvstream._tcp'][ip]) {
+  //         var mDnsDiscoveredHost = new NvHTTP(ip, myUniqueid);
+  //         mDnsDiscoveredHost.pollServer(function(returnedDiscoveredHost) {
+  //           // Just drop this if the host doesn't respond
+  //           if (!returnedDiscoveredHost.online) {
+  //             return;
+  //           }
+  //           if (hosts[returnedDiscoveredHost.serverUid] != null) {
+  //             // If we're seeing a host we've already seen before, update it for the current local IP
+  //             hosts[returnedDiscoveredHost.serverUid].address = returnedDiscoveredHost.address;
+  //             hosts[returnedDiscoveredHost.serverUid].updateExternalAddressIP4();
+  //           } else {
+  //             // Host must be in the grid before starting background polling
+  //             addHostToGrid(returnedDiscoveredHost, true);
+  //             beginBackgroundPollingOfHost(returnedDiscoveredHost);
+  //           }
+  //           saveHosts();
+  //         });
+  //       }
+  //     }
+  //   }
+  // });
 }
 
 function hostChosen(host) {
@@ -392,7 +332,7 @@ function hostChosen(host) {
   api = host;
   if (!host.paired) {
     // If the host is not paired yet, then go to the pairing flow. After that, we refresh the server info, show the apps, and save the host.
-    pairTo(host, function() {
+    pairingDialog(host, function() {
       host.refreshServerInfo().then(function(ret) {
         showApps(host);
       }, function(failedRefreshInfo) {
@@ -484,7 +424,7 @@ function initIpAddressFields() {
 
 // If the `Add Host +` is selected on the host grid, then show the 
 // Add Host dialog to enter the connection details for the host PC
-function addHost() {
+function addHostDialog() {
   // Find the existing overlay and dialog elements
   var addHostOverlay = document.querySelector('#addHostDialogOverlay');
   var addHostDialog = document.querySelector('#addHostDialog');
@@ -507,7 +447,7 @@ function addHost() {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelAddHost').off('click');
   $('#cancelAddHost').on('click', function() {
-    console.log('%c[index.js, addHost]', 'color: green;', 'Closing app dialog and returning.');
+    console.log('%c[index.js, addHostDialog]', 'color: green;', 'Closing app dialog and returning.');
     addHostOverlay.style.display = 'none';
     addHostDialog.close();
     isDialogOpen = false;
@@ -522,7 +462,7 @@ function addHost() {
   // Send a connection request if the Continue button is pressed
   $('#continueAddHost').off('click');
   $('#continueAddHost').on('click', function() {
-    console.log('%c[index.js, addHost]', 'color: green;', 'Adding host, closing app dialog, and returning.');
+    console.log('%c[index.js, addHostDialog]', 'color: green;', 'Adding host, closing app dialog, and returning.');
     // Disable the Continue button to prevent multiple connection requests
     setTimeout(() => {
       // Add disabled state after 2 seconds
@@ -544,11 +484,11 @@ function addHost() {
     }
     // Send a connection request to the Host object based on the given IP address
     var _nvhttpHost = new NvHTTP(inputHost, myUniqueid, inputHost);
-    console.log('%c[index.js, addHost]', 'color: green;', 'Sending connection request to ' + _nvhttpHost.hostname + '...');
+    console.log('%c[index.js, addHostDialog]', 'color: green;', 'Sending connection request to ' + _nvhttpHost.hostname + '...');
     _nvhttpHost.refreshServerInfoAtAddress(inputHost).then(function(success) {
       snackbarLog('Connecting to ' + _nvhttpHost.hostname + '...');
       // Close the dialog if the user has provided the IP address
-      console.log('%c[index.js, addHost]', 'color: green;', 'Closing app dialog and returning.');
+      console.log('%c[index.js, addHostDialog]', 'color: green;', 'Closing app dialog and returning.');
       addHostOverlay.style.display = 'none';
       addHostDialog.close();
       isDialogOpen = false;
@@ -560,11 +500,11 @@ function addHost() {
         hosts[_nvhttpHost.serverUid].address = _nvhttpHost.address;
         hosts[_nvhttpHost.serverUid].userEnteredAddress = _nvhttpHost.userEnteredAddress;
         // Use the host in the array directly to ensure the PPK propagates after pairing
-        pairTo(hosts[_nvhttpHost.serverUid], function() {
+        pairingDialog(hosts[_nvhttpHost.serverUid], function() {
           saveHosts();
         });
       } else {
-        pairTo(_nvhttpHost, function() {
+        pairingDialog(_nvhttpHost, function() {
           // Host must be in the grid before starting background polling
           addHostToGrid(_nvhttpHost);
           beginBackgroundPollingOfHost(_nvhttpHost);
@@ -577,7 +517,7 @@ function addHost() {
       $('#ipAddressTextInput').val('');
       initIpAddressFields();
     }.bind(this), function(failure) {
-      console.error('%c[index.js, addHost]', 'color: green;', 'Error: Failed API object:\n', _nvhttpHost, '\n' + _nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      console.error('%c[index.js, addHostDialog]', 'color: green;', 'Error: Failed API object:\n', _nvhttpHost, '\n' + _nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLogLong('Failed to connect to ' + (_nvhttpHost.hostname || 'the host') + '. Ensure Sunshine is running on your PC or GameStream is enabled in GeForce Experience SHIELD settings.');
       // Re-enable the Continue button after failure processing
       $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
@@ -585,6 +525,92 @@ function addHost() {
       $('#ipAddressTextInput').val('');
       initIpAddressFields();
     }.bind(this));
+  });
+}
+
+// Show the Pairing dialog before pairing with the given NvHTTP host object. Returns whether the pairing was successful or failed.
+function pairingDialog(nvhttpHost, onSuccess, onFailure) {
+  if (!onFailure) {
+    onFailure = function() {}
+  }
+
+  if (!pairingCert) {
+    console.warn('%c[index.js, pairingDialog]', 'color: green;', 'Warning: Pairing certificate is not generated yet. Please ensure Wasm is initialized properly!');
+    snackbarLogLong('Something went wrong with the pairing certificate. Please try pairing with the host PC again.');
+    onFailure();
+    return;
+  }
+
+  nvhttpHost.pollServer(function(returnedNvHTTPHost) {
+    if (!nvhttpHost.online) {
+      console.error('%c[index.js, pairingDialog]', 'color: green;', 'Error: Failed to connect to ' + nvhttpHost.hostname + '. Ensure your host PC is online!', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      snackbarLogLong('Failed to connect to ' + nvhttpHost.hostname + '. Ensure Sunshine is running on your host PC or GameStream is enabled in the GeForce Experience SHIELD settings.');
+      onFailure();
+      return;
+    }
+
+    if (nvhttpHost.paired) {
+      onSuccess();
+      return;
+    }
+
+    if (nvhttpHost.currentGame != 0) {
+      snackbarLogLong(nvhttpHost.hostname + ' is currently in a game session. Please quit the running app or restart the computer, then try again.');
+      onFailure();
+      return;
+    }
+
+    // Find the existing overlay and dialog elements
+    var pairingOverlay = document.querySelector('#pairingDialogOverlay');
+    var pairingDialog = document.querySelector('#pairingDialog');
+    var randomNumber = String('0000' + (Math.random() * 10000 | 0)).slice(-4);
+
+    // Change the dialog text element to include the random PIN number
+    $('#pairingDialogText').html(
+      'Please enter the following PIN on the target PC: ' + randomNumber + '<br><br>' +
+      'If your host PC is running Sunshine (all GPUs), navigate to the Sunshine Web UI to enter the PIN.<br><br>' +
+      'Alternatively, if your host PC has NVIDIA GameStream (NVIDIA-only), navigate to the GeForce Experience to enter the PIN.<br><br>' +
+      'This dialog will close once the pairing is complete.'
+    );
+
+    // Show the dialog and push the view
+    pairingOverlay.style.display = 'flex';
+    pairingDialog.showModal();
+    isDialogOpen = true;
+    Navigation.push(Views.PairingDialog);
+
+    // Cancel the operation if the Cancel button is pressed
+    $('#cancelPairing').off('click');
+    $('#cancelPairing').on('click', function() {
+      console.log('%c[index.js, pairingDialog]', 'color: green;', 'Closing app dialog and returning.');
+      pairingOverlay.style.display = 'none';
+      pairingDialog.close();
+      isDialogOpen = false;
+      Navigation.pop();
+    });
+
+    console.log('%c[index.js, pairingDialog]', 'color: green;', 'Sending pairing request to ' + nvhttpHost.hostname + ' with PIN ' + randomNumber);
+    nvhttpHost.pair(randomNumber).then(function() {
+      snackbarLog('Successfully paired with ' + nvhttpHost.hostname);
+      // Close the dialog if the pairing was successful
+      console.log('%c[index.js, pairingDialog]', 'color: green;', 'Closing app dialog and returning.');
+      pairingOverlay.style.display = 'none';
+      pairingDialog.close();
+      isDialogOpen = false;
+      Navigation.pop();
+      onSuccess();
+    }, function(failedPairing) {
+      console.error('%c[index.js, pairingDialog]', 'color: green;', 'Error: Failed API object:\n', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+      snackbarLog('Failed to pair with ' + nvhttpHost.hostname + '.');
+      // If the host is already in a streaming session or failed during pairing,
+      // change the dialog text element to include the hostname and display the returned error message
+      if (nvhttpHost.currentGame != 0) {
+        $('#pairingDialogText').html('Error: ' + nvhttpHost.hostname + ' is currently busy!<br><br>You must stop streaming to pair with the host.');
+      } else {
+        $('#pairingDialogText').html('Error: Failed to pair with ' + nvhttpHost.hostname + '<br><br>Please try pairing with the host again.');
+      }
+      onFailure();
+    });
   });
 }
 
@@ -667,7 +693,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
     // Prevent the click event from propagating to the host container
     e.stopPropagation();
     // Select the host menu button when the Click key is pressed
-    showHostMenu(host);
+    hostMenuDialog(host);
   });
 
   // Append the host container to the host grid
@@ -682,8 +708,22 @@ function addHostToGrid(host, ismDNSDiscovered) {
   }
 }
 
+// FIXME: This is a workaround to correctly update and store valid host MAC address in IndexedDB
+function updateMacAddress(host) {
+  getData('hosts', function(previousValue) {
+    hosts = previousValue.hosts != null ? previousValue.hosts : {};
+    if (host.macAddress != '00:00:00:00:00:00') {
+      if (hosts[host.serverUid] && hosts[host.serverUid].macAddress != host.macAddress) {
+        console.log('%c[index.js, updateMacAddress]', 'color: green;', 'Updated MAC address for host ' + host.hostname + ' from ' + hosts[host.serverUid].macAddress + ' to ' + host.macAddress);
+        hosts[host.serverUid].macAddress = host.macAddress;
+        saveHosts();
+      }
+    }
+  });
+}
+
 // Show the Host Menu dialog with host button options
-function showHostMenu(host) {
+function hostMenuDialog(host) {
   // Create an overlay for the dialog and append it to the body
   var hostMenuDialogOverlay = $('<div>', {
     id: 'hostMenuDialogOverlay-' + host.serverUid,
@@ -732,12 +772,12 @@ function showHostMenu(host) {
       }
     },
     {
-      id: 'removeHost-' + host.hostname,
+      id: 'deleteHost-' + host.hostname,
       class: 'host-menu-button',
       text: 'Delete PC',
       action: function() {
         // Remove the selected host from the list
-        setTimeout(() => removeHost(host), 100);
+        setTimeout(() => deleteHostDialog(host), 100);
       }
     },
     {
@@ -746,7 +786,7 @@ function showHostMenu(host) {
       text: 'View Details',
       action: function() {
         // View details of the selected host
-        setTimeout(() => hostDetails(host), 100);
+        setTimeout(() => hostDetailsDialog(host), 100);
       }
     },
   ];
@@ -781,13 +821,15 @@ function showHostMenu(host) {
   // Create and set up the Close button
   var closeHostMenuDialog = $('<button>', {
     type: 'button',
-    id: 'closeHostMenuDialog',
+    id: 'closeHostMenu',
     class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
     text: 'Close'
   });
+
   // Close the dialog if the Close button is pressed
   closeHostMenuDialog.off('click');
   closeHostMenuDialog.click(function() {
+    console.log('%c[index.js, hostMenuDialog]', 'color: green;', 'Closing app dialog and returning.');
     $(hostMenuDialogOverlay).css('display', 'none');
     hostMenuDialog[0].close();
     hostMenuDialogOverlay.remove();
@@ -809,11 +851,14 @@ function showHostMenu(host) {
 }
 
 // Show a confirmation with the Delete Host dialog before removing the host object
-function removeHost(host) {
+function deleteHostDialog(host) {
   // Find the existing overlay and dialog elements
   var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
   var deleteHostDialog = document.querySelector('#deleteHostDialog');
-  document.getElementById('deleteHostDialogText').innerHTML = ' Are you sure you want to delete ' + host.hostname + '?';
+
+  // Change the dialog title and text elements to include the hostname
+  document.getElementById('deleteHostDialogTitle').innerHTML = 'Delete Host';
+  document.getElementById('deleteHostDialogText').innerHTML = 'Are you sure you want to delete ' + host.hostname + '?';
 
   // Show the dialog and push the view
   deleteHostOverlay.style.display = 'flex';
@@ -824,7 +869,7 @@ function removeHost(host) {
   // Cancel the operation if the Cancel button is pressed
   $('#cancelDeleteHost').off('click');
   $('#cancelDeleteHost').on('click', function() {
-    console.log('%c[index.js, removeHost]', 'color: green;', 'Closing app dialog and returning.');
+    console.log('%c[index.js, deleteHostDialog]', 'color: green;', 'Closing app dialog and returning.');
     deleteHostOverlay.style.display = 'none';
     deleteHostDialog.close();
     isDialogOpen = false;
@@ -837,7 +882,7 @@ function removeHost(host) {
   // This means we can re-add the host, and will still be paired
   $('#continueDeleteHost').off('click');
   $('#continueDeleteHost').on('click', function() {
-    console.log('%c[index.js, removeHost]', 'color: green;', 'Removing host, closing app dialog, and returning.');
+    console.log('%c[index.js, deleteHostDialog]', 'color: green;', 'Removing host, closing app dialog, and returning.');
     // Remove the host container from the grid
     $('#host-container-' + host.serverUid).remove();
     // Remove the host from the hosts object
@@ -855,15 +900,19 @@ function removeHost(host) {
 }
 
 // Show a confirmation with the Delete Host dialog before removing all hosts objects
-function removeAllHosts() {
+function deleteAllHostsDialog() {
   if (Object.keys(hosts).length === 0) {
     // If no hosts exist, show snackbar message
     snackbarLog('There are no existing hosts.');
+    return;
   } else {
     // Find the existing overlay and dialog elements
     var deleteHostOverlay = document.querySelector('#deleteHostDialogOverlay');
     var deleteHostDialog = document.querySelector('#deleteHostDialog');
-    document.getElementById('deleteHostDialogText').innerHTML = ' Are you sure you want to delete all hosts?';
+
+    // Change the dialog title and text elements
+    document.getElementById('deleteHostDialogTitle').innerHTML = 'Delete All Hosts';
+    document.getElementById('deleteHostDialogText').innerHTML = 'Are you sure you want to delete all existing hosts?';
     
     // Show the dialog and push the view
     deleteHostOverlay.style.display = 'flex';
@@ -874,7 +923,7 @@ function removeAllHosts() {
     // Cancel the operation if the Cancel button is pressed
     $('#cancelDeleteHost').off('click');
     $('#cancelDeleteHost').on('click', function() {
-      console.log('%c[index.js, removeAllHosts]', 'color: green;', 'Closing app dialog and returning.');
+      console.log('%c[index.js, deleteAllHostsDialog]', 'color: green;', 'Closing app dialog and returning.');
       deleteHostOverlay.style.display = 'none';
       deleteHostDialog.close();
       isDialogOpen = false;
@@ -885,7 +934,7 @@ function removeAllHosts() {
     // Remove all existing hosts if the Continue button is pressed
     $('#continueDeleteHost').off('click');
     $('#continueDeleteHost').on('click', function() {
-      console.log('%c[index.js, removeAllHosts]', 'color: green;', 'Removing all hosts, closing app dialog, and returning.');
+      console.log('%c[index.js, deleteAllHostsDialog]', 'color: green;', 'Removing all hosts, closing app dialog, and returning.');
       // Iterate through all hosts and remove them
       for (var serverUid in hosts) {
         if (hosts.hasOwnProperty(serverUid)) {
@@ -910,7 +959,7 @@ function removeAllHosts() {
 }
 
 // Show the Host Details dialog with host information details
-function hostDetails(host) {
+function hostDetailsDialog(host) {
   // Create an overlay for the dialog and append it to the body
   var hostDetailsDialogOverlay = $('<div>', {
     id: 'hostDetailsDialogOverlay-' + host.serverUid,
@@ -957,13 +1006,15 @@ function hostDetails(host) {
   // Create and set up the Close button
   var closeHostDetailsDialog = $('<button>', {
     type: 'button',
-    id: 'closeHostDetailsDialog',
+    id: 'closeHostDetails',
     class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
     text: 'Close'
   });
+
   // Close the dialog if the Close button is pressed
   closeHostDetailsDialog.off('click');
   closeHostDetailsDialog.click(function() {
+    console.log('%c[index.js, hostDetailsDialog]', 'color: green;', 'Closing app dialog and returning.');
     $(hostDetailsDialogOverlay).css('display', 'none');
     hostDetailsDialog[0].close();
     hostDetailsDialogOverlay.remove();
@@ -984,12 +1035,50 @@ function hostDetails(host) {
   setTimeout(() => Navigation.switch(), 5);
 }
 
-// Show the Hosts grid
-function showHosts() {
-  // Navigate to the Hosts view
-  showHostsMode();
-  // Set focus to current item and/or scroll to the current host row
-  setTimeout(() => Navigation.switch(), 5);
+// Show the Moonlight Support dialog
+function appSupportDialog() {
+  // Find the existing overlay and dialog elements
+  var appSupportDialogOverlay = document.querySelector('#appSupportDialogOverlay');
+  var appSupportDialog = document.querySelector('#appSupportDialog');
+
+  // Show the dialog and push the view
+  appSupportDialogOverlay.style.display = 'flex';
+  appSupportDialog.showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.MoonlightSupportDialog);
+
+  // Close the dialog if the Close button is pressed
+  $('#closeAppSupport').off('click');
+  $('#closeAppSupport').on('click', function() {
+    console.log('%c[index.js, appSupportDialog]', 'color: green;', 'Closing app dialog and returning.');
+    appSupportDialogOverlay.style.display = 'none';
+    appSupportDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  });
+}
+
+// Handle layout elements when displaying the Settings view
+function showSettingsMode() {
+  console.log('%c[index.js, showSettingsMode]', 'color: green;', 'Entering "Show Settings" mode.');
+  $('#header-title').html('Settings');
+  $('#header-logo').show();
+  $('#main-header').show();
+  $('#goBackBtn').show();
+  $('#restoreDefaultsBtn').show();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('#host-grid').hide();
+  $('#game-grid').hide();
+  $('.nav-menu-parent').hide();
+  $('#settingsBtn').hide();
+  $('#supportBtn').hide();
+  $('#quitRunningAppBtn').hide();
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
+
+  stopPollingHosts();
+  Navigation.start();
 }
 
 // Show the Settings list
@@ -1005,7 +1094,7 @@ function showSettings() {
 }
 
 // Handle the click event on the settings categories and open the corresponding views
-function handleCategoryClick(category) {
+function handleSettingsCategory(category) {
   // Hide the right settings panel which includes settings options
   const settingsOptions = document.querySelectorAll('.settings-options');
   settingsOptions.forEach(function(settingsOption) {
@@ -1096,73 +1185,8 @@ function handleCategoryClick(category) {
   }
 }
 
-// Show a confirmation with the Restore Defaults dialog before restoring the default settings
-function restoreDefaultSettings() {
-  // Find the existing overlay and dialog elements
-  var restoreDefaultsDialogOverlay = document.querySelector('#restoreDefaultsDialogOverlay');
-  var restoreDefaultsDialog = document.querySelector('#restoreDefaultsDialog');
-
-  // Show the dialog and push the view
-  restoreDefaultsDialogOverlay.style.display = 'flex';
-  restoreDefaultsDialog.showModal();
-  isDialogOpen = true;
-  Navigation.push(Views.RestoreDefaultsDialog);
-
-  // Cancel the operation if the Cancel button is pressed
-  $('#cancelRestoreDefaults').off('click');
-  $('#cancelRestoreDefaults').on('click', function() {
-    console.log('%c[index.js, restoreDefaultSettings]', 'color: green;', 'Closing app dialog and returning.');
-    restoreDefaultsDialogOverlay.style.display = 'none';
-    restoreDefaultsDialog.close();
-    isDialogOpen = false;
-    Navigation.pop();
-    Navigation.switch();
-  });
-
-  // Restore all default settings if the Continue button is pressed
-  $('#continueRestoreDefaults').off('click');
-  $('#continueRestoreDefaults').on('click', function() {
-    console.log('%c[index.js, restoreDefaultSettings]', 'color: green;', 'Restoring default settings, closing app dialog, and returning.');
-    // Reset any settings to their default state and save the updated values
-    restoreDefaultsSettingsValues();
-    // If the settings have been reset to default, show snackbar message
-    snackbarLog('Settings have been restored to their default values.');
-    restoreDefaultsDialogOverlay.style.display = 'none';
-    restoreDefaultsDialog.close();
-    isDialogOpen = false;
-    Navigation.pop();
-    Navigation.switch();
-    // Show the Restart Moonlight dialog and push the view
-    setTimeout(() => showRestartMoonlightDialog(), 2000);
-  });
-}
-
-// Show the Support dialog
-function showSupportDialog() {
-  // Find the existing overlay and dialog elements
-  var supportDialogOverlay = document.querySelector('#supportDialogOverlay');
-  var supportDialog = document.querySelector('#supportDialog');
-
-  // Show the dialog and push the view
-  supportDialogOverlay.style.display = 'flex';
-  supportDialog.showModal();
-  isDialogOpen = true;
-  Navigation.push(Views.SupportDialog);
-
-  // Close the dialog if the Close button is pressed
-  $('#closeSupportDialog').off('click');
-  $('#closeSupportDialog').on('click', function() {
-    console.log('%c[index.js, showSupportDialog]', 'color: green;', 'Closing app dialog and returning.');
-    supportDialogOverlay.style.display = 'none';
-    supportDialog.close();
-    isDialogOpen = false;
-    Navigation.pop();
-    Navigation.switch();
-  });
-}
-
 // Show the Navigation Guide dialog
-function showNavigationGuideDialog() {
+function navigationGuideDialog() {
   // Find the existing overlay and dialog elements
   var navGuideDialogOverlay = document.querySelector('#navGuideDialogOverlay');
   var navGuideDialog = document.querySelector('#navGuideDialog');
@@ -1174,9 +1198,9 @@ function showNavigationGuideDialog() {
   Navigation.push(Views.NavigationGuideDialog);
 
   // Close the dialog if the Close button is pressed
-  $('#closeNavGuideDialog').off('click');
-  $('#closeNavGuideDialog').on('click', function() {
-    console.log('%c[index.js, showNavigationGuideDialog]', 'color: green;', 'Closing app dialog and returning.');
+  $('#closeNavGuide').off('click');
+  $('#closeNavGuide').on('click', function() {
+    console.log('%c[index.js, navigationGuideDialog]', 'color: green;', 'Closing app dialog and returning.');
     navGuideDialogOverlay.style.display = 'none';
     navGuideDialog.close();
     isDialogOpen = false;
@@ -1211,8 +1235,8 @@ function checkForAppUpdates() {
     setTimeout(() => {
       // Check if a new version update is available or the app is already up to date
       if (compareVersionParts(currentVersion, latestVersion)) {
-        // Show dialog with new version and release notes to inform user to update application
-        showUpdateMoonlightDialog(latestVersion, releaseNotes);
+        // Show dialog with new version and release notes to inform user to update the app
+        updateAppDialog(latestVersion, releaseNotes);
       } else {
         // Otherwise, show a snackbar message to inform the user that the app is already up to date
         snackbarLogLong('Your app is already up to date with the latest version.');
@@ -1250,7 +1274,7 @@ function extractReleaseNotes(releaseNotes) {
 }
 
 // Show the Update Moonlight dialog
-function showUpdateMoonlightDialog(latestVersion, releaseNotes) {
+function updateAppDialog(latestVersion, releaseNotes) {
   // Create an overlay for the dialog and append it to the body
   var updateAppDialogOverlay = $('<div>', {
     id: 'updateAppDialogOverlay',
@@ -1289,7 +1313,7 @@ function showUpdateMoonlightDialog(latestVersion, releaseNotes) {
   }).appendTo(updateAppDialog);
 
   // Create and set up the Close button
-  var closeUpdateApp = $('<button>', {
+  var closeUpdateAppDialog = $('<button>', {
     type: 'button',
     id: 'closeUpdateApp',
     class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
@@ -1297,9 +1321,9 @@ function showUpdateMoonlightDialog(latestVersion, releaseNotes) {
   });
 
   // Close the dialog if the Close button is pressed
-  closeUpdateApp.off('click');
-  closeUpdateApp.click(function() {
-    console.log('%c[index.js, showUpdateMoonlightDialog]', 'color: green;', 'Closing app dialog and returning.');
+  closeUpdateAppDialog.off('click');
+  closeUpdateAppDialog.click(function() {
+    console.log('%c[index.js, updateAppDialog]', 'color: green;', 'Closing app dialog and returning.');
     $(updateAppDialogOverlay).css('display', 'none');
     updateAppDialog[0].close();
     updateAppDialogOverlay.remove();
@@ -1321,85 +1345,44 @@ function showUpdateMoonlightDialog(latestVersion, releaseNotes) {
   setTimeout(() => Navigation.switch(), 5);
 }
 
-// Restart the application
-function restartApplication() {
-  var restartApplication = window.location;
-  restartApplication.reload(true);
-}
-
-// Show the Restart Moonlight dialog
-function showRestartMoonlightDialog() {
+// Show a confirmation with the Restore Defaults dialog before restoring the default settings
+function restoreDefaultsDialog() {
   // Find the existing overlay and dialog elements
-  var restartAppDialogOverlay = document.querySelector('#restartAppDialogOverlay');
-  var restartAppDialog = document.querySelector('#restartAppDialog');
+  var restoreDefaultsDialogOverlay = document.querySelector('#restoreDefaultsDialogOverlay');
+  var restoreDefaultsDialog = document.querySelector('#restoreDefaultsDialog');
 
   // Show the dialog and push the view
-  restartAppDialogOverlay.style.display = 'flex';
-  restartAppDialog.showModal();
+  restoreDefaultsDialogOverlay.style.display = 'flex';
+  restoreDefaultsDialog.showModal();
   isDialogOpen = true;
-  Navigation.push(Views.RestartMoonlightDialog);
+  Navigation.push(Views.RestoreDefaultsDialog);
 
   // Cancel the operation if the Cancel button is pressed
-  $('#cancelRestartApp').off('click');
-  $('#cancelRestartApp').on('click', function() {
-    console.log('%c[index.js, showRestartMoonlightDialog]', 'color: green;', 'Closing app dialog and returning.');
-    restartAppDialogOverlay.style.display = 'none';
-    restartAppDialog.close();
+  $('#cancelRestoreDefaults').off('click');
+  $('#cancelRestoreDefaults').on('click', function() {
+    console.log('%c[index.js, restoreDefaultsDialog]', 'color: green;', 'Closing app dialog and returning.');
+    restoreDefaultsDialogOverlay.style.display = 'none';
+    restoreDefaultsDialog.close();
     isDialogOpen = false;
     Navigation.pop();
     Navigation.switch();
   });
 
-  // Restart the application if the Restart button is pressed
-  $('#continueRestartApp').off('click');
-  $('#continueRestartApp').on('click', function() {
-    console.log('%c[index.js, showRestartMoonlightDialog]', 'color: green;', 'Closing app dialog, restarting application, and returning.');
-    restartAppDialogOverlay.style.display = 'none';
-    restartAppDialog.close();
-    isDialogOpen = false;
-    Navigation.pop();
-    restartApplication();
-  });
-}
-
-// Exit the application
-function exitApplication() {
-  var exitApplication = tizen.application.getCurrentApplication();
-  exitApplication.exit();
-}
-
-// Show the Exit Application dialog
-function showExitMoonlightDialog() {
-  // Find the existing overlay and dialog elements
-  var exitAppOverlay = document.querySelector('#exitAppDialogOverlay');
-  var exitAppDialog = document.querySelector('#exitAppDialog');
-
-  // Show the dialog and push the view
-  exitAppOverlay.style.display = 'flex';
-  exitAppDialog.showModal();
-  isDialogOpen = true;
-  Navigation.push(Views.ExitMoonlightDialog);
-
-  // Cancel the operation if the Cancel button is pressed
-  $('#cancelExitApp').off('click');
-  $('#cancelExitApp').on('click', function() {
-    console.log('%c[index.js, showExitMoonlightDialog]', 'color: green;', 'Closing app dialog and returning');
-    exitAppOverlay.style.display = 'none';
-    exitAppDialog.close();
+  // Restore all default settings if the Continue button is pressed
+  $('#continueRestoreDefaults').off('click');
+  $('#continueRestoreDefaults').on('click', function() {
+    console.log('%c[index.js, restoreDefaultsDialog]', 'color: green;', 'Restoring default settings, closing app dialog, and returning.');
+    // Reset any settings to their default state and save the updated values
+    restoreDefaultsSettingsValues();
+    // If the settings have been reset to default, show snackbar message
+    snackbarLog('Settings have been restored to their default values.');
+    restoreDefaultsDialogOverlay.style.display = 'none';
+    restoreDefaultsDialog.close();
     isDialogOpen = false;
     Navigation.pop();
     Navigation.switch();
-  });
-
-  // Exit the application if the Exit button is pressed
-  $('#continueExitApp').off('click');
-  $('#continueExitApp').on('click', function() {
-    console.log('%c[index.js, showExitMoonlightDialog]', 'color: green;', 'Closing app dialog, exiting application, and returning.');
-    exitAppOverlay.style.display = 'none';
-    exitAppDialog.close();
-    isDialogOpen = false;
-    Navigation.pop();
-    exitApplication();
+    // Show the Restart Moonlight dialog and push the view
+    setTimeout(() => restartAppDialog(), 2000);
   });
 }
 
@@ -1450,7 +1433,35 @@ function sortTitles(list, sortOrder) {
   });
 }
 
-// Show the Apps/Games grid
+// Handle layout elements when displaying the Apps view
+function showAppsMode() {
+  console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show Apps" mode.');
+  $('#header-title').html('Apps & Games');
+  $('#header-logo').show();
+  $('#main-header').show();
+  $('#goBackBtn').show();
+  $('#quitRunningAppBtn').show();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('#host-grid').hide();
+  $('#settings-list').hide();
+  $('.nav-menu-parent').hide();
+  $('#settingsBtn').hide();
+  $('#supportBtn').hide();
+  $('#restoreDefaultsBtn').hide();
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
+  $('#loadingSpinner').css('display', 'none');
+  $('body').css('backgroundColor', '#282C38');
+  $('#wasm_module').css('display', 'none');
+
+  isInGame = false;
+  // FIXME: We want to eventually poll on the app screen, but we can't now
+  // because it slows down box art loading and we don't update the UI live anyway.
+  stopPollingHosts();
+  Navigation.start();
+}
+
+// Show the Apps grid
 function showApps(host) {
   // Safety checking, shouldn't happen
   if (!host || !host.paired) {
@@ -1599,77 +1610,51 @@ function showApps(host) {
   showAppsMode();
 }
 
-// Handle layout elements when displaying the Hosts view
-function showHostsMode() {
-  console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show Hosts" mode.');
-  $('#header-title').html('Hosts');
-  $('#header-logo').show();
-  $('#main-header').show();
-  $('.nav-menu-parent').show();
-  $('#settingsBtn').show();
-  $('#supportBtn').show();
-  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
-  $('#settings-list').hide();
-  $('#game-grid').hide();
-  $('#goBackBtn').hide();
-  $('#restoreDefaultsBtn').hide();
-  $('#quitRunningAppBtn').hide();
-  $('#main-content').removeClass('fullscreen');
-  $('#listener').removeClass('fullscreen');
+// Show a confirmation with the Quit App dialog before stopping the running app or game
+function quitAppDialog() {
+  if (api.currentGame === 0) {
+    // If no app or game is running, show snackbar message
+    snackbarLog('No app or game is currently running.');
+    return;
+  } else {
+    api.getAppById(api.currentGame).then(function(currentGame) {
+      // Find the existing overlay and dialog elements
+      var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
+      var quitAppDialog = document.querySelector('#quitAppDialog');
 
-  Navigation.start();
-  Navigation.pop();
-  startPollingHosts();
-}
+      // Change the dialog text element to include the game title
+      document.getElementById('quitAppDialogText').innerHTML = 'Are you sure you want to quit ' + currentGame.title + '? All unsaved data will be lost.';
+      
+      // Show the dialog and push the view
+      quitAppOverlay.style.display = 'flex';
+      quitAppDialog.showModal();
+      isDialogOpen = true;
+      Navigation.push(Views.QuitAppDialog);
 
-// Handle layout elements when displaying the Settings view
-function showSettingsMode() {
-  console.log('%c[index.js, showSettingsMode]', 'color: green;', 'Entering "Show Settings" mode.');
-  $('#header-title').html('Settings');
-  $('#header-logo').show();
-  $('#main-header').show();
-  $('#goBackBtn').show();
-  $('#restoreDefaultsBtn').show();
-  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
-  $('#host-grid').hide();
-  $('#game-grid').hide();
-  $('.nav-menu-parent').hide();
-  $('#settingsBtn').hide();
-  $('#supportBtn').hide();
-  $('#quitRunningAppBtn').hide();
-  $('#main-content').removeClass('fullscreen');
-  $('#listener').removeClass('fullscreen');
+      // Cancel the operation if the Cancel button is pressed
+      $('#cancelQuitApp').off('click');
+      $('#cancelQuitApp').on('click', function() {
+        console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Closing app dialog and returning.');
+        quitAppOverlay.style.display = 'none';
+        quitAppDialog.close();
+        isDialogOpen = false;
+        Navigation.pop();
+        Navigation.switch();
+      });
 
-  stopPollingHosts();
-  Navigation.start();
-}
-
-// Handle layout elements when displaying the Apps view
-function showAppsMode() {
-  console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show Apps" mode.');
-  $('#header-title').html('Apps & Games');
-  $('#header-logo').show();
-  $('#main-header').show();
-  $('#goBackBtn').show();
-  $('#quitRunningAppBtn').show();
-  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
-  $('#host-grid').hide();
-  $('#settings-list').hide();
-  $('.nav-menu-parent').hide();
-  $('#settingsBtn').hide();
-  $('#supportBtn').hide();
-  $('#restoreDefaultsBtn').hide();
-  $('#main-content').removeClass('fullscreen');
-  $('#listener').removeClass('fullscreen');
-  $('#loadingSpinner').css('display', 'none');
-  $('body').css('backgroundColor', '#282C38');
-  $('#wasm_module').css('display', 'none');
-
-  isInGame = false;
-  // FIXME: We want to eventually poll on the app screen, but we can't now
-  // because it slows down box art loading and we don't update the UI live anyway.
-  stopPollingHosts();
-  Navigation.start();
+      // Quit the running app if the Continue button is pressed
+      $('#continueQuitApp').off('click');
+      $('#continueQuitApp').on('click', function() {
+        console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
+        stopGame(api);
+        quitAppOverlay.style.display = 'none';
+        quitAppDialog.close();
+        isDialogOpen = false;
+        Navigation.pop();
+        Navigation.switch();
+      });
+    });
+  }
 }
 
 // Handle layout elements when displaying the Stream view
@@ -1701,6 +1686,8 @@ function startGame(host, appID) {
           // Find the existing overlay and dialog elements
           var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
           var quitAppDialog = document.querySelector('#quitAppDialog');
+
+          // Change the dialog text element to include the game title
           document.getElementById('quitAppDialogText').innerHTML = currentApp.title + ' is already running. Would you like to quit ' + currentApp.title + '?';
           
           // Show the dialog and push the view
@@ -1859,75 +1846,7 @@ function startGame(host, appID) {
   });
 }
 
-// Maximize the size of the Wasm module by scaling and resizing appropriately
-function fullscreenWasmModule() {
-  var streamWidth = $('#selectResolution').data('value').split(':')[0];
-  var streamHeight = $('#selectResolution').data('value').split(':')[1];
-  var screenWidth = window.innerWidth;
-  var screenHeight = window.innerHeight;
-
-  var xRatio = screenWidth / streamWidth;
-  var yRatio = screenHeight / streamHeight;
-
-  var zoom = Math.min(xRatio, yRatio);
-
-  var module = $('#wasm_module')[0];
-  module.width = zoom * streamWidth;
-  module.height = zoom * streamHeight;
-  module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
-}
-
-// FIXME: This is a workaround to send the escape key to the host
-function sendEscapeKeyToHost() {
-  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0);
-  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0);
-}
-
-// Show a confirmation with the Quit App dialog before stopping the running game
-function quitRunningApp() {
-  if (api.currentGame === 0) {
-    // If no app or game is running, show snackbar message
-    snackbarLog('No app or game is currently running.');
-    return;
-  } else {
-    api.getAppById(api.currentGame).then(function(currentGame) {
-      // Find the existing overlay and dialog elements
-      var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
-      var quitAppDialog = document.querySelector('#quitAppDialog');
-      document.getElementById('quitAppDialogText').innerHTML = ' Are you sure you want to quit ' + currentGame.title + '?  All unsaved data will be lost.';
-      
-      // Show the dialog and push the view
-      quitAppOverlay.style.display = 'flex';
-      quitAppDialog.showModal();
-      isDialogOpen = true;
-      Navigation.push(Views.QuitAppDialog);
-
-      // Cancel the operation if the Cancel button is pressed
-      $('#cancelQuitApp').off('click');
-      $('#cancelQuitApp').on('click', function() {
-        console.log('%c[index.js, quitRunningApp]', 'color: green;', 'Closing app dialog and returning.');
-        quitAppOverlay.style.display = 'none';
-        quitAppDialog.close();
-        isDialogOpen = false;
-        Navigation.pop();
-        Navigation.switch();
-      });
-
-      // Quit the running app if the Continue button is pressed
-      $('#continueQuitApp').off('click');
-      $('#continueQuitApp').on('click', function() {
-        console.log('%c[index.js, quitRunningApp]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
-        stopGame(api);
-        quitAppOverlay.style.display = 'none';
-        quitAppDialog.close();
-        isDialogOpen = false;
-        Navigation.pop();
-        Navigation.switch();
-      });
-    });
-  }
-}
-
+// Stop the running app title, refresh the server info, and then return to Apps grid
 function stopGame(host, callbackFunction) {
   isInGame = false;
 
@@ -1960,6 +1879,112 @@ function stopGame(host, callbackFunction) {
     });
   }, function(failedRefreshInfo) {
     console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
+  });
+}
+
+// Maximize the size of the Wasm module by scaling and resizing appropriately
+function fullscreenWasmModule() {
+  var streamWidth = $('#selectResolution').data('value').split(':')[0];
+  var streamHeight = $('#selectResolution').data('value').split(':')[1];
+  var screenWidth = window.innerWidth;
+  var screenHeight = window.innerHeight;
+
+  var xRatio = screenWidth / streamWidth;
+  var yRatio = screenHeight / streamHeight;
+
+  var zoom = Math.min(xRatio, yRatio);
+
+  var module = $('#wasm_module')[0];
+  module.width = zoom * streamWidth;
+  module.height = zoom * streamHeight;
+  module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
+}
+
+// FIXME: This is a workaround to send the escape key to the host
+function sendEscapeKeyToHost() {
+  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0);
+  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0);
+}
+
+// Restart the application
+function restartApplication() {
+  var restartApplication = window.location;
+  restartApplication.reload(true);
+}
+
+// Show the Restart Moonlight dialog
+function restartAppDialog() {
+  // Find the existing overlay and dialog elements
+  var restartAppDialogOverlay = document.querySelector('#restartAppDialogOverlay');
+  var restartAppDialog = document.querySelector('#restartAppDialog');
+
+  // Show the dialog and push the view
+  restartAppDialogOverlay.style.display = 'flex';
+  restartAppDialog.showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.RestartMoonlightDialog);
+
+  // Cancel the operation if the Cancel button is pressed
+  $('#cancelRestartApp').off('click');
+  $('#cancelRestartApp').on('click', function() {
+    console.log('%c[index.js, restartAppDialog]', 'color: green;', 'Closing app dialog and returning.');
+    restartAppDialogOverlay.style.display = 'none';
+    restartAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  });
+
+  // Restart the application if the Restart button is pressed
+  $('#continueRestartApp').off('click');
+  $('#continueRestartApp').on('click', function() {
+    console.log('%c[index.js, restartAppDialog]', 'color: green;', 'Closing app dialog, restarting application, and returning.');
+    restartAppDialogOverlay.style.display = 'none';
+    restartAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    restartApplication();
+  });
+}
+
+// Exit the application
+function exitApplication() {
+  var exitApplication = tizen.application.getCurrentApplication();
+  exitApplication.exit();
+}
+
+// Show the Exit Moonlight dialog
+function exitAppDialog() {
+  // Find the existing overlay and dialog elements
+  var exitAppOverlay = document.querySelector('#exitAppDialogOverlay');
+  var exitAppDialog = document.querySelector('#exitAppDialog');
+
+  // Show the dialog and push the view
+  exitAppOverlay.style.display = 'flex';
+  exitAppDialog.showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.ExitMoonlightDialog);
+
+  // Cancel the operation if the Cancel button is pressed
+  $('#cancelExitApp').off('click');
+  $('#cancelExitApp').on('click', function() {
+    console.log('%c[index.js, exitAppDialog]', 'color: green;', 'Closing app dialog and returning');
+    exitAppOverlay.style.display = 'none';
+    exitAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  });
+
+  // Exit the application if the Exit button is pressed
+  $('#continueExitApp').off('click');
+  $('#continueExitApp').on('click', function() {
+    console.log('%c[index.js, exitAppDialog]', 'color: green;', 'Closing app dialog, exiting application, and returning to Smart Hub.');
+    exitAppOverlay.style.display = 'none';
+    exitAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    exitApplication();
   });
 }
 

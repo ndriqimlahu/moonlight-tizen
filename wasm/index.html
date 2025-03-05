@@ -61,23 +61,23 @@
         <!-- Left Panel: Settings Categories -->
         <div id="settings-left-panel">
           <div class="settings-categories">
-            <div class="settings-category" data-category="basicSettings" onclick="handleCategoryClick('basicSettings')">
+            <div class="settings-category" data-category="basicSettings" onclick="handleSettingsCategory('basicSettings')">
               <i class="settings-category-icons material-icons">tune</i>
               <label>Basic Settings</label>
             </div>
-            <div class="settings-category" data-category="hostSettings" onclick="handleCategoryClick('hostSettings')">
+            <div class="settings-category" data-category="hostSettings" onclick="handleSettingsCategory('hostSettings')">
               <i class="settings-category-icons material-icons">desktop_windows</i>
               <label>Host Settings</label>
             </div>
-            <div class="settings-category" data-category="inputSettings" onclick="handleCategoryClick('inputSettings')">
+            <div class="settings-category" data-category="inputSettings" onclick="handleSettingsCategory('inputSettings')">
               <i class="settings-category-icons material-icons">sports_esports</i>
               <label>Input Settings</label>
             </div>
-            <div class="settings-category" data-category="decoderSettings" onclick="handleCategoryClick('decoderSettings')">
+            <div class="settings-category" data-category="decoderSettings" onclick="handleSettingsCategory('decoderSettings')">
               <i class="settings-category-icons material-icons">video_settings</i>
               <label>Decoder Settings</label>
             </div>
-            <div class="settings-category" data-category="aboutSettings" onclick="handleCategoryClick('aboutSettings')">
+            <div class="settings-category" data-category="aboutSettings" onclick="handleSettingsCategory('aboutSettings')">
               <i class="settings-category-icons material-icons">info</i>
               <label>About</label>
             </div>
@@ -374,7 +374,7 @@
         </p>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="button" id="cancelPairingDialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
+        <button type="button" id="cancelPairing" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Cancel</button>
       </div>
     </dialog>
   </div>
@@ -420,18 +420,18 @@
       </div>
     </dialog>
   </div>
-  <div id="supportDialogOverlay" class="dialog-overlay">
-    <dialog id="supportDialog" class="mdl-dialog">
-      <h3 id="supportDialogTitle" class="mdl-dialog__title">Moonlight Support</h3>
+  <div id="appSupportDialogOverlay" class="dialog-overlay">
+    <dialog id="appSupportDialog" class="mdl-dialog">
+      <h3 id="appSupportDialogTitle" class="mdl-dialog__title">Moonlight Support</h3>
       <div class="mdl-dialog__content">
-        <p id="supportDialogText">
+        <p id="appSupportDialogText">
           If you're facing any problems with Moonlight, visit our comprehensive guide.<br><br>
           Scan the QR code below to access an in-depth setup guide, troubleshooting tips, frequently asked questions, and more.<br><br>
           <img src="static/res/support_qr_code.svg" id="supportQrCode"><br>
         </p>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="button" id="closeSupportDialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
+        <button type="button" id="closeAppSupport" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
       </div>
     </dialog>
   </div>
@@ -516,7 +516,7 @@
         </ul>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="button" id="closeNavGuideDialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
+        <button type="button" id="closeNavGuide" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
       </div>
     </dialog>
   </div>

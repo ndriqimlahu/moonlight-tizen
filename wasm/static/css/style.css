@@ -376,7 +376,7 @@ body {
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
-#pairingDialogText, #deleteHostDialogText, .host-details-text, #supportDialogText,
+#pairingDialogText, #deleteHostDialogText, .host-details-text, #appSupportDialogText,
 #navGuideDialogText, .update-app-text, #restoreDefaultsDialogText, #quitAppDialogText,
 #restartAppDialogText, #exitAppDialogText {
     font-size: 1.45rem;
@@ -387,9 +387,9 @@ body {
     list-style-type: none;
     padding: 5px 20px 5px 20px;
 }
-#continueAddHost, #cancelAddHost, #cancelPairingDialog, #continueDeleteHost,
-#closeHostMenuDialog, #closeHostDetailsDialog, #cancelDeleteHost, #closeSupportDialog,
-#closeNavGuideDialog, #closeUpdateApp, #continueRestoreDefaults, #cancelRestoreDefaults,
+#continueAddHost, #cancelAddHost, #cancelPairing, #continueDeleteHost,
+#closeHostMenu, #closeHostDetails, #cancelDeleteHost, #closeAppSupport,
+#closeNavGuide, #closeUpdateApp, #continueRestoreDefaults, #cancelRestoreDefaults,
 #continueQuitApp, #cancelQuitApp, #continueRestartApp, #cancelRestartApp, #continueExitApp,
 #cancelExitApp {
     text-transform: uppercase;
@@ -402,7 +402,7 @@ body {
     font-size: 1.4rem;
     letter-spacing: 0.5px;
 }
-#cancelAddHost, #cancelPairingDialog, #cancelDeleteHost, #closeSupportDialog,
+#cancelAddHost, #cancelPairing, #cancelDeleteHost, #closeAppSupport,
 #cancelRestoreDefaults, #cancelQuitApp, #cancelRestartApp, #cancelExitApp {
     height: 40px;
     margin: 0 10px 20px 0;
@@ -422,13 +422,13 @@ body {
     background-color: #666875;
     cursor: pointer;
 }
-.host-menu-button, #closeHostMenuDialog, #closeHostDetailsDialog,
+.host-menu-button, #closeHostMenu, #closeHostDetails,
 #closeUpdateApp {
     margin: 10px 15px 20px 0;
     font-size: 1.4rem;
     letter-spacing: 0.5px;
 }
-#closeNavGuideDialog {
+#closeNavGuide {
     width: 58%;
     height: 40px;
     margin: 0 25rem 1.3rem 0;
@@ -886,21 +886,21 @@ body {
 /* =============================
    Interactive Elements
 ============================= */
-#continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairingDialog:hover, #cancelPairingDialog:focus,
-#continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeHostMenuDialog:hover,
-#closeHostMenuDialog:focus, #closeHostDetailsDialog:hover, #closeHostDetailsDialog:focus, #closeSupportDialog:hover, #closeSupportDialog:focus,
-#closeNavGuideDialog:hover, #closeNavGuideDialog:focus, #closeUpdateApp:hover, #closeUpdateApp:focus, #continueRestoreDefaults:hover,
-#continueRestoreDefaults:focus, #cancelRestoreDefaults:hover, #cancelRestoreDefaults:focus, #continueQuitApp:hover, #continueQuitApp:focus,
-#cancelQuitApp:hover, #cancelQuitApp:focus, #continueRestartApp:hover, #continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus,
-#continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover, #cancelExitApp:focus, #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover,
-#supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus, #restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover,
-#quitRunningAppBtn:focus, #selectResolution:hover, #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover,
-#selectBitrate:focus, #ipAddressFieldModeBtn:hover, #ipAddressFieldModeBtn:focus, #sortAppsListBtn:hover, #sortAppsListBtn:focus,
-#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover, #externalAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus,
-#mouseEmulationBtn:hover, #mouseEmulationBtn:focus, #flipABfaceButtonsBtn:hover, #flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover,
-#flipXYfaceButtonsBtn:focus, #selectCodec:hover, #selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus, #framePacingBtn:hover, #framePacingBtn:focus,
-#audioSyncBtn:hover, #audioSyncBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus,
-#navigationGuideBtn:hover, #navigationGuideBtn:focus, #checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
+#continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairing:hover, #cancelPairing:focus,
+#continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeHostMenu:hover, #closeHostMenu:focus,
+#closeHostDetails:hover, #closeHostDetails:focus, #closeAppSupport:hover, #closeAppSupport:focus, #closeNavGuide:hover, #closeNavGuide:focus,
+#closeUpdateApp:hover, #closeUpdateApp:focus, #continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover,
+#cancelRestoreDefaults:focus, #continueQuitApp:hover, #continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #continueRestartApp:hover,
+#continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus, #continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover,
+#cancelExitApp:focus, #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,
+#restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus, #selectResolution:hover,
+#selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover, #selectBitrate:focus, #ipAddressFieldModeBtn:hover,
+#ipAddressFieldModeBtn:focus, #sortAppsListBtn:hover, #sortAppsListBtn:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover,
+#externalAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus, #mouseEmulationBtn:hover, #mouseEmulationBtn:focus,
+#flipABfaceButtonsBtn:hover,#flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover, #flipXYfaceButtonsBtn:focus, #selectCodec:hover,
+#selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus, #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
+#systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus,
+#checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }

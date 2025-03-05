@@ -270,7 +270,7 @@ const Views = {
     },
     back: function() {
       // Show the Exit Moonlight dialog and push the view
-      showExitMoonlightDialog();
+      exitAppDialog();
     },
     press: function() {
       const currentItem = this.view.current();
@@ -412,12 +412,12 @@ const Views = {
     },
   },
   PairingDialog: {
-    view: new ListView(() => ['cancelPairingDialog']),
+    view: new ListView(() => ['cancelPairing']),
     up: function() {
-      document.getElementById('cancelPairingDialog').blur();
+      document.getElementById('cancelPairing').blur();
     },
     down: function() {
-      document.getElementById('cancelPairingDialog').focus();
+      document.getElementById('cancelPairing').focus();
     },
     left: function() {},
     right: function() {},
@@ -428,7 +428,7 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('cancelPairingDialog').click();
+      document.getElementById('cancelPairing').click();
     },
     press: function() {},
     switch: function() {},
@@ -441,8 +441,8 @@ const Views = {
   },
   HostMenuDialog: {
     view: new ListView(() => {
-      const actions = ['refreshApps', 'wakeHost', 'removeHost', 'viewDetails', 'closeHostMenuDialog'];
-      return actions.map(action => action === 'closeHostMenuDialog' ? action : action + '-' + Views.HostMenuDialog.hostname);
+      const actions = ['refreshApps', 'wakeHost', 'deleteHost', 'viewDetails', 'closeHostMenu'];
+      return actions.map(action => action === 'closeHostMenu' ? action : action + '-' + Views.HostMenuDialog.hostname);
     }),
     up: function() {
       this.view.prevOption();
@@ -461,7 +461,7 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('closeHostMenuDialog').click();
+      document.getElementById('closeHostMenu').click();
     },
     press: function() {},
     switch: function() {
@@ -507,12 +507,12 @@ const Views = {
     },
   },
   HostDetailsDialog: {
-    view: new ListView(() => ['closeHostDetailsDialog']),
+    view: new ListView(() => ['closeHostDetails']),
     up: function() {
-      document.getElementById('closeHostDetailsDialog').blur();
+      document.getElementById('closeHostDetails').blur();
     },
     down: function() {
-      document.getElementById('closeHostDetailsDialog').focus();
+      document.getElementById('closeHostDetails').focus();
     },
     left: function() {},
     right: function() {},
@@ -523,7 +523,7 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('closeHostDetailsDialog').click();
+      document.getElementById('closeHostDetails').click();
     },
     press: function() {},
     switch: function() {
@@ -536,13 +536,13 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  SupportDialog: {
-    view: new ListView(() => ['closeSupportDialog']),
+  MoonlightSupportDialog: {
+    view: new ListView(() => ['closeAppSupport']),
     up: function() {
-      document.getElementById('closeSupportDialog').blur();
+      document.getElementById('closeAppSupport').blur();
     },
     down: function() {
-      document.getElementById('closeSupportDialog').focus();
+      document.getElementById('closeAppSupport').focus();
     },
     left: function() {},
     right: function() {},
@@ -553,7 +553,7 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('closeSupportDialog').click();
+      document.getElementById('closeAppSupport').click();
     },
     press: function() {},
     switch: function() {},
@@ -1038,14 +1038,14 @@ const Views = {
       this.view.current().click();
       document.getElementById('selectCodec').focus();
       // Show the Restart Moonlight dialog and push the view
-      setTimeout(() => showRestartMoonlightDialog(), 1200);
+      setTimeout(() => restartAppDialog(), 1000);
     },
     accept: function() {
       this.view.current().click();
       Navigation.pop();
       document.getElementById('selectCodec').focus();
       // Show the Restart Moonlight dialog and push the view
-      setTimeout(() => showRestartMoonlightDialog(), 1200);
+      setTimeout(() => restartAppDialog(), 1000);
     },
     back: function() {
       document.getElementById('selectCodec').click();
@@ -1115,12 +1115,12 @@ const Views = {
     },
   },
   NavigationGuideDialog: {
-    view: new ListView(() => ['closeNavGuideDialog']),
+    view: new ListView(() => ['closeNavGuide']),
     up: function() {
-      document.getElementById('closeNavGuideDialog').blur();
+      document.getElementById('closeNavGuide').blur();
     },
     down: function() {
-      document.getElementById('closeNavGuideDialog').focus();
+      document.getElementById('closeNavGuide').focus();
     },
     left: function() {},
     right: function() {},
@@ -1131,7 +1131,7 @@ const Views = {
       document.getElementById(this.view.current()).click();
     },
     back: function() {
-      document.getElementById('closeNavGuideDialog').click();
+      document.getElementById('closeNavGuide').click();
     },
     press: function() {},
     switch: function() {},
