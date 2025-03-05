@@ -1211,8 +1211,8 @@ function checkForAppUpdates() {
     setTimeout(() => {
       // Check if a new version update is available or the app is already up to date
       if (compareVersionParts(currentVersion, latestVersion)) {
-        // If a new version update is available, show a snackbar message to inform the user to update the app
-        snackbarLogLong(`Version ${latestVersion} is now available! Update manually to enjoy new features and improvements.`);
+        // Show dialog with new version and release notes to inform user to update application
+        showUpdateMoonlightDialog(latestVersion, releaseNotes);
       } else {
         // Otherwise, show a snackbar message to inform the user that the app is already up to date
         snackbarLogLong('Your app is already up to date with the latest version.');
@@ -1250,7 +1250,7 @@ function extractReleaseNotes(releaseNotes) {
 }
 
 // Show the Update Moonlight dialog
-function showUpdateMoonlightDialog() {
+function showUpdateMoonlightDialog(latestVersion, releaseNotes) {
   // Create an overlay for the dialog and append it to the body
   var updateAppDialogOverlay = $('<div>', {
     id: 'updateAppDialogOverlay',
@@ -1274,6 +1274,14 @@ function showUpdateMoonlightDialog() {
   var updateAppDialogContent = $('<div>', {
     class: 'mdl-dialog__content'
   }).appendTo(updateAppDialog);
+
+  // Add a paragraph with multiple lines of text
+  $('<p>', {
+    id: 'updateAppDialogText',
+    class: 'update-app-text',
+    html: `Version ${latestVersion} is now available! Update manually to enjoy new features and improvements.<br><br>` +
+          `<strong>What's Changed:</strong><br>` + releaseNotes
+  }).appendTo(updateAppDialogContent);
 
   // Create the actions section inside the dialog
   var updateAppDialogActions = $('<div>', {
