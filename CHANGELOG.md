@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.3.0
+
+### Added
+- Added a new 'System Update' icon for the 'Check for Updates' button
+- Introduced a new 'Check for Updates' button to check for new Moonlight updates
+- Implemented version comparison and release notes extraction for new updates
+- Introduced a new 'Update Moonlight' dialog and its corresponding view
+- Implemented version info and release notes in the 'Update Moonlight' dialog
+
+### Fixed
+- Minor improvements, code refactoring, and rearrangement across the application
+
 ## v1.2.20
 
 ### Added
