@@ -777,7 +777,7 @@ body {
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
-#selectCodec, #navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
+#selectCodec, #navigationGuideBtn, #manualCheckUpdatesBtn, #restartAppBtn {
     font-size: 1.45rem;
     letter-spacing: 0.5px;
     text-indent: 36px;
@@ -786,7 +786,7 @@ body {
 #sortAppsListBtn, #optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn,
 #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn, #flipXYfaceButtonsBtn,
 #selectCodec, #hdrModeBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn,
-#checkUpdatesBtn, #restartAppBtn {
+#manualCheckUpdatesBtn, #restartAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -875,7 +875,7 @@ body {
     color: #ececec;
     background: url('../res/ic_arrow_drop_down_48px.svg') 94.8% 50% no-repeat rgba(64, 67, 84, 1);
 }
-#removeAllHostsIcon, #navigationGuideIcon, #checkUpdatesIcon,
+#removeAllHostsIcon, #navigationGuideIcon, #manualCheckUpdatesIcon,
 #restartApplicationIcon {
     float: right;
     width: 35px;
@@ -900,7 +900,7 @@ body {
 #flipABfaceButtonsBtn:hover,#flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover, #flipXYfaceButtonsBtn:focus, #selectCodec:hover,
 #selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus, #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
 #systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus,
-#checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
+#manualCheckUpdatesBtn:hover, #manualCheckUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
