@@ -1157,10 +1157,10 @@ function handleSettingsCategory(category) {
           setTimeout(() => Navigation.switch(), 5);
         }
         break;
-      case 'decoderSettings':
-        // Navigate to the DecoderSettings view
+      case 'advancedSettings':
+        // Navigate to the AdvancedSettings view
         Navigation.pop();
-        Navigation.push(Views.DecoderSettings);
+        Navigation.push(Views.AdvancedSettings);
         if (currentSettingsOption) {
           // Set focus on the current settings option
           currentSettingsOption.focus();

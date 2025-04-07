@@ -959,7 +959,7 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  DecoderSettings: {
+  AdvancedSettings: {
     view: new ListView(() => [
       'selectCodec',
       'hdrModeBtn',
@@ -1001,7 +1001,7 @@ const Views = {
       });
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
-      // Set focus on the category item in Settings view when transitioning from DecoderSettings view
+      // Set focus on the category item in Settings view when transitioning from AdvancedSettings view
       const navItem = document.getElementById(Views.Settings.view.current());
       if (navItem) {
         navItem.focus();
