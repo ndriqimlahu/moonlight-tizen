@@ -696,21 +696,8 @@ const Views = {
     back: function() {
       // Remove focus from the current element before changing the view
       document.getElementById(this.view.current()).blur();
-      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
-      const toggleSwitches = document.querySelectorAll('.mdl-switch');
-      toggleSwitches.forEach(function (toggleSwitch) {
-        toggleSwitch.classList.remove('hovered', 'is-focused');
-      });
-      // Hide the right settings pane which includes settings options
-      const settingsOptions = document.querySelectorAll('.settings-options');
-      settingsOptions.forEach(function (settingsOption) {
-        settingsOption.style.display = 'none';
-      });
-      // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.settings-category');
-      settingsCategories.forEach(function (settingsCategory) {
-        settingsCategory.classList.remove('selected');
-      });
+      // Reset the current settings view before navigating to the next settings view
+      resetSettingsView();
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
       // Set focus on the category item in Settings view when transitioning from BasicSettings view
@@ -866,21 +853,8 @@ const Views = {
     back: function() {
       // Remove focus from the current element before changing the view
       document.getElementById(this.view.current()).blur();
-      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
-      const toggleSwitches = document.querySelectorAll('.mdl-switch');
-      toggleSwitches.forEach(function (toggleSwitch) {
-        toggleSwitch.classList.remove('hovered', 'is-focused');
-      });
-      // Hide the right settings pane which includes settings options
-      const settingsOptions = document.querySelectorAll('.settings-options');
-      settingsOptions.forEach(function (settingsOption) {
-        settingsOption.style.display = 'none';
-      });
-      // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.settings-category');
-      settingsCategories.forEach(function (settingsCategory) {
-        settingsCategory.classList.remove('selected');
-      });
+      // Reset the current settings view before navigating to the next settings view
+      resetSettingsView();
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
       // Set focus on the category item in Settings view when transitioning from HostSettings view
@@ -925,21 +899,8 @@ const Views = {
     back: function() {
       // Remove focus from the current element before changing the view
       document.getElementById(this.view.current()).blur();
-      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
-      const toggleSwitches = document.querySelectorAll('.mdl-switch');
-      toggleSwitches.forEach(function (toggleSwitch) {
-        toggleSwitch.classList.remove('hovered', 'is-focused');
-      });
-      // Hide the right settings pane which includes settings options
-      const settingsOptions = document.querySelectorAll('.settings-options');
-      settingsOptions.forEach(function (settingsOption) {
-        settingsOption.style.display = 'none';
-      });
-      // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.settings-category');
-      settingsCategories.forEach(function (settingsCategory) {
-        settingsCategory.classList.remove('selected');
-      });
+      // Reset the current settings view before navigating to the next settings view
+      resetSettingsView();
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
       // Set focus on the category item in Settings view when transitioning from InputSettings view
@@ -984,21 +945,8 @@ const Views = {
     back: function() {
       // Remove focus from the current element before changing the view
       document.getElementById(this.view.current()).blur();
-      // Remove the 'hovered' and 'is-focused' classes from all toggle switches
-      const toggleSwitches = document.querySelectorAll('.mdl-switch');
-      toggleSwitches.forEach(function (toggleSwitch) {
-        toggleSwitch.classList.remove('hovered', 'is-focused');
-      });
-      // Hide the right settings pane which includes settings options
-      const settingsOptions = document.querySelectorAll('.settings-options');
-      settingsOptions.forEach(function (settingsOption) {
-        settingsOption.style.display = 'none';
-      });
-      // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.settings-category');
-      settingsCategories.forEach(function (settingsCategory) {
-        settingsCategory.classList.remove('selected');
-      });
+      // Reset the current settings view before navigating to the next settings view
+      resetSettingsView();
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
       // Set focus on the category item in Settings view when transitioning from AdvancedSettings view
@@ -1085,16 +1033,8 @@ const Views = {
     back: function() {
       // Remove focus from the current element before changing the view
       document.getElementById(this.view.current()).blur();
-      // Hide the right settings pane which includes settings options
-      const settingsOptions = document.querySelectorAll('.settings-options');
-      settingsOptions.forEach(function (settingsOption) {
-        settingsOption.style.display = 'none';
-      });
-      // Remove the 'selected' class from all categories
-      const settingsCategories = document.querySelectorAll('.settings-category');
-      settingsCategories.forEach(function (settingsCategory) {
-        settingsCategory.classList.remove('selected');
-      });
+      // Reset the current settings view before navigating to the next settings view
+      resetSettingsView();
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
       // Set focus on the category item in Settings view when transitioning from AboutSettings view

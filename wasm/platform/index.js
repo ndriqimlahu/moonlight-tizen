@@ -1093,95 +1093,77 @@ function showSettings() {
   showSettingsMode();
 }
 
-// Handle the click event on the settings categories and open the corresponding views
-function handleSettingsCategory(category) {
-  // Hide the right settings panel which includes settings options
-  const settingsOptions = document.querySelectorAll('.settings-options');
-  settingsOptions.forEach(function(settingsOption) {
+// Reset the current settings view by clearing the selection and hiding the right panel
+function resetSettingsView() {
+  // Remove the 'hovered' and 'is-focused' classes from all toggle switches
+  document.querySelectorAll('.mdl-switch').forEach(function(toggleSwitch) {
+    toggleSwitch.classList.remove('hovered', 'is-focused');
+  });
+
+  // Hide all settings options from the right panel
+  document.querySelectorAll('.settings-options').forEach(function(settingsOption) {
     settingsOption.style.display = 'none';
   });
 
-  // Remove the 'selected' class from all categories
-  const settingsCategories = document.querySelectorAll('.settings-category');
-  settingsCategories.forEach(function(settingsCategory) {
+  // Remove the 'selected' class from all settings categories
+  document.querySelectorAll('.settings-category').forEach(function(settingsCategory) {
     settingsCategory.classList.remove('selected');
   });
+}
 
-  // Show the right settings panel when the category item is clicked
-  const currentItem = document.getElementById(category);
-  if (currentItem) {
-    currentItem.style.display = 'block';
+// Navigate to the provided settings view by pushing the target view and set the focus to the setting
+function navigateSettingsView(view) {
+  Navigation.pop();
+  Navigation.push(view);
+  setTimeout(() => Navigation.switch(), 5);
+}
 
-    // Add the 'selected' class to the clicked category and mark it as selected
-    const selectedCategory = document.querySelector('.settings-category[data-category="' + category + '"]');
-    if (selectedCategory) {
-      selectedCategory.classList.add('selected');
-    }
+// Handle category selection, display appropriate options, and navigate to the provided settings panel
+function handleSettingsView(category) {
+  // Reset the current settings view before navigating to the next settings view
+  resetSettingsView();
 
-    // Retrieve the settings option for the current category
-    const currentSettingsCategory = document.getElementById(category);
-    const currentSettingsOption = currentSettingsCategory.querySelector('.setting-option');
+  // Show appropriate settings options in the target panel based on the selected settings category
+  const targetPanelOptions = document.getElementById(category);
+  const selectedCategory = document.querySelector(`.settings-category[data-category="${category}"]`);
 
-    // Trigger the corresponding action based on the category ID
-    switch (category) {
-      case 'basicSettings':
-        // Navigate to the BasicSettings view
-        Navigation.pop();
-        Navigation.push(Views.BasicSettings);
-        if (currentSettingsOption) {
-          // Set focus on the current settings option
-          currentSettingsOption.focus();
-          // Simulate navigation to set focus on the settings item
-          setTimeout(() => Navigation.switch(), 5);
-        }
-        break;
-      case 'hostSettings':
-        // Navigate to the HostSettings view
-        Navigation.pop();
-        Navigation.push(Views.HostSettings);
-        if (currentSettingsOption) {
-          // Set focus on the current settings option
-          currentSettingsOption.focus();
-          // Simulate navigation to set focus on the settings item
-          setTimeout(() => Navigation.switch(), 5);
-        }
-        break;
-      case 'inputSettings':
-        // Navigate to the InputSettings view
-        Navigation.pop();
-        Navigation.push(Views.InputSettings);
-        if (currentSettingsOption) {
-          // Set focus on the current settings option
-          currentSettingsOption.focus();
-          // Simulate navigation to set focus on the settings item
-          setTimeout(() => Navigation.switch(), 5);
-        }
-        break;
-      case 'advancedSettings':
-        // Navigate to the AdvancedSettings view
-        Navigation.pop();
-        Navigation.push(Views.AdvancedSettings);
-        if (currentSettingsOption) {
-          // Set focus on the current settings option
-          currentSettingsOption.focus();
-          // Simulate navigation to set focus on the settings item
-          setTimeout(() => Navigation.switch(), 5);
-        }
-        break;
-      case 'aboutSettings':
-        // Navigate to the AboutSettings view
-        Navigation.pop();
-        Navigation.push(Views.AboutSettings);
-        if (currentSettingsOption) {
-          // Set focus on the current settings option
-          currentSettingsOption.focus();
-          // Simulate navigation to set focus on the settings item
-          setTimeout(() => Navigation.switch(), 5);
-        }
-        break;
-      default:
-        break;
-    }
+  // Show the target panel options if the target panel exists
+  if (targetPanelOptions) {
+    // Show the panel view
+    targetPanelOptions.style.display = 'block';
+  } else {
+    // Otherwise, exit early
+    return;
+  }
+
+  // Add the 'selected' class to the clicked settings category
+  if (selectedCategory) {
+    // Mark the category as selected
+    selectedCategory.classList.add('selected');
+  } else {
+    // Otherwise, exit early
+    return;
+  }
+
+  // Navigate to the corresponding settings view
+  switch (category) {
+    case 'basicSettings': // Navigate to the BasicSettings view
+      navigateSettingsView(Views.BasicSettings);
+      break;
+    case 'hostSettings': // Navigate to the HostSettings view
+      navigateSettingsView(Views.HostSettings);
+      break;
+    case 'inputSettings': // Navigate to the InputSettings view
+      navigateSettingsView(Views.InputSettings);
+      break;
+    case 'advancedSettings': // Navigate to the AdvancedSettings view
+      navigateSettingsView(Views.AdvancedSettings);
+      break;
+    case 'aboutSettings': // Navigate to the AboutSettings view
+      navigateSettingsView(Views.AboutSettings);
+      break;
+    default:
+      break;
   }
 }
 
