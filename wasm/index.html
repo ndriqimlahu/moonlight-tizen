@@ -141,16 +141,19 @@
               <div id="ipAddressFieldModeMenu">
                 <label id="ipAddressFieldModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="ipAddressFieldModeSwitch">
                   <input type="checkbox" id="ipAddressFieldModeSwitch" class="mdl-switch__input" onchange="handleIpAddressFieldMode()">
-                  <span class="mdl-switch__label">Change the field mode when entering the IP address of host PC</span>
+                  <span class="mdl-switch__label">Change the IP address input text field to numeric input mode</span>
                 </label>
               </div>
             </div>
             <div class="setting-option">
-              <label>Sort apps and games:</label>
+              <label>Sort the list of apps:</label>
+              <span class="mdl-list__item-text-body">
+                - By default, the list of apps is sorted in ascending order (A to Z), unless changed.
+              </span>
               <div id="sortAppsListMenu">
                 <label id="sortAppsListBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="sortAppsListSwitch">
                   <input type="checkbox" id="sortAppsListSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Sort the list of apps and games from Z to A instead of A to Z</span>
+                  <span class="mdl-switch__label">Allow sorting the list of apps in descending order (Z to A)</span>
                 </label>
               </div>
             </div>
@@ -159,7 +162,7 @@
               <div id="optimizeGamesMenu">
                 <label id="optimizeGamesBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="optimizeGamesSwitch">
                   <input type="checkbox" id="optimizeGamesSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow GFE to modify game settings for optimal streaming</span>
+                  <span class="mdl-switch__label">Allow the host to modify game settings for optimal streaming</span>
                 </label>
               </div>
             </div>
@@ -168,7 +171,7 @@
               <div id="externalAudioMenu">
                 <label id="externalAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="externalAudioSwitch">
                   <input type="checkbox" id="externalAudioSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Play audio from the computer and this device</span>
+                  <span class="mdl-switch__label">Allow playing audio from the computer and this device</span>
                 </label>
               </div>
             </div>
@@ -176,7 +179,7 @@
               <label>Remove all hosts:</label>
               <div id="removeAllHostsMenu">
                 <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Remove All Hosts">
-                  Remove all existing hosts from the list
+                  Remove all currently saved hosts from the list
                   <img src="static/res/ic_remove_from_queue_white_48px.svg" id="removeAllHostsIcon">
                 </button>
               </div>
@@ -188,7 +191,7 @@
               <div id="rumbleFeedbackMenu">
                 <label id="rumbleFeedbackBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="rumbleFeedbackSwitch">
                   <input type="checkbox" id="rumbleFeedbackSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow gamepad to support rumble feedback while streaming</span>
+                  <span class="mdl-switch__label">Allow gamepad rumble feedback support while streaming</span>
                 </label>
               </div>
             </div>
@@ -197,7 +200,7 @@
               <div id="mouseEmulationMenu">
                 <label id="mouseEmulationBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="mouseEmulationSwitch">
                   <input type="checkbox" id="mouseEmulationSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Switch the gamepad to mouse mode by holding down the Start button</span>
+                  <span class="mdl-switch__label">Allow gamepad to switch to mouse mode when holding the Start button</span>
                 </label>
               </div>
             </div>
@@ -206,7 +209,7 @@
               <div id="flipABfaceButtonsMenu">
                 <label id="flipABfaceButtonsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="flipABfaceButtonsSwitch">
                   <input type="checkbox" id="flipABfaceButtonsSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Swap the A and B face buttons for the gamepad while streaming</span>
+                  <span class="mdl-switch__label">Swap A and B face buttons on the gamepad while streaming</span>
                 </label>
               </div>
             </div>
@@ -215,7 +218,7 @@
               <div id="flipXYfaceButtonsMenu">
                 <label id="flipXYfaceButtonsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="flipXYfaceButtonsSwitch">
                   <input type="checkbox" id="flipXYfaceButtonsSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Swap the X and Y face buttons for the gamepad while streaming</span>
+                  <span class="mdl-switch__label">Swap X and Y face buttons on the gamepad while streaming</span>
                 </label>
               </div>
             </div>
@@ -245,7 +248,7 @@
               <div id="hdrModeMenu">
                 <label id="hdrModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="hdrModeSwitch">
                   <input type="checkbox" id="hdrModeSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow HDR for more vibrant colors and improved contrast while streaming</span>
+                  <span class="mdl-switch__label">Allow high dynamic range for vibrant colors and enhanced contrast</span>
                 </label>
               </div>
             </div>
@@ -263,7 +266,7 @@
               <div id="audioSyncMenu">
                 <label id="audioSyncBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="audioSyncSwitch">
                   <input type="checkbox" id="audioSyncSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow audio synchronization to function while streaming</span>
+                  <span class="mdl-switch__label">Allow audio synchronization support for consistent sound output</span>
                 </label>
               </div>
             </div>
@@ -290,7 +293,7 @@
             <div class="setting-option">
               <label>Check for updates:</label>
               <span class="mdl-list__item-text-body">
-                - Find out if a new version of the app is available.
+                - Find out if a new application update is available.
               </span>
               <div id="manualCheckUpdatesMenu">
                 <button type="button" id="manualCheckUpdatesBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Manual Check Updates">
@@ -302,11 +305,11 @@
             <div class="setting-option">
               <label>Restart the application:</label>
               <span class="mdl-list__item-text-body">
-                - If you encounter issues, you can quickly restart the app to resolve them.
+                - If you encounter issues, here you can restart the app to resolve them.
               </span>
               <div id="restartApplicationMenu">
                 <button type="button" id="restartAppBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Restart Application">
-                  Restart the Moonlight app immediately
+                  Restart the Moonlight app quickly
                   <img src="static/res/ic_restart_alt_48px.svg" id="restartApplicationIcon">
                 </button>
               </div>
