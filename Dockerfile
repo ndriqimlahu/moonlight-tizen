@@ -27,7 +27,7 @@ WORKDIR /home/moonlight
 # Install Tizen Studio, get the file: `web-cli_Tizen_Studio_5.6_ubuntu-64.bin`
 RUN wget -nv -O web-cli_Tizen_Studio_5.6_ubuntu-64.bin 'https://download.tizen.org/sdk/Installer/tizen-studio_5.6/web-cli_Tizen_Studio_5.6_ubuntu-64.bin'
 RUN chmod a+x web-cli_Tizen_Studio_5.6_ubuntu-64.bin
-RUN ./web-cli_Tizen_Studio_5.6_ubuntu-64.bin --accept-license /home/moonlight/tizen-studio
+RUN ./web-cli_Tizen_Studio_5.6_ubuntu-64.bin --accept-license --no-java-check /home/moonlight/tizen-studio
 ENV PATH=/home/moonlight/tizen-studio/tools/ide/bin:/home/moonlight/tizen-studio/tools:${PATH}
 
 # Prepare the Tizen signing certificates
@@ -51,6 +51,9 @@ RUN wget -nv -O emscripten-1.39.4.7-linux64.zip 'https://developer.samsung.com/s
 RUN unzip emscripten-1.39.4.7-linux64.zip
 WORKDIR emscripten-release-bundle/emsdk
 RUN ./emsdk activate latest-fastcomp
+
+# Configure Java for the Emscripten Closure Compiler
+RUN echo 'JAVA = "/usr/bin/java"' >> /home/moonlight/.emscripten
 WORKDIR ../..
 
 # Build the application package from the source code
