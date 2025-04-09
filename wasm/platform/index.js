@@ -2636,7 +2636,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored ipAddressFieldMode preferences.');
   getData('ipAddressFieldMode', function(previousValue) {
-    if (previousValue.ipAddressFieldMode == null || previousValue.ipAddressFieldMode === false) {
+    if (previousValue.ipAddressFieldMode == null) {
+      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.ipAddressFieldMode == false) {
       document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.on();
@@ -2647,7 +2649,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored sortAppsList preferences.');
   getData('sortAppsList', function(previousValue) {
-    if (previousValue.sortAppsList == null || previousValue.sortAppsList === false) {
+    if (previousValue.sortAppsList == null) {
+      document.querySelector('#sortAppsListBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.sortAppsList == false) {
       document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#sortAppsListBtn').MaterialSwitch.on();
@@ -2656,7 +2660,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored optimizeGames preferences.');
   getData('optimizeGames', function(previousValue) {
-    if (previousValue.optimizeGames == null || previousValue.optimizeGames === false) {
+    if (previousValue.optimizeGames == null) {
+      document.querySelector('#optimizeGamesBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.optimizeGames == false) {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.on();
@@ -2665,7 +2671,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored externalAudio preferences.');
   getData('externalAudio', function(previousValue) {
-    if (previousValue.externalAudio == null || previousValue.externalAudio === false) {
+    if (previousValue.externalAudio == null) {
+      document.querySelector('#externalAudioBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.externalAudio == false) {
       document.querySelector('#externalAudioBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#externalAudioBtn').MaterialSwitch.on();
@@ -2674,7 +2682,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored rumbleFeedback preferences.');
   getData('rumbleFeedback', function(previousValue) {
-    if (previousValue.rumbleFeedback == null || previousValue.rumbleFeedback === false) {
+    if (previousValue.rumbleFeedback == null) {
+      document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.rumbleFeedback == false) {
       document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.on();
@@ -2683,7 +2693,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored mouseEmulation preferences.');
   getData('mouseEmulation', function(previousValue) {
-    if (previousValue.mouseEmulation == null || previousValue.mouseEmulation === false) {
+    if (previousValue.mouseEmulation == null) {
+      document.querySelector('#mouseEmulationBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.mouseEmulation == false) {
       document.querySelector('#mouseEmulationBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#mouseEmulationBtn').MaterialSwitch.on();
@@ -2692,7 +2704,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored flipABfaceButtons preferences.');
   getData('flipABfaceButtons', function(previousValue) {
-    if (previousValue.flipABfaceButtons == null || previousValue.flipABfaceButtons === false) {
+    if (previousValue.flipABfaceButtons == null) {
+      document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.flipABfaceButtons == false) {
       document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#flipABfaceButtonsBtn').MaterialSwitch.on();
@@ -2701,7 +2715,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored flipXYfaceButtons preferences.');
   getData('flipXYfaceButtons', function(previousValue) {
-    if (previousValue.flipXYfaceButtons == null || previousValue.flipXYfaceButtons === false) {
+    if (previousValue.flipXYfaceButtons == null) {
+      document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.flipXYfaceButtons == false) {
       document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.on();
@@ -2722,7 +2738,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored hdrMode preferences.');
   getData('hdrMode', function(previousValue) {
-    if (previousValue.hdrMode == null || previousValue.hdrMode === false) {
+    if (previousValue.hdrMode == null) {
+      document.querySelector('#hdrModeBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.hdrMode == false) {
       document.querySelector('#hdrModeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#hdrModeBtn').MaterialSwitch.on();
@@ -2731,7 +2749,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored framePacing preferences.');
   getData('framePacing', function(previousValue) {
-    if (previousValue.framePacing == null || previousValue.framePacing === false) {
+    if (previousValue.framePacing == null) {
+      document.querySelector('#framePacingBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.framePacing == false) {
       document.querySelector('#framePacingBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#framePacingBtn').MaterialSwitch.on();
@@ -2740,7 +2760,9 @@ function loadUserDataCb() {
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored audioSync preferences.');
   getData('audioSync', function(previousValue) {
-    if (previousValue.audioSync == null || previousValue.audioSync === false) {
+    if (previousValue.audioSync == null) {
+      document.querySelector('#audioSyncBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.audioSync == false) {
       document.querySelector('#audioSyncBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#audioSyncBtn').MaterialSwitch.on();
