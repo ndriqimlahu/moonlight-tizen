@@ -16,7 +16,7 @@ To get started, ensure that your client, host, and network meet the recommended 
 
 - Client Requirements — You must have a Samsung TV with Tizen OS starting from model year `2020 (Tizen 5.5) or later`.
 
-- Host Requirements — You must have a Gaming PC with a GPU capable of hardware decoding and that meets the [system requirements](https://docs.lizardbyte.dev/projects/sunshine/en/latest/about/overview.html#system-requirements) to ensure optimal performance.
+- Host Requirements — You must have a Gaming PC with a GPU capable of hardware decoding and that meets the [system requirements](https://docs.lizardbyte.dev/projects/sunshine/latest/index.html#%EF%B8%8F-system-requirements) to ensure optimal performance.
 
 - Network Requirements — You need a mid-range or high-end wireless router with a good wireless connection to your client using `5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax)` and a good wired connection to your host using the `CAT5e ethernet or better` which is strongly recommended.
 
