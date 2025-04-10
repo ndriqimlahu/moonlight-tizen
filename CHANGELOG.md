@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.3.1
+
+### Changed
+- Improved manual release update checking and eliminated redundant code
+- Renamed 'Decoder Settings' category to 'Advanced Settings' for better understanding
+- Improved settings view handling, navigation control, and reduced repetitive code
+- Refined setting labels and option names for improved clarity and usability
+- Improved Java configuration for Emscripten and bypassed Java check for Tizen Studio
+
+### Fixed
+- Fixed incorrect conditions causing toggle switches to misinterpret their default state
+
 ## v1.3.0
 
 ### Added
