@@ -676,7 +676,8 @@ const Views = {
     view: new ListView(() => [
       'selectResolution',
       'selectFramerate',
-      'selectBitrate']),
+      'selectBitrate',
+      'framePacingBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -921,7 +922,8 @@ const Views = {
     },
   },
   AudioSettings: {
-    view: new ListView(() => []),
+    view: new ListView(() => [
+      'audioSyncBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -965,9 +967,7 @@ const Views = {
   AdvancedSettings: {
     view: new ListView(() => [
       'selectCodec',
-      'hdrModeBtn',
-      'framePacingBtn',
-      'audioSyncBtn']),
+      'hdrModeBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();

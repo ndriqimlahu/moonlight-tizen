@@ -782,10 +782,10 @@ body {
     letter-spacing: 0.5px;
     text-indent: 36px;
 }
-#selectResolution, #selectFramerate, #selectBitrate, #ipAddressFieldModeBtn,
-#sortAppsListBtn, #optimizeGamesBtn, #externalAudioBtn, #removeAllHostsBtn,
-#rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn, #flipXYfaceButtonsBtn,
-#selectCodec, #hdrModeBtn, #framePacingBtn, #audioSyncBtn, #navigationGuideBtn,
+#selectResolution, #selectFramerate, #selectBitrate, #framePacingBtn,
+#ipAddressFieldModeBtn, #sortAppsListBtn, #optimizeGamesBtn, #externalAudioBtn,
+#removeAllHostsBtn, #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn,
+#flipXYfaceButtonsBtn, #audioSyncBtn, #selectCodec, #hdrModeBtn, #navigationGuideBtn,
 #manualCheckUpdatesBtn, #restartAppBtn {
     color: #ececec;
     background-color: #404354;
@@ -894,11 +894,11 @@ body {
 #continueRestartApp:focus, #cancelRestartApp:hover, #cancelRestartApp:focus, #continueExitApp:hover, #continueExitApp:focus, #cancelExitApp:hover,
 #cancelExitApp:focus, #settingsBtn:hover, #settingsBtn:focus, #supportBtn:hover, #supportBtn:focus, #goBackBtn:hover, #goBackBtn:focus,
 #restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus, #selectResolution:hover,
-#selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover, #selectBitrate:focus, #ipAddressFieldModeBtn:hover,
-#ipAddressFieldModeBtn:focus, #sortAppsListBtn:hover, #sortAppsListBtn:focus, #optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover,
-#externalAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus, #mouseEmulationBtn:hover, #mouseEmulationBtn:focus,
-#flipABfaceButtonsBtn:hover,#flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover, #flipXYfaceButtonsBtn:focus, #selectCodec:hover,
-#selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus, #framePacingBtn:hover, #framePacingBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
+#selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover, #selectBitrate:focus, #framePacingBtn:hover,
+#framePacingBtn:focus, #ipAddressFieldModeBtn:hover, #ipAddressFieldModeBtn:focus, #sortAppsListBtn:hover, #sortAppsListBtn:focus,
+#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover, #externalAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus,
+#mouseEmulationBtn:hover, #mouseEmulationBtn:focus, #flipABfaceButtonsBtn:hover,#flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover,
+#flipXYfaceButtonsBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #selectCodec:hover, #selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus,  
 #systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus,
 #manualCheckUpdatesBtn:hover, #manualCheckUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
     background-color: #404354;

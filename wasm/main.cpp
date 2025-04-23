@@ -173,14 +173,15 @@ static void HexStringToBytes(const char* str, char* output) {
 }
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
-  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, std::string codecMode,
-  std::string serverCodecMode, bool hdrMode, bool framePacing, bool audioSync) {
+  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
+  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode,
+  std::string serverCodecMode, bool hdrMode) {
   PostToJs("Streaming session has started");
   PostToJs("Setting the stream host address to: " + host);
   PostToJs("Setting the stream resolution to: " + width + "x" + height);
   PostToJs("Setting the stream frame rate to: " + fps + " FPS");
   PostToJs("Setting the stream bitrate to: " + bitrate + " Kbps");
+  PostToJs("Setting the frame pacing to: " + std::to_string(framePacing));
   PostToJs("Setting the remote input key to: " + rikey);
   PostToJs("Setting the remote input key ID to: " + rikeyid);
   PostToJs("Setting the app version to: " + appversion);
@@ -192,11 +193,10 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the mouse emulation to: " + std::to_string(mouseEmulation));
   PostToJs("Setting the flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
   PostToJs("Setting the flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
+  PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
   PostToJs("Setting the codec mode to: " + codecMode);
   PostToJs("Setting the server codec mode to: " + serverCodecMode);
   PostToJs("Setting the HDR mode to: " + std::to_string(hdrMode));
-  PostToJs("Setting the frame pacing to: " + std::to_string(framePacing));
-  PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
 
   // Populate the stream configuration
   LiInitializeStreamConfiguration(&m_StreamConfig);
@@ -222,16 +222,16 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
   m_RtspUrl = rtspurl;
+  m_FramePacingEnabled = framePacing;
   m_OptimizeGamesEnabled = optimizeGames;
   m_ExternalAudioEnabled = externalAudio;
   m_RumbleFeedbackEnabled = rumbleFeedback;
   m_MouseEmulationEnabled = mouseEmulation;
   m_FlipABfaceButtonsEnabled = flipABfaceButtons;
   m_FlipXYfaceButtonsEnabled = flipXYfaceButtons;
+  m_AudioSyncEnabled = audioSync;
   m_SupportedVideoCodecs = stoi(serverCodecMode,0,16);
   m_HdrModeEnabled = hdrMode;
-  m_FramePacingEnabled = framePacing;
-  m_AudioSyncEnabled = audioSync;
 
   // Initialize the rendering surface before starting the connection
   if (InitializeRenderingSurface(m_StreamConfig.width, m_StreamConfig.height)) {
@@ -320,14 +320,12 @@ int main(int argc, char** argv) {
 }
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons,
-  bool flipXYfaceButtons, std::string codecMode, std::string serverCodecMode, bool hdrMode, bool framePacing,
-  bool audioSync) {
+  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
+  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, 
+  std::string serverCodecMode, bool hdrMode) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
-  return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl,
-  optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, codecMode,
-  serverCodecMode, hdrMode, framePacing, audioSync);
+  return g_Instance->StartStream(host, width, height, fps, bitrate, framePacing, rikey, rikeyid, appversion, gfeversion, rtspurl, optimizeGames,
+  externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, serverCodecMode, hdrMode);
 }
 
 MessageResult stopStream() {

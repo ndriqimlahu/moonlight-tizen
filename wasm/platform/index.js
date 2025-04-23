@@ -33,6 +33,7 @@ function attachListeners() {
   $('.resolutionMenu li').on('click', saveResolution);
   $('.framerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', saveBitrate);
+  $('#framePacingSwitch').on('click', saveFramePacing);
   $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
@@ -42,10 +43,9 @@ function attachListeners() {
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
   $('#flipABfaceButtonsSwitch').on('click', saveFlipABfaceButtons);
   $('#flipXYfaceButtonsSwitch').on('click', saveFlipXYfaceButtons);
+  $('#audioSyncSwitch').on('click', saveAudioSync);
   $('.codecMenu li').on('click', saveCodecMode);
   $('#hdrModeSwitch').on('click', saveHdrMode);
-  $('#framePacingSwitch').on('click', saveFramePacing);
-  $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#manualCheckUpdatesBtn').on('click', manualCheckForAppUpdates);
   $('#restartAppBtn').on('click', restartApplication);
@@ -1725,20 +1725,20 @@ function startGame(host, appID) {
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
       var frameRate = $('#selectFramerate').data('value').toString();
       var bitrate = parseFloat($('#bitrateSlider').val()) * 1000;
+      const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const externalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
       const codecFormats = {
         '0x0001': 'H.264', '0x0100': 'HEVC', '0x0200': 'HEVC Main10', '0x1000': 'AV1', '0x2000': 'AV1 Main10'
       };
       var streamCodec = codecFormats[codecMode] || 'Unknown';
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
       var gamepadMask = getConnectedGamepadMask();
@@ -1748,16 +1748,16 @@ function startGame(host, appID) {
       '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + 
       '\n Stream frame rate: ' + frameRate + ' FPS' + 
       '\n Stream bitrate: ' + bitrate + ' Kbps' + 
+      '\n Frame pacing: ' + framePacing + 
       '\n Optimize games: ' + optimizeGames + 
       '\n External audio: ' + externalAudio + 
       '\n Rumble feedback: ' + rumbleFeedback + 
       '\n Mouse emulation: ' + mouseEmulation + 
       '\n Flip A/B face buttons: ' + flipABfaceButtons + 
       '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
+      '\n Audio sync: ' + audioSync + 
       '\n Codec mode: ' + streamCodec + 
-      '\n HDR mode: ' + hdrMode + 
-      '\n Frame pacing: ' + framePacing + 
-      '\n Audio sync: ' + audioSync);
+      '\n HDR mode: ' + hdrMode);
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
@@ -1784,10 +1784,11 @@ function startGame(host, appID) {
             return;
           }
           // Start stream request
-          sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate, bitrate.toString(),
-            rikey, rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
+          sendMessage('startRequest', [
+            host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
+            rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
             optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
+            audioSync, codecMode, host.serverCodecMode, hdrMode
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -1822,10 +1823,11 @@ function startGame(host, appID) {
           return;
         }
         // Start stream request
-        sendMessage('startRequest', [host.address, streamWidth, streamHeight, frameRate, bitrate.toString(),
-          rikey, rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
+        sendMessage('startRequest', [
+          host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
+          rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
           optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          codecMode, host.serverCodecMode, hdrMode, framePacing, audioSync
+          audioSync, codecMode, host.serverCodecMode, hdrMode
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2258,6 +2260,14 @@ function setBitratePresetValue() {
   saveBitrate();
 }
 
+function saveFramePacing() {
+  setTimeout(() => {
+    const chosenFramePacing = $('#framePacingSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state: ' + chosenFramePacing);
+    storeData('framePacing', chosenFramePacing, null);
+  }, 100);
+}
+
 function saveIpAddressFieldMode() {
   setTimeout(() => {
     const chosenIpAddressFieldMode = $('#ipAddressFieldModeSwitch').parent().hasClass('is-checked');
@@ -2319,6 +2329,14 @@ function saveFlipXYfaceButtons() {
     const chosenFlipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveFlipXYfaceButtons]', 'color: green;', 'Saving flip X/Y face buttons state: ' + chosenFlipXYfaceButtons);
     storeData('flipXYfaceButtons', chosenFlipXYfaceButtons, null);
+  }, 100);
+}
+
+function saveAudioSync() {
+  setTimeout(() => {
+    const chosenAudioSync = $('#audioSyncSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state: ' + chosenAudioSync);
+    storeData('audioSync', chosenAudioSync, null);
   }, 100);
 }
 
@@ -2436,22 +2454,6 @@ function updateHdrMode() {
   }, 100);
 }
 
-function saveFramePacing() {
-  setTimeout(() => {
-    const chosenFramePacing = $('#framePacingSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, saveFramePacing]', 'color: green;', 'Saving frame pacing state: ' + chosenFramePacing);
-    storeData('framePacing', chosenFramePacing, null);
-  }, 100);
-}
-
-function saveAudioSync() {
-  setTimeout(() => {
-    const chosenAudioSync = $('#audioSyncSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state: ' + chosenAudioSync);
-    storeData('audioSync', chosenAudioSync, null);
-  }, 100);
-}
-
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2466,6 +2468,10 @@ function restoreDefaultsSettingsValues() {
   $('#selectBitrate').html(defaultBitrate + ' Mbps');
   $('#bitrateSlider')[0].MaterialSlider.change(defaultBitrate);
   storeData('bitrate', defaultBitrate, null);
+
+  const defaultFramePacing = false;
+  document.querySelector('#framePacingBtn').MaterialSwitch.off();
+  storeData('framePacing', defaultFramePacing, null);
 
   const defaultIpAddressFieldMode = false;
   document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
@@ -2499,6 +2505,10 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
   storeData('flipXYfaceButtons', defaultFlipXYfaceButtons, null);
 
+  const defaultAudioSync = false;
+  document.querySelector('#audioSyncBtn').MaterialSwitch.off();
+  storeData('audioSync', defaultAudioSync, null);
+
   const defaultCodecMode = '0x0001';
   $('#selectCodec').text('H.264').data('value', defaultCodecMode);
   storeData('codecMode', defaultCodecMode, null);
@@ -2506,14 +2516,6 @@ function restoreDefaultsSettingsValues() {
   const defaultHdrMode = false;
   document.querySelector('#hdrModeBtn').MaterialSwitch.off();
   storeData('hdrMode', defaultHdrMode, null);
-
-  const defaultFramePacing = false;
-  document.querySelector('#framePacingBtn').MaterialSwitch.off();
-  storeData('framePacing', defaultFramePacing, null);
-  
-  const defaultAudioSync = false;
-  document.querySelector('#audioSyncBtn').MaterialSwitch.off();
-  storeData('audioSync', defaultAudioSync, null);
 }
 
 function initSamsungKeys() {
@@ -2637,6 +2639,17 @@ function loadUserDataCb() {
     $('#selectBitrate').html($('#bitrateSlider').val() + ' Mbps');
   });
 
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored framePacing preferences.');
+  getData('framePacing', function(previousValue) {
+    if (previousValue.framePacing == null) {
+      document.querySelector('#framePacingBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.framePacing == false) {
+      document.querySelector('#framePacingBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#framePacingBtn').MaterialSwitch.on();
+    }
+  });
+
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored ipAddressFieldMode preferences.');
   getData('ipAddressFieldMode', function(previousValue) {
     if (previousValue.ipAddressFieldMode == null) {
@@ -2727,6 +2740,17 @@ function loadUserDataCb() {
     }
   });
 
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored audioSync preferences.');
+  getData('audioSync', function(previousValue) {
+    if (previousValue.audioSync == null) {
+      document.querySelector('#audioSyncBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.audioSync == false) {
+      document.querySelector('#audioSyncBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#audioSyncBtn').MaterialSwitch.on();
+    }
+  });
+
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored codecMode preferences.');
   getData('codecMode', function(previousValue) {
     if (previousValue.codecMode != null) {
@@ -2747,28 +2771,6 @@ function loadUserDataCb() {
       document.querySelector('#hdrModeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#hdrModeBtn').MaterialSwitch.on();
-    }
-  });
-
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored framePacing preferences.');
-  getData('framePacing', function(previousValue) {
-    if (previousValue.framePacing == null) {
-      document.querySelector('#framePacingBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.framePacing == false) {
-      document.querySelector('#framePacingBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#framePacingBtn').MaterialSwitch.on();
-    }
-  });
-
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored audioSync preferences.');
-  getData('audioSync', function(previousValue) {
-    if (previousValue.audioSync == null) {
-      document.querySelector('#audioSyncBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.audioSync == false) {
-      document.querySelector('#audioSyncBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#audioSyncBtn').MaterialSwitch.on();
     }
   });
 }

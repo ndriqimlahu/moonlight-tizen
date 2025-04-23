@@ -61,10 +61,9 @@ class MoonlightInstance {
   explicit MoonlightInstance();
 
   MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-    std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-    bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons,
-    bool flipXYfaceButtons, std::string codecMode, std::string serverCodecMode, bool hdrMode, bool framePacing,
-    bool audioSync);
+    bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
+    bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode,
+    std::string serverCodecMode, bool hdrMode);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -185,16 +184,17 @@ class MoonlightInstance {
   std::string m_AppVersion;
   std::string m_GfeVersion;
   std::string m_RtspUrl;
+  bool m_FramePacingEnabled;
   bool m_OptimizeGamesEnabled;
   bool m_ExternalAudioEnabled;
   bool m_RumbleFeedbackEnabled;
   bool m_MouseEmulationEnabled;
   bool m_FlipABfaceButtonsEnabled;
   bool m_FlipXYfaceButtonsEnabled;
+  bool m_AudioSyncEnabled;
   int m_SupportedVideoCodecs;
   bool m_HdrModeEnabled;
-  bool m_FramePacingEnabled;
-  bool m_AudioSyncEnabled;
+
   STREAM_CONFIGURATION m_StreamConfig;
   bool m_Running;
 
@@ -246,10 +246,9 @@ MessageResult httpInit(std::string cert, std::string privateKey, std::string myU
 void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryResponse);
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons,
-  bool flipXYfaceButtons, std::string codecMode, std::string serverCodecMode, bool hdrMode, bool framePacing,
-  bool audioSync);
+  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
+  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode,
+  std::string serverCodecMode, bool hdrMode);
 MessageResult stopStream();
 
 void stun(int callbackId);
