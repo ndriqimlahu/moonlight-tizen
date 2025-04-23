@@ -1156,6 +1156,9 @@ function handleSettingsView(category) {
     case 'inputSettings': // Navigate to the InputSettings view
       navigateSettingsView(Views.InputSettings);
       break;
+    case 'audioSettings': // Navigate to the AudioSettings view
+      navigateSettingsView(Views.AudioSettings);
+      break;
     case 'advancedSettings': // Navigate to the AdvancedSettings view
       navigateSettingsView(Views.AdvancedSettings);
       break;
