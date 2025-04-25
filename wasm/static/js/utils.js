@@ -313,30 +313,7 @@ NvHTTP.prototype = {
     this.serverUid = $root.find('uniqueid').text().trim();
     this.hostname = $root.find('hostname').text().trim();
     this.macAddress = $root.find('mac').text().trim();
-
-    // Convert the value from ServerCodecModeSupport to a hexadecimal string
-    var serverCodecModeSupport = '0x' + parseInt($root.find('ServerCodecModeSupport').text().trim(), 10).toString(16).padStart(8, '0');
-
-    // Mapping of codecMode values to serverCodecMode values
-    const codecMap = {
-      '0x0001': '0x00000001', // H.264
-      '0x0100': '0x00000100', // HEVC
-      '0x0200': '0x00000200', // HEVC Main10
-      '0x1000': '0x00010000', // AV1
-      '0x2000': '0x00020000'  // AV1 Main10
-    };
-
-    // Retrieve the selected codec value from the data attribute of the selected menu item
-    var selectedCodecMode = $('#selectCodec').data('value').toString();
-    var selectedServerCodecMode = codecMap[selectedCodecMode];
-
-    // Check if the selected codec exists in codecMap
-    if (codecMap.hasOwnProperty(selectedCodecMode)) {
-      // Set serverCodecMode to either serverCodecModeSupport or selectedServerCodecMode based on the match
-      this.serverCodecMode = selectedServerCodecMode === serverCodecModeSupport ? serverCodecModeSupport : selectedServerCodecMode;
-    } else {
-      console.error('%c[utils.js, _parseServerInfo]', 'color: gray;', 'Error: Failed to select server codec mode value!');
-    }
+    this.serverCodecModeSupport = parseInt($root.find('ServerCodecModeSupport').text().trim(), 10);
 
     var externIP = $root.find('ExternalIP').text().trim();
     if (externIP) {

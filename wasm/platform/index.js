@@ -1783,8 +1783,8 @@ function startGame(host, appID) {
           sendMessage('startRequest', [
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
             rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
-            optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            audioSync, codecMode, host.serverCodecMode, hdrMode
+            host.serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation,
+            flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -1822,8 +1822,8 @@ function startGame(host, appID) {
         sendMessage('startRequest', [
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
           rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
-          optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          audioSync, codecMode, host.serverCodecMode, hdrMode
+          host.serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation,
+          flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');

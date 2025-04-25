@@ -142,12 +142,47 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
   // Post a status update before we begin
   PostToJs(std::string("Starting connection to ") + me->m_Host);
 
+  // Populate the server information
   LiInitializeServerInformation(&serverInfo);
   serverInfo.address = me->m_Host.c_str();
   serverInfo.serverInfoAppVersion = me->m_AppVersion.c_str();
   serverInfo.serverInfoGfeVersion = me->m_GfeVersion.c_str();
   serverInfo.rtspSessionUrl = me->m_RtspUrl.c_str();
-  serverInfo.serverCodecModeSupport = me->m_SupportedVideoCodecs;
+
+  // Initialize the server codec mode support with default value
+  serverInfo.serverCodecModeSupport = 0;
+  // Handle setting of server codec mode support values ​​based on the selected video format
+  if (me->m_StreamConfig.supportedVideoFormats & VIDEO_FORMAT_H264) { // H.264
+    // Apply the appropriate value for the H.264 server codec
+    serverInfo.serverCodecModeSupport |= SCM_H264;
+    PostToJs("Selecting the server code mode to: SCM_H264");
+  }
+  if (me->m_StreamConfig.supportedVideoFormats & VIDEO_FORMAT_H265) { // HEVC
+    // Apply the appropriate value for the HEVC server codec
+    serverInfo.serverCodecModeSupport |= SCM_HEVC;
+    PostToJs("Selecting the server code mode to: SCM_HEVC");
+  }
+  if (me->m_StreamConfig.supportedVideoFormats & VIDEO_FORMAT_H265_MAIN10) { // HEVC Main10
+    // Apply the appropriate value for the HEVC Main10 server codec
+    serverInfo.serverCodecModeSupport |= SCM_HEVC_MAIN10;
+    PostToJs("Selecting the server code mode to: SCM_HEVC_MAIN10");
+  }
+  if (me->m_StreamConfig.supportedVideoFormats & VIDEO_FORMAT_AV1_MAIN8) { // AV1
+    // Apply the appropriate value for the AV1 server codec
+    serverInfo.serverCodecModeSupport |= SCM_AV1_MAIN8;
+    PostToJs("Selecting the server code mode to: SCM_AV1_MAIN8");
+  }
+  if (me->m_StreamConfig.supportedVideoFormats & VIDEO_FORMAT_AV1_MAIN10) { // AV1 Main10
+    // Apply the appropriate value for the AV1 Main10 server codec
+    serverInfo.serverCodecModeSupport |= SCM_AV1_MAIN10;
+    PostToJs("Selecting the server code mode to: SCM_AV1_MAIN10");
+  }
+  // Handle fall back logic for server codec mode support
+  if (serverInfo.serverCodecModeSupport == 0) { // Unset
+    // Fallback to H.264 if no server codec was selected
+    serverInfo.serverCodecModeSupport = SCM_H264;
+    PostToJs("Selecting the fallback server code mode to: SCM_H264");
+  }
 
   err = LiStartConnection(&serverInfo, &me->m_StreamConfig, &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks, &MoonlightInstance::s_ArCallbacks, NULL, 0, NULL, 0);
   if (err != 0) {
@@ -173,9 +208,9 @@ static void HexStringToBytes(const char* str, char* output) {
 }
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
-  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode,
-  std::string serverCodecMode, bool hdrMode) {
+  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
+  int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
+  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode) {
   PostToJs("Streaming session has started");
   PostToJs("Setting the stream host address to: " + host);
   PostToJs("Setting the stream resolution to: " + width + "x" + height);
@@ -187,6 +222,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the app version to: " + appversion);
   PostToJs("Setting the GFE version to: " + gfeversion);
   PostToJs("Setting the RTSP URL to: " + rtspurl);
+  PostToJs("Setting the server codec mode support to: " + std::to_string(serverCodecModeSupport));
   PostToJs("Setting the optimize games to: " + std::to_string(optimizeGames));
   PostToJs("Setting the external audio to: " + std::to_string(externalAudio));
   PostToJs("Setting the rumble feedback to: " + std::to_string(rumbleFeedback));
@@ -195,7 +231,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
   PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
   PostToJs("Setting the stream codec to: " + codecMode);
-  PostToJs("Setting the server codec mode to: " + serverCodecMode);
   PostToJs("Setting the HDR mode to: " + std::to_string(hdrMode));
 
   // Populate the stream configuration
@@ -247,6 +282,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AppVersion = appversion;
   m_GfeVersion = gfeversion;
   m_RtspUrl = rtspurl;
+  m_ServerCodecModeSupport = serverCodecModeSupport;
   m_FramePacingEnabled = framePacing;
   m_OptimizeGamesEnabled = optimizeGames;
   m_ExternalAudioEnabled = externalAudio;
@@ -255,7 +291,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_FlipABfaceButtonsEnabled = flipABfaceButtons;
   m_FlipXYfaceButtonsEnabled = flipXYfaceButtons;
   m_AudioSyncEnabled = audioSync;
-  m_SupportedVideoCodecs = stoi(serverCodecMode,0,16);
   m_HdrModeEnabled = hdrMode;
 
   // Initialize the rendering surface before starting the connection
@@ -345,12 +380,13 @@ int main(int argc, char** argv) {
 }
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, bool optimizeGames,
-  bool externalAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, 
-  std::string serverCodecMode, bool hdrMode) {
+  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
+  int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
+  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
-  return g_Instance->StartStream(host, width, height, fps, bitrate, framePacing, rikey, rikeyid, appversion, gfeversion, rtspurl, optimizeGames,
-  externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, serverCodecMode, hdrMode);
+  return g_Instance->StartStream(host, width, height, fps, bitrate, framePacing, rikey, rikeyid, appversion, gfeversion, rtspurl,
+    serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+    audioSync, codecMode, hdrMode);
 }
 
 MessageResult stopStream() {
