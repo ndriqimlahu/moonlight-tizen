@@ -194,7 +194,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
   PostToJs("Setting the flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
   PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
-  PostToJs("Setting the codec mode to: " + codecMode);
+  PostToJs("Setting the stream codec to: " + codecMode);
   PostToJs("Setting the server codec mode to: " + serverCodecMode);
   PostToJs("Setting the HDR mode to: " + std::to_string(hdrMode));
 
@@ -207,7 +207,32 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_StreamConfig.packetSize = 1392;
   m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
   m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
-  m_StreamConfig.supportedVideoFormats = stoi(codecMode,0,16);
+
+  // Initialize the supported video format with default value
+  m_StreamConfig.supportedVideoFormats = 0;
+  // Handle setting of supported video format values ​​based on the selected codec
+  if (codecMode == "H264") { // H.264
+    // Apply the appropriate value for the H.264 codec
+    m_StreamConfig.supportedVideoFormats |= VIDEO_FORMAT_H264;
+    PostToJs("Selecting the video format to: VIDEO_FORMAT_H264");
+  } else if (codecMode == "HEVC") { // HEVC
+    // Apply the desired HDR or SDR profile ​for the HEVC codec based on the HDR toggle switch state
+    m_StreamConfig.supportedVideoFormats |= hdrMode ? VIDEO_FORMAT_H265_MAIN10 : VIDEO_FORMAT_H265;
+    PostToJs(hdrMode ? "Selecting the video format to: VIDEO_FORMAT_H265_MAIN10" : "Selecting the video format to: VIDEO_FORMAT_H265");
+  } else if (codecMode == "AV1") { // AV1
+    // Apply the desired HDR or SDR profile ​for the AV1 codec based on the HDR toggle switch state
+    m_StreamConfig.supportedVideoFormats |= hdrMode ? VIDEO_FORMAT_AV1_MAIN10 : VIDEO_FORMAT_AV1_MAIN8;
+    PostToJs(hdrMode ? "Selecting the video format to: VIDEO_FORMAT_AV1_MAIN10" : "Selecting the video format to: VIDEO_FORMAT_AV1_MAIN8");
+  } else { // Unknown
+    // Default case for unsupported codec selection
+    ClLogMessage("Unsupported video codec '%s' detected! Reverting to the default codec...\n", codecMode.c_str());
+  }
+  // Handle fall back logic for supported video formats
+  if (m_StreamConfig.supportedVideoFormats == 0) { // Unset
+    // Fallback to H.264 if no codec was selected
+    m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H264;
+    PostToJs("Selecting the fallback video format to: VIDEO_FORMAT_H264");
+  }
 
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);

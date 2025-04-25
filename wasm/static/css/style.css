@@ -863,9 +863,6 @@ body {
 #bitrateLowestValue.hovered, #bitrateHighestValue.hovered {
     background-color: #333846;
 }
-#hevc-main10, #av1-main10 {
-    display: none !important;
-}
 .dropdown-items {
     float: right;
     margin: 5px 28px 5px 28px;

@@ -1010,10 +1010,9 @@ const Views = {
   },
   SelectCodecMenu: {
     isActive: () => isPopupActive('codecMenu'),
-    view: new ListView(() => {
-      return Array.from(document.getElementById('codecMenu').parentNode.children[3].children[1].children)
-        .filter(option => option.id !== 'hevc-main10' && option.id !== 'av1-main10');
-    }),
+    view: new ListView(() => 
+      document.getElementById('codecMenu')
+      .parentNode.children[3].children[1].children),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
