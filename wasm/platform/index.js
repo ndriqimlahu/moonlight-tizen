@@ -1766,6 +1766,7 @@ function startGame(host, appID) {
           streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
           optimizeGames, // Optimize game settings
           rikey, rikeyid, // Remote input key and key ID
+          hdrMode, // Auto HDR video streaming
           externalAudio, // Play audio on host and client device
           0x030002, // Surround channel mask << 16 | Surround channel count
           gamepadMask // Connect gamepad mask
@@ -1800,6 +1801,7 @@ function startGame(host, appID) {
         streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
         optimizeGames, // Optimize game settings
         rikey, rikeyid, // Remote input key and key ID
+        hdrMode, // Auto HDR video streaming
         externalAudio, // Play audio on host and client device
         0x030002, // Surround channel mask << 16 | Surround channel count
         gamepadMask // Connect gamepad mask
