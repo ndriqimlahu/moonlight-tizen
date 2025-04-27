@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.4.0
+
+### Added
+- Introduced a new 'Audio Settings' category which will contain audio settings
+- Added 'HDR mode' parameter to launch and resume requests to auto-toggle HDR on host PC
+
+### Changed
+- Reorganized settings by moving options across different categories for better grouping
+- Improved handling of video codec selection and HDR mode state for better value determination
+- Enhanced server codec mode support for proper value handling based on the selected video format
+
+### Fixed
+- Fixed validation of non-pinned TLS trusted certificates
+
 ## v1.3.1
 
 ### Changed
