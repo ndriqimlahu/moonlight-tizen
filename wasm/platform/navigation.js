@@ -297,9 +297,13 @@ const Views = {
     },
   },
   HostsNav: {
-    view: new ListView(() => [
-      'settingsBtn',
-      'supportBtn']),
+    view: new ListView(() => {
+      if (document.getElementById('updateAppBtn')) {
+        return ['updateAppBtn', 'settingsBtn', 'supportBtn'];
+      } else {
+        return ['settingsBtn', 'supportBtn'];
+      }
+    }),
     up: function() {},
     down: function() {
       // Remove focus from the current element before changing the view

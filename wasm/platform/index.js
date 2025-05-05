@@ -254,6 +254,7 @@ function showHostsMode() {
   $('#header-logo').show();
   $('#main-header').show();
   $('.nav-menu-parent').show();
+  $('#updateAppBtn').show();
   $('#settingsBtn').show();
   $('#supportBtn').show();
   $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
@@ -1074,6 +1075,7 @@ function showSettingsMode() {
   $('#host-grid').hide();
   $('#game-grid').hide();
   $('.nav-menu-parent').hide();
+  $('#updateAppBtn').hide();
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $('#quitRunningAppBtn').hide();
@@ -1242,6 +1244,75 @@ function checkVersionUpdate(currentVersion, latestVersion) {
 function extractReleaseNotes(releaseNotes) {
   const match = releaseNotes.match(/## What's Changed:\r?\n\r?\n([\s\S]+?)(?:\r?\n\r?\n\*\*Full Changelog\*\*|$)/);
   return match ? match[1].split('\n').map(line => line.replace(/^-\s/, '• ')).join('<br>') : null;
+}
+
+// Show the Update App button when a new update is found
+function updateAppButton(latestVersion) {
+  // Create the button dynamically
+  var updateAppBtn = $('<button>', {
+    type: 'button',
+    id: 'updateAppBtn',
+    class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+    'aria-label': 'Update App'
+  });
+  // Create the badge icon dynamically
+  var updateAppBtnBadge = $('<div>', {
+    class: 'navigation-button-icons material-icons mdl-badge mdl-badge--overlap',
+    'data-badge': '1',
+    text: 'update'
+  });
+  // Create the button text dynamically
+  var updateAppBtnText = $('<span>', {
+    id: 'updateAppBtnText',
+    text: 'New update v' + latestVersion
+  });
+  // Create the button tooltip dynamically
+  var updateAppBtnTooltip = $('<div>', {
+    id: 'updateAppBtnTooltip',
+    class: 'mdl-tooltip',
+    'for': 'updateAppBtn',
+    text: 'Check what\'s new'
+  });
+  // Create the layout spacer dynamically
+  var extraLayoutSpacer = $('<div>', {
+    class: 'mdl-layout-spacer'
+  });
+  // Append elements inside the button
+  updateAppBtn.append(updateAppBtnBadge, updateAppBtnText);
+  // Insert elements after the existing layout spacer
+  $('.mdl-layout-spacer').after(updateAppBtn, updateAppBtnTooltip, extraLayoutSpacer);
+  // Upgrade newly added elements for MDL styling
+  componentHandler.upgradeElement(updateAppBtn[0]);
+  componentHandler.upgradeElement(updateAppBtnTooltip[0]);
+  componentHandler.upgradeDom();
+  // Smoothly fade-in the button after inserting
+  setTimeout(() => {
+    updateAppBtn.css({
+      opacity: 1,
+      transform: 'translateY(0)'
+    });
+  }, 1200);
+  // Attach the click event listener to the Update App button
+  updateAppBtn.off('click');
+  updateAppBtn.on('click', function() {
+    // Get current app version
+    const currentVersion = tizen.application.getAppInfo().version;
+
+    console.log('%c[index.js, updateAppButton]', 'color: green;', 'Checking for new update release notes...');
+    // Fetch the latest release data from the GitHub API
+    fetchLatestRelease().then(({ latestVersion, releaseNotes }) => {
+      setTimeout(() => {
+        // Check if a new version update is available
+        if (checkVersionUpdate(currentVersion, latestVersion)) {
+          // Show the Update Moonlight dialog with new version and release notes to inform user to update the app
+          updateAppDialog(latestVersion, releaseNotes);
+        }
+      }, 500);
+    }).catch(error => {
+      console.error('%c[index.js, updateAppButton]', 'color: green;', 'Error: Failed to fetch the release data!', error);
+      snackbarLogLong('Unable to check update release notes at this time. Please try again later!');
+    });
+  });
 }
 
 // Show the Update Moonlight dialog
@@ -1464,6 +1535,7 @@ function showAppsMode() {
   $('#host-grid').hide();
   $('#settings-list').hide();
   $('.nav-menu-parent').hide();
+  $('#updateAppBtn').hide();
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $('#restoreDefaultsBtn').hide();

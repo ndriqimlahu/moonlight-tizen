@@ -117,13 +117,31 @@ body {
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
-.navigation-button-icons {
-    margin: 0 8px 0 2px;
-    font-size: 32px !important;
+#updateAppBtn {
+    background-color: #404354;
+    right: 52px;
+    height: 50px;
+    padding: 0 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(-10px);
+    box-shadow: 0 0 6px 2px rgba(239, 191, 4, 0.5);
+    transition: opacity .3s ease-in-out, transform .3s ease-in-out, box-shadow .2s ease-in-out;
 }
-#settingsBtn i, #supportBtn i, #goBackBtn i,
-#restoreDefaultsBtn i, #quitRunningAppBtn i {
-    margin: auto -4px;
+#updateAppBtn:hover, #updateAppBtn:focus {
+    background-color: #404354;
+    box-shadow: 0 0 2px 3px rgba(239, 191, 4, 1);
+}
+#updateAppBtnText {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+.navigation-button-icons {
+    margin: 0 8px 0 -4px;
+    font-size: 32px !important;
 }
 .nav-menu-parent {
     position: relative;
@@ -740,7 +758,7 @@ body {
     text-align: left;
 }
 /* =============================
-   Switch, Button, and Menu Styles
+   Switch, Button, Badge, and Menu Styles
 ============================= */
 .mdl-switch__input, .mdl-switch__track, .mdl-switch__thumb {
     margin: 1.2rem 0 1.2rem 74.5rem;
@@ -775,6 +793,26 @@ body {
 .mdl-button--raised.mdl-button--colored:active {
     background-color: #404354 !important;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
+}
+.mdl-badge {
+    margin-right: 30px !important;
+}
+.mdl-badge::after {
+    background-color: #EFC004D0 !important;
+    padding: 2px;
+}
+.mdl-badge[data-badge]::after {
+    width: 22px;
+    height: 22px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.mdl-button .mdl-badge[data-badge]:after {
+    top: -5px;
+    bottom: 0;
+    left: 30px;
+    right: 0;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
 #selectCodec, #navigationGuideBtn, #manualCheckUpdatesBtn, #restartAppBtn {
