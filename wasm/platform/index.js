@@ -316,6 +316,9 @@ function restoreUiAfterWasmLoad() {
   //     }
   //   }
   // });
+
+  // Automatically check for a new update after 10 seconds delay at application startup
+  setTimeout(() => checkForAppUpdatesAtStartup(), 10000);
 }
 
 function hostChosen(host) {
@@ -1335,6 +1338,29 @@ function manualCheckForAppUpdates() {
   }).catch(error => {
     console.log('%c[index.js, manualCheckForAppUpdates]', 'color: green;', 'Error: Failed to fetch the release data!', error);
     snackbarLogLong('Unable to check for updates right now. Please try again later!');
+  });
+}
+
+// Automatically check for updates and notify the user
+function checkForAppUpdatesAtStartup() {
+  // Get current app version
+  const currentVersion = tizen.application.getAppInfo().version;
+
+  console.log('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 'Performing auto-check for new application updates...');
+  // Fetch the latest release data from the GitHub API
+  fetchLatestRelease().then(({ latestVersion }) => {
+    setTimeout(() => {
+      // Check if a new version update is available
+      if (checkVersionUpdate(currentVersion, latestVersion)) {
+        // Show snackbar message with new version to inform user to update the app
+        snackbarLogLong(`🚀 Version ${latestVersion} is now available! Check out the latest features & improvements.`);
+        // Create and display the Update App button with tooltip and additional layout spacer
+        updateAppButton(latestVersion);
+      }
+    }, 100);
+  }).catch(error => {
+    console.error('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 'Error: Failed to fetch the release data!', error);
+    snackbarLogLong('Cannot automatically check for updates at this time!');
   });
 }
 
