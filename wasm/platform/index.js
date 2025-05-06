@@ -18,6 +18,8 @@ const REPEAT_DELAY = 350; // Repeat delay set to 350ms (milliseconds)
 const REPEAT_INTERVAL = 100; // Repeat interval set to 100ms (milliseconds)
 const ACTION_THRESHOLD = 0.5; // Threshold for initial navigation set to 0.5
 const NAVIGATION_DELAY = 150; // Navigation delay set to 150ms (milliseconds)
+const UPDATE_TIMESTAMP = 'lastUpdateCheck'; // Use the update check timestamp key to determine the last update check
+const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // Automatic check for updates interval is set to 24 hours
 
 // Called by the common.js module
 function attachListeners() {
@@ -318,7 +320,7 @@ function restoreUiAfterWasmLoad() {
   //   }
   // });
 
-  // Automatically check for a new update after 10 seconds delay at application startup
+  // Automatically check for a new update after 10 seconds delay at application startup once every 24 hours
   setTimeout(() => checkForAppUpdatesAtStartup(), 10000);
 }
 
@@ -1246,6 +1248,17 @@ function extractReleaseNotes(releaseNotes) {
   return match ? match[1].split('\n').map(line => line.replace(/^-\s/, '• ')).join('<br>') : null;
 }
 
+// Format the update timestamp into a readable string as "dd/mm/yyyy hh:mm"
+function formatUpdateTimestamp(ms) {
+  var date = new Date(ms);
+  var day = date.getDate().toString().padStart(2, '0');
+  var month = (date.getMonth() + 1).toString().padStart(2, '0');
+  var year = date.getFullYear();
+  var hour = date.getHours().toString().padStart(2, '0');
+  var minute = date.getMinutes().toString().padStart(2, '0');
+  return `${day}/${month}/${year} ${hour}:${minute}`;
+}
+
 // Show the Update App button when a new update is found
 function updateAppButton(latestVersion) {
   // Create the button dynamically
@@ -1412,26 +1425,52 @@ function manualCheckForAppUpdates() {
   });
 }
 
-// Automatically check for updates and notify the user
+// Automatically perform a scheduled app update check at startup if the interval condition is met and notify the user
 function checkForAppUpdatesAtStartup() {
-  // Get current app version
-  const currentVersion = tizen.application.getAppInfo().version;
+  // Fetch the current timestamp and stored version info
+  getData(UPDATE_TIMESTAMP, function(result) {
+    var lastChecked = result[UPDATE_TIMESTAMP];
+    var currentTime = Date.now();
 
-  console.log('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 'Performing auto-check for new application updates...');
-  // Fetch the latest release data from the GitHub API
-  fetchLatestRelease().then(({ latestVersion }) => {
-    setTimeout(() => {
-      // Check if a new version update is available
-      if (checkVersionUpdate(currentVersion, latestVersion)) {
-        // Show snackbar message with new version to inform user to update the app
-        snackbarLogLong(`🚀 Version ${latestVersion} is now available! Check out the latest features & improvements.`);
-        // Create and display the Update App button with tooltip and additional layout spacer
-        updateAppButton(latestVersion);
-      }
-    }, 100);
-  }).catch(error => {
-    console.error('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 'Error: Failed to fetch the release data!', error);
-    snackbarLogLong('Cannot automatically check for updates at this time!');
+    if (lastChecked) {
+      console.log('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', `Last auto-check performed: ${formatUpdateTimestamp(lastChecked)}`);
+    }
+
+    // Check if enough time has passed since the last update check
+    if (!lastChecked || currentTime - lastChecked > UPDATE_INTERVAL) {
+      // Get current app version
+      const currentVersion = tizen.application.getAppInfo().version;
+
+      console.log('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 'Performing auto-check for new application updates...');
+      // Fetch the latest release data from the GitHub API
+      fetchLatestRelease().then(({ latestVersion }) => {
+        setTimeout(() => {
+          // Check if a new version update is available
+          if (checkVersionUpdate(currentVersion, latestVersion)) {
+            // Show snackbar message with new version to inform user to update the app
+            snackbarLogLong(`🚀 Version ${latestVersion} is now available! Check out the latest features & improvements.`);
+            // Create and display the Update App button with tooltip and additional layout spacer
+            updateAppButton(latestVersion);
+          }
+        }, 100);
+      }).catch(error => {
+        console.error('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 'Error: Failed to fetch the release data!', error);
+        snackbarLogLong('Cannot automatically check for updates at this time!');
+      });
+
+      // Save the current time
+      storeData(UPDATE_TIMESTAMP, currentTime);
+      console.log('%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', `New auto-check timestamp stored: ${formatUpdateTimestamp(currentTime)}`);
+    } else {
+      var timeLeft = UPDATE_INTERVAL - (currentTime - lastChecked);
+      var hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+      var minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      console.log(
+        '%c[index.js, checkForAppUpdatesAtStartup]', 'color: green;', 
+        'Auto-update check skipped as the last one was within the past 24 hours. ' + 
+        `Next auto-check will occur in ${hoursLeft} hour${hoursLeft !== 1 ? 's' : ''} and ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`
+      );
+    }
   });
 }
 
