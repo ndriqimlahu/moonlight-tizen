@@ -164,52 +164,58 @@ function delayedNavigation(callback) {
 }
 
 function beginBackgroundPollingOfHost(host) {
-  console.log('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Starting background polling of host ' + host.serverUid, host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   // Assign methods of NvHTTP to the host object
   Object.assign(host, NvHTTP.prototype);
 
-  var hostCell = document.querySelector('#host-' + host.serverUid);
-  // Check if the host is currently online
-  if (host.online) {
-    // If the host is online, show it as active
-    hostCell.classList.remove('host-cell-inactive');
-    // The host was already online, so start polling in the background now
-    activePolls[host.serverUid] = window.setInterval(function() {
-      // Every 5 seconds, poll at the address to check for any status changes
-      host.pollServer(function(returnedHost) {
-        // Check if the host is currently online
-        if (host.online) {
-          hostCell.classList.remove('host-cell-inactive');
-        } else {
-          hostCell.classList.add('host-cell-inactive');
-        }
-      });
-    }, 5000);
-  } else {
-    // If the host is offline, show it as inactive
-    hostCell.classList.add('host-cell-inactive');
-    // The host was offline, so poll immediately to check the host's status
-    host.pollServer(function(returnedHost) {
-      // Check if the host is currently online
-      if (host.online) {
-        hostCell.classList.remove('host-cell-inactive');
-      } else {
-        hostCell.classList.add('host-cell-inactive');
-      }
-      // Now that the initial poll is done, start the background polling
+  // Refresh server info before attempting to start background polling of the host
+  host.refreshServerInfo().then(function(ret) {
+    console.log('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Starting background polling of host ' + host.serverUid, host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+    // Find the desired host cell using the server UUID
+    var hostCell = document.querySelector('#host-' + host.serverUid);
+    // Check if the host is currently online
+    if (host.online) {
+      // If the host is online, show it as active
+      hostCell.classList.remove('host-cell-inactive');
+      // The host was already online, so start polling in the background now
       activePolls[host.serverUid] = window.setInterval(function() {
         // Every 5 seconds, poll at the address to check for any status changes
         host.pollServer(function(returnedHost) {
           // Check if the host is currently online
-          if (host.online) {
+          if (returnedHost.online) {
             hostCell.classList.remove('host-cell-inactive');
           } else {
             hostCell.classList.add('host-cell-inactive');
           }
         });
       }, 5000);
-    });
-  }
+    } else {
+      // If the host is offline, show it as inactive
+      hostCell.classList.add('host-cell-inactive');
+      // The host was offline, so poll immediately to check the host's status
+      host.pollServer(function(returnedHost) {
+        // Check if the host is currently online
+        if (returnedHost.online) {
+          hostCell.classList.remove('host-cell-inactive');
+        } else {
+          hostCell.classList.add('host-cell-inactive');
+        }
+        // Now that the initial poll is done, start the background polling
+        activePolls[host.serverUid] = window.setInterval(function() {
+          // Every 5 seconds, poll at the address to check for any status changes
+          host.pollServer(function(returnedHost) {
+            // Check if the host is currently online
+            if (returnedHost.online) {
+              hostCell.classList.remove('host-cell-inactive');
+            } else {
+              hostCell.classList.add('host-cell-inactive');
+            }
+          });
+        }, 5000);
+      });
+    }
+  }, function(failedRefreshInfo) {
+    console.error('%c[index.js, beginBackgroundPollingOfHost]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '! Failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  });
 }
 
 function startPollingHosts() {
