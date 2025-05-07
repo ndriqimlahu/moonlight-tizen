@@ -968,7 +968,7 @@ const Views = {
       unmark(this.view.current());
     },
   },
-  AdvancedSettings: {
+  VideoSettings: {
     view: new ListView(() => [
       'selectCodec',
       'hdrModeBtn']),
@@ -995,7 +995,7 @@ const Views = {
       resetSettingsView();
       // Navigate to the Settings view
       Navigation.change(Views.Settings);
-      // Set focus on the category item in Settings view when transitioning from AdvancedSettings view
+      // Set focus on the category item in Settings view when transitioning from VideoSettings view
       const navItem = document.getElementById(Views.Settings.view.current());
       if (navItem) {
         navItem.focus();
