@@ -24,10 +24,10 @@ RUN useradd -m -s /bin/bash moonlight
 USER moonlight
 WORKDIR /home/moonlight
 
-# Install Tizen Studio, get the file: `web-cli_Tizen_Studio_5.6_ubuntu-64.bin`
-RUN wget -nv -O web-cli_Tizen_Studio_5.6_ubuntu-64.bin 'https://download.tizen.org/sdk/Installer/tizen-studio_5.6/web-cli_Tizen_Studio_5.6_ubuntu-64.bin'
-RUN chmod a+x web-cli_Tizen_Studio_5.6_ubuntu-64.bin
-RUN ./web-cli_Tizen_Studio_5.6_ubuntu-64.bin --accept-license --no-java-check /home/moonlight/tizen-studio
+# Install Tizen Studio, get the file: `web-cli_Tizen_Studio_6.1_ubuntu-64.bin`
+RUN wget -nv -O web-cli_Tizen_Studio_6.1_ubuntu-64.bin 'https://download.tizen.org/sdk/Installer/tizen-studio_6.1/web-cli_Tizen_Studio_6.1_ubuntu-64.bin'
+RUN chmod a+x web-cli_Tizen_Studio_6.1_ubuntu-64.bin
+RUN ./web-cli_Tizen_Studio_6.1_ubuntu-64.bin --accept-license --no-java-check /home/moonlight/tizen-studio
 ENV PATH=/home/moonlight/tizen-studio/tools/ide/bin:/home/moonlight/tizen-studio/tools:${PATH}
 
 # Prepare the Tizen signing certificates
@@ -98,7 +98,7 @@ RUN rm -rf \
 	emscripten-release-bundle \
 	moonlight-tizen \
 	tizen-package-expect.sh \
-	web-cli_Tizen_Studio_5.6_ubuntu-64.bin \
+	web-cli_Tizen_Studio_6.1_ubuntu-64.bin \
 	.emscripten \
 	.emscripten_cache \
 	.emscripten_cache.lock \
