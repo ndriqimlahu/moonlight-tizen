@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(MoonlightWasm VERSION 1.1)
+project(MoonlightWasm VERSION 1.0)
 
 add_compile_options(-w -s WASM=1 -fno-ident -Os -flto -DSAMSUNG_WRT -DOS_WASM -DNDEBUG)
 
@@ -285,7 +285,6 @@ target_link_libraries(moonlight-wasm PUBLIC
     moonlight-rs
 )
 
-# TODO(samsung) These files may change.
 set(EMSCRIPTEN_OUTPUT_FILES
   "${CMAKE_CURRENT_BINARY_DIR}/moonlight-wasm.js.mem"
   "${CMAKE_CURRENT_BINARY_DIR}/moonlight-wasm.wasm"
@@ -299,4 +298,3 @@ install(DIRECTORY wasm/platform DESTINATION widget)
 install(FILES wasm/index.html DESTINATION widget)
 install(FILES res/config.xml DESTINATION widget)
 install(FILES res/platform.js DESTINATION widget)
-
