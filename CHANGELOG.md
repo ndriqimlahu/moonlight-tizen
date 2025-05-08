@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.4.1
+
+### Added
+- Implemented auto-checking for new Moonlight updates at application startup
+- Notify and add a new 'Update Moonlight' button to view update release notes
+
+### Changed
+- Preventing API requests by limiting the interval when performing update checks at startup
+- Ensured that server information is refreshed before background polling of the host begins
+- Renamed 'Advanced Settings' category to 'Video Settings' to better align with the relevant settings
+
+### Dependencies
+- Updated 'tizen-studio' tool from v5.6 to v6.1
+
 ## v1.4.0
 
 ### Added
@@ -471,7 +485,7 @@ All notable changes to this project will be documented in this file.
 ## v1.1.5
 
 ### Added
-- Introduced a new way to stop the streaming session using the 'Red' button on the remote control
+- Introduced a new way to stop the streaming session using the RED key on the remote control
 - Implemented a reusable function for terminating the application
 
 ### Changed
