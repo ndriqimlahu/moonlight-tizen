@@ -48,6 +48,7 @@ function attachListeners() {
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('.codecMenu li').on('click', saveCodecMode);
   $('#hdrModeSwitch').on('click', saveHdrMode);
+  $('#fullRangeSwitch').on('click', saveFullRange);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#manualCheckUpdatesBtn').on('click', manualCheckForAppUpdates);
   $('#restartAppBtn').on('click', restartApplication);
@@ -1878,6 +1879,7 @@ function startGame(host, appID) {
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var codecMode = $('#selectCodec').data('value').toString();
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var rikey = generateRemoteInputKey();
       var rikeyid = generateRemoteInputKeyId();
       var gamepadMask = getConnectedGamepadMask();
@@ -1896,7 +1898,8 @@ function startGame(host, appID) {
       '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
       '\n Audio sync: ' + audioSync + 
       '\n Stream codec: ' + codecMode + 
-      '\n HDR mode: ' + hdrMode);
+      '\n HDR mode: ' + hdrMode + 
+      '\n Full color range: ' + fullRange);
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
@@ -1928,7 +1931,7 @@ function startGame(host, appID) {
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
             rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
             host.serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation,
-            flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode
+            flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode, fullRange
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -1968,7 +1971,7 @@ function startGame(host, appID) {
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
           rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
           host.serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation,
-          flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode
+          flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode, fullRange
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2564,6 +2567,14 @@ function updateHdrMode() {
   }, 100);
 }
 
+function saveFullRange() {
+  setTimeout(() => {
+    const chosenFullRange = $('#fullRangeSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveFullRange]', 'color: green;', 'Saving full range state: ' + chosenFullRange);
+    storeData('fullRange', chosenFullRange, null);
+  }, 100);
+}
+
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2626,6 +2637,10 @@ function restoreDefaultsSettingsValues() {
   const defaultHdrMode = false;
   document.querySelector('#hdrModeBtn').MaterialSwitch.off();
   storeData('hdrMode', defaultHdrMode, null);
+
+  const defaultFullRange = false;
+  document.querySelector('#fullRangeBtn').MaterialSwitch.off();
+  storeData('fullRange', defaultFullRange, null);
 }
 
 function initSamsungKeys() {
@@ -2881,6 +2896,17 @@ function loadUserDataCb() {
       document.querySelector('#hdrModeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#hdrModeBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored fullRange preferences.');
+  getData('fullRange', function(previousValue) {
+    if (previousValue.fullRange == null) {
+      document.querySelector('#fullRangeBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.fullRange == false) {
+      document.querySelector('#fullRangeBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#fullRangeBtn').MaterialSwitch.on();
     }
   });
 }

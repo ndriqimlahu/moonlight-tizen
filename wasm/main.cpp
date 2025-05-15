@@ -210,7 +210,7 @@ static void HexStringToBytes(const char* str, char* output) {
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
   int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode) {
+  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode, bool fullRange) {
   PostToJs("Streaming session has started");
   PostToJs("Setting the stream host address to: " + host);
   PostToJs("Setting the stream resolution to: " + width + "x" + height);
@@ -232,6 +232,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
   PostToJs("Setting the stream codec to: " + codecMode);
   PostToJs("Setting the HDR mode to: " + std::to_string(hdrMode));
+  PostToJs("Setting the Full color range to: " + std::to_string(fullRange));
 
   // Populate the stream configuration
   LiInitializeStreamConfiguration(&m_StreamConfig);
@@ -269,6 +270,11 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
     PostToJs("Selecting the fallback video format to: VIDEO_FORMAT_H264");
   }
 
+  // Initialize the color range with default value
+  m_StreamConfig.colorRange = 0;
+  // Apply the desired color range ​based on the toggle switch state
+  m_StreamConfig.colorRange |= fullRange ? COLOR_RANGE_FULL : COLOR_RANGE_LIMITED;
+
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);
   int rikeyiv = htonl(stoi(rikeyid));
@@ -292,6 +298,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_FlipXYfaceButtonsEnabled = flipXYfaceButtons;
   m_AudioSyncEnabled = audioSync;
   m_HdrModeEnabled = hdrMode;
+  m_FullRangeEnabled = fullRange;
 
   // Initialize the rendering surface before starting the connection
   if (InitializeRenderingSurface(m_StreamConfig.width, m_StreamConfig.height)) {
@@ -382,11 +389,11 @@ int main(int argc, char** argv) {
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
   int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode) {
+  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode, bool fullRange) {
   printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
   return g_Instance->StartStream(host, width, height, fps, bitrate, framePacing, rikey, rikeyid, appversion, gfeversion, rtspurl,
     serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-    audioSync, codecMode, hdrMode);
+    audioSync, codecMode, hdrMode, fullRange);
 }
 
 MessageResult stopStream() {
