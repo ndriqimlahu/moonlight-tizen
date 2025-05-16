@@ -138,6 +138,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
       samsung::wasm::ElementaryAudioTrackConfig {
         "audio/webm; codecs=\"pcm\"", // Audio Codec: Pulse Code Modulation (PCM) Profile
         {}, // Extradata: Empty
+        samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
         samsung::wasm::SampleFormat::kS16, // Sample Format: 16-bit signed integer (S16)
         samsung::wasm::ChannelLayout::kStereo, // Channel Layout: Stereo (2 channels)
         kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
@@ -175,6 +176,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
       samsung::wasm::ElementaryVideoTrackConfig {
         mimetype, // MIME-type: Auto-Detect Video Codec
         {}, // Extradata: Empty
+        samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
         static_cast<uint32_t>(width), // Width: Video in Pixels
         static_cast<uint32_t>(height), // Height: Video in Pixels
         static_cast<uint32_t>(redrawRate), // Framerate: Numerator
