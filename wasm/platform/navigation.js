@@ -971,7 +971,8 @@ const Views = {
   VideoSettings: {
     view: new ListView(() => [
       'selectCodec',
-      'hdrModeBtn']),
+      'hdrModeBtn',
+      'fullRangeBtn']),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
