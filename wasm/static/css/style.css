@@ -429,16 +429,17 @@ body {
 }
 #continueAddHost[disabled], #continueAddHost.mdl-button--disabled {
     color: #fff;
-    background-color: #838593;
+    background-color: #838593 !important;
     pointer-events: auto;
-    cursor: pointer;
+    cursor: not-allowed;
 }
 #continueAddHost[disabled].hovered, #continueAddHost[disabled]:hover,
 #continueAddHost[disabled]:focus, #continueAddHost[disabled]:active,
 #continueAddHost.mdl-button--disabled:hover, #continueAddHost.mdl-button--disabled:focus,
 #continueAddHost.mdl-button--disabled:active {
-    background-color: #666875;
-    cursor: pointer;
+    background-color: #666875 !important;
+    box-shadow: 0 0 2px 3px rgba(170, 170, 170, 1) !important;
+    cursor: not-allowed;
 }
 .host-menu-button, #closeHostMenu, #closeHostDetails,
 #closeUpdateApp {

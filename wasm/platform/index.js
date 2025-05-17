@@ -480,8 +480,12 @@ function addHostDialog() {
     setTimeout(() => {
       // Add disabled state after 2 seconds
       $('#continueAddHost').addClass('mdl-button--disabled').prop('disabled', true);
+      Navigation.switch();
       // Re-enable the Continue button after 12 seconds
-      setTimeout(() => $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false), 12000);
+      setTimeout(() => {
+        $('#continueAddHost').removeClass('mdl-button--disabled').prop('disabled', false);
+        Navigation.switch();
+      }, 12000);
     }, 2000);
     
     // Get the IP address value from the input field

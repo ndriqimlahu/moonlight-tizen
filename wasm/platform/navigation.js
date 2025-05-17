@@ -407,7 +407,16 @@ const Views = {
     press: function() {
       document.getElementById('ipAddressFieldModeSwitch').click();
     },
-    switch: function() {},
+    switch: function() {
+      const currentItem = this.view.current();
+      if (currentItem === 'continueAddHost' || currentItem === 'cancelAddHost') {
+        // Set focus only on the Continue or Cancel button element
+        document.getElementById(currentItem).focus();
+      } else {
+        // Remove focus from any other focused item element
+        document.getElementById(currentItem).blur();
+      }
+    },
     enter: function() {
       mark(this.view.current());
     },
