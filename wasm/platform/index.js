@@ -344,14 +344,10 @@ function hostChosen(host) {
 
   api = host;
   if (!host.paired) {
-    // If the host is not paired yet, then go to the pairing flow. After that, we refresh the server info, show the apps, and save the host.
+    // If the host is not paired yet, then go to the pairing flow. After that, save the host and show the apps.
     pairingDialog(host, function() {
-      host.refreshServerInfo().then(function(ret) {
-        showApps(host);
-      }, function(failedRefreshInfo) {
-        console.error('%c[index.js, hostChosen]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '! Failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-      });
       saveHosts();
+      showApps(host);
       Navigation.push(Views.Apps);
       setTimeout(() => {
         // Scroll to the current game row
@@ -364,12 +360,8 @@ function hostChosen(host) {
       startPollingHosts();
     });
   } else {
-    // But if the host is already paired. Then, we refresh the server info and show the apps as usual.
-    host.refreshServerInfo().then(function(ret2) {
-      showApps(host);
-    }, function(failedRefreshInfo2) {
-      console.error('%c[index.js, hostChosen]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo2 + '!');
-    });
+    // But if the host is already paired, then show the apps as usual.
+    showApps(host);
     Navigation.push(Views.Apps);
     setTimeout(() => {
       // Scroll to the current game row
@@ -1532,15 +1524,24 @@ function restoreDefaultsDialog() {
 // the function was made like this so that we can remove duplicated code, but
 // not do N*N stylization of the box art, or make the code not flow very well
 function stylizeBoxArt(freshApi, appIdToStylize) {
-  // If the app or game is currently running, then apply CSS stylization
-  var appBox = document.querySelector('#game-container-' + appIdToStylize);
-  if (freshApi.currentGame === appIdToStylize) {
-    appBox.classList.add('current-game-active');
-    appBox.title += ' (Running)';
-  } else {
-    appBox.classList.remove('current-game-active');
-    appBox.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
-  }
+  // Refresh server info and apply the CSS style to the current running game
+  freshApi.refreshServerInfo().then(function(ret) {
+    var appBox = document.querySelector('#game-container-' + appIdToStylize);
+    if (!appBox) {
+      console.warn('%c[index.js, stylizeBoxArt]', 'color: green;', 'Warning: No box art found for appId: ' + appIdToStylize);
+      return;
+    }
+    // If the game is currently running, then apply CSS stylization
+    if (freshApi.currentGame === appIdToStylize) {
+      appBox.classList.add('current-game-active');
+      appBox.title += ' (Running)';
+    } else {
+      appBox.classList.remove('current-game-active');
+      appBox.title = appBox.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
+    }
+  }, function(failedRefreshInfo) {
+    console.error('%c[index.js, stylizeBoxArt]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
+  });
 }
 
 // Sort the app titles
