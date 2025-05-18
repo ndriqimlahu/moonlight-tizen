@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.0
+
+### Added
+- Introduced a new 'Color range' setting that enables full color range while streaming
+- Implemented full color range handling based on toggle switch state
+- Added hardware decoding mode flag for audio and video playback configurations
+
+### Changed
+- Increased the maximum bitrate slider for the bitrate menu from '120 Mbps' to '150 Mbps'
+
+### Fixed
+- Fixed focus issue on 'Continue' button after toggling its disabled state in the 'Add Host' dialog
+- Fixed an issue with the running game card style not being applied when navigating to the 'Apps' view
+
 ## v1.4.1
 
 ### Added
