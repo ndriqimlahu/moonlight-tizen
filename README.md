@@ -16,7 +16,7 @@ To get started, ensure that your client, host, and network meet the recommended 
 
 - Client Requirements — You must have a Samsung TV with Tizen OS starting from model year `2020 (Tizen 5.5) or later`.
 
-- Host Requirements — You must have a Gaming PC with a GPU capable of hardware decoding and that meets the [system requirements](https://docs.lizardbyte.dev/projects/sunshine/latest/index.html#%EF%B8%8F-system-requirements) to ensure optimal performance.
+- Host Requirements — You must have a powerful PC with a GPU capable of hardware decoding that meets the [system requirements](https://docs.lizardbyte.dev/projects/sunshine/latest/index.html#%EF%B8%8F-system-requirements) to ensure optimal streaming performance.
 
 - Network Requirements — You need a mid-range or high-end wireless router with a good wireless connection to your client using `5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax)` and a good wired connection to your host using the `CAT5e ethernet or better` which is strongly recommended.
 
@@ -24,16 +24,16 @@ To get started, ensure that your client, host, and network meet the recommended 
 
 Follow the instructions below based on the Tizen OS version of your Samsung TV to successfully download and install the **Moonlight** app.
 
-### For Newer Samsung TVs (Tizen 8.0 or Higher)
+### Newer Samsung TVs — Tizen 8.0 or Higher
 
 - Download the `Moonlight.wgt` file from the [latest release](https://github.com/ndriqimlahu/moonlight-tizen/releases/latest).
-- Follow the recommended [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-tizen-studio) to install the app on your TV using Tizen Studio.
-- After installation is complete, launch the **Moonlight** app on your TV.
+- Follow the provided [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-tizen-studio) to install the app on your TV using Tizen Studio.
+- Once the installation is complete, the **Moonlight** app will automatically open on your TV.
 
-### For Older Samsung TVs (Tizen 5.5 to 7.0)
+### Older Samsung TVs — Tizen 5.5 to 7.0
 
-- Follow the recommended [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-docker-image) to install the app on your TV using the Docker image.
-- After installation is complete, launch the **Moonlight** app on your TV.
+- Follow the provided [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-docker-image) to install the app on your TV using the Docker image.
+- Once the installation is complete, open the **Moonlight** app on your TV.
 
 ## Changelogs
 
@@ -53,4 +53,4 @@ This project is licensed under the `GNU General Public License v3.0`. See the [L
 - Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
 - Thanks to [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating a method for building Moonlight by re-adapting the Dockerfile.
 - Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files and improving the Dockerfile for better compatibility.
-- Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for fixing many issues in the app and adding new features for a better experience.
+- Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for improving the Docker publishing workflow and adding new features for a better experience.
