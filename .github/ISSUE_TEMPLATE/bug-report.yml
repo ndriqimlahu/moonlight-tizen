@@ -1,0 +1,95 @@
+name: Bug Report
+description: Report something that isn`t working
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Device Information
+        Please provide information about the device you are using as a client.
+  - type: input
+    attributes:
+      label: Moonlight Version
+      description: What is the version of Moonlight you are using?
+      placeholder: "Example: 1.5.0"
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Installation Type
+      description: What is the method you used to install Moonlight on your device?
+      options:
+        - Tizen Studio
+        - Docker image
+        - USB drive
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Device Model
+      description: What is the model of your device?
+      placeholder: "Example: Samsung S90D or QN55S90DDF"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Device OS
+      description: What is the OS version of your device?
+      placeholder: "Example: Tizen 8"
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Host Information
+        Please provide information about the computer you are streaming from.
+        This information is important especially when experiencing performance issues.
+  - type: dropdown
+    attributes:
+      label: Host OS
+      description: What is the OS of your computer?
+      options:
+        - Windows
+        - Linux
+        - macOS
+  - type: dropdown
+    attributes:
+      label: Host Software
+      description: What streaming software are you using?
+      options:
+        - Sunshine
+        - GeForce Experience
+  - type: textarea
+    attributes:
+      label: Host Setup
+      description: What is the hardware and software setup of your computer?
+      placeholder: "Example: Intel Core i7-12700K, NVIDIA GeForce RTX 3080, 16GB RAM DDR4, 144Hz Monitor, Windows 11 Pro 23H2"
+  - type: markdown
+    attributes:
+      value: |
+        ## Issue Information
+        Please provide information about the issue you are experiencing.
+        This information is important to help us understand the issue.
+  - type: textarea
+    attributes:
+      label: Bug Description
+      description: What kind of incorrect behavior did you see?
+      placeholder: "Example: I can't see video output when I start streaming"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction Steps
+      description: Can you reproduce the issue? If so, please share below as steps.
+      placeholder: |
+        Example: 
+        1. Select computer
+        2. Open "Desktop" in the apps list
+        3. Wait for the connection to be established
+        4. Seeing black screen without video
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: What is the correct behavior do you think?
+      placeholder: "Seeing video output of my computer screen"
