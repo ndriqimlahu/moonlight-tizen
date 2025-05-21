@@ -1,0 +1,128 @@
+# This GitHub Actions workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub release.
+name: Build Docker image and publish GitHub release
+
+# Configures this workflow to run every time a change is pushed to the branch called `master`.
+on:
+  push:
+    branches: ['master']
+
+# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      short_sha: ${{ github.sha }}
+    # This job checks out the code, logs into GitHub Container Registry, builds the Docker image with metadata, pushes it to the registry, and triggers the next workflow via repository dispatch.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Uses the `docker/login-action` action to log in to the Container registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
+      # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
+      # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  run-and-upload-release:
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: write
+      packages: read
+      actions: write
+    # This job depends on the completion of the build-and-push-image job. It checks out the repository, extracts version info, extracts build artifacts from the Docker image, and creates a new GitHub release with the extracted files.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Uses the `docker/login-action` action to log in to the Container registry using the account and password that will run the container.
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Extracts the version number from the config.xml file to use in tagging and release.
+      - name: Extract version number
+        id: get_version
+        run: |
+          VERSION=$(grep -oP 'version="\K[0-9]+\.[0-9]+\.[0-9]+' res/config.xml)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      # Sets the full Docker image tag using the output from the 'build-and-push-image' job.
+      - name: Set up image tag
+        run: echo "IMAGE_TAG=${{ needs.build-and-push-image.outputs.image_tag }}" >> $GITHUB_ENV
+      # Runs the Docker container in detached mode to extract the build artifact.
+      - name: Run Docker container
+        run: |
+          docker run -d --name temp_container $IMAGE_TAG
+      # Copies the built Moonlight.wgt file from the Docker container.
+      - name: Copy artifacts from Docker container
+        run: |
+          docker cp temp_container:/home/moonlight/Moonlight.wgt .
+      # Stops and removes the temporary Docker container to clean up resources.
+      - name: Stop and remove Docker container
+        run: |
+          docker stop temp_container && docker rm temp_container
+      # Creates a new GitHub release using the extracted version and includes a detailed description.
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: v${{ env.VERSION }}
+          body: |
+            # Moonlight Tizen v${{ env.VERSION }}
+            
+            - Ensure your Samsung TV is running Tizen OS version 5.5 or higher.
+            - Choose the recommended [installation method](https://github.com/ndriqimlahu/moonlight-tizen#installation) based on your Tizen OS version.
+            - Follow the detailed instructions from the installation guide to successfully install the **Moonlight** app on your TV.
+            
+            ## What's Changed:
+            
+            - Add the changes you made to this version (e.g., commit messages).
+
+            ## Project Contributors:
+
+            Thanks to the following contributors for this release:
+
+            @contributor-name
+          draft: false
+          prerelease: false
+      # Uploads the Moonlight.wgt file as a release asset in the newly created GitHub release.
+      - name: Upload the widget file to GitHub release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Moonlight.wgt
+          asset_name: Moonlight.wgt
+          asset_content_type: application/octet-stream
