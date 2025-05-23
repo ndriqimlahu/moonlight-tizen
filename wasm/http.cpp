@@ -79,12 +79,6 @@ MessageResult MoonlightInstance::HttpInit(std::string cert, std::string privateK
   } else if (res == LoadResult::PrivateKeyErr) {
     return MessageResult::Reject(emscripten::val(std::string("Error loading private key into memory")));
   }
-  res = LoadCert(cert.c_str(), privateKey.c_str());
-  if (res == LoadResult::CertErr) {
-    return MessageResult::Reject(emscripten::val(std::string("Error loading cert into memory")));
-  } else if (res == LoadResult::PrivateKeyErr) {
-    return MessageResult::Reject(emscripten::val(std::string("Error loading private key into memory")));
-  }
 
   g_UniqueId = strdup(myUniqueId.c_str());
 
@@ -98,7 +92,7 @@ void MoonlightInstance::OpenUrl_private(int callbackId, std::string url, std::st
   if (url.find("/launch?") != std::string::npos || url.find("/resume?") != std::string::npos) {
     url += LiGetLaunchUrlQueryParameters();
   }
-  
+
   PHTTP_DATA data = http_create_data();
   int err;
 
@@ -118,15 +112,11 @@ void MoonlightInstance::OpenUrl_private(int callbackId, std::string url, std::st
     std::vector<uint8_t> response;
     response.resize(data->size);
     memcpy(response.data(), data->memory, data->size);
-
     http_free_data(data);
-
     PostPromiseMessage(callbackId, "resolve", response);
   } else {
     std::string response{data->memory, data->size};
-
     http_free_data(data);
-
     PostPromiseMessage(callbackId, "resolve", response);
   }
 }

@@ -40,6 +40,7 @@ EM_BOOL MoonlightInstance::HandleMouseDown(const EmscriptenMouseEvent &event) {
     m_MouseLastPosY = event.screenY;
     return EM_TRUE;
   }
+
   LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, ConvertButtonToLiButton(event.button));
   return EM_TRUE;
 }
@@ -86,7 +87,7 @@ EM_BOOL MoonlightInstance::HandleKeyDown(const EmscriptenKeyboardEvent &event) {
 
   // Define a combination of keys on the keyboard to stop streaming session
   if (modifiers == (MODIFIER_ALT | MODIFIER_CTRL | MODIFIER_SHIFT)) {
-    if (keyCode == 0x51) {  // Q key
+    if (keyCode == 0x51) { // Q key
       // Terminate the connection
       stopStream();
       return EM_TRUE;
@@ -146,11 +147,13 @@ EM_BOOL handlePointerLockChange(int eventType, const EmscriptenPointerlockChange
   if (!pointerlockChangeEvent) {
     return false;
   }
+
   if (pointerlockChangeEvent->isActive) {
     g_Instance->DidLockMouse(0);
   } else {
     g_Instance->MouseLockLost();
   }
+
   return true;
 }
 
@@ -164,6 +167,7 @@ void MoonlightInstance::ReportMouseMovement() {
     LiSendMouseMoveEvent(m_MouseDeltaX, m_MouseDeltaY);
     m_MouseDeltaX = m_MouseDeltaY = 0;
   }
+
   if (m_AccumulatedTicks != 0) {
     // We can have fractional ticks here, so multiply by WHEEL_DELTA
     // to get actual scroll distance and use the high-res variant.
@@ -184,6 +188,7 @@ void MoonlightInstance::DidLockMouse(int32_t result) {
   if (result != 0) {
     ClLogMessage("Error locking mouse, event type: %d\n", result);
   }
+
   m_MouseLocked = (result == 0);
   if (m_MouseLocked) {
     // Request an IDR frame to dump the frame queue that may have

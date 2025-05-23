@@ -425,7 +425,9 @@ const Views = {
     },
   },
   PairingDialog: {
-    view: new ListView(() => ['cancelPairing']),
+    view: new ListView(() => [
+      'cancelPairing'
+    ]),
     up: function() {
       document.getElementById('cancelPairing').blur();
     },
@@ -490,7 +492,8 @@ const Views = {
   DeleteHostDialog: {
     view: new ListView(() => [
       'continueDeleteHost',
-      'cancelDeleteHost']),
+      'cancelDeleteHost'
+    ]),
     up: function() {},
     down: function() {},
     left: function() {
@@ -520,7 +523,9 @@ const Views = {
     },
   },
   HostDetailsDialog: {
-    view: new ListView(() => ['closeHostDetails']),
+    view: new ListView(() => [
+      'closeHostDetails'
+    ]),
     up: function() {
       document.getElementById('closeHostDetails').blur();
     },
@@ -550,7 +555,9 @@ const Views = {
     },
   },
   MoonlightSupportDialog: {
-    view: new ListView(() => ['closeAppSupport']),
+    view: new ListView(() => [
+      'closeAppSupport'
+    ]),
     up: function() {
       document.getElementById('closeAppSupport').blur();
     },
@@ -627,7 +634,8 @@ const Views = {
   SettingsNav: {
     view: new ListView(() => [
       'goBackBtn',
-      'restoreDefaultsBtn']),
+      'restoreDefaultsBtn'
+    ]),
     up: function() {},
     down: function() {
       // Navigate to the Settings view
@@ -690,7 +698,8 @@ const Views = {
       'selectResolution',
       'selectFramerate',
       'selectBitrate',
-      'framePacingBtn']),
+      'framePacingBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -732,9 +741,9 @@ const Views = {
     },
   },
   SelectResolutionMenu: {
-    isActive: () => isPopupActive('resolutionMenu'),
+    isActive: () => isPopupActive('videoResolutionMenu'),
     view: new ListView(() => 
-      document.getElementById('resolutionMenu')
+      document.getElementById('videoResolutionMenu')
       .parentNode.children[3].children[1].children),
     up: function() {
       this.view.prevOption();
@@ -769,9 +778,9 @@ const Views = {
     },
   },
   SelectFramerateMenu: {
-    isActive: () => isPopupActive('framerateMenu'),
+    isActive: () => isPopupActive('videoFramerateMenu'),
     view: new ListView(() => 
-      document.getElementById('framerateMenu')
+      document.getElementById('videoFramerateMenu')
       .parentNode.children[3].children[1].children),
     up: function() {
       this.view.prevOption();
@@ -806,9 +815,9 @@ const Views = {
     },
   },
   SelectBitrateMenu: {
-    isActive: () => isPopupActive('bitrateMenu'),
+    isActive: () => isPopupActive('videoBitrateMenu'),
     view: new ListView(() => 
-      document.getElementById('bitrateMenu')
+      document.getElementById('videoBitrateMenu')
       .parentNode.children[3].children[1].children),
     up: function() {},
     down: function() {},
@@ -846,8 +855,9 @@ const Views = {
       'ipAddressFieldModeBtn',
       'sortAppsListBtn',
       'optimizeGamesBtn',
-      'externalAudioBtn',
-      'removeAllHostsBtn']),
+      'playHostAudioBtn',
+      'removeAllHostsBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -893,7 +903,8 @@ const Views = {
       'rumbleFeedbackBtn',
       'mouseEmulationBtn',
       'flipABfaceButtonsBtn',
-      'flipXYfaceButtonsBtn']),
+      'flipXYfaceButtonsBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -936,7 +947,8 @@ const Views = {
   },
   AudioSettings: {
     view: new ListView(() => [
-      'audioSyncBtn']),
+      'audioSyncBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -981,7 +993,8 @@ const Views = {
     view: new ListView(() => [
       'selectCodec',
       'hdrModeBtn',
-      'fullRangeBtn']),
+      'fullRangeBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -1023,9 +1036,9 @@ const Views = {
     },
   },
   SelectCodecMenu: {
-    isActive: () => isPopupActive('codecMenu'),
+    isActive: () => isPopupActive('videoCodecMenu'),
     view: new ListView(() => 
-      document.getElementById('codecMenu')
+      document.getElementById('videoCodecMenu')
       .parentNode.children[3].children[1].children),
     up: function() {
       this.view.prevOption();
@@ -1067,8 +1080,9 @@ const Views = {
     view: new ListView(() => [
       'systemInfoBtn',
       'navigationGuideBtn',
-      'manualCheckUpdatesBtn',
-      'restartAppBtn']),
+      'checkUpdatesBtn',
+      'restartAppBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -1110,7 +1124,9 @@ const Views = {
     },
   },
   NavigationGuideDialog: {
-    view: new ListView(() => ['closeNavGuide']),
+    view: new ListView(() => [
+      'closeNavGuide'
+    ]),
     up: function() {
       document.getElementById('closeNavGuide').blur();
     },
@@ -1138,7 +1154,9 @@ const Views = {
     },
   },
   UpdateMoonlightDialog: {
-    view: new ListView(() => ['closeUpdateApp']),
+    view: new ListView(() => [
+      'closeUpdateApp'
+    ]),
     up: function() {
       document.getElementById('closeUpdateApp').blur();
     },
@@ -1170,7 +1188,8 @@ const Views = {
   RestoreDefaultsDialog: {
     view: new ListView(() => [
       'continueRestoreDefaults',
-      'cancelRestoreDefaults']),
+      'cancelRestoreDefaults'
+    ]),
     up: function() {},
     down: function() {},
     left: function() {
@@ -1252,7 +1271,8 @@ const Views = {
   AppsNav: {
     view: new ListView(() => [
       'goBackBtn',
-      'quitRunningAppBtn']),
+      'quitRunningAppBtn'
+    ]),
     up: function() {},
     down: function() {
       // Navigate to the Apps view
@@ -1294,7 +1314,8 @@ const Views = {
   QuitAppDialog: {
     view: new ListView(() => [
       'continueQuitApp',
-      'cancelQuitApp']),
+      'cancelQuitApp'
+    ]),
     up: function() {},
     down: function() {},
     left: function() {
@@ -1326,7 +1347,8 @@ const Views = {
   RestartMoonlightDialog: {
     view: new ListView(() => [
       'continueRestartApp',
-      'cancelRestartApp']),
+      'cancelRestartApp'
+    ]),
     up: function() {},
     down: function() {},
     left: function() {
@@ -1358,7 +1380,8 @@ const Views = {
   ExitMoonlightDialog: {
     view: new ListView(() => [
       'continueExitApp',
-      'cancelExitApp']),
+      'cancelExitApp'
+    ]),
     up: function() {},
     down: function() {},
     left: function() {

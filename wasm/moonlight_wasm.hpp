@@ -61,13 +61,14 @@ class MoonlightInstance {
   explicit MoonlightInstance();
 
   MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-    bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-    int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
-    bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode, bool fullRange);
+    std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
+    bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+    bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange);
   MessageResult StopStream();
 
   void STUN(int callbackId);
   void Pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber);
+  void WakeOnLan(int callbackId, std::string macAddress);
 
   virtual ~MoonlightInstance();
 
@@ -188,12 +189,13 @@ class MoonlightInstance {
 
   bool m_FramePacingEnabled;
   bool m_OptimizeGamesEnabled;
-  bool m_ExternalAudioEnabled;
+  bool m_PlayHostAudioEnabled;
   bool m_RumbleFeedbackEnabled;
   bool m_MouseEmulationEnabled;
   bool m_FlipABfaceButtonsEnabled;
   bool m_FlipXYfaceButtonsEnabled;
   bool m_AudioSyncEnabled;
+  int m_VideoCodec;
   bool m_HdrModeEnabled;
   bool m_FullRangeEnabled;
 
@@ -248,13 +250,14 @@ MessageResult httpInit(std::string cert, std::string privateKey, std::string myU
 void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryResponse);
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode, bool fullRange);
+  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
+  bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+  bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange);
 MessageResult stopStream();
 
 void stun(int callbackId);
 void pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber);
+void wakeOnLan(int callbackId, std::string macAddress);
 
 EM_BOOL handleKeyDown(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData);
 EM_BOOL handleKeyUp(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData);

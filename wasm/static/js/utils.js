@@ -100,7 +100,7 @@ function NvHTTP(address, clientUid, userEnteredAddress = '', macAddress) {
   this.gfeVersion = '';
   this.serverMajorVersion = 0;
   this.gputype = '';
-  this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported framerates
+  this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported frame rates
 
   _self = this;
 };
@@ -109,9 +109,11 @@ function _arrayBufferToBase64(buffer) {
   var binary = '';
   var bytes = new Uint8Array(buffer);
   var len = bytes.byteLength;
+
   for (var i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
+
   return window.btoa(binary);
 }
 
@@ -119,15 +121,19 @@ function _base64ToArrayBuffer(base64) {
   var binary_string = window.atob(base64);
   var len = binary_string.length;
   var bytes = new Uint8Array(len);
+
   for (var i = 0; i < len; i++) {
     bytes[i] = binary_string.charCodeAt(i);
   }
+
   return bytes.buffer;
 }
 
 NvHTTP.prototype = {
+  // Refreshes the server info using the base URL. This is useful for testing whether we can successfully ping a host at the base URL
   refreshServerInfo: function() {
     if (this.ppkstr == null) {
+      // Use HTTP if we have no pinned cert
       return sendMessage('openUrl', [
         this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
       ]).then(function(retHttp) {
@@ -139,6 +145,7 @@ NvHTTP.prototype = {
       this._baseUrlHttps + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
     ]).then(function(ret) {
       if (!this._parseServerInfo(ret)) { // If that fails
+        console.error('%c[utils.js, refreshServerInfo]', 'color: gray;', 'Error: Failed to parse server info from HTTPS, falling back to HTTP...');
         // Try HTTP as a failover. Useful to clients who aren't paired yet
         return sendMessage('openUrl', [
           this._baseUrlHttp + '/serverinfo?' + this._buildUidStr(), this.ppkstr, false
@@ -299,8 +306,8 @@ NvHTTP.prototype = {
       return false;
     }
 
-    if (this.serverUid != $root.find('uniqueid').text().trim() && this.serverUid != "") {
-      // If we received a UID that isn't the one we expected, fail
+    if (this.serverUid != $root.find('uniqueid').text().trim() && this.serverUid != '') {
+      // If we received a UUID that isn't the one we expected, fail
       return false;
     }
 
@@ -315,13 +322,15 @@ NvHTTP.prototype = {
     this.macAddress = $root.find('mac').text().trim();
     this.serverCodecModeSupport = parseInt($root.find('ServerCodecModeSupport').text().trim(), 10);
 
+    // This is not present in newer GFE versions
     var externIP = $root.find('ExternalIP').text().trim();
     if (externIP) {
-      // New versions of GFE don't have this field, so don't overwrite the one we found via STUN
+      // Don't overwrite the external IP we found via STUN
       this.externalIP = externIP;
     }
 
-    try { // These aren't critical for functionality, and don't necessarily exist in older GFE versions
+    try {
+      // These aren't critical for functionality, and don't necessarily exist in older GFE versions
       this.gfeVersion = $root.find('GfeVersion').text().trim();
       this.gputype = $root.find('gputype').text().trim();
       this.numofapps = $root.find('numofapps').text().trim();

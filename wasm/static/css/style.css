@@ -126,7 +126,7 @@ body {
     opacity: 0;
     transform: translateY(-10px);
     box-shadow: 0 0 6px 2px rgba(239, 191, 4, 0.5);
-    transition: opacity .3s ease-in-out, transform .3s ease-in-out, box-shadow .2s ease-in-out;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 #updateAppBtn:hover, #updateAppBtn:focus {
     background-color: #404354;
@@ -477,7 +477,7 @@ body {
     cursor: pointer;
     text-align: center;
     will-change: transform;
-    transition: all .2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 #host-grid .mdl-shadow--4dp {
     box-shadow: unset;
@@ -534,7 +534,7 @@ body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    transition: transform .2s ease-in-out;
+    transition: transform 0.2s ease-in-out;
 }
 #host-grid .mdl-card.hovered .host-text, #host-grid .mdl-card:hover .host-text,
 #host-grid .mdl-card:focus .host-text, #host-grid .mdl-card:active .host-text {
@@ -555,7 +555,7 @@ body {
     cursor: pointer;
     will-change: transform;
     transform: scale(1.2);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 .host-menu.hovered, .host-menu:hover, .host-menu:focus, .host-menu:active {
@@ -587,14 +587,14 @@ body {
     cursor: pointer;
     text-align: center;
     will-change: transform;
-    transition: all .2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 #game-grid .mdl-card img {
     width: 100%;
     height: 100%;
     z-index: -1;
     opacity: 0;
-    transition: opacity .3s;
+    transition: opacity 0.3s;
 }
 #game-grid .mdl-card img.fade-in {
     opacity: 1;
@@ -640,7 +640,7 @@ body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    transition: transform .2s ease-in-out;
+    transition: transform 0.2s ease-in-out;
 }
 #game-grid .mdl-card.hovered .game-text, #game-grid .mdl-card:hover .game-text,
 #game-grid .mdl-card:focus .game-text, #game-grid .mdl-card:active .game-text {
@@ -653,6 +653,7 @@ body {
 ============================= */
 .fullscreen {
     height: 100vh !important;
+    z-index: 1 !important;
     margin: auto !important;
     padding: 0 !important;
     border: none !important;
@@ -668,7 +669,7 @@ body {
     display: flex;
     flex-flow: row wrap;
 }
-#settings-left-panel {
+#settings-left-pane {
     flex: 1;
     max-width: 30%;
     padding: 20px;
@@ -693,7 +694,7 @@ body {
 }
 .settings-category.hovered, .settings-category:hover, .settings-category:focus {
     background-color: #484C5F;
-    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
+    box-shadow: 0 0 2px 3px rgba(0, 163, 198, 0.8);
 }
 .settings-category.selected {
     color: #ececec;
@@ -702,7 +703,7 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 .settings-category.selected:hover, .settings-category.selected:focus {
-    transform: scale(1.04);
+    transform: scale(1.05);
 }
 .settings-category-icons {
     margin: 0 30px 0 15px;
@@ -716,7 +717,7 @@ body {
     letter-spacing: 0.5px;
     cursor: pointer;
 }
-#settings-right-panel {
+#settings-right-pane {
     flex: 1;
     padding: 20px;
     overflow: auto;
@@ -816,16 +817,16 @@ body {
     right: 0;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
-#selectCodec, #navigationGuideBtn, #manualCheckUpdatesBtn, #restartAppBtn {
+#selectCodec, #navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
     font-size: 1.45rem;
     letter-spacing: 0.5px;
     text-indent: 36px;
 }
 #selectResolution, #selectFramerate, #selectBitrate, #framePacingBtn,
-#ipAddressFieldModeBtn, #sortAppsListBtn, #optimizeGamesBtn, #externalAudioBtn,
+#ipAddressFieldModeBtn, #sortAppsListBtn, #optimizeGamesBtn, #playHostAudioBtn,
 #removeAllHostsBtn, #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn,
-#flipXYfaceButtonsBtn, #audioSyncBtn, #selectCodec, #hdrModeBtn, #fullRangeBtn,
-#navigationGuideBtn, #manualCheckUpdatesBtn, #restartAppBtn {
+#flipXYfaceButtonsBtn, #audioSyncBtn, #selectCodec, #hdrModeBtn,
+#fullRangeBtn, #navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -863,20 +864,22 @@ body {
 .mdl-menu__item.hovered, .mdl-menu__item:hover, .mdl-menu__item:focus {
     background-color: #484C5F;
 }
-.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__container {
+.videoResolutionMenu, .videoFramerateMenu, .videoBitrateMenu,
+.videoCodecMenu, .mdl-menu__container {
     width: 59.4% !important;
 }
-.resolutionMenu, .framerateMenu, .bitrateMenu, .codecMenu, .mdl-menu__outline {
+.videoResolutionMenu, .videoFramerateMenu, .videoBitrateMenu,
+.videoCodecMenu, .mdl-menu__outline {
     width: 100% !important;
     top: 2.5px !important;
     border-radius: 0 0 8px 8px;
 }
-.bitrateMenu {
+.videoBitrateMenu {
     background-color: #333846;
     display: flex;
     align-items: center;
 }
-.bitrateMenu, .mdl-menu__container {
+.videoBitrateMenu, .mdl-menu__container {
     height: 20% !important;
 }
 .mdl-slider {
@@ -906,12 +909,12 @@ body {
     float: right;
     margin: 5px 28px 5px 28px;
 }
-#resolutionMenu > #selectResolution, #framerateMenu > #selectFramerate,
-#bitrateMenu > #selectBitrate, #codecMenu > #selectCodec {
+#videoResolutionMenu > #selectResolution, #videoFramerateMenu > #selectFramerate,
+#videoBitrateMenu > #selectBitrate, #videoCodecMenu > #selectCodec {
     color: #ececec;
     background: url('../res/ic_arrow_drop_down_48px.svg') 94.8% 50% no-repeat rgba(64, 67, 84, 1);
 }
-#removeAllHostsIcon, #navigationGuideIcon, #manualCheckUpdatesIcon,
+#removeAllHostsIcon, #navigationGuideIcon, #checkUpdatesIcon,
 #restartApplicationIcon {
     float: right;
     width: 35px;
@@ -932,11 +935,11 @@ body {
 #restoreDefaultsBtn:hover, #restoreDefaultsBtn:focus, #quitRunningAppBtn:hover, #quitRunningAppBtn:focus, #selectResolution:hover,
 #selectResolution:focus, #selectFramerate:hover, #selectFramerate:focus, #selectBitrate:hover, #selectBitrate:focus, #framePacingBtn:hover,
 #framePacingBtn:focus, #ipAddressFieldModeBtn:hover, #ipAddressFieldModeBtn:focus, #sortAppsListBtn:hover, #sortAppsListBtn:focus,
-#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #externalAudioBtn:hover, #externalAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus,
+#optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #playHostAudioBtn:hover, #playHostAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus,
 #mouseEmulationBtn:hover, #mouseEmulationBtn:focus, #flipABfaceButtonsBtn:hover,#flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover,
 #flipXYfaceButtonsBtn:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #selectCodec:hover, #selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus,
 #fullRangeBtn:hover, #fullRangeBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus,
-#navigationGuideBtn:hover, #navigationGuideBtn:focus, #manualCheckUpdatesBtn:hover, #manualCheckUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
+#navigationGuideBtn:hover, #navigationGuideBtn:focus, #checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }

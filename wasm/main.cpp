@@ -30,37 +30,37 @@
 MoonlightInstance* g_Instance;
 
 MoonlightInstance::MoonlightInstance()
-    : m_OpusDecoder(NULL),
-      m_MouseLocked(false),
-      m_MouseLastPosX(-1),
-      m_MouseLastPosY(-1),
-      m_WaitingForAllModifiersUp(false),
-      m_AccumulatedTicks(0),
-      m_MouseDeltaX(0),
-      m_MouseDeltaY(0),
-      m_HttpThreadPoolSequence(0),
-      m_Dispatcher("Curl"),
-      m_Mutex(),
-      m_EmssStateChanged(),
-      m_EmssAudioStateChanged(),
-      m_EmssVideoStateChanged(),
-      m_EmssReadyState(EmssReadyState::kDetached),
-      m_AudioStarted(false),
-      m_VideoStarted(false),
-      m_AudioSessionId(0),
-      m_VideoSessionId(0),
-      m_MediaElement("wasm_module"),
-      m_Source(
-        samsung::wasm::ElementaryMediaStreamSource::LatencyMode::kUltraLow,
-        samsung::wasm::ElementaryMediaStreamSource::RenderingMode::kMediaElement),
-      m_SourceListener(this),
-      m_AudioTrackListener(this),
-      m_VideoTrackListener(this),
-      m_AudioTrack(),
-      m_VideoTrack() {
-  m_Dispatcher.start();
-  m_Source.SetListener(&m_SourceListener);
-}
+  : m_OpusDecoder(NULL),
+    m_MouseLocked(false),
+    m_MouseLastPosX(-1),
+    m_MouseLastPosY(-1),
+    m_WaitingForAllModifiersUp(false),
+    m_AccumulatedTicks(0),
+    m_MouseDeltaX(0),
+    m_MouseDeltaY(0),
+    m_HttpThreadPoolSequence(0),
+    m_Dispatcher("Curl"),
+    m_Mutex(),
+    m_EmssStateChanged(),
+    m_EmssAudioStateChanged(),
+    m_EmssVideoStateChanged(),
+    m_EmssReadyState(EmssReadyState::kDetached),
+    m_AudioStarted(false),
+    m_VideoStarted(false),
+    m_AudioSessionId(0),
+    m_VideoSessionId(0),
+    m_MediaElement("wasm_module"),
+    m_Source(
+      samsung::wasm::ElementaryMediaStreamSource::LatencyMode::kUltraLow,
+      samsung::wasm::ElementaryMediaStreamSource::RenderingMode::kMediaElement),
+    m_SourceListener(this),
+    m_AudioTrackListener(this),
+    m_VideoTrackListener(this),
+    m_AudioTrack(),
+    m_VideoTrack() {
+      m_Dispatcher.start();
+      m_Source.SetListener(&m_SourceListener);
+    }
 
 MoonlightInstance::~MoonlightInstance() { 
   m_Dispatcher.stop();
@@ -184,11 +184,11 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
     PostToJs("Selecting the fallback server code mode to: SCM_H264");
   }
 
-  err = LiStartConnection(&serverInfo, &me->m_StreamConfig, &MoonlightInstance::s_ClCallbacks, &MoonlightInstance::s_DrCallbacks, &MoonlightInstance::s_ArCallbacks, NULL, 0, NULL, 0);
+  err = LiStartConnection(&serverInfo, &me->m_StreamConfig, &MoonlightInstance::s_ClCallbacks,
+    &MoonlightInstance::s_DrCallbacks, &MoonlightInstance::s_ArCallbacks, NULL, 0, NULL, 0);
   if (err != 0) {
-    // Notify the JS code that the stream has ended
-    // NB: We pass error code 0 here to avoid triggering a "Connection
-    // terminated" warning message.
+    // Notify the JS code that the stream has ended!
+    // NB: We pass error code 0 here to avoid triggering a "Connection terminated" warning message.
     PostToJs(MSG_STREAM_TERMINATED + std::to_string(0));
     return NULL;
   }
@@ -208,30 +208,29 @@ static void HexStringToBytes(const char* str, char* output) {
 }
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode, bool fullRange) {
-  PostToJs("Streaming session has started");
-  PostToJs("Setting the stream host address to: " + host);
-  PostToJs("Setting the stream resolution to: " + width + "x" + height);
-  PostToJs("Setting the stream frame rate to: " + fps + " FPS");
-  PostToJs("Setting the stream bitrate to: " + bitrate + " Kbps");
-  PostToJs("Setting the frame pacing to: " + std::to_string(framePacing));
-  PostToJs("Setting the remote input key to: " + rikey);
-  PostToJs("Setting the remote input key ID to: " + rikeyid);
-  PostToJs("Setting the app version to: " + appversion);
+  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
+  bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+  bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
+  PostToJs("Setting the Host address to: " + host);
+  PostToJs("Setting the Video resolution to: " + width + "x" + height);
+  PostToJs("Setting the Video frame rate to: " + fps + " FPS");
+  PostToJs("Setting the Video bitrate to: " + bitrate + " Kbps");
+  PostToJs("Setting the Remote input key to: " + rikey);
+  PostToJs("Setting the Remote input key ID to: " + rikeyid);
+  PostToJs("Setting the App version to: " + appversion);
   PostToJs("Setting the GFE version to: " + gfeversion);
-  PostToJs("Setting the RTSP URL to: " + rtspurl);
-  PostToJs("Setting the server codec mode support to: " + std::to_string(serverCodecModeSupport));
-  PostToJs("Setting the optimize games to: " + std::to_string(optimizeGames));
-  PostToJs("Setting the external audio to: " + std::to_string(externalAudio));
-  PostToJs("Setting the rumble feedback to: " + std::to_string(rumbleFeedback));
-  PostToJs("Setting the mouse emulation to: " + std::to_string(mouseEmulation));
-  PostToJs("Setting the flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
-  PostToJs("Setting the flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
-  PostToJs("Setting the audio sync to: " + std::to_string(audioSync));
-  PostToJs("Setting the stream codec to: " + codecMode);
-  PostToJs("Setting the HDR mode to: " + std::to_string(hdrMode));
+  PostToJs("Setting the RTSP session URL to: " + rtspurl);
+  PostToJs("Setting the Server codec mode support to: " + std::to_string(serverCodecModeSupport));
+  PostToJs("Setting the Video frame pacing to: " + std::to_string(framePacing));
+  PostToJs("Setting the Optimize game settings to: " + std::to_string(optimizeGames));
+  PostToJs("Setting the Play host audio to: " + std::to_string(playHostAudio));
+  PostToJs("Setting the Rumble feedback to: " + std::to_string(rumbleFeedback));
+  PostToJs("Setting the Mouse emulation to: " + std::to_string(mouseEmulation));
+  PostToJs("Setting the Flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
+  PostToJs("Setting the Flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
+  PostToJs("Setting the Audio synchronization to: " + std::to_string(audioSync));
+  PostToJs("Setting the Video codec to: " + videoCodec);
+  PostToJs("Setting the Video HDR mode to: " + std::to_string(hdrMode));
   PostToJs("Setting the Full color range to: " + std::to_string(fullRange));
 
   // Populate the stream configuration
@@ -247,21 +246,21 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   // Initialize the supported video format with default value
   m_StreamConfig.supportedVideoFormats = 0;
   // Handle setting of supported video format values ​​based on the selected codec
-  if (codecMode == "H264") { // H.264
+  if (videoCodec == "H264") { // H.264
     // Apply the appropriate value for the H.264 codec
     m_StreamConfig.supportedVideoFormats |= VIDEO_FORMAT_H264;
     PostToJs("Selecting the video format to: VIDEO_FORMAT_H264");
-  } else if (codecMode == "HEVC") { // HEVC
+  } else if (videoCodec == "HEVC") { // HEVC
     // Apply the desired HDR or SDR profile ​for the HEVC codec based on the HDR toggle switch state
     m_StreamConfig.supportedVideoFormats |= hdrMode ? VIDEO_FORMAT_H265_MAIN10 : VIDEO_FORMAT_H265;
     PostToJs(hdrMode ? "Selecting the video format to: VIDEO_FORMAT_H265_MAIN10" : "Selecting the video format to: VIDEO_FORMAT_H265");
-  } else if (codecMode == "AV1") { // AV1
+  } else if (videoCodec == "AV1") { // AV1
     // Apply the desired HDR or SDR profile ​for the AV1 codec based on the HDR toggle switch state
     m_StreamConfig.supportedVideoFormats |= hdrMode ? VIDEO_FORMAT_AV1_MAIN10 : VIDEO_FORMAT_AV1_MAIN8;
     PostToJs(hdrMode ? "Selecting the video format to: VIDEO_FORMAT_AV1_MAIN10" : "Selecting the video format to: VIDEO_FORMAT_AV1_MAIN8");
   } else { // Unknown
     // Default case for unsupported codec selection
-    ClLogMessage("Unsupported video codec '%s' detected! Reverting to the default codec...\n", codecMode.c_str());
+    ClLogMessage("Unsupported video codec '%s' detected! Reverting to the default codec...\n", videoCodec.c_str());
   }
   // Handle fall back logic for supported video formats
   if (m_StreamConfig.supportedVideoFormats == 0) { // Unset
@@ -269,6 +268,8 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
     m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H264;
     PostToJs("Selecting the fallback video format to: VIDEO_FORMAT_H264");
   }
+  // Store the supported video format value from the stream configurations
+  m_VideoCodec = m_StreamConfig.supportedVideoFormats;
 
   // Initialize the color range with default value
   m_StreamConfig.colorRange = 0;
@@ -291,7 +292,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_ServerCodecModeSupport = serverCodecModeSupport;
   m_FramePacingEnabled = framePacing;
   m_OptimizeGamesEnabled = optimizeGames;
-  m_ExternalAudioEnabled = externalAudio;
+  m_PlayHostAudioEnabled = playHostAudio;
   m_RumbleFeedbackEnabled = rumbleFeedback;
   m_MouseEmulationEnabled = mouseEmulation;
   m_FlipABfaceButtonsEnabled = flipABfaceButtons;
@@ -313,7 +314,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
 }
 
 MessageResult MoonlightInstance::StopStream() {
-  PostToJs("Streaming session has ended");
   // Begin connection teardown
   StopConnection();
 
@@ -340,7 +340,7 @@ void MoonlightInstance::Pair_private(int callbackId, std::string serverMajorVers
   char* ppkstr;
   int err = gs_pair(atoi(serverMajorVersion.c_str()), address.c_str(), randomNumber.c_str(), &ppkstr);
 
-  printf("Pair address: %s with result: %d\n", address.c_str(), err);
+  ClLogMessage("Paired host address: %s using PIN: %s with result: %d\n", address.c_str(), randomNumber.c_str(), err);
   if (err == 0) {
     free(ppkstr);
     PostPromiseMessage(callbackId, "resolve", ppkstr);
@@ -350,8 +350,59 @@ void MoonlightInstance::Pair_private(int callbackId, std::string serverMajorVers
 }
 
 void MoonlightInstance::Pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber) {
-  printf("%s address: %s\n", __func__, address.c_str());
+  ClLogMessage("%s with host address: %s\n", __func__, address.c_str());
   m_Dispatcher.post_job(std::bind(&MoonlightInstance::Pair_private, this, callbackId, serverMajorVersion, address, randomNumber), false);
+}
+
+void MoonlightInstance::WakeOnLan(int callbackId, std::string macAddress) {
+  unsigned char magicPacket[102];
+  unsigned char mac[6];
+
+  // Validate and parse the MAC address
+  if (sscanf(macAddress.c_str(), "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]) != 6) {
+    ClLogMessage("Invalid MAC address format: %s\n", macAddress.c_str());
+    return;
+  }
+
+  // Fill magic packet with the MAC address
+  for (int i = 0; i < 6; i++) {
+    magicPacket[i] = 0xFF;
+  }
+  for (int i = 1; i <= 16; i++) {
+    memcpy(&magicPacket[i * 6], &mac, 6 * sizeof(unsigned char));
+  }
+
+  // Create UDP socket
+  int udpSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  if (udpSocket == -1) {
+    ClLogMessage("Failed to create socket");
+    return;
+  }
+
+  // Enable broadcasting
+  int broadcast = 1;
+  if (setsockopt(udpSocket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) == -1) {
+    ClLogMessage("Failed to enable broadcast");
+    close(udpSocket);
+    return;
+  }
+
+  // Set up destination address for the magic packet
+  struct sockaddr_in addr;
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = INADDR_BROADCAST;
+  addr.sin_port = htons(9); // Wake-on-LAN typically uses port 9
+
+  // Send the magic packet
+  if (sendto(udpSocket, magicPacket, sizeof(magicPacket), 0, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
+    ClLogMessage("Failed to send magic packet");
+  } else {
+    ClLogMessage("Magic packet sent successfully to MAC address: %s\n", macAddress.c_str());
+  }
+
+  // Close the socket
+  close(udpSocket);
 }
 
 bool MoonlightInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
@@ -387,16 +438,17 @@ int main(int argc, char** argv) {
 }
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
-  bool framePacing, std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl,
-  int serverCodecModeSupport, bool optimizeGames, bool externalAudio, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, bool audioSync, std::string codecMode, bool hdrMode, bool fullRange) {
-  printf("%s host: %s w: %s h: %s\n", __func__, host.c_str(), width.c_str(), height.c_str());
-  return g_Instance->StartStream(host, width, height, fps, bitrate, framePacing, rikey, rikeyid, appversion, gfeversion, rtspurl,
-    serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-    audioSync, codecMode, hdrMode, fullRange);
+  std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
+  bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+  bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
+  PostToJs("Starting the streaming session...");
+  return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
+  framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+  audioSync, videoCodec, hdrMode, fullRange);
 }
 
 MessageResult stopStream() {
+  PostToJs("Stopping the streaming session...");
   return g_Instance->StopStream();
 }
 
@@ -409,54 +461,7 @@ void pair(int callbackId, std::string serverMajorVersion, std::string address, s
 }
 
 void wakeOnLan(int callbackId, std::string macAddress) {
-  unsigned char magicPacket[102];
-  unsigned char mac[6];
-
-  // Validate and parse the MAC address
-  if (sscanf(macAddress.c_str(), "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]) != 6) {
-    printf("Invalid MAC address format: %s\n", macAddress.c_str());
-    return;
-  }
-
-  // Fill magic packet with the MAC address
-  for (int i = 0; i < 6; i++) {
-    magicPacket[i] = 0xFF;
-  }
-  for (int i = 1; i <= 16; i++) {
-    memcpy(&magicPacket[i * 6], &mac, 6 * sizeof(unsigned char));
-  }
-
-  // Create UDP socket
-  int udpSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  if (udpSocket == -1) {
-    printf("Failed to create socket");
-    return;
-  }
-
-  // Enable broadcasting
-  int broadcast = 1;
-  if (setsockopt(udpSocket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) == -1) {
-    printf("Failed to enable broadcast");
-    close(udpSocket);
-    return;
-  }
-
-  // Set up destination address for the magic packet
-  struct sockaddr_in addr;
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = INADDR_BROADCAST;
-  addr.sin_port = htons(9); // Wake-on-LAN typically uses port 9
-
-  // Send the magic packet
-  if (sendto(udpSocket, magicPacket, sizeof(magicPacket), 0, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
-    printf("Failed to send magic packet");
-  } else {
-    printf("Magic packet sent successfully to MAC address: %s\n", macAddress.c_str());
-  }
-
-  // Close the socket
-  close(udpSocket);
+  g_Instance->WakeOnLan(callbackId, macAddress);
 }
 
 void PostToJs(std::string msg) {

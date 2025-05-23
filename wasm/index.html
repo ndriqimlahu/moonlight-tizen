@@ -8,9 +8,9 @@
   <title>Moonlight Game Streaming</title>
   <link rel="icon" href="static/favicon/favicon.png">
   <link rel="stylesheet" href="static/css/roboto.css">
+  <link rel="stylesheet" href="static/css/material-icons.css">
   <link rel="stylesheet" href="static/css/material.min.css">
   <link rel="stylesheet" href="static/css/style.css">
-  <link rel="stylesheet" href="static/css/material-icons.css">
   <script type="text/javascript" src="platform.js"></script>
 </head>
 <body data-name="moonlight-tizen" data-tools="emscripten" data-configs="Debug Release" data-path="{tc}/{config}">
@@ -58,8 +58,8 @@
         </div>
       </div>
       <div id="settings-list" class="hide-container">
-        <!-- Left Panel: Settings Categories -->
-        <div id="settings-left-panel">
+        <!-- Left Pane: Settings Categories -->
+        <div id="settings-left-pane">
           <div class="settings-categories">
             <div class="settings-category" data-category="basicSettings" onclick="handleSettingsView('basicSettings')">
               <i class="settings-category-icons material-icons">tune</i>
@@ -87,18 +87,18 @@
             </div>
           </div>
         </div>
-        <!-- Right Panel: Settings Options -->
-        <div id="settings-right-panel">
+        <!-- Right Pane: Settings Options -->
+        <div id="settings-right-pane">
           <div id="basicSettings" class="settings-options">
             <div class="setting-option">
-              <label>Video resolution:</label>
+              <label>Video resolution</label>
               <span class="mdl-list__item-text-body">
                 - Increase to improve image clarity or decrease for better performance on lower-end devices and slower networks.
               </span>
-              <div id="resolutionMenu">
+              <div id="videoResolutionMenu">
                 <button type="button" id="selectResolution" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="1280:720">1280 x 720 (720p)</button>
               </div>
-              <ul class="resolutionMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectResolution">
+              <ul class="videoResolutionMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectResolution">
                 <li class="mdl-menu__item" data-value="854:480">854 x 480 (480p)</li>
                 <li class="mdl-menu__item" data-value="1280:720">1280 x 720 (720p)</li>
                 <li class="mdl-menu__item" data-value="1920:1080">1920 x 1080 (1080p)</li>
@@ -107,14 +107,14 @@
               </ul>
             </div>
             <div class="setting-option">
-              <label>Video frame rate:</label>
+              <label>Video frame rate</label>
               <span class="mdl-list__item-text-body">
                 - Increase for smoother video stream or decrease for better performance on lower-end devices.
               </span>
-              <div id="framerateMenu">
+              <div id="videoFramerateMenu">
                 <button type="button" id="selectFramerate" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="60">60 FPS</button>
               </div>
-              <ul class="framerateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectFramerate">
+              <ul class="videoFramerateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectFramerate">
                 <li class="mdl-menu__item" data-value="30">30 FPS</li>
                 <li class="mdl-menu__item" data-value="60">60 FPS</li>
                 <li class="mdl-menu__item" data-value="90">90 FPS</li>
@@ -122,22 +122,23 @@
               </ul>
             </div>
             <div class="setting-option">
-              <label>Video bitrate:</label>
+              <label>Video bitrate</label>
               <span class="mdl-list__item-text-body">
                 - Increase for better image quality or decrease to improve performance on slower connections.
               </span>
-              <div id="bitrateMenu">
+              <div id="videoBitrateMenu">
                 <button type="button" id="selectBitrate" class="mdl-button mdl-js-button mdl-js-ripple-effect">10 Mbps</button>
               </div>
-              <div class="bitrateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectBitrate">
+              <div class="videoBitrateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectBitrate">
                 <span id="bitrateLowestValue">0.5</span>
                 <input type="range" id="bitrateSlider" class="mdl-slider mdl-js-slider" min="0.5" max="150" step="0.5" value="10">
                 <span id="bitrateHighestValue">150</span>
               </div>
             </div>
             <div class="setting-option">
-              <label>Video frame pacing:</label>
-              <div id="framePacingMenu">
+              <label>Video frame pacing</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="videoFramePacingMenu">
                 <label id="framePacingBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="framePacingSwitch">
                   <input type="checkbox" id="framePacingSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow frame pacing to balance video latency and smoothness</span>
@@ -147,9 +148,9 @@
           </div>
           <div id="hostSettings" class="settings-options">
             <div class="setting-option">
-              <label>IP address field mode:</label>
+              <label>IP address field mode</label>
               <span class="mdl-list__item-text-body">
-                - Recommended for devices that have issues with the TV keyboard when entering the IP address.
+                - Recommended for devices that have issues with the TV keyboard when entering the host IP address.
               </span>
               <div id="ipAddressFieldModeMenu">
                 <label id="ipAddressFieldModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="ipAddressFieldModeSwitch">
@@ -159,10 +160,8 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Sort the list of apps:</label>
-              <span class="mdl-list__item-text-body">
-                - By default, the list of apps is sorted in ascending order (A to Z), unless changed.
-              </span>
+              <label>Sort the list of apps</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="sortAppsListMenu">
                 <label id="sortAppsListBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="sortAppsListSwitch">
                   <input type="checkbox" id="sortAppsListSwitch" class="mdl-switch__input">
@@ -171,7 +170,8 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Optimize game settings:</label>
+              <label>Optimize game settings</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="optimizeGamesMenu">
                 <label id="optimizeGamesBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="optimizeGamesSwitch">
                   <input type="checkbox" id="optimizeGamesSwitch" class="mdl-switch__input">
@@ -180,16 +180,18 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Play audio on PC:</label>
-              <div id="externalAudioMenu">
-                <label id="externalAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="externalAudioSwitch">
-                  <input type="checkbox" id="externalAudioSwitch" class="mdl-switch__input">
+              <label>Play audio on PC</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="playHostAudioMenu">
+                <label id="playHostAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="playHostAudioSwitch">
+                  <input type="checkbox" id="playHostAudioSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow playing audio from the computer and this device</span>
                 </label>
               </div>
             </div>
             <div class="setting-option">
-              <label>Remove all hosts:</label>
+              <label>Remove all hosts</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="removeAllHostsMenu">
                 <button type="button" id="removeAllHostsBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Remove All Hosts">
                   Remove all currently saved hosts from the list
@@ -200,7 +202,8 @@
           </div>
           <div id="inputSettings" class="settings-options">
             <div class="setting-option">
-              <label>Rumble feedback:</label>
+              <label>Rumble feedback</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="rumbleFeedbackMenu">
                 <label id="rumbleFeedbackBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="rumbleFeedbackSwitch">
                   <input type="checkbox" id="rumbleFeedbackSwitch" class="mdl-switch__input">
@@ -209,7 +212,8 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Mouse emulation:</label>
+              <label>Mouse emulation</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="mouseEmulationMenu">
                 <label id="mouseEmulationBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="mouseEmulationSwitch">
                   <input type="checkbox" id="mouseEmulationSwitch" class="mdl-switch__input">
@@ -218,7 +222,8 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Flip A/B face buttons:</label>
+              <label>Flip A/B face buttons</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="flipABfaceButtonsMenu">
                 <label id="flipABfaceButtonsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="flipABfaceButtonsSwitch">
                   <input type="checkbox" id="flipABfaceButtonsSwitch" class="mdl-switch__input">
@@ -227,7 +232,8 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Flip X/Y face buttons:</label>
+              <label>Flip X/Y face buttons</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="flipXYfaceButtonsMenu">
                 <label id="flipXYfaceButtonsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="flipXYfaceButtonsSwitch">
                   <input type="checkbox" id="flipXYfaceButtonsSwitch" class="mdl-switch__input">
@@ -242,32 +248,32 @@
               <div id="audioSyncMenu">
                 <label id="audioSyncBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="audioSyncSwitch">
                   <input type="checkbox" id="audioSyncSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow audio synchronization support for consistent sound output</span>
+                  <span class="mdl-switch__label">Allow audio synchronization support for optimal sound output</span>
                 </label>
               </div>
             </div>
           </div>
           <div id="videoSettings" class="settings-options">
             <div class="setting-option">
-              <label>Video codec:</label>
+              <label>Video codec</label>
               <span class="mdl-list__item-text-body">
                 - Increase for better video compression and quality or decrease to improve performance on lower-end devices.
               </span>
-              <div id="codecMenu">
+              <div id="videoCodecMenu">
                 <button type="button" id="selectCodec" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="H264">H.264</button>
               </div>
-              <ul class="codecMenu mdl-menu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectCodec">
+              <ul class="videoCodecMenu mdl-menu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectCodec">
                 <li id="h264" class="mdl-menu__item" data-value="H264">H.264</li>
                 <li id="hevc" class="mdl-menu__item" data-value="HEVC">HEVC</li>
                 <li id="av1" class="mdl-menu__item" data-value="AV1">AV1</li>
               </ul>
             </div>
             <div class="setting-option">
-              <label>HDR mode:</label>
+              <label>Video HDR</label>
               <span class="mdl-list__item-text-body">
                 - HDR requires an HDR10-capable device, a GPU that can encode HEVC Main 10, and HDR10-enabled game.
               </span>
-              <div id="hdrModeMenu">
+              <div id="videoHdrMenu">
                 <label id="hdrModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="hdrModeSwitch">
                   <input type="checkbox" id="hdrModeSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow high dynamic range for vibrant colors and enhanced contrast</span>
@@ -289,13 +295,14 @@
           </div>
           <div id="aboutSettings" class="settings-options">
             <div class="setting-option">
-              <label>System information:</label>
+              <label>System information</label>
+              <span class="mdl-list__item-text-body"></span>
               <div id="systemInfoMenu">
                 <button type="button" id="systemInfoBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="System Information">Loading system information...</button>
               </div>
             </div>
             <div class="setting-option">
-              <label>Navigation guide:</label>
+              <label>Navigation guide</label>
               <span class="mdl-list__item-text-body">
                 - Useful for users who need guidance or help navigating the app.
               </span>
@@ -307,23 +314,23 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Check for updates:</label>
+              <label>Check for updates</label>
               <span class="mdl-list__item-text-body">
                 - Find out if a new application update is available.
               </span>
-              <div id="manualCheckUpdatesMenu">
-                <button type="button" id="manualCheckUpdatesBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Manual Check Updates">
+              <div id="checkForUpdatesMenu">
+                <button type="button" id="checkUpdatesBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Check for Updates">
                   Check for new Moonlight updates
-                  <img src="static/res/ic_system_update_alt_48px.svg" id="manualCheckUpdatesIcon">
+                  <img src="static/res/ic_system_update_alt_48px.svg" id="checkUpdatesIcon">
                 </button>
               </div>
             </div>
             <div class="setting-option">
-              <label>Restart the application:</label>
+              <label>Restart the application</label>
               <span class="mdl-list__item-text-body">
                 - If you encounter issues, here you can restart the app to resolve them.
               </span>
-              <div id="restartApplicationMenu">
+              <div id="restartAppMenu">
                 <button type="button" id="restartAppBtn" class="mdl-button mdl-js-button mdl-js-ripple-effect" aria-label="Restart Application">
                   Restart the Moonlight app quickly
                   <img src="static/res/ic_restart_alt_48px.svg" id="restartApplicationIcon">

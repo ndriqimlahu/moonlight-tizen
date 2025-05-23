@@ -153,21 +153,21 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
     const char *mimetype = "video/mp4"; // MIME-type: Video MP4 Container
     if (videoFormat & VIDEO_FORMAT_H264) {
       mimetype = "video/mp4; codecs=\"avc1.640033\""; // Video Codec: H.264 High Level 5.1 Profile
-      ClLogMessage("Selected mimeType for H.264 codec\n");
+      ClLogMessage("Selected mime type for H.264 codec\n");
     } else if (videoFormat & VIDEO_FORMAT_H265) {
       mimetype = "video/mp4; codecs=\"hev1.1.6.L153.B0\""; // Video Codec: HEVC Main Level 5.1 Profile
-      ClLogMessage("Selected mimeType for HEVC codec\n");
+      ClLogMessage("Selected mime type for HEVC codec\n");
     } else if (videoFormat & VIDEO_FORMAT_H265_MAIN10) {
       mimetype = "video/mp4; codecs=\"hev1.2.4.L153.B0\""; // Video Codec: HEVC Main10 Level 5.1 Profile
-      ClLogMessage("Selected mimeType for HEVC Main10 codec\n");
+      ClLogMessage("Selected mime type for HEVC Main10 codec\n");
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN8) {
       mimetype = "video/mp4; codecs=\"av01.0.13M.08\""; // Video Codec: AV1 Main Level 5.1 Profile
-      ClLogMessage("Selected mimeType for AV1 codec\n");
+      ClLogMessage("Selected mime type for AV1 codec\n");
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN10) {
       mimetype = "video/mp4; codecs=\"av01.0.13M.10\""; // Video Codec: AV1 Main10 Level 5.1 Profile
-      ClLogMessage("Selected mimeType for AV1 Main10 codec\n");
+      ClLogMessage("Selected mime type for AV1 Main10 codec\n");
     } else {
-      ClLogMessage("Cannot select mimeType for videoFormat=0x%x\n", videoFormat);
+      ClLogMessage("Cannot select mime type for videoFormat=0x%x\n", videoFormat);
       return -1;
     }
 
@@ -216,8 +216,6 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
 }
 
 int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags) {
-  static std::once_flag once_flag;
-
   ClLogMessage("MoonlightInstance::VidDecSetup\n");
 
   // Resize the decode buffer based on initial decode buffer length
@@ -247,6 +245,7 @@ int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int r
   s_FramePacingEnabled = g_Instance->m_FramePacingEnabled;
 
   // Ensure that StartupVidDecSetup is called only once regardless of how many times VidDecSetup is invoked
+  static std::once_flag once_flag;
   std::call_once(once_flag, &MoonlightInstance::StartupVidDecSetup, videoFormat, width, height, redrawRate, context, drFlags);
 
   return DR_OK;

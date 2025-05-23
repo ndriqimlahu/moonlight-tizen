@@ -39,10 +39,11 @@ static void DecodeAndAppendPacket(samsung::wasm::ElementaryMediaTrack* track, sa
     s_DecodeBuffer.data(), FRAME_SIZE, 0
   );
 
-  // Check if decoding failed
+  // Check if audio decoding failed
   if (decodeLen <= 0) {
     // Reset the buffer contents to zero when decoding fails
     s_DecodeBuffer.assign(s_DecodeBuffer.size(), 0);
+    return;
   }
 
   // Create an ElementaryMediaPacket with the decoded audio data
@@ -125,9 +126,9 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
   auto now = std::chrono::steady_clock::now();
   TimeStamp ntp = now - s_firstAppend;
 
-  // Check if audio synchronization is enabled and if dropping a packet is needed to avoid overflow
+  // Check if audio synchronization is enabled and if packet dropping is necessary to avoid overflow
   if (s_AudioSyncEnabled && ntp + kAudioBufferMargin < s_estimatedAudioEnd) {
-    ClLogMessage("Dropping audio packet to avoid overflow: PTS: %.03f NTP: %.03f\n", s_pktPts.count(), ntp.count());
+    ClLogMessage("Dropping audio packet to avoid overflow: PTS=%.03f NTP=%.03f\n", s_pktPts.count(), ntp.count());
     return;
   }
 

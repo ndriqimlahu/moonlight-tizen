@@ -7,9 +7,9 @@ var api; // The `api` should only be set if we're in a host-specific screen, on 
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
 var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
-var resFpsWarning = false; // Flag indicating whether the resolution and frame rate warning message has shown, initial value is false
-var bitrateWarning = false; // Flag indicating whether the bitrate warning message has shown, initial value is false
-var codecWarning = false; // Flag indicating whether the codec warning message has shown, initial value is false
+var resFpsWarning = false; // Flag indicating whether the video resolution and frame rate warning message has shown, initial value is false
+var bitrateWarning = false; // Flag indicating whether the video bitrate warning message has shown, initial value is false
+var codecWarning = false; // Flag indicating whether the video codec warning message has shown, initial value is false
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
 var repeatTimeout = null; // Flag indicating whether the repeat timeout is set, initial value is null
@@ -32,25 +32,25 @@ function attachListeners() {
   $('#goBackBtn').on('click', showHosts);
   $('#restoreDefaultsBtn').on('click', restoreDefaultsDialog);
   $('#quitRunningAppBtn').on('click', quitAppDialog);
-  $('.resolutionMenu li').on('click', saveResolution);
-  $('.framerateMenu li').on('click', saveFramerate);
+  $('.videoResolutionMenu li').on('click', saveResolution);
+  $('.videoFramerateMenu li').on('click', saveFramerate);
   $('#bitrateSlider').on('input', saveBitrate);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
-  $('#externalAudioSwitch').on('click', saveExternalAudio);
+  $('#playHostAudioSwitch').on('click', savePlayHostAudio);
   $('#removeAllHostsBtn').on('click', deleteAllHostsDialog);
   $('#rumbleFeedbackSwitch').on('click', saveRumbleFeedback);
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
   $('#flipABfaceButtonsSwitch').on('click', saveFlipABfaceButtons);
   $('#flipXYfaceButtonsSwitch').on('click', saveFlipXYfaceButtons);
   $('#audioSyncSwitch').on('click', saveAudioSync);
-  $('.codecMenu li').on('click', saveCodecMode);
+  $('.videoCodecMenu li').on('click', saveVideoCodec);
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#fullRangeSwitch').on('click', saveFullRange);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
-  $('#manualCheckUpdatesBtn').on('click', manualCheckForAppUpdates);
+  $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartApplication);
 
   const registerMenu = (elementId, view) => {
@@ -332,9 +332,10 @@ function restoreUiAfterWasmLoad() {
 }
 
 function hostChosen(host) {
+  // If the host is already offline or fails to connect, notify the user.
   if (!host.online) {
+    // Let the user know what to do to bring the host back online and until then, we'll be back to the previous view.
     console.error('%c[index.js, hostChosen]', 'color: green;', 'Error: Connection to host failed or host is offline!');
-    // If the host is offline, then return to the previous view
     snackbarLogLong('Failed to connect to the host. Ensure the host is online, Sunshine is running on your PC or GameStream is enabled in GeForce Experience SHIELD settings.');
     return;
   }
@@ -343,9 +344,11 @@ function hostChosen(host) {
   stopPollingHosts();
 
   api = host;
+  // If the host is not yet paired or has been removed from the server, go to the pairing flow.
   if (!host.paired) {
-    // If the host is not paired yet, then go to the pairing flow. After that, save the host and show the apps.
+    // Continue with the pairing flow
     pairingDialog(host, function() {
+      // After pairing the host, save the host object, show the apps, and navigate to the Apps view
       saveHosts();
       showApps(host);
       Navigation.push(Views.Apps);
@@ -360,7 +363,7 @@ function hostChosen(host) {
       startPollingHosts();
     });
   } else {
-    // But if the host is already paired, then show the apps as usual.
+    // But if the host is already paired and online, then we show the apps and navigate to the Apps view as usual.
     showApps(host);
     Navigation.push(Views.Apps);
     setTimeout(() => {
@@ -479,7 +482,6 @@ function addHostDialog() {
         Navigation.switch();
       }, 12000);
     }, 2000);
-    
     // Get the IP address value from the input field
     var inputHost;
     if ($('#ipAddressFieldModeSwitch').prop('checked')) {
@@ -493,7 +495,7 @@ function addHostDialog() {
     }
     // Send a connection request to the Host object based on the given IP address
     var _nvhttpHost = new NvHTTP(inputHost, myUniqueid, inputHost);
-    console.log('%c[index.js, addHostDialog]', 'color: green;', 'Sending connection request to ' + _nvhttpHost.hostname + '...');
+    console.log('%c[index.js, addHostDialog]', 'color: green;', 'Sending connection request to host address ' + _nvhttpHost.hostname);
     _nvhttpHost.refreshServerInfoAtAddress(inputHost).then(function(success) {
       snackbarLog('Connecting to ' + _nvhttpHost.hostname + '...');
       // Close the dialog if the user has provided the IP address
@@ -551,7 +553,7 @@ function pairingDialog(nvhttpHost, onSuccess, onFailure) {
   }
 
   nvhttpHost.pollServer(function(returnedNvHTTPHost) {
-    if (!nvhttpHost.online) {
+    if (!returnedNvHTTPHost.online) {
       console.error('%c[index.js, pairingDialog]', 'color: green;', 'Error: Failed to connect to ' + nvhttpHost.hostname + '. Ensure your host PC is online!', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
       snackbarLogLong('Failed to connect to ' + nvhttpHost.hostname + '. Ensure Sunshine is running on your host PC or GameStream is enabled in the GeForce Experience SHIELD settings.');
       onFailure();
@@ -614,9 +616,9 @@ function pairingDialog(nvhttpHost, onSuccess, onFailure) {
       // If the host is already in a streaming session or failed during pairing,
       // change the dialog text element to include the hostname and display the returned error message
       if (nvhttpHost.currentGame != 0) {
-        $('#pairingDialogText').html('Error: ' + nvhttpHost.hostname + ' is currently busy!<br><br>You must stop streaming to pair with the host.');
+        $('#pairingDialogText').html('Error: ' + nvhttpHost.hostname + ' is currently busy!<br><br>You must stop the running app in order to pair with the host.');
       } else {
-        $('#pairingDialogText').html('Error: Failed to pair with ' + nvhttpHost.hostname + '<br><br>Please try pairing with the host again.');
+        $('#pairingDialogText').html('Error: Failed to pair with ' + nvhttpHost.hostname + '.<br><br>Please, try pairing with the host again.');
       }
       onFailure();
     });
@@ -692,7 +694,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
     isClickPrevented = true;
     // Select the host when the Click key is pressed
     hostChosen(host);
-    // Reset the click flag after a 2 second delay
+    // Reset the click flag after 2 second delay
     setTimeout(() => isClickPrevented = false, 2000);
   });
 
@@ -764,10 +766,10 @@ function hostMenuDialog(host) {
       class: 'host-menu-button',
       text: 'Refresh apps',
       action: function() {
-        // Refresh the list of apps and games on the selected host
+        // Refresh the list of apps for the target host
+        snackbarLogLong('Refreshing the list of ' + host.hostname + ' applications...');
         host.clearBoxArt();
         host.getAppListWithCacheFlush();
-        snackbarLogLong('App and game list has been refreshed on ' + host.hostname + '.');
       }
     },
     {
@@ -775,9 +777,9 @@ function hostMenuDialog(host) {
       class: 'host-menu-button',
       text: 'Wake PC',
       action: function() {
-        // Send a Wake-on-LAN request to the selected host
+        // Send a Wake-on-LAN request to the target host
+        snackbarLogLong('Sending a Wake On LAN request to ' + host.hostname + '...');
         host.sendWOL();
-        snackbarLogLong('Sending Wake On LAN request to ' + host.hostname + '...');
       }
     },
     {
@@ -911,8 +913,8 @@ function deleteHostDialog(host) {
 // Show a confirmation with the Delete Host dialog before removing all hosts objects
 function deleteAllHostsDialog() {
   if (Object.keys(hosts).length === 0) {
-    // If no hosts exist, show snackbar message
-    snackbarLog('There are no existing hosts.');
+    // If there are no hosts, show snackbar message
+    snackbarLog('No host exists.');
     return;
   } else {
     // Find the existing overlay and dialog elements
@@ -1103,14 +1105,14 @@ function showSettings() {
   showSettingsMode();
 }
 
-// Reset the current settings view by clearing the selection and hiding the right panel
+// Reset the current settings view by clearing the selection and hiding the right pane
 function resetSettingsView() {
   // Remove the 'hovered' and 'is-focused' classes from all toggle switches
   document.querySelectorAll('.mdl-switch').forEach(function(toggleSwitch) {
     toggleSwitch.classList.remove('hovered', 'is-focused');
   });
 
-  // Hide all settings options from the right panel
+  // Hide all settings options from the right pane
   document.querySelectorAll('.settings-options').forEach(function(settingsOption) {
     settingsOption.style.display = 'none';
   });
@@ -1128,19 +1130,19 @@ function navigateSettingsView(view) {
   setTimeout(() => Navigation.switch(), 5);
 }
 
-// Handle category selection, display appropriate options, and navigate to the provided settings panel
+// Handle category selection, display appropriate options, and navigate to the provided settings pane
 function handleSettingsView(category) {
   // Reset the current settings view before navigating to the next settings view
   resetSettingsView();
 
-  // Show appropriate settings options in the target panel based on the selected settings category
-  const targetPanelOptions = document.getElementById(category);
+  // Show appropriate settings options in the target pane based on the selected settings category
+  const targetPaneOptions = document.getElementById(category);
   const selectedCategory = document.querySelector(`.settings-category[data-category="${category}"]`);
 
-  // Show the target panel options if the target panel exists
-  if (targetPanelOptions) {
-    // Show the panel view
-    targetPanelOptions.style.display = 'block';
+  // Show the target pane options if the target pane exists
+  if (targetPaneOptions) {
+    // Show the pane view
+    targetPaneOptions.style.display = 'block';
   } else {
     // Otherwise, exit early
     return;
@@ -1403,19 +1405,19 @@ function updateAppDialog(latestVersion, releaseNotes) {
   setTimeout(() => Navigation.switch(), 5);
 }
 
-// Manually check for updates when the Check for Updates button is pressed
-function manualCheckForAppUpdates() {
+// Check for updates when the Check for Updates button is pressed
+function checkForAppUpdates() {
   // Get current app version
   const currentVersion = tizen.application.getAppInfo().version;
 
+  console.log('%c[index.js, checkForAppUpdates]', 'color: green;', 'Checking for new application updates...');
   snackbarLog('Checking for available Moonlight updates...');
-
   // Fetch the latest release data from the GitHub API
   fetchLatestRelease().then(({ latestVersion, releaseNotes }) => {
     setTimeout(() => {
       // Check if a new version update is available
       if (checkVersionUpdate(currentVersion, latestVersion)) {
-        // Show dialog with new version and release notes to inform user to update the app
+        // Show the Update Moonlight dialog with new version and release notes to inform user to update the app
         updateAppDialog(latestVersion, releaseNotes);
       } else {
         // Otherwise, show a snackbar message to inform the user that the app is already up to date
@@ -1423,7 +1425,7 @@ function manualCheckForAppUpdates() {
       }
     }, 1500);
   }).catch(error => {
-    console.log('%c[index.js, manualCheckForAppUpdates]', 'color: green;', 'Error: Failed to fetch the release data!', error);
+    console.error('%c[index.js, checkForAppUpdates]', 'color: green;', 'Error: Failed to fetch the release data!', error);
     snackbarLogLong('Unable to check for updates right now. Please try again later!');
   });
 }
@@ -1518,538 +1520,6 @@ function restoreDefaultsDialog() {
   });
 }
 
-// Puts the CSS style for current app on the app that's currently running
-// and puts the CSS style for non-current app on the apps that aren't running
-// this requires a hot-off-the-host `api`, and the appId we're going to stylize
-// the function was made like this so that we can remove duplicated code, but
-// not do N*N stylization of the box art, or make the code not flow very well
-function stylizeBoxArt(freshApi, appIdToStylize) {
-  // Refresh server info and apply the CSS style to the current running game
-  freshApi.refreshServerInfo().then(function(ret) {
-    var appBox = document.querySelector('#game-container-' + appIdToStylize);
-    if (!appBox) {
-      console.warn('%c[index.js, stylizeBoxArt]', 'color: green;', 'Warning: No box art found for appId: ' + appIdToStylize);
-      return;
-    }
-    // If the game is currently running, then apply CSS stylization
-    if (freshApi.currentGame === appIdToStylize) {
-      appBox.classList.add('current-game-active');
-      appBox.title += ' (Running)';
-    } else {
-      appBox.classList.remove('current-game-active');
-      appBox.title = appBox.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
-    }
-  }, function(failedRefreshInfo) {
-    console.error('%c[index.js, stylizeBoxArt]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
-  });
-}
-
-// Sort the app titles
-function sortTitles(list, sortOrder) {
-  return list.sort((a, b) => {
-    const titleA = a.title.toLowerCase();
-    const titleB = b.title.toLowerCase();
-
-    // Ascending order (A - Z)
-    if (sortOrder === 'ASC') {
-      if (titleA < titleB) {
-        return -1;
-      }
-      if (titleA > titleB) {
-        return 1;
-      }
-      return 0;
-    }
-
-    // Descending order (Z - A)
-    if (sortOrder === 'DESC') {
-      if (titleA < titleB) {
-        return 1;
-      }
-      if (titleA > titleB) {
-        return -1;
-      }
-      return 0;
-    }
-  });
-}
-
-// Handle layout elements when displaying the Apps view
-function showAppsMode() {
-  console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show Apps" mode.');
-  $('#header-title').html('Apps & Games');
-  $('#header-logo').show();
-  $('#main-header').show();
-  $('#goBackBtn').show();
-  $('#quitRunningAppBtn').show();
-  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
-  $('#host-grid').hide();
-  $('#settings-list').hide();
-  $('.nav-menu-parent').hide();
-  $('#updateAppBtn').hide();
-  $('#settingsBtn').hide();
-  $('#supportBtn').hide();
-  $('#restoreDefaultsBtn').hide();
-  $('#main-content').removeClass('fullscreen');
-  $('#listener').removeClass('fullscreen');
-  $('#loadingSpinner').css('display', 'none');
-  $('body').css('backgroundColor', '#282C38');
-  $('#wasm_module').css('display', 'none');
-
-  isInGame = false;
-  // FIXME: We want to eventually poll on the app screen, but we can't now
-  // because it slows down box art loading and we don't update the UI live anyway.
-  stopPollingHosts();
-  Navigation.start();
-}
-
-// Show the Apps grid
-function showApps(host) {
-  // Safety checking, shouldn't happen
-  if (!host || !host.paired) {
-    console.error('%c[index.js, showApps]', 'color: green;', 'Error: Unable to initialize the host properly! Host object: ', host);
-    return;
-  }
-
-  console.log('%c[index.js, showApps]', 'color: green;', 'Current host object: \n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  $('#game-grid .game-container').remove();
-
-  // Hide the main header before showing a loading screen
-  $('#main-header').children().hide();
-  $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
-
-  // Show a spinner while the app list loads
-  $('#wasmSpinner').css('display', 'inline-block');
-  $('#wasmSpinnerLogo').hide();
-  $('#wasmSpinnerMessage').text('Loading apps and games...');
-
-  $('div.game-container').remove();
-
-  host.getAppList().then(function(appList) {
-    // Hide the spinner after the host has successfully retrieved the app list
-    $('#wasmSpinner').hide();
-
-    // Show the main header after the loading screen is complete
-    $('#main-header').children().show();
-    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
-
-    // Show the game grid section
-    $('#game-grid').show();
-
-    if (appList.length == 0) {
-      console.warn('%c[index.js, showApps]', 'Warning: Your app list is empty. Please add some apps or games to your list!');
-      var emptyAppListImg = new Image();
-      emptyAppListImg.src = 'static/res/applist_empty.svg';
-      $('#game-grid').html(emptyAppListImg);
-      snackbarLogLong('Your list is currently empty. Please add your favorite apps and games to the list.');
-      return;
-    }
-
-    // Find the existing switch element
-    const sortAppsListSwitch = document.getElementById('sortAppsListSwitch');
-    // Defines the sort order based on the state of the switch
-    const sortOrder = sortAppsListSwitch.checked ? 'DESC' : 'ASC';
-    // If game grid is populated, sort the app list
-    const sortedAppList = sortTitles(appList, sortOrder);
-
-    sortedAppList.forEach(function(app) {
-      // Double clicking the button will cause multiple box arts to appear.
-      // To mitigate this, we ensure that we don't add a duplicate box art.
-      // This isn't perfect: there's lots of RTTs before the logic prevents anything.
-      if ($('#game-container-' + app.id).length === 0) {
-        // Create the game container with the appropriate attributes for the game card
-        var gameContainer = $('<div>', {
-          id: 'game-container-' + app.id,
-          class: 'game-container mdl-card mdl-shadow--4dp',
-          role: 'link',
-          tabindex: 0,
-          'aria-label': app.title
-        });
-
-        // Create the game cell to serve as a holder for the game box
-        var gameCell = $('<div>', {
-          id: 'game-' + app.id,
-          class: 'mdl-card__title mdl-card--expand'
-        });
-
-        // Create the game title wrapper to hold the game title text
-        var gameTitle = $('<div>', {
-          class: 'game-title mdl-card__title-text'
-        });
-
-        // Create the game text placeholder that will contain the game name
-        var gameText = $('<span>', {
-          class: 'game-text',
-          html: app.title
-        });
-
-        // Append the game text to the game title wrapper
-        gameTitle.append(gameText);
-
-        // Handle animation state based on game title text length
-        if (app.title.length <= 20) {
-          // For game title text of 20 characters or less, disable scrolling text animation
-          gameText.addClass('disable-animation');
-        } else {
-          // For game title text longer than 20 characters, enable scrolling text animation
-          gameText.removeClass('disable-animation');
-        }
-
-        // Append the game title to the game cell
-        gameCell.append(gameTitle);
-
-        // Append the game cell to the game container
-        gameContainer.append(gameCell);
-
-        // Attach the click event listener to the game container
-        gameContainer.off('click');
-        gameContainer.on('click', function() {
-          // Prevent further clicks
-          if (isClickPrevented) {
-            return;
-          }
-          // Block subsequent clicks immediately
-          isClickPrevented = true;
-          // Start the game when the Click key is pressed
-          startGame(host, app.id);
-          // Reset the click flag after a 2 second delay
-          setTimeout(() => isClickPrevented = false, 2000);
-        });
-
-        // Append the game container to the game grid
-        $('#game-grid').append(gameContainer);
-
-        // Apply style to the game container to indicate whether the game is active or not
-        stylizeBoxArt(host, app.id);
-      }
-      // Load box art
-      var boxArtPlaceholderImg = new Image();
-      host.getBoxArt(app.id).then(function(resolvedPromise) {
-        boxArtPlaceholderImg.src = resolvedPromise;
-      }, function(failedPromise) {
-        console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to retrieve box art for app ID: ' + app.id + '. Returned value was: ' + failedPromise + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-        boxArtPlaceholderImg.src = 'static/res/placeholder_error.svg';
-      });
-      boxArtPlaceholderImg.onload = e => boxArtPlaceholderImg.classList.add('fade-in');
-      gameContainer.append(boxArtPlaceholderImg);
-    });
-  }, function(failedAppList) {
-    // Hide the spinner if the host has failed to retrieve the app list
-    $('#wasmSpinner').hide();
-
-    // Show the main header after the loading screen is complete
-    $('#main-header').children().show();
-    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
-
-    console.error('%c[index.js, showApps]', 'Error: Failed to get app list from ' + host.hostname + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-    var errorAppListImg = new Image();
-    errorAppListImg.src = 'static/res/applist_error.svg';
-    $('#game-grid').html(errorAppListImg);
-    snackbarLogLong('Unable to retrieve your list of apps and games at this time. Please refresh the app list or try again later.');
-  });
-
-  // Navigate to the Apps view
-  showAppsMode();
-}
-
-// Show a confirmation with the Quit App dialog before stopping the running app or game
-function quitAppDialog() {
-  if (api.currentGame === 0) {
-    // If no app or game is running, show snackbar message
-    snackbarLog('No app or game is currently running.');
-    return;
-  } else {
-    api.getAppById(api.currentGame).then(function(currentGame) {
-      // Find the existing overlay and dialog elements
-      var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
-      var quitAppDialog = document.querySelector('#quitAppDialog');
-
-      // Change the dialog text element to include the game title
-      document.getElementById('quitAppDialogText').innerHTML = 'Are you sure you want to quit ' + currentGame.title + '? All unsaved data will be lost.';
-      
-      // Show the dialog and push the view
-      quitAppOverlay.style.display = 'flex';
-      quitAppDialog.showModal();
-      isDialogOpen = true;
-      Navigation.push(Views.QuitAppDialog);
-
-      // Cancel the operation if the Cancel button is pressed
-      $('#cancelQuitApp').off('click');
-      $('#cancelQuitApp').on('click', function() {
-        console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Closing app dialog and returning.');
-        quitAppOverlay.style.display = 'none';
-        quitAppDialog.close();
-        isDialogOpen = false;
-        Navigation.pop();
-        Navigation.switch();
-      });
-
-      // Quit the running app if the Continue button is pressed
-      $('#continueQuitApp').off('click');
-      $('#continueQuitApp').on('click', function() {
-        console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
-        stopGame(api);
-        quitAppOverlay.style.display = 'none';
-        quitAppDialog.close();
-        isDialogOpen = false;
-        Navigation.pop();
-        Navigation.switch();
-      });
-    });
-  }
-}
-
-// Handle layout elements when displaying the Stream view
-function showStreamMode() {
-  console.log('%c[index.js, showStreamMode]', 'color: green;', 'Entering "Show Stream" mode.');
-  $('#main-header').hide();
-  $('#main-content').children().not('#listener, #loadingSpinner').hide();
-  $('#main-content').addClass('fullscreen');
-  $('#listener').addClass('fullscreen');
-  $('#loadingSpinner').css('display', 'inline-block');
-
-  isInGame = true;
-  fullscreenWasmModule();
-  Navigation.stop();
-}
-
-// Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
-function startGame(host, appID) {
-  if (!host || !host.paired) {
-    console.error('%c[index.js, startGame]', 'color: green;', 'Error: Attempted to start a game, but the host was not initialized properly! Host object: ', host);
-    return;
-  }
-
-  // Refresh the server info, because the user might have quit the game
-  host.refreshServerInfo().then(function(ret) {
-    host.getAppById(appID).then(function(appToStart) {
-      if (host.currentGame != 0 && host.currentGame != appID) {
-        host.getAppById(host.currentGame).then(function(currentApp) {
-          // Find the existing overlay and dialog elements
-          var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
-          var quitAppDialog = document.querySelector('#quitAppDialog');
-
-          // Change the dialog text element to include the game title
-          document.getElementById('quitAppDialogText').innerHTML = currentApp.title + ' is already running. Would you like to quit ' + currentApp.title + '?';
-          
-          // Show the dialog and push the view
-          quitAppOverlay.style.display = 'flex';
-          quitAppDialog.showModal();
-          isDialogOpen = true;
-          Navigation.push(Views.QuitAppDialog);
-
-          // Cancel the operation if the Cancel button is pressed
-          $('#cancelQuitApp').off('click');
-          $('#cancelQuitApp').on('click', function() {
-            console.log('%c[index.js, startGame]', 'color: green;', 'Closing app dialog and returning.');
-            quitAppOverlay.style.display = 'none';
-            quitAppDialog.close();
-            isDialogOpen = false;
-            Navigation.pop();
-          });
-
-          // Quit the running app if the Continue button is pressed
-          $('#continueQuitApp').off('click');
-          $('#continueQuitApp').on('click', function() {
-            console.log('%c[index.js, startGame]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
-            stopGame(host, function() {
-              // Please, don't infinite loop with recursion
-              startGame(host, appID);
-            });
-            quitAppOverlay.style.display = 'none';
-            quitAppDialog.close();
-            isDialogOpen = false;
-            Navigation.pop();
-          });
-
-          return;
-        }, function(failedCurrentApp) {
-          console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to get the current running app from ' + host.hostname + '\n Returned error was: ' + failedCurrentApp + '!', '\n Host object: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-          return;
-        });
-        return;
-      }
-
-      var streamWidth = $('#selectResolution').data('value').split(':')[0];
-      var streamHeight = $('#selectResolution').data('value').split(':')[1];
-      var frameRate = $('#selectFramerate').data('value').toString();
-      var bitrate = parseFloat($('#bitrateSlider').val()) * 1000;
-      const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const externalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      var codecMode = $('#selectCodec').data('value').toString();
-      const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      var rikey = generateRemoteInputKey();
-      var rikeyid = generateRemoteInputKeyId();
-      var gamepadMask = getConnectedGamepadMask();
-
-      console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
-      '\n Host address: ' + host.address + 
-      '\n Stream resolution: ' + streamWidth + 'x' + streamHeight + 
-      '\n Stream frame rate: ' + frameRate + ' FPS' + 
-      '\n Stream bitrate: ' + bitrate + ' Kbps' + 
-      '\n Frame pacing: ' + framePacing + 
-      '\n Optimize games: ' + optimizeGames + 
-      '\n External audio: ' + externalAudio + 
-      '\n Rumble feedback: ' + rumbleFeedback + 
-      '\n Mouse emulation: ' + mouseEmulation + 
-      '\n Flip A/B face buttons: ' + flipABfaceButtons + 
-      '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
-      '\n Audio sync: ' + audioSync + 
-      '\n Stream codec: ' + codecMode + 
-      '\n HDR mode: ' + hdrMode + 
-      '\n Full color range: ' + fullRange);
-
-      // Shows a loading message to launch the application and start stream mode
-      $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
-      showStreamMode();
-
-      // Check if user wants to resume the already-running app
-      if (host.currentGame == appID) {
-        // If the app is already running, we can just resume it
-        return host.resumeApp(
-          streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
-          optimizeGames, // Optimize game settings
-          rikey, rikeyid, // Remote input key and key ID
-          hdrMode, // Auto HDR video streaming
-          externalAudio, // Play audio on host and client device
-          0x030002, // Surround channel mask << 16 | Surround channel count
-          gamepadMask // Connect gamepad mask
-        ).then(function(launchResult) {
-          $xml = $($.parseXML(launchResult.toString()));
-          $root = $xml.find('root');
-          var status_code = $root.attr('status_code');
-          var status_message = $root.attr('status_message');
-          if (status_code != 200) {
-            snackbarLogLong('Error ' + status_code + ': ' + status_message);
-            showApps(host);
-            return;
-          }
-          // Start stream request
-          sendMessage('startRequest', [
-            host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
-            rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
-            host.serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation,
-            flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode, fullRange
-          ]);
-        }, function(failedResumeApp) {
-          console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
-          snackbarLog('Failed to resume ' + appToStart.title);
-          showApps(host);
-          return;
-        });
-      }
-
-      // If the user wants to launch the app, then we start launching it
-      host.launchApp(
-        appID, // App or game ID
-        streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
-        optimizeGames, // Optimize game settings
-        rikey, rikeyid, // Remote input key and key ID
-        hdrMode, // Auto HDR video streaming
-        externalAudio, // Play audio on host and client device
-        0x030002, // Surround channel mask << 16 | Surround channel count
-        gamepadMask // Connect gamepad mask
-      ).then(function(launchResult) {
-        $xml = $($.parseXML(launchResult.toString()));
-        $root = $xml.find('root');
-        var status_code = $root.attr('status_code');
-        var status_message = $root.attr('status_message');
-        if (status_code != 200) {
-          if (status_code == 4294967295 && status_message == 'Invalid') {
-            // Special case handling an audio capture error which GFE doesn't provide any useful status message
-            status_code = 418;
-            status_message = 'Audio capture device is missing. Please reinstall the audio drivers.';
-          }
-          snackbarLogLong('Error ' + status_code + ': ' + status_message);
-          showApps(host);
-          return;
-        }
-        // Start stream request
-        sendMessage('startRequest', [
-          host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), framePacing, rikey,
-          rikeyid.toString(), host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(),
-          host.serverCodecModeSupport, optimizeGames, externalAudio, rumbleFeedback, mouseEmulation,
-          flipABfaceButtons, flipXYfaceButtons, audioSync, codecMode, hdrMode, fullRange
-        ]);
-      }, function(failedLaunchApp) {
-        console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
-        snackbarLog('Failed to launch ' + appToStart.title + '.');
-        showApps(host);
-        return;
-      });
-    });
-  }, function(failedRefreshInfo) {
-    console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + ' and failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  });
-}
-
-// Stop the running app title, refresh the server info, and then return to Apps grid
-function stopGame(host, callbackFunction) {
-  isInGame = false;
-
-  if (!host.paired) {
-    return;
-  }
-
-  host.refreshServerInfo().then(function(ret) {
-    host.getAppById(host.currentGame).then(function(runningApp) {
-      if (!runningApp) {
-        snackbarLog('No app or game is currently running.');
-        return;
-      }
-      var appTitle = runningApp.title;
-      snackbarLog('Quitting ' + appTitle + '...');
-      host.quitApp().then(function(ret2) {
-        snackbarLog('Successfully quit ' + appTitle);
-        host.refreshServerInfo().then(function(ret3) {
-          // Refresh to show no app is currently running
-          showApps(host);
-          if (typeof(callbackFunction) === "function") callbackFunction();
-        }, function(failedRefreshInfo2) {
-          console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo2 + '! Failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-        });
-      }, function(failedQuitApp) {
-        console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to quit app! Returned error was: ' + failedQuitApp + '!');
-      });
-    }, function(failedGetApp) {
-      console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to get app ID! Returned error was: ' + failedGetApp + '!');
-    });
-  }, function(failedRefreshInfo) {
-    console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
-  });
-}
-
-// Maximize the size of the Wasm module by scaling and resizing appropriately
-function fullscreenWasmModule() {
-  var streamWidth = $('#selectResolution').data('value').split(':')[0];
-  var streamHeight = $('#selectResolution').data('value').split(':')[1];
-  var screenWidth = window.innerWidth;
-  var screenHeight = window.innerHeight;
-
-  var xRatio = screenWidth / streamWidth;
-  var yRatio = screenHeight / streamHeight;
-
-  var zoom = Math.min(xRatio, yRatio);
-
-  var module = $('#wasm_module')[0];
-  module.width = zoom * streamWidth;
-  module.height = zoom * streamHeight;
-  module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
-}
-
-// FIXME: This is a workaround to send the escape key to the host
-function sendEscapeKeyToHost() {
-  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0);
-  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0);
-}
-
 // Restart the application
 function restartApplication() {
   var restartApplication = window.location;
@@ -2130,6 +1600,539 @@ function exitAppDialog() {
     Navigation.pop();
     exitApplication();
   });
+}
+
+// Puts the CSS style for current app on the app that's currently running
+// and puts the CSS style for non-current app on the apps that aren't running
+// this requires a hot-off-the-host `api`, and the appId we're going to stylize
+// the function was made like this so that we can remove duplicated code, but
+// not do N*N stylization of the box art, or make the code not flow very well
+function stylizeBoxArt(freshApi, appIdToStylize) {
+  // Refresh server info and apply the CSS style to the current running game
+  freshApi.refreshServerInfo().then(function(ret) {
+    var appBox = document.querySelector('#game-container-' + appIdToStylize);
+    if (!appBox) {
+      console.warn('%c[index.js, stylizeBoxArt]', 'color: green;', 'Warning: No box art found for appId: ' + appIdToStylize);
+      return;
+    }
+    // If the game is currently running, then apply CSS stylization
+    if (freshApi.currentGame === appIdToStylize) {
+      appBox.classList.add('current-game-active');
+      appBox.title += ' (Running)';
+    } else {
+      appBox.classList.remove('current-game-active');
+      appBox.title = appBox.title.replace(' (Running)', ''); // TODO: Replace with localized string so make it e.title = game_title
+    }
+  }, function(failedRefreshInfo) {
+    console.error('%c[index.js, stylizeBoxArt]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
+  });
+}
+
+// Sort the app titles
+function sortTitles(list, sortOrder) {
+  return list.sort((a, b) => {
+    const titleA = a.title.toLowerCase();
+    const titleB = b.title.toLowerCase();
+
+    // Ascending order (A - Z)
+    if (sortOrder === 'ASC') {
+      if (titleA < titleB) {
+        return -1;
+      }
+      if (titleA > titleB) {
+        return 1;
+      }
+      return 0;
+    }
+
+    // Descending order (Z - A)
+    if (sortOrder === 'DESC') {
+      if (titleA < titleB) {
+        return 1;
+      }
+      if (titleA > titleB) {
+        return -1;
+      }
+      return 0;
+    }
+  });
+}
+
+// Handle layout elements when displaying the Apps view
+function showAppsMode() {
+  console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show Apps" mode.');
+  $('#header-title').html('Apps');
+  $('#header-logo').show();
+  $('#main-header').show();
+  $('#goBackBtn').show();
+  $('#quitRunningAppBtn').show();
+  $('#main-content').children().not('#listener, #loadingSpinner, #wasmSpinner').show();
+  $('#host-grid').hide();
+  $('#settings-list').hide();
+  $('.nav-menu-parent').hide();
+  $('#updateAppBtn').hide();
+  $('#settingsBtn').hide();
+  $('#supportBtn').hide();
+  $('#restoreDefaultsBtn').hide();
+  $('#main-content').removeClass('fullscreen');
+  $('#listener').removeClass('fullscreen');
+  $('#loadingSpinner').css('display', 'none');
+  $('body').css('backgroundColor', '#282C38');
+  $('#wasm_module').css('display', 'none');
+
+  isInGame = false;
+  // FIXME: We want to eventually poll on the app screen, but we can't now
+  // because it slows down box art loading and we don't update the UI live anyway.
+  stopPollingHosts();
+  Navigation.start();
+}
+
+// Show the Apps grid
+function showApps(host) {
+  // Safety checking should happen before attempting to show the app list
+  if (!host || !host.paired) {
+    console.error('%c[index.js, showApps]', 'color: green;', 'Error: Unable to initialize the host properly! Host object: ', host);
+    return;
+  } else {
+    console.log('%c[index.js, showApps]', 'color: green;', 'Current host object: \n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  }
+
+  // Hide the main header before showing a loading screen
+  $('#main-header').children().hide();
+  $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
+
+  // Show a spinner while the app list loads
+  $('#wasmSpinner').css('display', 'inline-block');
+  $('#wasmSpinnerLogo').hide();
+  $('#wasmSpinnerMessage').text('Loading Apps...');
+
+  // Remove all game container elements from the game grid and from any other div elements
+  $('#game-grid .game-container').remove();
+  $('div.game-container').remove();
+
+  host.getAppList().then(function(appList) {
+    // Hide the spinner after the host has successfully retrieved the app list
+    $('#wasmSpinner').hide();
+
+    // Show the main header after the loading screen is complete
+    $('#main-header').children().show();
+    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+
+    // Show the game grid section
+    $('#game-grid').show();
+
+    if (appList.length == 0) {
+      console.warn('%c[index.js, showApps]', 'Warning: Your app list is empty. Please add some apps to your list!');
+      var emptyAppListImg = new Image();
+      emptyAppListImg.src = 'static/res/applist_empty.svg';
+      $('#game-grid').html(emptyAppListImg);
+      snackbarLogLong('Your list is currently empty. Please add your favorite apps to the list.');
+      return;
+    }
+
+    // Find the existing switch element
+    const sortAppsListSwitch = document.getElementById('sortAppsListSwitch');
+    // Defines the sort order based on the state of the switch
+    const sortOrder = sortAppsListSwitch.checked ? 'DESC' : 'ASC';
+    // If game grid is populated, sort the app list
+    const sortedAppList = sortTitles(appList, sortOrder);
+
+    sortedAppList.forEach(function(app) {
+      // Double clicking the button will cause multiple box arts to appear.
+      // To mitigate this, we ensure that we don't add a duplicate box art.
+      // This isn't perfect: there's lots of RTTs before the logic prevents anything.
+      if ($('#game-container-' + app.id).length === 0) {
+        // Create the game container with the appropriate attributes for the game card
+        var gameContainer = $('<div>', {
+          id: 'game-container-' + app.id,
+          class: 'game-container mdl-card mdl-shadow--4dp',
+          role: 'link',
+          tabindex: 0,
+          'aria-label': app.title
+        });
+
+        // Create the game cell to serve as a holder for the game box
+        var gameCell = $('<div>', {
+          id: 'game-' + app.id,
+          class: 'mdl-card__title mdl-card--expand'
+        });
+
+        // Create the game title wrapper to hold the game title text
+        var gameTitle = $('<div>', {
+          class: 'game-title mdl-card__title-text'
+        });
+
+        // Create the game text placeholder that will contain the game name
+        var gameText = $('<span>', {
+          class: 'game-text',
+          html: app.title
+        });
+
+        // Append the game text to the game title wrapper
+        gameTitle.append(gameText);
+
+        // Handle animation state based on game title text length
+        if (app.title.length <= 20) {
+          // For game title text of 20 characters or less, disable scrolling text animation
+          gameText.addClass('disable-animation');
+        } else {
+          // For game title text longer than 20 characters, enable scrolling text animation
+          gameText.removeClass('disable-animation');
+        }
+
+        // Append the game title to the game cell
+        gameCell.append(gameTitle);
+
+        // Append the game cell to the game container
+        gameContainer.append(gameCell);
+
+        // Attach the click event listener to the game container
+        gameContainer.off('click');
+        gameContainer.on('click', function() {
+          // Prevent further clicks
+          if (isClickPrevented) {
+            return;
+          }
+          // Block subsequent clicks immediately
+          isClickPrevented = true;
+          // Start the game when the Click key is pressed
+          startGame(host, app.id);
+          // Reset the click flag after 2 second delay
+          setTimeout(() => isClickPrevented = false, 2000);
+        });
+
+        // Append the game container to the game grid
+        $('#game-grid').append(gameContainer);
+
+        // Apply style to the game container to indicate whether the game is active or not
+        stylizeBoxArt(host, app.id);
+      }
+      // Load box art
+      var boxArtPlaceholderImg = new Image();
+      host.getBoxArt(app.id).then(function(resolvedPromise) {
+        boxArtPlaceholderImg.src = resolvedPromise;
+      }, function(failedPromise) {
+        console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to retrieve box art for app ID: ' + app.id + '. Returned value was: ' + failedPromise + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+        boxArtPlaceholderImg.src = 'static/res/placeholder_error.svg';
+      });
+      boxArtPlaceholderImg.onload = e => boxArtPlaceholderImg.classList.add('fade-in');
+      $(gameContainer).append(boxArtPlaceholderImg);
+    });
+  }, function(failedAppList) {
+    // Hide the spinner if the host has failed to retrieve the app list
+    $('#wasmSpinner').hide();
+
+    // Show the main header after the loading screen is complete
+    $('#main-header').children().show();
+    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+
+    console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to get app list from ' + host.hostname + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+    var errorAppListImg = new Image();
+    errorAppListImg.src = 'static/res/applist_error.svg';
+    $('#game-grid').html(errorAppListImg);
+    snackbarLogLong('Unable to retrieve your list of apps at this time. Please refresh the list of apps or try again later!');
+  });
+
+  // Navigate to the Apps view
+  showAppsMode();
+}
+
+// Show a confirmation with the Quit App dialog before stopping the running app
+function quitAppDialog() {
+  if (api.currentGame === 0) {
+    // If no app is running, show snackbar message
+    snackbarLog('No app is currently running.');
+    return;
+  } else {
+    api.getAppById(api.currentGame).then(function(currentGame) {
+      // Find the existing overlay and dialog elements
+      var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
+      var quitAppDialog = document.querySelector('#quitAppDialog');
+
+      // Change the dialog text element to include the game title
+      document.getElementById('quitAppDialogText').innerHTML = 'Are you sure you want to quit ' + currentGame.title + '? All unsaved data will be lost.';
+      
+      // Show the dialog and push the view
+      quitAppOverlay.style.display = 'flex';
+      quitAppDialog.showModal();
+      isDialogOpen = true;
+      Navigation.push(Views.QuitAppDialog);
+
+      // Cancel the operation if the Cancel button is pressed
+      $('#cancelQuitApp').off('click');
+      $('#cancelQuitApp').on('click', function() {
+        console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Closing app dialog and returning.');
+        quitAppOverlay.style.display = 'none';
+        quitAppDialog.close();
+        isDialogOpen = false;
+        Navigation.pop();
+        Navigation.switch();
+      });
+
+      // Quit the running app if the Continue button is pressed
+      $('#continueQuitApp').off('click');
+      $('#continueQuitApp').on('click', function() {
+        console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
+        stopGame(api);
+        quitAppOverlay.style.display = 'none';
+        quitAppDialog.close();
+        isDialogOpen = false;
+        Navigation.pop();
+        Navigation.switch();
+      });
+    });
+  }
+}
+
+// Handle layout elements when displaying the Stream view
+function showStreamMode() {
+  console.log('%c[index.js, showStreamMode]', 'color: green;', 'Entering "Show Stream" mode.');
+  $('#main-header').hide();
+  $('#main-content').children().not('#listener, #loadingSpinner').hide();
+  $('#main-content').addClass('fullscreen');
+  $('#listener').addClass('fullscreen');
+  $('#loadingSpinner').css('display', 'inline-block');
+
+  isInGame = true;
+  fullscreenWasmModule();
+  Navigation.stop();
+}
+
+// Maximize the size of the Wasm module by scaling and resizing appropriately
+function fullscreenWasmModule() {
+  var streamWidth = $('#selectResolution').data('value').split(':')[0];
+  var streamHeight = $('#selectResolution').data('value').split(':')[1];
+  var screenWidth = window.innerWidth;
+  var screenHeight = window.innerHeight;
+
+  var xRatio = screenWidth / streamWidth;
+  var yRatio = screenHeight / streamHeight;
+
+  var zoom = Math.min(xRatio, yRatio);
+
+  var module = $('#wasm_module')[0];
+  module.width = zoom * streamWidth;
+  module.height = zoom * streamHeight;
+  module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
+}
+
+// Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
+function startGame(host, appID) {
+  if (!host || !host.paired) {
+    console.error('%c[index.js, startGame]', 'color: green;', 'Error: Attempted to start a game, but the host was not initialized properly! Host object: ', host);
+    return;
+  }
+
+  // Refresh the server info, because the user might have quit the game
+  host.refreshServerInfo().then(function(ret) {
+    host.getAppById(appID).then(function(appToStart) {
+      if (host.currentGame != 0 && host.currentGame != appID) {
+        host.getAppById(host.currentGame).then(function(currentApp) {
+          // Find the existing overlay and dialog elements
+          var quitAppOverlay = document.querySelector('#quitAppDialogOverlay');
+          var quitAppDialog = document.querySelector('#quitAppDialog');
+
+          // Change the dialog text element to include the game title
+          document.getElementById('quitAppDialogText').innerHTML = currentApp.title + ' is already running. Would you like to quit it and start ' + appToStart.title + '?';
+
+          // Show the dialog and push the view
+          quitAppOverlay.style.display = 'flex';
+          quitAppDialog.showModal();
+          isDialogOpen = true;
+          Navigation.push(Views.QuitAppDialog);
+
+          // Cancel the operation if the Cancel button is pressed
+          $('#cancelQuitApp').off('click');
+          $('#cancelQuitApp').on('click', function() {
+            console.log('%c[index.js, startGame]', 'color: green;', 'Closing app dialog and returning.');
+            quitAppOverlay.style.display = 'none';
+            quitAppDialog.close();
+            isDialogOpen = false;
+            Navigation.pop();
+          });
+
+          // Quit the running app if the Continue button is pressed
+          $('#continueQuitApp').off('click');
+          $('#continueQuitApp').on('click', function() {
+            console.log('%c[index.js, startGame]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
+            stopGame(host, function() {
+              // Please, don't infinite loop with recursion
+              startGame(host, appID);
+            });
+            quitAppOverlay.style.display = 'none';
+            quitAppDialog.close();
+            isDialogOpen = false;
+            Navigation.pop();
+          });
+
+          return;
+        }, function(failedCurrentApp) {
+          console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to get the current running app from ' + host.hostname + '\n Returned error was: ' + failedCurrentApp + '!', '\n Host object: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+          return;
+        });
+        return;
+      }
+
+      var streamWidth = $('#selectResolution').data('value').split(':')[0];
+      var streamHeight = $('#selectResolution').data('value').split(':')[1];
+      var frameRate = $('#selectFramerate').data('value').toString();
+      var bitrate = parseFloat($('#bitrateSlider').val()) * 1000;
+      var rikey = generateRemoteInputKey();
+      var rikeyid = generateRemoteInputKeyId();
+      var gamepadMask = getConnectedGamepadMask();
+      const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const playHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      var videoCodec = $('#selectCodec').data('value').toString();
+      const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+
+      console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
+      '\n Host address: ' + host.address + 
+      '\n Video resolution: ' + streamWidth + 'x' + streamHeight + 
+      '\n Video frame rate: ' + frameRate + ' FPS' + 
+      '\n Video bitrate: ' + bitrate + ' Kbps' + 
+      '\n Video frame pacing: ' + framePacing + 
+      '\n Optimize game settings: ' + optimizeGames + 
+      '\n Play host audio: ' + playHostAudio + 
+      '\n Rumble feedback: ' + rumbleFeedback + 
+      '\n Mouse emulation: ' + mouseEmulation + 
+      '\n Flip A/B face buttons: ' + flipABfaceButtons + 
+      '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
+      '\n Audio synchronization: ' + audioSync + 
+      '\n Video codec: ' + videoCodec + 
+      '\n Video HDR mode: ' + hdrMode + 
+      '\n Full color range: ' + fullRange);
+
+      // Shows a loading message to launch the application and start stream mode
+      $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
+      showStreamMode();
+
+      // Check if user wants to resume the already-running app
+      if (host.currentGame == appID) {
+        // If the app is already running, we can just resume it
+        return host.resumeApp(
+          streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
+          optimizeGames, // Optimize game settings (SOPS)
+          rikey, rikeyid, // Remote input key and key ID
+          hdrMode, // Auto HDR video streaming
+          playHostAudio, // Play audio on host and client device
+          0x030002, // Surround channel mask << 16 | Surround channel count
+          gamepadMask // Connect gamepad mask
+        ).then(function(launchResult) {
+          $xml = $($.parseXML(launchResult.toString()));
+          $root = $xml.find('root');
+          var status_code = $root.attr('status_code');
+          var status_message = $root.attr('status_message');
+          if (status_code != 200) {
+            snackbarLogLong('Error ' + status_code + ': ' + status_message);
+            showApps(host);
+            return;
+          }
+          // Start stream request
+          sendMessage('startRequest', [
+            host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
+            host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
+            framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+            audioSync, videoCodec, hdrMode, fullRange
+          ]);
+        }, function(failedResumeApp) {
+          console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
+          snackbarLog('Failed to resume ' + appToStart.title);
+          showApps(host);
+          return;
+        });
+      }
+
+      // If the user wants to launch the app, then we start launching it
+      host.launchApp(
+        appID, // App ID
+        streamWidth + 'x' + streamHeight + 'x' + frameRate, // Resolution and frame rate
+        optimizeGames, // Optimize game settings (SOPS)
+        rikey, rikeyid, // Remote input key and key ID
+        hdrMode, // Auto HDR video streaming
+        playHostAudio, // Play audio on host and client device
+        0x030002, // Surround channel mask << 16 | Surround channel count
+        gamepadMask // Connect gamepad mask
+      ).then(function(launchResult) {
+        $xml = $($.parseXML(launchResult.toString()));
+        $root = $xml.find('root');
+        var status_code = $root.attr('status_code');
+        var status_message = $root.attr('status_message');
+        if (status_code != 200) {
+          if (status_code == 4294967295 && status_message == 'Invalid') {
+            // Special case handling an audio capture error which GFE doesn't provide any useful status message
+            status_code = 418;
+            status_message = 'Audio capture device is missing. Please reinstall the audio drivers.';
+          }
+          snackbarLogLong('Error ' + status_code + ': ' + status_message);
+          showApps(host);
+          return;
+        }
+        // Start stream request
+        sendMessage('startRequest', [
+          host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
+          host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
+          framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+          audioSync, videoCodec, hdrMode, fullRange
+        ]);
+      }, function(failedLaunchApp) {
+        console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
+        snackbarLog('Failed to launch ' + appToStart.title + '.');
+        showApps(host);
+        return;
+      });
+    });
+  }, function(failedRefreshInfo) {
+    console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + ' and failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+  });
+}
+
+// Stop the running app title, refresh the server info, and then return to Apps grid
+function stopGame(host, callbackFunction) {
+  isInGame = false;
+
+  if (!host.paired) {
+    return;
+  }
+
+  host.refreshServerInfo().then(function(ret) {
+    host.getAppById(host.currentGame).then(function(runningApp) {
+      if (!runningApp) {
+        snackbarLog('No app is currently running.');
+        return;
+      }
+      var appTitle = runningApp.title;
+      snackbarLog('Quitting ' + appTitle + '...');
+      host.quitApp().then(function(ret2) {
+        snackbarLog('Successfully quit ' + appTitle);
+        host.refreshServerInfo().then(function(ret3) {
+          // Refresh to show no app is currently running
+          showApps(host);
+          if (typeof(callbackFunction) === "function") callbackFunction();
+        }, function(failedRefreshInfo2) {
+          console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo2 + '! Failed server was: ' + '\n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
+        });
+      }, function(failedQuitApp) {
+        console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to quit app! Returned error was: ' + failedQuitApp + '!');
+      });
+    }, function(failedGetApp) {
+      console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to get app ID! Returned error was: ' + failedGetApp + '!');
+    });
+  }, function(failedRefreshInfo) {
+    console.error('%c[index.js, stopGame]', 'color: green;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
+  });
+}
+
+// FIXME: This is a workaround to send the escape key to the host
+function sendEscapeKeyToHost() {
+  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0);
+  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0);
 }
 
 let indexedDB = null;
@@ -2220,7 +2223,6 @@ function getData(key, callbackFunction) {
         let value = null;
         if (readRequest.result) {
           value = JSON.parse(readRequest.result);
-          console.log('%c[index.js, getData]', 'color: green;', 'Parsed value: ' + value);
         }
         callCb(key, value, callbackFunction);
       };
@@ -2287,7 +2289,7 @@ function saveResolution() {
 
   // Update the bitrate value based on the selected resolution
   setBitratePresetValue();
-  // Trigger warning check after changing resolution
+  // Trigger warning check after changing video resolution
   warnResolutionFramerate();
 }
 
@@ -2299,7 +2301,7 @@ function saveFramerate() {
 
   // Update the bitrate value based on the selected frame rate
   setBitratePresetValue();
-  // Trigger warning check after changing frame rate
+  // Trigger warning check after changing video frame rate
   warnResolutionFramerate();
 }
 
@@ -2308,14 +2310,14 @@ function warnResolutionFramerate() {
   var chosenResolutionHeight = $('#selectResolution').data('value').split(':')[1];
   var chosenFramerate = $('#selectFramerate').data('value');
 
-  // Resolution and frame rate warning
+  // Video resolution and frame rate warning
   if (!resFpsWarning && chosenResolutionWidth > '1920' && chosenResolutionHeight > '1080' && chosenFramerate > '60') {
-    // Warn only if resolution is greater than 1080p and frame rate is greater than 60 FPS
-    snackbarLogLong('Warning: This resolution and frame rate may not perform well on lower-end devices or slower connections.');
-    // Set flag for resolution and frame rate warning
+    // Warn only if video resolution is greater than 1080p and frame rate is greater than 60 FPS
+    snackbarLogLong('Warning: This resolution and frame rate may not perform well on lower-end devices or slower connections!');
+    // Set flag for video resolution and frame rate warning
     resFpsWarning = true;
   } else if (resFpsWarning && (chosenResolutionWidth <= '1920' || chosenResolutionHeight <= '1080' || chosenFramerate <= '60')) {
-    // Reset the flag for resolution and frame rate warning if the conditions go back to normal
+    // Reset the flag for video resolution and frame rate warning if the condition goes back to normal (1080p and 60 FPS)
     resFpsWarning = false;
   }
 }
@@ -2326,21 +2328,21 @@ function saveBitrate() {
   console.log('%c[index.js, saveBitrate]', 'color: green;', 'Saving bitrate value: ' + chosenBitrate);
   storeData('bitrate', chosenBitrate, null);
 
-  // Trigger warning check after changing bitrate
+  // Trigger warning check after changing video bitrate
   warnBitrate();
 }
 
 function warnBitrate() {
   var chosenBitrate = $('#bitrateSlider').val();
 
-  // Bitrate warning
+  // Video bitrate warning
   if (!bitrateWarning && chosenBitrate > 100) {
-    // Warn only if bitrate is greater than 100 Mbps
-    snackbarLogLong('Warning: Higher bitrate may cause playback interruptions and performance issues, please try with caution.');
-    // Set flag for bitrate warning
+    // Warn only if video bitrate is greater than 100 Mbps
+    snackbarLogLong('Warning: Higher bitrate may cause playback interruptions and performance issues, please try with caution!');
+    // Set flag for video bitrate warning
     bitrateWarning = true;
   } else if (bitrateWarning && chosenBitrate <= 100) {
-    // Reset the flag for bitrate warning if the condition goes back to normal
+    // Reset the flag for video bitrate warning if the condition goes back to normal (100 Mbps)
     bitrateWarning = false;
   }
 }
@@ -2441,11 +2443,11 @@ function saveOptimizeGames() {
   }, 100);
 }
 
-function saveExternalAudio() {
+function savePlayHostAudio() {
   setTimeout(() => {
-    const chosenExternalAudio = $('#externalAudioSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, saveExternalAudio]', 'color: green;', 'Saving external audio state: ' + chosenExternalAudio);
-    storeData('externalAudio', chosenExternalAudio, null);
+    const chosenPlayHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, savePlayHostAudio]', 'color: green;', 'Saving play host audio state: ' + chosenPlayHostAudio);
+    storeData('playHostAudio', chosenPlayHostAudio, null);
   }, 100);
 }
 
@@ -2489,73 +2491,73 @@ function saveAudioSync() {
   }, 100);
 }
 
-function saveCodecMode() {
-  var chosenCodecMode = $(this).data('value');
+function saveVideoCodec() {
+  var chosenVideoCodec = $(this).data('value');
   const selectedH264Codec = $('#h264').data('value');
   const enabledHdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked');
 
   // Check if HDR mode is enabled and prevent any incompatible HDR codec from being selected
-  if (enabledHdrMode && chosenCodecMode === selectedH264Codec) { // Selecting H.264 while HDR mode is enabled
+  if (enabledHdrMode && chosenVideoCodec === selectedH264Codec) { // Selecting H.264 while HDR mode is enabled
     // H.264 does not support HDR profile, so stay on H.264 codec
-    updateCodecMode('#h264', selectedH264Codec);
+    updateVideoCodec('#h264', selectedH264Codec);
     snackbarLog('HDR has been disabled due to unsupported H.264 codec.');
     // Turn off the HDR mode switch and save the state
     $('#hdrModeSwitch').parent().removeClass('is-checked');
     updateHdrMode();
-  } else { // Selecting other codecs while HDR mode is disabled
+  } else { // Selecting other video codecs while HDR mode is disabled
     // Continue to select the SDR profile of other video codecs
-    updateCodecMode(this, chosenCodecMode);
+    updateVideoCodec(this, chosenVideoCodec);
   }
 }
 
-function updateCodecMode(chosenCodecId, chosenCodecValue) {
+function updateVideoCodec(chosenCodecId, chosenCodecValue) {
   $('#selectCodec').text($(chosenCodecId).text()).data('value', chosenCodecValue);
-  console.log('%c[index.js, updateCodecMode]', 'color: green;', 'Saving codec mode value: ' + chosenCodecValue);
-  storeData('codecMode', chosenCodecValue, null);
+  console.log('%c[index.js, updateVideoCodec]', 'color: green;', 'Saving video codec value: ' + chosenCodecValue);
+  storeData('videoCodec', chosenCodecValue, null);
 
-  // Trigger warning check after changing codec
-  warnCodecMode();
+  // Trigger warning check after changing video codec
+  warnVideoCodec();
 }
 
-function warnCodecMode() {
-  var chosenCodecMode = $('#selectCodec').data('value');
+function warnVideoCodec() {
+  var chosenVideoCodec = $('#selectCodec').data('value');
 
-  // Codec warning
-  if (!codecWarning && (chosenCodecMode === 'AV1')) {
-    // Warn only if codec is selected to AV1
-    snackbarLogLong('Warning: This codec is only supported on high-end devices and can significantly slow down performance.');
-    // Set flag for codec warning
+  // Video codec warning
+  if (!codecWarning && (chosenVideoCodec === 'AV1')) {
+    // Warn only if video codec is selected to AV1
+    snackbarLogLong('Warning: Selected codec may not be supported by your host PC and may significantly slow down performance!');
+    // Set flag for video codec warning
     codecWarning = true;
-  } else if (codecWarning && (chosenCodecMode === 'HEVC' || chosenCodecMode === 'H264')) {
-    // Reset the flag for codec warning if the condition goes back to normal (HEVC or H.264)
+  } else if (codecWarning && (chosenVideoCodec === 'HEVC' || chosenVideoCodec === 'H264')) {
+    // Reset the flag for video codec warning if the condition goes back to normal (HEVC or H.264)
     codecWarning = false;
   }
 }
 
 function saveHdrMode() {
   setTimeout(() => {
-    var selectedCodecMode = $('#selectCodec').data('value');
+    var selectedVideoCodec = $('#selectCodec').data('value');
     const chosenH264Codec = $('#h264').data('value');
     const chosenHevcCodec = $('#hevc').data('value');
     const chosenAv1Codec = $('#av1').data('value');
 
     // Handle HDR mode switch based on the selected codec
-    if (selectedCodecMode === chosenH264Codec) { // H.264
+    if (selectedVideoCodec === chosenH264Codec) { // H.264
       // H.264 does not support HDR profile, so stay on H.264 codec
       snackbarLog('H.264 codec does not support the HDR profile.');
       // Turn off the HDR mode switch and save the state
       $('#hdrModeSwitch').parent().removeClass('is-checked');
       updateHdrMode();
-    } else if (selectedCodecMode === chosenHevcCodec) { // HEVC
+    } else if (selectedVideoCodec === chosenHevcCodec) { // HEVC
       // Select the HDR profile of the HEVC codec (HEVC Main10)
-      // Turn on/off the HDR mode switch and save the state
+      // Toggle the HDR mode switch and save the state
       updateHdrMode();
-    } else if (selectedCodecMode === chosenAv1Codec) { // AV1
+    } else if (selectedVideoCodec === chosenAv1Codec) { // AV1
       // Select the HDR profile of the AV1 codec (AV1 Main10)
-      // Turn on/off the HDR mode switch and save the state
+      // Toggle the HDR mode switch and save the state
       updateHdrMode();
     } else { // Undefined
-      // Unknown codec does not support HDR profile
+      // Unknown codec format does not support HDR profile
       snackbarLog('Selected codec does not support the HDR profile.');
       // Turn off the HDR mode switch and save the state
       $('#hdrModeSwitch').parent().removeClass('is-checked');
@@ -2611,9 +2613,9 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
   storeData('optimizeGames', defaultOptimizeGames, null);
 
-  const defaultExternalAudio = false;
-  document.querySelector('#externalAudioBtn').MaterialSwitch.off();
-  storeData('externalAudio', defaultExternalAudio, null);
+  const defaultPlayHostAudio = false;
+  document.querySelector('#playHostAudioBtn').MaterialSwitch.off();
+  storeData('playHostAudio', defaultPlayHostAudio, null);
 
   const defaultRumbleFeedback = false;
   document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
@@ -2635,9 +2637,9 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#audioSyncBtn').MaterialSwitch.off();
   storeData('audioSync', defaultAudioSync, null);
 
-  const defaultCodecMode = 'H264';
-  $('#selectCodec').text('H.264').data('value', defaultCodecMode);
-  storeData('codecMode', defaultCodecMode, null);
+  const defaultVideoCodec = 'H264';
+  $('#selectCodec').text('H.264').data('value', defaultVideoCodec);
+  storeData('videoCodec', defaultVideoCodec, null);
 
   const defaultHdrMode = false;
   document.querySelector('#hdrModeBtn').MaterialSwitch.off();
@@ -2741,7 +2743,7 @@ function loadUserDataCb() {
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored resolution preferences.');
   getData('resolution', function(previousValue) {
     if (previousValue.resolution != null) {
-      $('.resolutionMenu li').each(function() {
+      $('.videoResolutionMenu li').each(function() {
         if ($(this).data('value') === previousValue.resolution) {
           // Update the video resolution field based on the given value
           $('#selectResolution').text($(this).text()).data('value', previousValue.resolution);
@@ -2753,7 +2755,7 @@ function loadUserDataCb() {
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored frameRate preferences.');
   getData('frameRate', function(previousValue) {
     if (previousValue.frameRate != null) {
-      $('.framerateMenu li').each(function() {
+      $('.videoFramerateMenu li').each(function() {
         if ($(this).data('value') === previousValue.frameRate) {
           // Update the video frame rate field based on the given value
           $('#selectFramerate').text($(this).text()).data('value', previousValue.frameRate);
@@ -2815,14 +2817,14 @@ function loadUserDataCb() {
     }
   });
 
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored externalAudio preferences.');
-  getData('externalAudio', function(previousValue) {
-    if (previousValue.externalAudio == null) {
-      document.querySelector('#externalAudioBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.externalAudio == false) {
-      document.querySelector('#externalAudioBtn').MaterialSwitch.off();
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored playHostAudio preferences.');
+  getData('playHostAudio', function(previousValue) {
+    if (previousValue.playHostAudio == null) {
+      document.querySelector('#playHostAudioBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.playHostAudio == false) {
+      document.querySelector('#playHostAudioBtn').MaterialSwitch.off();
     } else {
-      document.querySelector('#externalAudioBtn').MaterialSwitch.on();
+      document.querySelector('#playHostAudioBtn').MaterialSwitch.on();
     }
   });
 
@@ -2881,13 +2883,13 @@ function loadUserDataCb() {
     }
   });
 
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored codecMode preferences.');
-  getData('codecMode', function(previousValue) {
-    if (previousValue.codecMode != null) {
-      $('.codecMenu li').each(function() {
-        if ($(this).data('value') === previousValue.codecMode) {
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored videoCodec preferences.');
+  getData('videoCodec', function(previousValue) {
+    if (previousValue.videoCodec != null) {
+      $('.videoCodecMenu li').each(function() {
+        if ($(this).data('value') === previousValue.videoCodec) {
           // Update the video codec field based on the given value
-          $('#selectCodec').text($(this).text()).data('value', previousValue.codecMode);
+          $('#selectCodec').text($(this).text()).data('value', previousValue.videoCodec);
         }
       });
     }
