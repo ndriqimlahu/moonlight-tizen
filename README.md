@@ -1,7 +1,7 @@
-# Moonlight for Samsung TV (Tizen OS)
+# Moonlight Tizen
 
 [![Project Status](https://img.shields.io/badge/project-actively_maintained-brightgreen?style=for-the-badge&logo=github)](#)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/docker-publish.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/docker-publish.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/build-and-release.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/build-and-release.yml)
 [![Release Version](https://img.shields.io/github/v/release/ndriqimlahu/moonlight-tizen?style=for-the-badge&logo=github)](https://github.com/ndriqimlahu/moonlight-tizen/releases/latest)
 
 Moonlight Tizen is a port of [Moonlight ChromeOS](https://github.com/moonlight-stream/moonlight-chrome), which is an open source client for NVIDIA GameStream and [Sunshine](https://app.lizardbyte.dev/Sunshine/).
