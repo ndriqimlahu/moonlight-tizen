@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.1
+
+### Added
+- Added issue templates for bug report and feature request with selection options
+- Added GitHub Action workflow for scheduled release USB method with associated file
+
+### Changed
+- Improved pull request template with structured sections and helpful instructions
+- Improved GitHub Action workflow for automated release publishing with associated file
+
+### Removed
+- Removed the 'Buy Me a Coffee' funding platform due to regional restrictions
+
+### Fixed
+- Minor bug fixes, code refactoring and general improvements
+
 ## v1.5.0
 
 ### Added
