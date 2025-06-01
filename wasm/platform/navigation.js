@@ -990,6 +990,47 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  SelectAudioMenu: {
+    isActive: () => isPopupActive('audioConfigMenu'),
+    view: new ListView(() => 
+      document.getElementById('audioConfigMenu')
+      .parentNode.children[3].children[1].children),
+    up: function() {
+      this.view.prevOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    down: function() {
+      this.view.nextOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+      document.getElementById('selectAudio').focus();
+      // Show the Restart Moonlight dialog and push the view
+      setTimeout(() => restartAppDialog(), 1000);
+    },
+    accept: function() {
+      this.view.current().click();
+      Navigation.pop();
+      document.getElementById('selectAudio').focus();
+      // Show the Restart Moonlight dialog and push the view
+      setTimeout(() => restartAppDialog(), 1000);
+    },
+    back: function() {
+      document.getElementById('selectAudio').click();
+      document.getElementById('selectAudio').focus();
+    },
+    press: function() {},
+    switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   VideoSettings: {
     view: new ListView(() => [
       'selectCodec',
