@@ -947,6 +947,7 @@ const Views = {
   },
   AudioSettings: {
     view: new ListView(() => [
+      'selectAudio',
       'audioSyncBtn'
     ]),
     up: function() {
