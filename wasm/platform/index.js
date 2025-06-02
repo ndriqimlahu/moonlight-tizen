@@ -9,6 +9,7 @@ var isDialogOpen = false; // Flag indicating whether the dialog is open, initial
 var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
 var resFpsWarning = false; // Flag indicating whether the video resolution and frame rate warning message has shown, initial value is false
 var bitrateWarning = false; // Flag indicating whether the video bitrate warning message has shown, initial value is false
+var audioWarning = false; // Flag indicating whether the audio configuration warning message has shown, initial value is false
 var codecWarning = false; // Flag indicating whether the video codec warning message has shown, initial value is false
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
@@ -2492,6 +2493,24 @@ function saveAudioConfiguration() {
   $('#selectAudio').text($(this).text()).data('value', chosenAudioConfig);
   console.log('%c[index.js, saveAudioConfiguration]', 'color: green;', 'Saving audioConfig value: ' + chosenAudioConfig);
   storeData('audioConfig', chosenAudioConfig, null);
+
+  // Trigger warning check after changing audio configuration
+  warnAudioConfiguration();
+}
+
+function warnAudioConfiguration() {
+  var chosenAudioConfig = $('#selectAudio').data('value');
+
+  // Audio configuration warning
+  if (!audioWarning && (chosenAudioConfig === '71Surround' || chosenAudioConfig === '51Surround')) {
+    // Warn only if audio configuration is selected to 5.1 or 7.1 Surround
+    snackbarLogLong('Warning: 5.1 or 7.1 Surround sound may not be supported by your host PC and may increase audio latency!');
+    // Set flag for audio configuration warning
+    audioWarning = true;
+  } else if (audioWarning && (chosenAudioConfig === 'Stereo')) {
+    // Reset the flag for audio configuration warning if the condition goes back to normal (Stereo)
+    audioWarning = false;
+  }
 }
 
 function saveAudioSync() {
