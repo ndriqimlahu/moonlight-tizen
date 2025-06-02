@@ -7,7 +7,7 @@ const SyncFunctions = {
   'httpInit': (...args) => Module.httpInit(...args),
   /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
   framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-  audioSync, videoCodec, hdrMode, fullRange */
+  audioConfig, audioSync, videoCodec, hdrMode, fullRange */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),
