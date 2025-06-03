@@ -8,7 +8,7 @@ using std::chrono_literals::operator""s;
 using std::chrono_literals::operator""ms;
 using TimeStamp = samsung::wasm::Seconds;
 
-#define MAX_CHANNEL_COUNT 2
+#define MAX_CHANNEL_COUNT 8
 #define FRAME_SIZE 240
 
 static constexpr TimeStamp kAudioBufferMargin = 100ms;
@@ -18,6 +18,9 @@ static std::vector<opus_int16> s_DecodeBuffer;
 static TimeStamp s_frameDuration;
 static TimeStamp s_pktPts;
 static TimeStamp s_estimatedAudioEnd;
+
+static size_t s_samplesPerFrame;
+static size_t s_channelCount;
 
 static std::chrono::time_point<std::chrono::steady_clock> s_firstAppend;
 
@@ -36,7 +39,7 @@ static void DecodeAndAppendPacket(samsung::wasm::ElementaryMediaTrack* track, sa
   // Decode the incoming audio packet using Opus decoder
   decodeLen = opus_multistream_decode(
     decoder, sampleData, sampleLength,
-    s_DecodeBuffer.data(), FRAME_SIZE, 0
+    s_DecodeBuffer.data(), s_samplesPerFrame, 0
   );
 
   // Check if audio decoding failed
@@ -46,24 +49,32 @@ static void DecodeAndAppendPacket(samsung::wasm::ElementaryMediaTrack* track, sa
     return;
   }
 
-  // Create an ElementaryMediaPacket with the decoded audio data
+  // Calculate desired buffer size in bytes for decoded audio data
+  size_t s_desiredBufferSize = sizeof(opus_int16) * decodeLen * s_channelCount;
+
+  // Create an ElementaryMediaPacket and start decoding with the decoded audio data
   samsung::wasm::ElementaryMediaPacket pkt {
     s_pktPts, // presentation timestamp
     s_pktPts, // decoding timestamp
     s_frameDuration, // packet duration
     true, // bool value indicating if packet is a keyframe
-    s_DecodeBuffer.size() * sizeof(opus_int16), // size of the data payload in bytes
-    s_DecodeBuffer.data(), // pointer to packet data payload
+    s_desiredBufferSize, // packet size
+    s_DecodeBuffer.data(), // pointer to packet payload
     0, 0, 0, 1, // packet of width, height, framerate numerator and framerate denominator
-    session_id // current session id
+    session_id // session identifier
   };
 
-  // Attempt to append the packet to the ElementaryMediaTrack
+  // Attempt to append the packet to the audio track for rendering
   if (track->AppendPacket(pkt)) {
     // If successful, update the presentation timestamp for the next packet
     s_pktPts += s_frameDuration;
   } else {
     MoonlightInstance::ClLogMessage("Append audio packet failed\n");
+  }
+
+  // Resize decode buffer if it's smaller than the desired size
+  if (s_desiredBufferSize > s_DecodeBuffer.size()) {
+    s_DecodeBuffer.resize(s_desiredBufferSize);
   }
 }
 
@@ -75,10 +86,17 @@ int MoonlightInstance::AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONF
   // Initialize packet timestamp to zero
   s_pktPts = 0s;
 
-  // Resize the decode buffer based on frame size and max channels
-  s_DecodeBuffer.resize(FRAME_SIZE * MAX_CHANNEL_COUNT);
+  // Initialize samples per frame (240) and channels count (2, 6, 8)
+  s_samplesPerFrame = opusConfig->samplesPerFrame;
+  s_channelCount = opusConfig->channelCount;
 
-  // Calculate the frame duration based on the samples per frame and sample rate
+  // Calculate buffer size in bytes for one decoded audio frame
+  size_t s_bufferSize = sizeof(opus_int16) * s_samplesPerFrame * s_channelCount;
+
+  // Resize the decode buffer based on the samples per frame and channels count
+  s_DecodeBuffer.resize(s_bufferSize);
+
+  // Calculate the frame duration based on the samples per frame (240) and sample rate (48000)
   s_frameDuration = FrameDuration(opusConfig->samplesPerFrame, opusConfig->sampleRate);
 
   // Create the Opus decoder with the provided configuration parameters
