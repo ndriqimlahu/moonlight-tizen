@@ -210,7 +210,7 @@ static void HexStringToBytes(const char* str, char* output) {
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
+  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
   PostToJs("Setting the Host address to: " + host);
   PostToJs("Setting the Video resolution to: " + width + "x" + height);
   PostToJs("Setting the Video frame rate to: " + fps + " FPS");
@@ -228,6 +228,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the Mouse emulation to: " + std::to_string(mouseEmulation));
   PostToJs("Setting the Flip A/B face buttons to: " + std::to_string(flipABfaceButtons));
   PostToJs("Setting the Flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
+  PostToJs("Setting the Audio configuration to: " + audioConfig);
   PostToJs("Setting the Audio synchronization to: " + std::to_string(audioSync));
   PostToJs("Setting the Video codec to: " + videoCodec);
   PostToJs("Setting the Video HDR mode to: " + std::to_string(hdrMode));
@@ -241,7 +242,34 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_StreamConfig.bitrate = stoi(bitrate); // kilobits per second
   m_StreamConfig.packetSize = 1392;
   m_StreamConfig.streamingRemotely = STREAM_CFG_AUTO;
-  m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
+
+  // Initialize the audio configuration with default value
+  m_StreamConfig.audioConfiguration = 0;
+  // Handle setting of audio configuration values ​​based on the selected audio
+  if (audioConfig == "Stereo") { // Stereo
+    // Apply the appropriate value for the Stereo audio
+    m_StreamConfig.audioConfiguration |= AUDIO_CONFIGURATION_STEREO;
+    PostToJs("Selecting the audio config to: AUDIO_CONFIGURATION_STEREO");
+  } else if (audioConfig == "51Surround") { // 5.1 Surround
+    // Apply the appropriate value for the 5.1 Surround audio
+    m_StreamConfig.audioConfiguration |= AUDIO_CONFIGURATION_51_SURROUND;
+    PostToJs("Selecting the audio config to: AUDIO_CONFIGURATION_51_SURROUND");
+  } else if (audioConfig == "71Surround") { // 7.1 Surround
+    // Apply the appropriate value for the 7.1 Surround audio
+    m_StreamConfig.audioConfiguration |= AUDIO_CONFIGURATION_71_SURROUND;
+    PostToJs("Selecting the audio config to: AUDIO_CONFIGURATION_71_SURROUND");
+  } else { // Unknown
+    // Default case for unsupported audio selection
+    ClLogMessage("Unsupported audio config '%s' detected! Reverting to the default audio...\n", audioConfig.c_str());
+  }
+  // Handle fall back logic for audio configuration
+  if (m_StreamConfig.audioConfiguration == 0) { // Unset
+    // Fallback to Stereo if no audio was selected
+    m_StreamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
+    PostToJs("Selecting the fallback audio config to: AUDIO_CONFIGURATION_STEREO");
+  }
+  // Store the audio configuration value from the stream configurations
+  m_AudioConfig = m_StreamConfig.audioConfiguration;
 
   // Initialize the supported video format with default value
   m_StreamConfig.supportedVideoFormats = 0;
@@ -440,10 +468,10 @@ int main(int argc, char** argv) {
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
+  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
   PostToJs("Starting the streaming session...");
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
-  framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+  framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioConfig,
   audioSync, videoCodec, hdrMode, fullRange);
 }
 
