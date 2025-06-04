@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.6.0
+
+### Added
+- Introduced a new 'Audio configuration' setting that allows selection of audio channels
+- Added a navigation view to interact with the new 'Audio configuration' setting
+- Implemented functionality to save value and initiate the stream with preferred audio config
+- Added a warning message when selecting 5.1 or 7.1 surround sound options
+- Handling of audio channels based on the selected audio configuration option
+
+### Changed
+- Enhanced audio decoding logic to support 5.1 and 7.1 surround audio channels
+
 ## v1.5.1
 
 ### Added
