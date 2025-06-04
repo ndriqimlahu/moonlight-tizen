@@ -244,6 +244,20 @@
           </div>
           <div id="audioSettings" class="settings-options">
             <div class="setting-option">
+              <label>Audio configuration</label>
+              <span class="mdl-list__item-text-body">
+                - Choose 5.1 or 7.1 surround sound for home-theater systems, or select Stereo for general compatibility.
+              </span>
+              <div id="audioConfigMenu">
+                <button type="button" id="selectAudio" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="Stereo">Stereo</button>
+              </div>
+              <ul class="audioConfigMenu mdl-menu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectAudio">
+                <li class="mdl-menu__item" data-value="Stereo">Stereo</li>
+                <li class="mdl-menu__item" data-value="51Surround">5.1 Surround Sound</li>
+                <li class="mdl-menu__item" data-value="71Surround">7.1 Surround Sound</li>
+              </ul>
+            </div>
+            <div class="setting-option">
               <label>Audio synchronization:</label>
               <div id="audioSyncMenu">
                 <label id="audioSyncBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="audioSyncSwitch">

@@ -9,6 +9,7 @@ var isDialogOpen = false; // Flag indicating whether the dialog is open, initial
 var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
 var resFpsWarning = false; // Flag indicating whether the video resolution and frame rate warning message has shown, initial value is false
 var bitrateWarning = false; // Flag indicating whether the video bitrate warning message has shown, initial value is false
+var audioWarning = false; // Flag indicating whether the audio configuration warning message has shown, initial value is false
 var codecWarning = false; // Flag indicating whether the video codec warning message has shown, initial value is false
 var repeatAction = null; // Flag indicating whether the repeat action is set, initial value is null
 var lastInvokeTime = 0; // Flag indicating the last invoke time, initial value is 0
@@ -45,6 +46,7 @@ function attachListeners() {
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
   $('#flipABfaceButtonsSwitch').on('click', saveFlipABfaceButtons);
   $('#flipXYfaceButtonsSwitch').on('click', saveFlipXYfaceButtons);
+  $('.audioConfigMenu li').on('click', saveAudioConfiguration);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('.videoCodecMenu li').on('click', saveVideoCodec);
   $('#hdrModeSwitch').on('click', saveHdrMode);
@@ -66,6 +68,7 @@ function attachListeners() {
   registerMenu('selectResolution', Views.SelectResolutionMenu);
   registerMenu('selectFramerate', Views.SelectFramerateMenu);
   registerMenu('selectBitrate', Views.SelectBitrateMenu);
+  registerMenu('selectAudio', Views.SelectAudioMenu);
   registerMenu('selectCodec', Views.SelectCodecMenu);
 
   $(window).resize(fullscreenWasmModule);
@@ -1987,6 +1990,7 @@ function startGame(host, appID) {
       const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      var audioConfig = $('#selectAudio').data('value').toString();
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var videoCodec = $('#selectCodec').data('value').toString();
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -2004,6 +2008,7 @@ function startGame(host, appID) {
       '\n Mouse emulation: ' + mouseEmulation + 
       '\n Flip A/B face buttons: ' + flipABfaceButtons + 
       '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
+      '\n Audio configuration: ' + audioConfig + 
       '\n Audio synchronization: ' + audioSync + 
       '\n Video codec: ' + videoCodec + 
       '\n Video HDR mode: ' + hdrMode + 
@@ -2039,7 +2044,7 @@ function startGame(host, appID) {
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
             framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            audioSync, videoCodec, hdrMode, fullRange
+            audioConfig, audioSync, videoCodec, hdrMode, fullRange
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -2079,7 +2084,7 @@ function startGame(host, appID) {
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
           framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          audioSync, videoCodec, hdrMode, fullRange
+          audioConfig, audioSync, videoCodec, hdrMode, fullRange
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2483,6 +2488,31 @@ function saveFlipXYfaceButtons() {
   }, 100);
 }
 
+function saveAudioConfiguration() {
+  var chosenAudioConfig = $(this).data('value');
+  $('#selectAudio').text($(this).text()).data('value', chosenAudioConfig);
+  console.log('%c[index.js, saveAudioConfiguration]', 'color: green;', 'Saving audioConfig value: ' + chosenAudioConfig);
+  storeData('audioConfig', chosenAudioConfig, null);
+
+  // Trigger warning check after changing audio configuration
+  warnAudioConfiguration();
+}
+
+function warnAudioConfiguration() {
+  var chosenAudioConfig = $('#selectAudio').data('value');
+
+  // Audio configuration warning
+  if (!audioWarning && (chosenAudioConfig === '71Surround' || chosenAudioConfig === '51Surround')) {
+    // Warn only if audio configuration is selected to 5.1 or 7.1 Surround
+    snackbarLogLong('Warning: 5.1 or 7.1 Surround sound may not be supported by your host PC and may increase audio latency!');
+    // Set flag for audio configuration warning
+    audioWarning = true;
+  } else if (audioWarning && (chosenAudioConfig === 'Stereo')) {
+    // Reset the flag for audio configuration warning if the condition goes back to normal (Stereo)
+    audioWarning = false;
+  }
+}
+
 function saveAudioSync() {
   setTimeout(() => {
     const chosenAudioSync = $('#audioSyncSwitch').parent().hasClass('is-checked');
@@ -2632,6 +2662,10 @@ function restoreDefaultsSettingsValues() {
   const defaultFlipXYfaceButtons = false;
   document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
   storeData('flipXYfaceButtons', defaultFlipXYfaceButtons, null);
+
+  const defaultAudioConfig = 'Stereo';
+  $('#selectAudio').text('Stereo').data('value', defaultAudioConfig);
+  storeData('audioConfig', defaultAudioConfig, null);
 
   const defaultAudioSync = false;
   document.querySelector('#audioSyncBtn').MaterialSwitch.off();
@@ -2869,6 +2903,18 @@ function loadUserDataCb() {
       document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored audioConfig preferences.');
+  getData('audioConfig', function(previousValue) {
+    if (previousValue.audioConfig != null) {
+      $('.audioConfigMenu li').each(function() {
+        if ($(this).data('value') === previousValue.audioConfig) {
+          // Update the audio configuration field based on the given value
+          $('#selectAudio').text($(this).text()).data('value', previousValue.audioConfig);
+        }
+      });
     }
   });
 

@@ -134,13 +134,32 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   ClLogMessage("Closed\n");
 
   {
+    samsung::wasm::ChannelLayout channelLayout; // Selected audio channel layout from audio config
+    switch (CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(g_Instance->m_AudioConfig)) {
+      case 2:
+        channelLayout = samsung::wasm::ChannelLayout::kStereo; // Audio Channel: Stereo
+        ClLogMessage("Selected channel layout for Stereo audio\n");
+        break;
+      case 6:
+        channelLayout = samsung::wasm::ChannelLayout::k5_1; // Audio Channel: 5.1 Surround Sound
+        ClLogMessage("Selected channel layout for 5.1 Surround audio\n");
+        break;
+      case 8:
+        channelLayout = samsung::wasm::ChannelLayout::k7_1; // Audio Channel: 7.1 Surround Sound
+        ClLogMessage("Selected channel layout for 7.1 Surround audio\n");
+        break;
+      default:
+        ClLogMessage("Unable to select channel layout from audio configuration\n");
+        break;
+    }
+
     auto add_track_result = g_Instance->m_Source.AddTrack(
       samsung::wasm::ElementaryAudioTrackConfig {
         "audio/webm; codecs=\"pcm\"", // Audio Codec: Pulse Code Modulation (PCM) Profile
         {}, // Extradata: Empty
         samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
         samsung::wasm::SampleFormat::kS16, // Sample Format: 16-bit signed integer (S16)
-        samsung::wasm::ChannelLayout::kStereo, // Channel Layout: Stereo (2 channels)
+        channelLayout, // Channel Layout: Stereo (2-CH), 5.1 Surround (6-CH), 7.1 Surround (8-CH)
         kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
       });
     if (add_track_result) {
