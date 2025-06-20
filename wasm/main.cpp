@@ -304,6 +304,9 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   // Apply the desired color range ​based on the toggle switch state
   m_StreamConfig.colorRange |= fullRange ? COLOR_RANGE_FULL : COLOR_RANGE_LIMITED;
 
+  // Limit encryption to devices that do not support AES instructions
+  m_StreamConfig.encryptionFlags = ENCFLG_NONE;
+
   // Load the rikey and rikeyid into the stream configuration
   HexStringToBytes(rikey.c_str(), m_StreamConfig.remoteInputAesKey);
   int rikeyiv = htonl(stoi(rikeyid));
