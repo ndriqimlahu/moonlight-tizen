@@ -53,7 +53,7 @@ function attachListeners() {
   $('#fullRangeSwitch').on('click', saveFullRange);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
-  $('#restartAppBtn').on('click', restartApplication);
+  $('#restartAppBtn').on('click', restartAppDialog);
 
   const registerMenu = (elementId, view) => {
     $(`#${elementId}`).on('click', () => {
@@ -1518,8 +1518,8 @@ function restoreDefaultsDialog() {
     isDialogOpen = false;
     Navigation.pop();
     Navigation.switch();
-    // Show the Restart Moonlight dialog and push the view
-    setTimeout(() => restartAppDialog(), 2000);
+    // Show the required Restart Moonlight dialog and push the view
+    setTimeout(() => requiredRestartAppDialog(), 2000);
   });
 }
 
@@ -1534,6 +1534,48 @@ function restartAppDialog() {
   // Find the existing overlay and dialog elements
   var restartAppDialogOverlay = document.querySelector('#restartAppDialogOverlay');
   var restartAppDialog = document.querySelector('#restartAppDialog');
+
+  // Change the dialog text element to confirm whether the user wants to restart the application
+  document.getElementById('restartAppDialogText').innerHTML = 'Are you sure you want to restart Moonlight?';
+
+  // Show the dialog and push the view
+  restartAppDialogOverlay.style.display = 'flex';
+  restartAppDialog.showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.RestartMoonlightDialog);
+
+  // Cancel the operation if the Cancel button is pressed
+  $('#cancelRestartApp').off('click');
+  $('#cancelRestartApp').on('click', function() {
+    console.log('%c[index.js, restartAppDialog]', 'color: green;', 'Closing app dialog and returning.');
+    restartAppDialogOverlay.style.display = 'none';
+    restartAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  });
+
+  // Restart the application if the Restart button is pressed
+  $('#continueRestartApp').off('click');
+  $('#continueRestartApp').on('click', function() {
+    console.log('%c[index.js, restartAppDialog]', 'color: green;', 'Closing app dialog, restarting application, and returning.');
+    restartAppDialogOverlay.style.display = 'none';
+    restartAppDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    restartApplication();
+  });
+}
+
+// Show the required Restart Moonlight dialog
+function requiredRestartAppDialog() {
+  // Find the existing overlay and dialog elements
+  var restartAppDialogOverlay = document.querySelector('#restartAppDialogOverlay');
+  var restartAppDialog = document.querySelector('#restartAppDialog');
+
+  // Change the dialog text element to inform the user that a restart is required
+  document.getElementById('restartAppDialogText').innerHTML = 'In order for your changes to take effect, a restart of the application is required.'
+  + '<br><br>' + 'Would you like to proceed with the restart?';
 
   // Show the dialog and push the view
   restartAppDialogOverlay.style.display = 'flex';
