@@ -77,9 +77,9 @@ jobs:
         run: |
           VERSION=$(grep -oP 'version="\K[0-9]+\.[0-9]+\.[0-9]+' res/config.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # Sets the full Docker image tag using the output from the 'build-and-push-image' job.
+      # Sets the full Docker image tag using the GitHub Container Registry with the username, repository name, and using the 'nightly' tag.
       - name: Set up image tag
-        run: echo "IMAGE_TAG=${{ needs.build-and-push-image.outputs.image_tag }}" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=ghcr.io/ndriqimlahu/moonlight-tizen:nightly" >> $GITHUB_ENV
       # Deletes any existing GitHub pre-releases and their corresponding tags to avoid duplicates.
       - name: Check for existing GitHub pre-releases and delete them with tags
         id: delete_old_prerelease
