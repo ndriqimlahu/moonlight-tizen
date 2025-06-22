@@ -73,7 +73,8 @@ EM_BOOL MoonlightInstance::HandleWheel(const EmscriptenWheelEvent &event) {
     return EM_FALSE;
   }
 
-  m_AccumulatedTicks += event.deltaY;
+  // Inverted delta y-axis to restore correct wheel direction
+  m_AccumulatedTicks -= event.deltaY;
   return EM_TRUE;
 }
 
