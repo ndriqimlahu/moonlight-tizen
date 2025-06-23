@@ -18,11 +18,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added issue templates for bug report and feature request with selection options
-- Added GitHub Action workflow for scheduled release USB method with associated file
+- Added GitHub Actions workflow for scheduled release USB method with associated file
 
 ### Changed
 - Improved pull request template with structured sections and helpful instructions
-- Improved GitHub Action workflow for automated release publishing with associated file
+- Improved GitHub Actions workflow for automated release publishing with associated file
 
 ### Removed
 - Removed the 'Buy Me a Coffee' funding platform due to regional restrictions
@@ -473,7 +473,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added bitrate presets for '120 FPS' frame rate option
-- Added GitHub Action for automated Docker image publishing
+- Added GitHub Actions for automated Docker image publishing
 
 ### Changed
 - Optimized Dockerfile using multi-stage build to reduce Docker image size
