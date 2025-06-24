@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.6.1
+
+### Added
+- Added encryption flag to stream configurations that disables encryption support
+
+### Changed
+- Updated 'Restart Moonlight' dialog to display appropriate message based on the restart request
+
+### Fixed
+- Fixed image tag setup in GitHub Actions scheduled workflow to use the correct Docker image tag
+- Fixed navigation view issues caused by pressing the RED key outside stream session
+- Fixed mouse wheel scroll direction issue caused by previously disabled floating menu
+
 ## v1.6.0
 
 ### Added
