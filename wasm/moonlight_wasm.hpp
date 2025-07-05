@@ -114,6 +114,7 @@ class MoonlightInstance {
   static void ClDisplayTransientMessage(const char* message);
   static void ClLogMessage(const char* format, ...);
   static void ClControllerRumble(unsigned short controllerNumber, unsigned short lowFreqMotor, unsigned short highFreqMotor);
+  static void ClConnectionStatusUpdate(int connectionStatus);
 
   void DidChangeFocus(bool got_focus);
   bool InitializeRenderingSurface(int width, int height);

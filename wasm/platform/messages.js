@@ -133,6 +133,14 @@ function handleMessage(msg) {
   } else if (msg === 'displayVideo') {
     // Show the video stream now
     $('#listener').addClass('fullscreen');
+  } else if (msg.indexOf('NoWarningMsg: ') === 0) {
+    // Hide the connection warnings overlay
+    $('#connection-warnings').css('background', 'transparent');
+    $('#connection-warnings').text('');
+  } else if (msg.indexOf('WarningMsg: ') === 0) {
+    // Show the connection warnings overlay
+    $('#connection-warnings').css('background', 'rgba(0, 0, 0, 0.5)');
+    $('#connection-warnings').text(msg.replace('WarningMsg: ', ''));
   } else if (msg.indexOf('controllerRumble: ') === 0) {
     const eventData = msg.split(' ')[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);

@@ -55,6 +55,21 @@ void MoonlightInstance::ClLogMessage(const char* format, ...) {
   emscripten_log(EM_LOG_CONSOLE, "%s", message);
 }
 
+void MoonlightInstance::ClConnectionStatusUpdate(int connectionStatus) {
+  if (g_Instance->m_DisableWarningsEnabled == false) {
+    switch (connectionStatus) {
+      case CONN_STATUS_OKAY:
+        PostToJs(std::string("NoWarningMsg: ") + std::string("Connection to PC has been improved."));
+        break;
+      case CONN_STATUS_POOR:
+        PostToJs(std::string("WarningMsg: ") + std::string("Slow connection to PC.\nReduce your bitrate!"));
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 CONNECTION_LISTENER_CALLBACKS MoonlightInstance::s_ClCallbacks = {
   .stageStarting = MoonlightInstance::ClStageStarting,
   .stageFailed = MoonlightInstance::ClStageFailed,
@@ -62,4 +77,5 @@ CONNECTION_LISTENER_CALLBACKS MoonlightInstance::s_ClCallbacks = {
   .connectionTerminated = MoonlightInstance::ClConnectionTerminated,
   .logMessage = MoonlightInstance::ClLogMessage,
   .rumble = MoonlightInstance::ClControllerRumble,
+  .connectionStatusUpdate = MoonlightInstance::ClConnectionStatusUpdate,
 };
