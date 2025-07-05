@@ -276,6 +276,7 @@ function showHostsMode() {
   $('#goBackBtn').hide();
   $('#restoreDefaultsBtn').hide();
   $('#quitRunningAppBtn').hide();
+  $('#connection-warnings').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1090,6 +1091,7 @@ function showSettingsMode() {
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $('#quitRunningAppBtn').hide();
+  $('#connection-warnings').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1720,6 +1722,7 @@ function showAppsMode() {
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $('#restoreDefaultsBtn').hide();
+  $('#connection-warnings').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
   $('#loadingSpinner').css('display', 'none');
@@ -1941,6 +1944,7 @@ function showStreamMode() {
 
   isInGame = true;
   fullscreenWasmModule();
+  handleOnScreenOverlays();
   Navigation.stop();
 }
 
@@ -1960,6 +1964,15 @@ function fullscreenWasmModule() {
   module.width = zoom * streamWidth;
   module.height = zoom * streamHeight;
   module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
+}
+
+// Handle on-screen overlays when the streaming session starts
+function handleOnScreenOverlays() {
+  // Find the existing toggle switch elements
+  const disableWarningsSwitch = document.getElementById('disableWarningsSwitch');
+
+  // Check if the disable warnings switch is checked, then hide or show the connection warning messages
+  disableWarningsSwitch.checked ? $('#connection-warnings').css('display', 'none') : $('#connection-warnings').css('display', 'inline-block');
 }
 
 // Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
@@ -2058,6 +2071,9 @@ function startGame(host, appID) {
       '\n Video HDR mode: ' + hdrMode + 
       '\n Full color range: ' + fullRange + 
       '\n Disable connection warnings: ' + disableWarnings);
+
+      // Hide on-screen overlays until the streaming session begins
+      $('#connection-warnings').css('background', 'transparent').text('');
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');

@@ -652,12 +652,27 @@ body {
    Streaming Layout
 ============================= */
 .fullscreen {
+    position: relative !important;
     height: 100vh !important;
     z-index: 1 !important;
     margin: auto !important;
     padding: 0 !important;
     border: none !important;
     overflow: hidden !important;
+}
+#connection-warnings {
+    color: #fff;
+    background: transparent;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: pre-wrap;
 }
 /* =============================
    Settings Section
