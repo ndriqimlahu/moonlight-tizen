@@ -306,6 +306,16 @@
                 </label>
               </div>
             </div>
+            <div class="setting-option">
+              <label>Connection warnings</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="connectionWarningsMenu">
+                <label id="disableWarningsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="disableWarningsSwitch">
+                  <input type="checkbox" id="disableWarningsSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Disable on-screen connection warning messages while streaming</span>
+                </label>
+              </div>
+            </div>
           </div>
           <div id="aboutSettings" class="settings-options">
             <div class="setting-option">
@@ -365,6 +375,7 @@
         <h4 id="loadingSpinnerMessage"></h4>
       </div>
     </main>
+    <div id="connection-warnings"></div>
   </div>
   <script defer src="static/js/jquery-2.2.0.min.js"></script>
   <script defer src="static/js/material.min.js"></script>

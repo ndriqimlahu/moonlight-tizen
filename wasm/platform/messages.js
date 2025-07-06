@@ -7,7 +7,7 @@ const SyncFunctions = {
   'httpInit': (...args) => Module.httpInit(...args),
   /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
   framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-  audioConfig, audioSync, videoCodec, hdrMode, fullRange */
+  audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),
@@ -72,6 +72,8 @@ function handleMessage(msg) {
   console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Message data: ', msg);
   // If it's a recognized event, notify the appropriate function
   if (msg.indexOf('streamTerminated: ') === 0) {
+    // Remove the on-screen overlays
+    $('#connection-warnings').css('display', 'none');
     // Show a termination snackbar message if the termination was unexpected
     var errorCode = parseInt(msg.replace('streamTerminated: ', ''));
     switch (errorCode) {
@@ -131,6 +133,14 @@ function handleMessage(msg) {
   } else if (msg === 'displayVideo') {
     // Show the video stream now
     $('#listener').addClass('fullscreen');
+  } else if (msg.indexOf('NoWarningMsg: ') === 0) {
+    // Hide the connection warnings overlay
+    $('#connection-warnings').css('background', 'transparent');
+    $('#connection-warnings').text('');
+  } else if (msg.indexOf('WarningMsg: ') === 0) {
+    // Show the connection warnings overlay
+    $('#connection-warnings').css('background', 'rgba(0, 0, 0, 0.5)');
+    $('#connection-warnings').text(msg.replace('WarningMsg: ', ''));
   } else if (msg.indexOf('controllerRumble: ') === 0) {
     const eventData = msg.split(' ')[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);

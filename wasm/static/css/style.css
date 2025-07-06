@@ -652,12 +652,27 @@ body {
    Streaming Layout
 ============================= */
 .fullscreen {
+    position: relative !important;
     height: 100vh !important;
     z-index: 1 !important;
     margin: auto !important;
     padding: 0 !important;
     border: none !important;
     overflow: hidden !important;
+}
+#connection-warnings {
+    color: #fff;
+    background: transparent;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: pre-wrap;
 }
 /* =============================
    Settings Section
@@ -826,7 +841,7 @@ body {
 #ipAddressFieldModeBtn, #sortAppsListBtn, #optimizeGamesBtn, #playHostAudioBtn,
 #removeAllHostsBtn, #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn,
 #flipXYfaceButtonsBtn, #selectAudio, #audioSyncBtn, #selectCodec, #hdrModeBtn,
-#fullRangeBtn, #navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
+#fullRangeBtn, #disableWarningsBtn, #navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -939,9 +954,9 @@ body {
 #optimizeGamesBtn:hover, #optimizeGamesBtn:focus, #playHostAudioBtn:hover, #playHostAudioBtn:focus, #rumbleFeedbackBtn:hover, #rumbleFeedbackBtn:focus,
 #mouseEmulationBtn:hover, #mouseEmulationBtn:focus, #flipABfaceButtonsBtn:hover,#flipABfaceButtonsBtn:focus, #flipXYfaceButtonsBtn:hover,
 #flipXYfaceButtonsBtn:focus, #selectAudio:hover, #selectAudio:focus, #audioSyncBtn:hover, #audioSyncBtn:focus, #selectCodec:hover, #selectCodec:focus,
-#hdrModeBtn:hover, #hdrModeBtn:focus, #fullRangeBtn:hover, #fullRangeBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover,
-#removeAllHostsBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus, #checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover,
-#restartAppBtn:focus {
+#hdrModeBtn:hover, #hdrModeBtn:focus, #fullRangeBtn:hover, #fullRangeBtn:focus, #disableWarningsBtn:hover, #disableWarningsBtn:focus,
+#systemInfoBtn:hover, #systemInfoBtn:focus, #removeAllHostsBtn:hover, #removeAllHostsBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus,
+#checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }

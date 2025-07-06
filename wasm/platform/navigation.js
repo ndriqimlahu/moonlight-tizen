@@ -1035,7 +1035,8 @@ const Views = {
     view: new ListView(() => [
       'selectCodec',
       'hdrModeBtn',
-      'fullRangeBtn'
+      'fullRangeBtn',
+      'disableWarningsBtn'
     ]),
     up: function() {
       this.view.prevOption();

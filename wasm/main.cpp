@@ -210,7 +210,7 @@ static void HexStringToBytes(const char* str, char* output) {
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
+  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings) {
   PostToJs("Setting the Host address to: " + host);
   PostToJs("Setting the Video resolution to: " + width + "x" + height);
   PostToJs("Setting the Video frame rate to: " + fps + " FPS");
@@ -233,6 +233,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the Video codec to: " + videoCodec);
   PostToJs("Setting the Video HDR mode to: " + std::to_string(hdrMode));
   PostToJs("Setting the Full color range to: " + std::to_string(fullRange));
+  PostToJs("Setting the Disable connection warnings to: " + std::to_string(disableWarnings));
 
   // Populate the stream configuration
   LiInitializeStreamConfiguration(&m_StreamConfig);
@@ -331,6 +332,7 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_AudioSyncEnabled = audioSync;
   m_HdrModeEnabled = hdrMode;
   m_FullRangeEnabled = fullRange;
+  m_DisableWarningsEnabled = disableWarnings;
 
   // Initialize the rendering surface before starting the connection
   if (InitializeRenderingSurface(m_StreamConfig.width, m_StreamConfig.height)) {
@@ -471,11 +473,11 @@ int main(int argc, char** argv) {
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange) {
+  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings) {
   PostToJs("Starting the streaming session...");
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
   framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioConfig,
-  audioSync, videoCodec, hdrMode, fullRange);
+  audioSync, videoCodec, hdrMode, fullRange, disableWarnings);
 }
 
 MessageResult stopStream() {

@@ -51,6 +51,7 @@ function attachListeners() {
   $('.videoCodecMenu li').on('click', saveVideoCodec);
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#fullRangeSwitch').on('click', saveFullRange);
+  $('#disableWarningsSwitch').on('click', saveDisableWarnings);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartAppDialog);
@@ -275,6 +276,7 @@ function showHostsMode() {
   $('#goBackBtn').hide();
   $('#restoreDefaultsBtn').hide();
   $('#quitRunningAppBtn').hide();
+  $('#connection-warnings').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1089,6 +1091,7 @@ function showSettingsMode() {
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $('#quitRunningAppBtn').hide();
+  $('#connection-warnings').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1719,6 +1722,7 @@ function showAppsMode() {
   $('#settingsBtn').hide();
   $('#supportBtn').hide();
   $('#restoreDefaultsBtn').hide();
+  $('#connection-warnings').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
   $('#loadingSpinner').css('display', 'none');
@@ -1940,6 +1944,7 @@ function showStreamMode() {
 
   isInGame = true;
   fullscreenWasmModule();
+  handleOnScreenOverlays();
   Navigation.stop();
 }
 
@@ -1959,6 +1964,15 @@ function fullscreenWasmModule() {
   module.width = zoom * streamWidth;
   module.height = zoom * streamHeight;
   module.style.marginTop = ((screenHeight - module.height) / 2) + 'px';
+}
+
+// Handle on-screen overlays when the streaming session starts
+function handleOnScreenOverlays() {
+  // Find the existing toggle switch elements
+  const disableWarningsSwitch = document.getElementById('disableWarningsSwitch');
+
+  // Check if the disable warnings switch is checked, then hide or show the connection warning messages
+  disableWarningsSwitch.checked ? $('#connection-warnings').css('display', 'none') : $('#connection-warnings').css('display', 'inline-block');
 }
 
 // Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
@@ -2037,6 +2051,7 @@ function startGame(host, appID) {
       var videoCodec = $('#selectCodec').data('value').toString();
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const disableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
       '\n Host address: ' + host.address + 
@@ -2054,7 +2069,11 @@ function startGame(host, appID) {
       '\n Audio synchronization: ' + audioSync + 
       '\n Video codec: ' + videoCodec + 
       '\n Video HDR mode: ' + hdrMode + 
-      '\n Full color range: ' + fullRange);
+      '\n Full color range: ' + fullRange + 
+      '\n Disable connection warnings: ' + disableWarnings);
+
+      // Hide on-screen overlays until the streaming session begins
+      $('#connection-warnings').css('background', 'transparent').text('');
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
@@ -2086,7 +2105,7 @@ function startGame(host, appID) {
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
             framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            audioConfig, audioSync, videoCodec, hdrMode, fullRange
+            audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -2126,7 +2145,7 @@ function startGame(host, appID) {
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
           framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          audioConfig, audioSync, videoCodec, hdrMode, fullRange
+          audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2654,6 +2673,14 @@ function saveFullRange() {
   }, 100);
 }
 
+function saveDisableWarnings() {
+  setTimeout(() => {
+    const chosenDisableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveDisableWarnings]', 'color: green;', 'Saving disable warnings state: ' + chosenDisableWarnings);
+    storeData('disableWarnings', chosenDisableWarnings, null);
+  }, 100);
+}
+
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2724,6 +2751,10 @@ function restoreDefaultsSettingsValues() {
   const defaultFullRange = false;
   document.querySelector('#fullRangeBtn').MaterialSwitch.off();
   storeData('fullRange', defaultFullRange, null);
+
+  const defaultDisableWarnings = false;
+  document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
+  storeData('disableWarnings', defaultDisableWarnings, null);
 }
 
 function initSamsungKeys() {
@@ -3002,6 +3033,17 @@ function loadUserDataCb() {
       document.querySelector('#fullRangeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#fullRangeBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored disableWarnings preferences.');
+  getData('disableWarnings', function(previousValue) {
+    if (previousValue.disableWarnings == null) {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.disableWarnings == false) {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.on();
     }
   });
 }
