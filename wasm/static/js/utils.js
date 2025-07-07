@@ -84,8 +84,11 @@ function NvHTTP(address, clientUid, userEnteredAddress = '', macAddress) {
   this.hostname = address;
   this.address = address;
   this.userEnteredAddress = userEnteredAddress; // if the user entered an address, we keep it on hand to try when polling
+  this.localAddress = '';
   this.externalIP = '';
   this.macAddress = macAddress;
+  this.httpsPort = 0;
+  this.externalPort = 0;
   this.clientUid = clientUid;
   this.serverUid = '';
   this.ppkstr = null;
@@ -99,6 +102,7 @@ function NvHTTP(address, clientUid, userEnteredAddress = '', macAddress) {
   this.appVersion = '';
   this.gfeVersion = '';
   this.serverMajorVersion = 0;
+  this.serverState = '';
   this.gputype = '';
   this.supportedDisplayModes = {}; // key: y-resolution:x-resolution, value: array of supported frame rates
 
@@ -278,7 +282,11 @@ NvHTTP.prototype = {
     var string = '';
     string += 'host name: ' + this.hostname + '\r\n';
     string += 'host address: ' + this.address + '\r\n';
+    string += 'local address: ' + this.localAddress + '\r\n';
+    string += 'external IP: ' + this.externalIP + '\r\n';
     string += 'mac address: ' + this.macAddress + '\r\n';
+    string += 'https port: ' + this.httpsPort + '\r\n';
+    string += 'external port: ' + this.externalPort + '\r\n';
     string += 'client UID: ' + this.clientUid + '\r\n';
     string += 'server UID: ' + this.serverUid + '\r\n';
     string += 'is paired: ' + this.paired + '\r\n';
@@ -288,6 +296,7 @@ NvHTTP.prototype = {
     string += 'app version: ' + this.appVersion + '\r\n';
     string += 'gfe version: ' + this.gfeVersion + '\r\n';
     string += 'server major version: ' + this.serverMajorVersion + '\r\n';
+    string += 'server state: ' + this.serverState + '\r\n';
     string += 'gpu type: ' + this.gputype + '\r\n';
     string += 'supported display modes: ' + '\r\n';
 
@@ -313,14 +322,25 @@ NvHTTP.prototype = {
 
     console.log('%c[utils.js, _parseServerInfo]', 'color: gray;', 'Parsing server info: ', $root);
 
-    this.paired = $root.find('PairStatus').text().trim() == 1;
-    this.currentGame = parseInt($root.find('currentgame').text().trim(), 10);
-    this.appVersion = $root.find('appversion').text().trim();
-    this.serverMajorVersion = parseInt(this.appVersion.substring(0, 1), 10);
+    // Retrieve the hostname and handle name validation
+    var serverName = $root.find('hostname').text().trim();
+    if (serverName != '') {
+      this.hostname = serverName;
+    } else {
+      this.hostname = 'UNKNOWN';
+    }
+
+    // UUID is mandatory to determine which machine is responding
     this.serverUid = $root.find('uniqueid').text().trim();
-    this.hostname = $root.find('hostname').text().trim();
+
+    // Retrieve the local IP address and MAC address of the host
+    this.localAddress = $root.find('LocalIP').text().trim();
     this.macAddress = $root.find('mac').text().trim();
-    this.serverCodecModeSupport = parseInt($root.find('ServerCodecModeSupport').text().trim(), 10);
+
+    // This is an extension which is not present in GFE. It is present for Sunshine to be able
+    // to support dynamic HTTP WAN ports without requiring the user to manually enter the port.
+    this.externalPort = parseInt($root.find('ExternalPort').text().trim(), 10);
+    this.httpsPort = parseInt($root.find('HttpsPort').text().trim(), 10);
 
     // This is not present in newer GFE versions
     var externIP = $root.find('ExternalIP').text().trim();
@@ -328,6 +348,14 @@ NvHTTP.prototype = {
       // Don't overwrite the external IP we found via STUN
       this.externalIP = externIP;
     }
+
+    // These are present in all supported GFE versions
+    this.paired = $root.find('PairStatus').text().trim() == 1;
+    this.appVersion = $root.find('appversion').text().trim();
+    this.serverMajorVersion = parseInt(this.appVersion.substring(0, 1), 10);
+
+    // This wasn't present on old GFE versions
+    this.serverCodecModeSupport = parseInt($root.find('ServerCodecModeSupport').text().trim(), 10);
 
     try {
       // These aren't critical for functionality, and don't necessarily exist in older GFE versions
@@ -350,10 +378,17 @@ NvHTTP.prototype = {
       // We don't need this data, so no error handling necessary
     }
 
+    var serverStatus = $root.find('state').text().trim();
+    if (serverStatus) {
+      this.serverState = serverStatus;
+    }
+
     // GFE 2.8 started keeping current game set to the last game played. As a result, it no longer
     // has the semantics that its name would indicate. To contain the effects of this change as much
     // as possible, we'll force the current game to zero if the server isn't in a streaming session.
-    if (!$root.find('state').text().trim().endsWith('_SERVER_BUSY')) {
+    if (serverStatus.endsWith('_SERVER_BUSY')) {
+      this.currentGame = parseInt($root.find('currentgame').text().trim(), 10);
+    } else {
       this.currentGame = 0;
     }
 
