@@ -1006,12 +1006,13 @@ function hostDetailsDialog(host) {
     class: 'host-details-text',
     html: 'Name: ' + host.hostname + '<br>' +
           'State: ' + (host.online ? 'ONLINE' : 'OFFLINE') + '<br>' +
-          'Local Address: ' + host.address + '<br>' +
-          'UUID: ' + host.serverUid + '<br>' +
-          'MAC Address: ' + host.macAddress + '<br>' +
+          'Active Address: ' + (host.address && host.externalPort ? host.address + ':' + host.externalPort : 'NULL') + '<br>' +
+          'UUID: ' + (host.serverUid ? host.serverUid : 'NULL') + '<br>' +
+          'Local Address: ' + (host.localAddress && host.externalPort ? host.localAddress + ':' + host.externalPort : 'NULL') + '<br>' +
+          'MAC Address: ' + (host.macAddress ? host.macAddress : 'NULL') + '<br>' +
           'Pair State: ' + (host.paired ? 'PAIRED' : 'UNPAIRED') + '<br>' +
           'Running Game ID: ' + host.currentGame + '<br>' +
-          'HTTPS Port: ' + '47984'
+          'HTTPS Port: ' + (host.httpsPort ? host.httpsPort : 'NULL')
   }).appendTo(hostDetailsDialogContent);
 
   // Create the actions section inside the dialog
