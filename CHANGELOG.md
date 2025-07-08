@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.7.0
+
+### Added
+- Introduced a new 'Connection warnings' setting that disables warning messages while streaming
+- Implemented functionality to toggle the connection warnings switch and save the changes
+- Added on-screen overlay for connection warnings shown only during streaming sessions
+- Handled connection status changes and provided warnings based on connection quality
+
+### Changed
+- Extended host object with additional server info and applied validation checks
+- Updated 'Host Details' dialog to display additional server info with fallback validation
+
 ## v1.6.1
 
 ### Added
