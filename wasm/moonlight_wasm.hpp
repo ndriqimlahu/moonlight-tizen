@@ -244,6 +244,7 @@ class MoonlightInstance {
 extern MoonlightInstance* g_Instance;
 
 void PostToJs(std::string msg);
+void PostToJsAsync(std::string msg);
 void PostPromiseMessage(int callbackId, const std::string& type, const std::string& response);
 void PostPromiseMessage(int callbackId, const std::string& type, const std::vector<uint8_t>& response);
 

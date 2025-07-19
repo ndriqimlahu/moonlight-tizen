@@ -504,6 +504,13 @@ void PostToJs(std::string msg) {
   }, msg.c_str());
 }
 
+void PostToJsAsync(std::string msg) {
+  MAIN_THREAD_ASYNC_EM_ASM({
+    const msg = UTF8ToString($0);
+    handleMessage(msg);
+  }, msg.c_str());
+}
+
 void PostPromiseMessage(int callbackId, const std::string& type, const std::string& response) {
   MAIN_THREAD_EM_ASM({
     const type = UTF8ToString($1);
