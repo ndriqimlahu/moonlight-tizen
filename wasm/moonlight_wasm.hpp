@@ -35,6 +35,9 @@
 // since our HTTP request library is synchronous.
 #define HTTP_HANDLER_THREADS 8
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 struct MessageResult {
   std::string type;
   emscripten::val ret;
