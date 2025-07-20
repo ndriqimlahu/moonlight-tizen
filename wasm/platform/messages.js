@@ -74,6 +74,11 @@ function handleMessage(msg) {
   if (msg.indexOf('streamTerminated: ') === 0) {
     // Remove the on-screen overlays
     $('#connection-warnings').css('display', 'none');
+    // Remove the video stream now
+    $('#listener').removeClass('fullscreen');
+    $('#loadingSpinner').css('display', 'none');
+    $('body').css('backgroundColor', '#282C38');
+    $('#wasm_module').css('display', 'none');
     // Show a termination snackbar message if the termination was unexpected
     var errorCode = parseInt(msg.replace('streamTerminated: ', ''));
     switch (errorCode) {
