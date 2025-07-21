@@ -46,7 +46,9 @@ static std::chrono::time_point<std::chrono::steady_clock> s_lastTime;
 static bool s_hasFirstFrame = false;
 static bool s_FramePacingEnabled = false;
 
-MoonlightInstance::SourceListener::SourceListener(MoonlightInstance* instance) : m_Instance(instance) {}
+MoonlightInstance::SourceListener::SourceListener(
+  MoonlightInstance* instance
+) : m_Instance(instance) {}
 
 void MoonlightInstance::SourceListener::OnSourceOpen() {
   ClLogMessage("EMSS::OnOpen\n");
@@ -69,7 +71,9 @@ void MoonlightInstance::SourceListener::OnSourceClosed() {
   m_Instance->m_EmssStateChanged.notify_all();
 }
 
-MoonlightInstance::AudioTrackListener::AudioTrackListener(MoonlightInstance* instance) : m_Instance(instance) {}
+MoonlightInstance::AudioTrackListener::AudioTrackListener(
+  MoonlightInstance* instance
+) : m_Instance(instance) {}
 
 void MoonlightInstance::AudioTrackListener::OnTrackOpen() {
   ClLogMessage("AUDIO ElementaryMediaTrack::OnTrackOpen\n");
@@ -90,7 +94,9 @@ void MoonlightInstance::AudioTrackListener::OnSessionIdChanged(samsung::wasm::Se
   m_Instance->m_AudioSessionId.store(new_session_id);
 }
 
-MoonlightInstance::VideoTrackListener::VideoTrackListener(MoonlightInstance* instance) : m_Instance(instance) {}
+MoonlightInstance::VideoTrackListener::VideoTrackListener(
+  MoonlightInstance* instance
+) : m_Instance(instance) {}
 
 void MoonlightInstance::VideoTrackListener::OnTrackOpen() {
   ClLogMessage("VIDEO ElementaryMediaTrack::OnTrackOpen\n");
@@ -161,7 +167,8 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
         samsung::wasm::SampleFormat::kS16, // Sample Format: 16-bit signed integer (S16)
         channelLayout, // Channel Layout: Stereo (2-CH), 5.1 Surround (6-CH), 7.1 Surround (8-CH)
         kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
-      });
+      }
+    );
     if (add_track_result) {
       g_Instance->m_AudioTrack = std::move(*add_track_result);
       g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
@@ -193,14 +200,15 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
     ClLogMessage("Using mimeType %s\n", mimetype);
     auto add_track_result = g_Instance->m_Source.AddTrack(
       samsung::wasm::ElementaryVideoTrackConfig {
-        mimetype, // MIME-type: Auto-Detect Video Codec
+        mimetype, // MIME-type: Selected Video Format
         {}, // Extradata: Empty
         samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
-        static_cast<uint32_t>(width), // Width: Video in Pixels
-        static_cast<uint32_t>(height), // Height: Video in Pixels
+        static_cast<uint32_t>(width), // Video resolution: Width
+        static_cast<uint32_t>(height), // Video resolution: Height
         static_cast<uint32_t>(redrawRate), // Framerate: Numerator
         1, // Framerate: Denominator
-      });
+      }
+    );
     if (add_track_result) {
       g_Instance->m_VideoTrack = std::move(*add_track_result);
       g_Instance->m_VideoTrack.SetListener(&g_Instance->m_VideoTrackListener);
@@ -235,7 +243,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
 }
 
 int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags) {
-  ClLogMessage("MoonlightInstance::VidDecSetup\n");
+  ClLogMessage("Video decoding setup has started.\n");
 
   // Resize the decode buffer based on initial decode buffer length
   s_DecodeBuffer.resize(INITIAL_DECODE_BUFFER_LEN);
@@ -288,13 +296,13 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
   PLENTRY entry;
   unsigned int offset;
   unsigned int totalLength;
-  
+
   // Build one packet from multiple data chunks
   totalLength = decodeUnit->fullLength;
 
-  // Check if the total length of the video data exceeds the current size of the decode buffer
+  // Ensure the decode buffer is large enough to hold the full packet
   if (totalLength > s_DecodeBuffer.size()) {
-    // Resize the decode buffer to accommodate the larger data
+    // Resize decode buffer to accommodate the larger data
     s_DecodeBuffer.resize(totalLength);
   }
 
@@ -323,17 +331,16 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
     s_firstAppend = std::chrono::steady_clock::now();
     // Update the flag to indicate that the first frame has been processed
     s_hasFirstFrame = true;
-  } else if (s_FramePacingEnabled) {
+  } else if (s_FramePacingEnabled) { // Check if the frame pacing is enabled
     // Calculate the time elapsed since the first frame
     TimeStamp fromStart = now - s_firstAppend;
     // Wait until the packet timestamp is within the frame time margin
     while (s_pktPts > fromStart - s_ptsDiff + kFrameTimeMargin) {
       // Update the current time and recalculate the elapsed time
       now = std::chrono::steady_clock::now();
-      // Calculate the time elapsed from the start of the frame presentation
       fromStart = now - s_firstAppend;
     }
-    // If the elapsed time exceeds the last second plus the time window
+    // Synchronize packet presentation timing every time window
     if (fromStart > s_lastSec + kTimeWindow) {
       // Update the last second to the current time plus the time window
       s_lastSec += kTimeWindow;
@@ -342,25 +349,25 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
     }
   }
 
-  // Update the last time to the current time
+  // Update the timestamp of the last packet append
   s_lastTime = now;
 
-  // Create an ElementaryMediaPacket with the decoded video data
+  // Create an ElementaryMediaPacket and start decoding with the decoded video data
   samsung::wasm::ElementaryMediaPacket pkt {
     s_pktPts, // presentation timestamp
     s_pktPts, // decoding timestamp
     s_frameDuration, // packet duration
     decodeUnit->frameType == FRAME_TYPE_IDR, // packet of frame type
-    offset, // packet offset
-    s_DecodeBuffer.data(), // pointer to packet data payload
+    offset, // packet size
+    s_DecodeBuffer.data(), // pointer to packet payload
     s_Width, // packet of width
     s_Height, // packet of height
     s_Framerate, // packet of framerate numerator
     1, // packet of framerate denominator
-    g_Instance->m_VideoSessionId.load() // current session id
+    g_Instance->m_VideoSessionId.load() // session identifier
   };
 
-  // Attempt to append the packet to the ElementaryMediaTrack
+  // Attempt to append the packet to the video track for rendering
   if (g_Instance->m_VideoTrack.AppendPacket(pkt)) {
     s_pktPts += s_frameDuration;
   } else {

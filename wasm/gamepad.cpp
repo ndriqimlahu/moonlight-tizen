@@ -11,8 +11,8 @@
 #include <Limelight.h>
 #include <emscripten/emscripten.h>
 
-// Bitmask for gamepad buttons to stop the streaming session
-const short STOP_STREAM_BUTTONS_FLAGS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
+// Bitmask for gamepad combo buttons to stop the streaming session
+const short STOP_STREAM_BUTTONS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
 // Flag for gamepad to track controller rumble state
 bool rumbleFeedbackSwitch = false;
@@ -196,8 +196,8 @@ void MoonlightInstance::PollGamepads() {
     const auto rightStickY = -gamepad.axis[GamepadAxis::RightY]
       * std::numeric_limits<short>::max();
 
-    // Check if the current button flags match the stop stream buttons flags
-    if (buttonFlags == STOP_STREAM_BUTTONS_FLAGS) {
+    // Check if the current button flags match the defined button combination on the gamepad
+    if (buttonFlags == STOP_STREAM_BUTTONS) {
       // Terminate the connection
       stopStream();
       return;
@@ -217,11 +217,11 @@ void MoonlightInstance::PollGamepads() {
           if (!mouseEmulationActive) {
             // Activate mouse emulation and notify the user
             mouseEmulationActive = true;
-            PostToJs("mouseEmulation enabled");
+            PostToJs(std::string("mouseEmulationOn"));
           } else {
             // Deactivate mouse emulation and notify the user
             mouseEmulationActive = false;
-            PostToJs("mouseEmulation disabled");
+            PostToJs(std::string("mouseEmulationOff"));
           }
           // Reset the PLAY/START press time to the current time after toggling
           activatePressTime = std::chrono::steady_clock::now();
@@ -266,7 +266,7 @@ void MoonlightInstance::PollGamepads() {
         // Send a mouse button release event for the left button
         LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_LEFT);
       }
-      if (buttonFlags & (LS_CLK_FLAG | RS_CLK_FLAG)) {
+      if (buttonFlags & (X_FLAG | Y_FLAG)) {
         // Send a mouse button press event for the Middle button
         LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_MIDDLE);
       } else {

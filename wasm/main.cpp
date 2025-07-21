@@ -297,8 +297,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
     m_StreamConfig.supportedVideoFormats = VIDEO_FORMAT_H264;
     PostToJs("Selecting the fallback video format to: VIDEO_FORMAT_H264");
   }
-  // Store the supported video format value from the stream configurations
-  m_VideoCodec = m_StreamConfig.supportedVideoFormats;
 
   // Initialize the color range with default value
   m_StreamConfig.colorRange = 0;

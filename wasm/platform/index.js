@@ -382,7 +382,7 @@ function hostChosen(host) {
         Navigation.switch();
         // Switch to Apps view
         Navigation.change(Views.Apps);
-      }, 1000);
+      }, 1500);
     }, function() {
       // Start polling the host after pairing flow
       startPollingHosts();
@@ -396,7 +396,7 @@ function hostChosen(host) {
       Navigation.switch();
       // Switch to Apps view
       Navigation.change(Views.Apps);
-    }, 1000);
+    }, 1500);
   }
 }
 
@@ -637,7 +637,7 @@ function pairingDialog(nvhttpHost, onSuccess, onFailure) {
       onSuccess();
     }, function(failedPairing) {
       console.error('%c[index.js, pairingDialog]', 'color: green;', 'Error: Failed API object:\n', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-      snackbarLog('Failed to pair with ' + nvhttpHost.hostname + '.');
+      snackbarLog('Failed to pair with ' + nvhttpHost.hostname);
       // If the host is already in a streaming session or failed during pairing,
       // change the dialog text element to include the hostname and display the returned error message
       if (nvhttpHost.currentGame != 0) {
@@ -744,7 +744,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
   }
 }
 
-// FIXME: This is a workaround to correctly update and store valid host MAC address in IndexedDB
+// Function to correctly update and store the valid MAC address of the host in IndexedDB
 function updateMacAddress(host) {
   getData('hosts', function(previousValue) {
     hosts = previousValue.hosts != null ? previousValue.hosts : {};
@@ -1770,8 +1770,8 @@ function showAppsMode() {
   $('#wasm_module').css('display', 'none');
 
   isInGame = false;
-  // FIXME: We want to eventually poll on the app screen, but we can't now
-  // because it slows down box art loading and we don't update the UI live anyway.
+  // We want to eventually poll on the app screen, but we can't now because
+  // it slows down box art loading and we don't update the UI live anyway.
   stopPollingHosts();
   Navigation.start();
 }
@@ -1970,7 +1970,7 @@ function quitAppDialog() {
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
-        Navigation.switch();
+        setTimeout(() => Navigation.switch(), 3800);
       });
     });
   }
@@ -2058,8 +2058,14 @@ function startGame(host, appID) {
           $('#continueQuitApp').on('click', function() {
             console.log('%c[index.js, startGame]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
             stopGame(host, function() {
+              setTimeout(() => {
+                // Scroll to the current game row
+                Navigation.switch();
+                // Switch to Apps view
+                Navigation.change(Views.Apps);
+              }, 1500);
               // Please, don't infinite loop with recursion
-              startGame(host, appID);
+              setTimeout(() => startGame(host, appID), 3000);
             });
             quitAppOverlay.style.display = 'none';
             quitAppDialog.close();
@@ -2075,6 +2081,7 @@ function startGame(host, appID) {
         return;
       }
 
+      // Retrieve all stream configuration options from the Settings view
       var streamWidth = $('#selectResolution').data('value').split(':')[0];
       var streamHeight = $('#selectResolution').data('value').split(':')[1];
       var frameRate = $('#selectFramerate').data('value').toString();
@@ -2139,8 +2146,15 @@ function startGame(host, appID) {
           var status_code = $root.attr('status_code');
           var status_message = $root.attr('status_message');
           if (status_code != 200) {
+            $('#loadingSpinnerMessage').text('');
             snackbarLogLong('Error ' + status_code + ': ' + status_message);
             showApps(host);
+            setTimeout(() => {
+              // Scroll to the current game row
+              Navigation.switch();
+              // Switch to Apps view
+              Navigation.change(Views.Apps);
+            }, 1500);
             return;
           }
           // Start stream request
@@ -2154,6 +2168,12 @@ function startGame(host, appID) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
           snackbarLog('Failed to resume ' + appToStart.title);
           showApps(host);
+          setTimeout(() => {
+            // Scroll to the current game row
+            Navigation.switch();
+            // Switch to Apps view
+            Navigation.change(Views.Apps);
+          }, 1500);
           return;
         });
       }
@@ -2179,8 +2199,15 @@ function startGame(host, appID) {
             status_code = 418;
             status_message = 'Audio capture device is missing. Please reinstall the audio drivers.';
           }
+          $('#loadingSpinnerMessage').text('');
           snackbarLogLong('Error ' + status_code + ': ' + status_message);
           showApps(host);
+          setTimeout(() => {
+            // Scroll to the current game row
+            Navigation.switch();
+            // Switch to Apps view
+            Navigation.change(Views.Apps);
+          }, 1500);
           return;
         }
         // Start stream request
@@ -2194,6 +2221,12 @@ function startGame(host, appID) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
         snackbarLog('Failed to launch ' + appToStart.title + '.');
         showApps(host);
+        setTimeout(() => {
+          // Scroll to the current game row
+          Navigation.switch();
+          // Switch to Apps view
+          Navigation.change(Views.Apps);
+        }, 1500);
         return;
       });
     });
@@ -2238,10 +2271,10 @@ function stopGame(host, callbackFunction) {
   });
 }
 
-// FIXME: This is a workaround to send the escape key to the host
+// Send the Escape key using the keyboard event to the host
 function sendEscapeKeyToHost() {
-  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0);
-  Module.sendLiSendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0);
+  Module.sendKeyboardEvent(0x80 << 8 | 0x1B, 0x03, 0); // Key down
+  Module.sendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0); // Key up
 }
 
 let indexedDB = null;
@@ -2830,17 +2863,19 @@ function initSamsungKeys() {
 function initSpecialKeys() {
   console.log('%c[index.js, initSpecialKeys]', 'color: green;', 'Initializing special TV input keys...');
 
+  // Find the video element that displays the streaming session
   var videoElement = document.getElementById('wasm_module');
+
+  // Listen for keydown events on the video element
   videoElement.addEventListener('keydown', function(e) {
-    if (e.key === 'XF86Back') {
-      if (isInGame === true) {
-        sendEscapeKeyToHost();
-        videoElement.dispatchEvent(new MouseEvent('mousedown', {
-          bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0
-        }));
-      } else {
-        console.error('%c[index.js, initSpecialKeys]', 'color: green;', 'Error: Failed to send the escape key (ESC) to the host!');
-      }
+    // Check if the 'Back' key has been pressed and the streaming is currently active
+    if (e.key === 'XF86Back' && isInGame === true) {
+      // Send the Escape key (ESC) to the host while streaming
+      sendEscapeKeyToHost();
+      // Simulate mouse to move focus back to the streaming session
+      videoElement.dispatchEvent(new MouseEvent('mousedown', {
+        bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0
+      }));
     }
   });
 }
@@ -3170,7 +3205,7 @@ window.addEventListener('gamepadconnected', function(e) {
   const gamepadIndex = connectedGamepad.index;
   const rumbleFeedbackSwitch = document.getElementById('rumbleFeedbackSwitch');
   console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Gamepad connected:\n' + JSON.stringify(connectedGamepad), connectedGamepad);
-  snackbarLog('Gamepad has been connected.');
+  snackbarLog('Gamepad ' + gamepadIndex + ' has been connected.');
   // Check if the rumble feedback switch is checked
   if (rumbleFeedbackSwitch.checked) {
     // Check if the connected gamepad has a vibrationActuator associated with it
@@ -3193,6 +3228,6 @@ window.addEventListener('gamepaddisconnected', function(e) {
   const disconnectedGamepad = e.gamepad;
   const gamepadIndex = disconnectedGamepad.index;
   console.log('%c[index.js, gamepaddisconnected]', 'color: green;', 'Gamepad disconnected:\n' + JSON.stringify(disconnectedGamepad), disconnectedGamepad);
-  snackbarLog('Gamepad has been disconnected.');
+  snackbarLog('Gamepad ' + gamepadIndex + ' has been disconnected.');
   console.warn('%c[index.js, gamepaddisconnected]', 'color: green;', 'Warning: Lost connection to gamepad ' + gamepadIndex + '. Please reconnect your gamepad!');
 });

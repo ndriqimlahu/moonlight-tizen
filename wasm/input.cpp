@@ -23,11 +23,11 @@ static char GetModifierFlags(const EmscriptenKeyboardEvent &event) {
   if (event.ctrlKey == true) {
     flags |= MODIFIER_CTRL;
   }
+  if (event.altKey == true) {
+    flags |= MODIFIER_ALT;
+  }
   if (event.shiftKey == true) {
     flags |= MODIFIER_SHIFT;
-  }
-  if (event.altKey) {
-    flags |= MODIFIER_ALT;
   }
 
   return flags;
@@ -86,8 +86,8 @@ EM_BOOL MoonlightInstance::HandleKeyDown(const EmscriptenKeyboardEvent &event) {
   char modifiers = GetModifierFlags(event);
   uint32_t keyCode = event.keyCode;
 
-  // Define a combination of keys on the keyboard to stop streaming session
-  if (modifiers == (MODIFIER_ALT | MODIFIER_CTRL | MODIFIER_SHIFT)) {
+  // Check if the current modifier flags match the defined key combination on the keyboard
+  if (modifiers == (MODIFIER_CTRL | MODIFIER_ALT | MODIFIER_SHIFT)) {
     if (keyCode == 0x51) { // Q key
       // Terminate the connection
       stopStream();
@@ -202,11 +202,11 @@ void MoonlightInstance::MouseLockLost() {
   m_MouseLocked = false;
 }
 
-// FIXME: This is a workaround to send the escape key to the host
-void sendLiSendKeyboardEvent(uint32_t keyCode, uint16_t action, char modifiers) {
+void sendKeyboardEvent(uint32_t keyCode, uint16_t action, char modifiers) {
+  // Send a keyboard event to the host
   LiSendKeyboardEvent(KEY_PREFIX << 8 | keyCode, action, modifiers);
 }
 
 EMSCRIPTEN_BINDINGS(input) {
-  emscripten::function("sendLiSendKeyboardEvent", &sendLiSendKeyboardEvent);
+  emscripten::function("sendKeyboardEvent", &sendKeyboardEvent);
 }

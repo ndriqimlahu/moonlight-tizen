@@ -200,7 +200,6 @@ class MoonlightInstance {
   bool m_FlipXYfaceButtonsEnabled;
   int m_AudioConfig;
   bool m_AudioSyncEnabled;
-  int m_VideoCodec;
   bool m_HdrModeEnabled;
   bool m_FullRangeEnabled;
   bool m_DisableWarningsEnabled;

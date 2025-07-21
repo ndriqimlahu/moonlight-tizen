@@ -103,36 +103,28 @@ function handleMessage(msg) {
         snackbarLogLong('Connection terminated');
         break;
     }
-    // Refresh the server info
-    api.refreshServerInfo().then(function(ret) {
-      // Return to app list with new current game
-      showApps(api);
-      setTimeout(() => {
-        // Scroll to the current game row
-        Navigation.switch();
-        // Switch to Apps view
-        Navigation.change(Views.Apps);
-      }, 1000);
-    }, function() {
-      // Return to app list anyway
-      showApps(api);
-      setTimeout(() => {
-        // Scroll to the current game row
-        Navigation.switch();
-        // Switch to Apps view
-        Navigation.change(Views.Apps);
-      }, 1000);
-    });
+    // Return to the app list with new current game
+    showApps(api);
+    setTimeout(() => {
+      // Scroll to the current game row
+      Navigation.switch();
+      // Switch to Apps view
+      Navigation.change(Views.Apps);
+    }, 1500);
   } else if (msg === 'Connection Established') {
+    // Prepare the screen for video stream
     $('#loadingSpinner').css('display', 'none');
     $('body').css('backgroundColor', 'transparent');
     $('#wasm_module').css('display', '');
     $('#wasm_module').focus();
   } else if (msg.indexOf('ProgressMsg: ') === 0) {
+    // Show progress message under loading spinner
     $('#loadingSpinnerMessage').text(msg.replace('ProgressMsg: ', ''));
   } else if (msg.indexOf('TransientMsg: ') === 0) {
+    // Show transient message as notification
     snackbarLogLong(msg.replace('TransientMsg: ', ''));
   } else if (msg.indexOf('DialogMsg: ') === 0) {
+    // Show dialog message as notification
     // FIXME: Really use a dialog
     snackbarLogLong(msg.replace('DialogMsg: ', ''));
   } else if (msg === 'displayVideo') {
@@ -165,9 +157,11 @@ function handleMessage(msg) {
     } else {
       console.warn('%c[messages.js, handleMessage]', 'color: gray;', 'Warning: Gamepad ' + gamepadIdx + ' does not support the rumble feature!');
     }
-  } else if (msg.indexOf('mouseEmulation enabled') === 0) {
-    snackbarLogLong('Mouse emulation has been enabled.');
-  } else if (msg.indexOf('mouseEmulation disabled') === 0) {
-    snackbarLogLong('Mouse emulation has been disabled.');
+  } else if (msg.indexOf('mouseEmulationOn') === 0) {
+    // Show mouse emulation enable status as a notification
+    snackbarLogLong('Mouse emulation is activated');
+  } else if (msg.indexOf('mouseEmulationOff') === 0) {
+    // Show mouse emulation disable status as notification
+    snackbarLogLong('Mouse emulation is deactivated');
   }
 }
