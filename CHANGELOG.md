@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.7.1
+
+### Added
+- Added loading screens to 'Hosts', 'Apps', and 'Settings' views for smoother transitions
+- Added functionality to support posting messages asynchronously to the main thread
+- Defined MIN and MAX macros for cleaner value comparisons across the codebase
+
+### Changed
+- Improved handling of stream termination to prevent video display from remaining stuck
+
+### Fixed
+- Minor bug fixes, code refactoring and general improvements
+
 ## v1.7.0
 
 ### Added
