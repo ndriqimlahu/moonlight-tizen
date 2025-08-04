@@ -1036,7 +1036,8 @@ const Views = {
       'selectCodec',
       'hdrModeBtn',
       'fullRangeBtn',
-      'disableWarningsBtn'
+      'disableWarningsBtn',
+      'performanceStatsBtn'
     ]),
     up: function() {
       this.view.prevOption();
