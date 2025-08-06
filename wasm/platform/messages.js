@@ -73,7 +73,7 @@ function handleMessage(msg) {
   // If it's a recognized event, notify the appropriate function
   if (msg.indexOf('streamTerminated: ') === 0) {
     // Remove the on-screen overlays
-    $('#connection-warnings').css('display', 'none');
+    $('#connection-warnings, #performance-stats').css('display', 'none');
     // Remove the video stream now
     $('#listener').removeClass('fullscreen');
     $('#loadingSpinner').css('display', 'none');

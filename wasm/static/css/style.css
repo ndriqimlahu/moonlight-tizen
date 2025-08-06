@@ -674,6 +674,20 @@ body {
     line-height: 1.2;
     white-space: pre-wrap;
 }
+#performance-stats {
+    color: #fff;
+    background: transparent;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 3;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: pre-wrap;
+}
 /* =============================
    Settings Section
 ============================= */

@@ -278,6 +278,7 @@ function showHostsMode() {
   $('#restoreDefaultsBtn').hide();
   $('#quitRunningAppBtn').hide();
   $('#connection-warnings').css('display', 'none');
+  $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1114,6 +1115,7 @@ function showSettingsMode() {
   $('#supportBtn').hide();
   $('#quitRunningAppBtn').hide();
   $('#connection-warnings').css('display', 'none');
+  $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1764,6 +1766,7 @@ function showAppsMode() {
   $('#supportBtn').hide();
   $('#restoreDefaultsBtn').hide();
   $('#connection-warnings').css('display', 'none');
+  $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
   $('#loadingSpinner').css('display', 'none');
@@ -2014,9 +2017,13 @@ function fullscreenWasmModule() {
 function handleOnScreenOverlays() {
   // Find the existing toggle switch elements
   const disableWarningsSwitch = document.getElementById('disableWarningsSwitch');
+  const performanceStatsSwitch = document.getElementById('performanceStatsSwitch');
 
   // Check if the disable warnings switch is checked, then hide or show the connection warning messages
   disableWarningsSwitch.checked ? $('#connection-warnings').css('display', 'none') : $('#connection-warnings').css('display', 'inline-block');
+
+  // Check if the performance stats switch is checked, then show or hide the performance statistics information
+  performanceStatsSwitch.checked ? $('#performance-stats').css('display', 'inline-block') : $('#performance-stats').css('display', 'none');
 }
 
 // Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
@@ -2126,7 +2133,7 @@ function startGame(host, appID) {
       '\n Performance statistics: ' + performanceStats);
 
       // Hide on-screen overlays until the streaming session begins
-      $('#connection-warnings').css('background', 'transparent').text('');
+      $('#connection-warnings, #performance-stats').css('background', 'transparent').text('');
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
