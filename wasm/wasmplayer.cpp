@@ -6,6 +6,7 @@
 
 #include <h264_stream.h>
 
+#include <assert.h>
 #include <pthread.h>
 
 #include "samsung/wasm/elementary_audio_track_config.h"
@@ -28,6 +29,7 @@ static constexpr TimeStamp kFrameTimeMargin = 0.5ms;
 static constexpr TimeStamp kTimeWindow = 1s;
 static constexpr uint32_t kSampleRate = 48000;
 
+static uint32_t s_VideoFormat = 0;
 static uint32_t s_Width = 0;
 static uint32_t s_Height = 0;
 static uint32_t s_Framerate = 0;
@@ -248,7 +250,8 @@ int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int r
   // Resize the decode buffer based on initial decode buffer length
   s_DecodeBuffer.resize(INITIAL_DECODE_BUFFER_LEN);
 
-  // Set the video dimensions and frame rate based on the input parameters
+  // Set the video format, video resolution and video frame rate based on the input parameters
+  s_VideoFormat = videoFormat;
   s_Width = width;
   s_Height = height;
   s_Framerate = redrawRate;
@@ -376,6 +379,191 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
   }
 
   return DR_OK;
+}
+
+void MoonlightInstance::AddVideoStats(VIDEO_STATS& src, VIDEO_STATS& dst) {
+  // Accumulate video stats from src into dst for aggregated metrics
+  dst.receivedFrames += src.receivedFrames;
+  dst.decodedFrames += src.decodedFrames;
+  dst.renderedFrames += src.renderedFrames;
+  dst.totalFrames += src.totalFrames;
+  dst.networkDroppedFrames += src.networkDroppedFrames;
+  dst.pacerDroppedFrames += src.pacerDroppedFrames;
+  dst.totalReassemblyTime += src.totalReassemblyTime;
+  dst.totalDecodeTime += src.totalDecodeTime;
+  dst.totalPacerTime += src.totalPacerTime;
+  dst.totalRenderTime += src.totalRenderTime;
+
+  // Update minimum host processing latency if it's not set or if the source has a valid smaller value
+  if (dst.minHostProcessingLatency == 0) {
+    dst.minHostProcessingLatency = src.minHostProcessingLatency;
+  } else if (src.minHostProcessingLatency != 0) {
+    dst.minHostProcessingLatency = MIN(dst.minHostProcessingLatency, src.minHostProcessingLatency);
+  }
+
+  // Update the maximum host processing latency if the current source value is higher
+  dst.maxHostProcessingLatency = MAX(dst.maxHostProcessingLatency, src.maxHostProcessingLatency);
+  dst.totalHostProcessingLatency += src.totalHostProcessingLatency;
+  dst.framesWithHostProcessingLatency += src.framesWithHostProcessingLatency;
+
+  // Attempt to retrieve the latest estimated RTT and variance
+  if (!LiGetEstimatedRttInfo(&dst.lastRtt, &dst.lastRttVariance)) {
+    // Set RTTs to 0 if unavailable
+    dst.lastRtt = 0;
+    dst.lastRttVariance = 0;
+  } else {
+    // Our logic to determine if RTT is valid depends on us never
+    // getting an RTT of 0. ENet currently ensures RTTs are >= 1.
+    assert(dst.lastRtt > 0);
+  }
+
+  // Get the current time in milliseconds
+  auto now = LiGetMillis();
+
+  // Initialize the measurement start point if this is the first video stat window
+  if (!dst.measurementStartTimestamp) {
+    dst.measurementStartTimestamp = src.measurementStartTimestamp;
+  }
+
+  // Ensure the global measurement timestamp has already started first
+  assert(dst.measurementStartTimestamp <= src.measurementStartTimestamp);
+
+  // Compute frames per second metrics for various stages of the video pipeline
+  dst.totalFps = (float)dst.totalFrames / ((float)(now - dst.measurementStartTimestamp) / 1000);
+  dst.receivedFps = (float)dst.receivedFrames / ((float)(now - dst.measurementStartTimestamp) / 1000);
+  dst.decodedFps = (float)dst.decodedFrames / ((float)(now - dst.measurementStartTimestamp) / 1000);
+  dst.renderedFps = (float)dst.renderedFrames / ((float)(now - dst.measurementStartTimestamp) / 1000);
+}
+
+void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int length) {
+  int ret;
+  int offset = 0;
+  const char* codecString;
+
+  // Start with an empty string
+  output[offset] = 0;
+
+  // Determine the video format being used and assign a readable string
+  switch (s_VideoFormat) {
+    case VIDEO_FORMAT_H264: // H.264 codec
+      codecString = "H.264";
+      break;
+    case VIDEO_FORMAT_H265: // HEVC codec
+      codecString = "HEVC";
+      break;
+    case VIDEO_FORMAT_H265_MAIN10: // HEVC Main10 codec
+      if (LiGetCurrentHostDisplayHdrMode()) {
+        codecString = "HEVC 10-bit HDR";
+      } else {
+        codecString = "HEVC 10-bit SDR";
+      }
+      break;
+    case VIDEO_FORMAT_AV1_MAIN8: // AV1 codec
+      codecString = "AV1";
+      break;
+    case VIDEO_FORMAT_AV1_MAIN10: // AV1 Main10 codec
+      if (LiGetCurrentHostDisplayHdrMode()) {
+        codecString = "AV1 10-bit HDR";
+      } else {
+        codecString = "AV1 10-bit SDR";
+      }
+      break;
+    default: // Unknown codec
+      assert(false);
+      codecString = "UNKNOWN";
+      break;
+  }
+
+  // If there is a meaningful received frame rate, print basic stream info
+  if (stats.receivedFps > 0) {
+    if (codecString != nullptr) {
+      // Print video resolution, frame rate, and codec name
+      ret = snprintf(
+        &output[offset], length - offset,
+        "Video stream: %dx%d %.2f FPS (Codec: %s)\n",
+        s_Width, s_Height, stats.totalFps, codecString
+      );
+      // Abort if string formatting failed or buffer overflowed
+      if (ret < 0 || ret >= length - offset) {
+        assert(false);
+        return;
+      }
+      offset += ret;
+    }
+
+    // Print frame rates at various stages of the pipeline
+    ret = snprintf(
+      &output[offset], length - offset,
+      "Incoming frame rate from network: %.2f FPS\n"
+      "Decoding frame rate: %.2f FPS\n"
+      "Rendering frame rate: %.2f FPS\n"
+      "Incoming bitrate from network: %.2f Mbps\n",
+      stats.receivedFps, stats.decodedFps, stats.renderedFps, stats.receivedBitrate
+    );
+    // Abort if string formatting failed or buffer overflowed
+    if (ret < 0 || ret >= length - offset) {
+      assert(false);
+      return;
+    }
+    offset += ret;
+  }
+
+  // Only display host processing latency if latency data exists
+  if (stats.framesWithHostProcessingLatency > 0) {
+    // Print min, max, and average host processing latency in milliseconds
+    ret = snprintf(
+      &output[offset], length - offset,
+      "Host processing latency min/max/average: %.1f/%.1f/%.1f ms\n",
+      (float)stats.minHostProcessingLatency / 10, (float)stats.maxHostProcessingLatency / 10,
+      (float)stats.totalHostProcessingLatency / 10 / stats.framesWithHostProcessingLatency
+    );
+    // Abort if string formatting failed or buffer overflowed
+    if (ret < 0 || ret >= length - offset) {
+      assert(false);
+      return;
+    }
+    offset += ret;
+  }
+
+  // Show remaining statistics only if some frames have been rendered
+  if (stats.renderedFrames != 0) {
+    char rttString[32];
+    // Format the round-trip time string
+    if (stats.lastRtt != 0) {
+      // Print the last RTT including variance in milliseconds
+      snprintf(
+        rttString, sizeof(rttString),
+        "%u ms (variance: %u ms)",
+        stats.lastRtt, stats.lastRttVariance
+      );
+    } else {
+      // Otherwise, print as "N/A" if RTT is unavailable
+      snprintf(rttString, sizeof(rttString), "N/A");
+    }
+
+    // Print detailed drop rates and timing statistics
+    ret = snprintf(
+      &output[offset], length - offset,
+      "Frames dropped by your network connection: %.2f%%\n"
+      "Frames dropped due to network jitter: %.2f%%\n"
+      "Average network latency: %s\n"
+      "Average decoding time: %.2f ms\n"
+      "Average frame queue delay: %.2f ms\n"
+      "Average rendering time: %.2f ms\n",
+      (float)stats.networkDroppedFrames / stats.totalFrames * 100,
+      (float)stats.pacerDroppedFrames / stats.decodedFrames * 100,
+      rttString,
+      (float)stats.totalDecodeTime / stats.decodedFrames,
+      (float)stats.totalPacerTime / stats.renderedFrames,
+      (float)stats.totalRenderTime / stats.renderedFrames
+    );
+    // Abort if string formatting failed or buffer overflowed
+    if (ret < 0 || ret >= length - offset) {
+      assert(false);
+      return;
+    }
+    offset += ret;
+  }
 }
 
 void MoonlightInstance::WaitFor(std::condition_variable* variable, std::function<bool()> condition) {
