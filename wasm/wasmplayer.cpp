@@ -679,6 +679,18 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
   }
 }
 
+void MoonlightInstance::TogglePerformanceStats() {
+  // Toggle the performance stats overlay flag
+  m_PerformanceStatsEnabled = !m_PerformanceStatsEnabled;
+
+  // Notify the JS code that performance stats overlay is enabled or disabled
+  if (m_PerformanceStatsEnabled) {
+    PostToJs(std::string("StatMsg: ") + s_StatString.data());
+  } else {
+    PostToJs(std::string("NoStatMsg: "));
+  }
+}
+
 void MoonlightInstance::WaitFor(std::condition_variable* variable, std::function<bool()> condition) {
   std::unique_lock<std::mutex> lock(m_Mutex);
   variable->wait(lock, condition);

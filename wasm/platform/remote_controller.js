@@ -53,6 +53,12 @@ function remoteControllerHandler(e) {
         Module.stopStream();
       }
       break;
+    case tvKey.KEY_YELLOW:
+      // Toggle performance stats overlay
+      if (isInGame === true) {
+        Module.toggleStats();
+      }
+      break;
     default:
       break;
   }

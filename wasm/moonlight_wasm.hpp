@@ -153,6 +153,7 @@ class MoonlightInstance {
   static int VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit);
   static void AddVideoStats(VIDEO_STATS& src, VIDEO_STATS& dst);
   static void FormatVideoStats(VIDEO_STATS& stats, char* output, int length);
+  void TogglePerformanceStats();
 
   static int AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags);
   static void AudDecCleanup(void);
@@ -289,6 +290,7 @@ MessageResult startStream(std::string host, std::string width, std::string heigh
   std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings, bool performanceStats);
 MessageResult stopStream();
 
+void toggleStats();
 void stun(int callbackId);
 void pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber);
 void wakeOnLan(int callbackId, std::string macAddress);

@@ -485,6 +485,10 @@ MessageResult stopStream() {
   return g_Instance->StopStream();
 }
 
+void toggleStats() {
+  g_Instance->TogglePerformanceStats();
+}
+
 void stun(int callbackId) {
   g_Instance->STUN(callbackId);
 }
@@ -531,6 +535,7 @@ EMSCRIPTEN_BINDINGS(handle_message) {
   emscripten::value_object<MessageResult>("MessageResult").field("type", &MessageResult::type).field("ret", &MessageResult::ret);
   emscripten::function("startStream", &startStream);
   emscripten::function("stopStream", &stopStream);
+  emscripten::function("toggleStats", &toggleStats);
   emscripten::function("stun", &stun);
   emscripten::function("pair", &pair);
   emscripten::function("wakeOnLan", &wakeOnLan);

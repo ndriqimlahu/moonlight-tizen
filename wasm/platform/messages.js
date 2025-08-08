@@ -11,6 +11,8 @@ const SyncFunctions = {
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),
+  // no parameters
+  'toggleStats': (...args) => Module.toggleStats(...args),
 };
 
 const AsyncFunctions = {
@@ -139,10 +141,22 @@ function handleMessage(msg) {
     $('#connection-warnings').css('background', 'rgba(0, 0, 0, 0.5)');
     $('#connection-warnings').text(msg.replace('WarningMsg: ', ''));
   } else if (msg.indexOf('NoStatMsg: ') === 0) {
+    // Toggle the performance stats switch and save the state
+    if ($('#performanceStatsSwitch').prop('checked')) {
+      $('#performanceStatsBtn')[0].MaterialSwitch.off();
+      savePerformanceStats();
+      $('#performance-stats').css('display', 'none');
+    }
     // Hide the performance statistics overlay
     $('#performance-stats').css('background', 'transparent');
     $('#performance-stats').text('');
   } else if (msg.indexOf('StatMsg: ') === 0) {
+    // Toggle the performance stats switch and save the state
+    if (!$('#performanceStatsSwitch').prop('checked')) {
+      $('#performanceStatsBtn')[0].MaterialSwitch.on();
+      savePerformanceStats();
+      $('#performance-stats').css('display', 'inline-block');
+    }
     // Show the performance statistics overlay
     $('#performance-stats').css('background', 'rgba(0, 0, 0, 0.5)');
     $('#performance-stats').text(msg.replace('StatMsg: ', ''));
