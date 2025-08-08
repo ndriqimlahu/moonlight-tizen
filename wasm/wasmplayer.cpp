@@ -406,6 +406,34 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
   // Calculate the current bitrate in bits per second and then convert the bitrate to megabits per second
   float bitrateMbps = (total_bytes * 8.0) / 1000000.0f;
 
+  // Flip performance stats window roughly every second
+  if (m_ActiveWndVideoStats.measurementStartTimestamp + 1000 < LiGetMillis()) {
+    // Update performance stats overlay if it's enabled
+    if (g_Instance->m_PerformanceStatsEnabled == true) {
+      // Create a container to hold aggregated stats for display
+      VIDEO_STATS lastTwoWndStats = {};
+      // Set the bitrate field in the temporary stats for display purposes
+      lastTwoWndStats.receivedBitrate = bitrateMbps;
+      // Add last window and current window to the aggregated stats
+      AddVideoStats(m_LastWndVideoStats, lastTwoWndStats);
+      AddVideoStats(m_ActiveWndVideoStats, lastTwoWndStats);
+      // Convert the aggregated stats to a display string
+      FormatVideoStats(lastTwoWndStats, s_StatString.data(), s_StatString.length());
+      // Send the formatted stats string to the JS frontend for overlay display
+      PostToJs(std::string("StatMsg: ") + s_StatString.data());
+      // Clear the stats string buffer for the next use
+      std::fill(s_StatString.begin(), s_StatString.end(), 0);
+      // Reset byte count for the next measurement interval
+      total_bytes = 0;
+    }
+    // Accumulate active window stats into global stats for overall tracking
+    AddVideoStats(m_ActiveWndVideoStats, m_GlobalVideoStats);
+    // Move current active stats to last window stats and reset active window stats for new interval
+    memcpy(&m_LastWndVideoStats, &m_ActiveWndVideoStats, sizeof(m_ActiveWndVideoStats));
+    memset(&m_ActiveWndVideoStats, 0, sizeof(m_ActiveWndVideoStats));
+    m_ActiveWndVideoStats.measurementStartTimestamp = LiGetMillis();
+  }
+
   // Update min host processing latency if a valid value was provided
   if (decodeUnit->frameHostProcessingLatency != 0) {
     // Take the minimum of current min latency and new latency

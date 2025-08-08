@@ -138,6 +138,14 @@ function handleMessage(msg) {
     // Show the connection warnings overlay
     $('#connection-warnings').css('background', 'rgba(0, 0, 0, 0.5)');
     $('#connection-warnings').text(msg.replace('WarningMsg: ', ''));
+  } else if (msg.indexOf('NoStatMsg: ') === 0) {
+    // Hide the performance statistics overlay
+    $('#performance-stats').css('background', 'transparent');
+    $('#performance-stats').text('');
+  } else if (msg.indexOf('StatMsg: ') === 0) {
+    // Show the performance statistics overlay
+    $('#performance-stats').css('background', 'rgba(0, 0, 0, 0.5)');
+    $('#performance-stats').text(msg.replace('StatMsg: ', ''));
   } else if (msg.indexOf('controllerRumble: ') === 0) {
     const eventData = msg.split(' ')[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);
