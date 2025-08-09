@@ -48,9 +48,9 @@ Contributions are welcome! Fork the repo, create pull requests, or open issues. 
 This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/LICENSE) file for more information.
 
 ## Acknowledgements
-- Thanks to [Moonlight Game Streaming Project](https://github.com/moonlight-stream/moonlight-chrome) for developing and maintaining Moonlight for Chrome OS.
-- Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for adapting the code and implementing Moonlight for Tizen OS.
-- Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) for adapting the Dockerfile and supporting files.
-- Thanks to [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating a method for building Moonlight by re-adapting the Dockerfile.
-- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files and improving the Dockerfile for better compatibility.
-- Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for improving the Docker publishing workflow and adding new features for a better experience.
+- Thanks to [Moonlight Streaming Core Library](https://github.com/moonlight-stream/moonlight-common-c) and [Moonlight Game Streaming Project](https://github.com/moonlight-stream/moonlight-chrome) for implementing the core GameStream client code and developing Moonlight for Chrome OS.
+- Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for porting the entire codebase from Chrome OS (NaCl) and adapting the Moonlight implementation for Tizen OS (WASM).
+- Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) and [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating a method for building the application and adapting the Dockerfile including the supporting files.
+- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files, adding a shortcut combo to stop the streaming session, allowing audio volume changes, and improving the Dockerfile for better compatibility.
+- Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for implementing features such as video codec selection, mouse emulation, Wake-on-LAN, new IP address field mode, improved Docker publishing workflow, and several improvements.
+- Thanks to [toypoodlegaming](https://github.com/toypoodlegaming/moonlight-chrome-tizen) for improving video codec selection logic and implementing features such as audio configuration and performance statistics.
