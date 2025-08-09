@@ -7,10 +7,12 @@ const SyncFunctions = {
   'httpInit': (...args) => Module.httpInit(...args),
   /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
   framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-  audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings */
+  audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings, performanceStats */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),
+  // no parameters
+  'toggleStats': (...args) => Module.toggleStats(...args),
 };
 
 const AsyncFunctions = {
@@ -73,7 +75,7 @@ function handleMessage(msg) {
   // If it's a recognized event, notify the appropriate function
   if (msg.indexOf('streamTerminated: ') === 0) {
     // Remove the on-screen overlays
-    $('#connection-warnings').css('display', 'none');
+    $('#connection-warnings, #performance-stats').css('display', 'none');
     // Remove the video stream now
     $('#listener').removeClass('fullscreen');
     $('#loadingSpinner').css('display', 'none');
@@ -138,6 +140,26 @@ function handleMessage(msg) {
     // Show the connection warnings overlay
     $('#connection-warnings').css('background', 'rgba(0, 0, 0, 0.5)');
     $('#connection-warnings').text(msg.replace('WarningMsg: ', ''));
+  } else if (msg.indexOf('NoStatMsg: ') === 0) {
+    // Toggle the performance stats switch and save the state
+    if ($('#performanceStatsSwitch').prop('checked')) {
+      $('#performanceStatsBtn')[0].MaterialSwitch.off();
+      savePerformanceStats();
+      $('#performance-stats').css('display', 'none');
+    }
+    // Hide the performance statistics overlay
+    $('#performance-stats').css('background', 'transparent');
+    $('#performance-stats').text('');
+  } else if (msg.indexOf('StatMsg: ') === 0) {
+    // Toggle the performance stats switch and save the state
+    if (!$('#performanceStatsSwitch').prop('checked')) {
+      $('#performanceStatsBtn')[0].MaterialSwitch.on();
+      savePerformanceStats();
+      $('#performance-stats').css('display', 'inline-block');
+    }
+    // Show the performance statistics overlay
+    $('#performance-stats').css('background', 'rgba(0, 0, 0, 0.5)');
+    $('#performance-stats').text(msg.replace('StatMsg: ', ''));
   } else if (msg.indexOf('controllerRumble: ') === 0) {
     const eventData = msg.split(' ')[1].split(',');
     const gamepadIdx = parseInt(eventData[0]);

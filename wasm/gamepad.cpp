@@ -14,6 +14,9 @@
 // Bitmask for gamepad combo buttons to stop the streaming session
 const short STOP_STREAM_BUTTONS = BACK_FLAG | PLAY_FLAG | LB_FLAG | RB_FLAG;
 
+// Bitmask for gamepad combo buttons to toggle the performance stats overlay
+const short PERF_STATS_BUTTONS = BACK_FLAG | LB_FLAG | RB_FLAG | X_FLAG;
+
 // Flag for gamepad to track controller rumble state
 bool rumbleFeedbackSwitch = false;
 
@@ -161,6 +164,9 @@ void MoonlightInstance::PollGamepads() {
   // Create a mask for active gamepads
   const auto activeGamepadMask = GetActiveGamepadMask(numGamepads);
 
+  // Prevent repeated trigger while the button combo is held down
+  static bool comboTriggered = false;
+
   // Iterate through connected gamepads and process their input
   for (int gamepadID = 0; gamepadID < numGamepads; ++gamepadID) {
     emscripten_sample_gamepad_data();
@@ -201,6 +207,16 @@ void MoonlightInstance::PollGamepads() {
       // Terminate the connection
       stopStream();
       return;
+    } else if (buttonFlags == PERF_STATS_BUTTONS) {
+      if (!comboTriggered) {
+        // Toggle performance stats overlay
+        toggleStats();
+        // Mark combo as triggered until buttons are released
+        comboTriggered = true;
+      }
+    } else {
+      // Reset when buttons are released
+      comboTriggered = false;
     }
 
     // Check if the mouse emulation switch is checked

@@ -53,6 +53,31 @@ struct MessageResult {
   }
 };
 
+typedef struct _VIDEO_STATS {
+  uint32_t receivedFrames;
+  uint32_t decodedFrames;
+  uint32_t renderedFrames;
+  uint32_t totalFrames;
+  uint32_t networkDroppedFrames;
+  uint32_t pacerDroppedFrames;
+  uint16_t minHostProcessingLatency;
+  uint16_t maxHostProcessingLatency;
+  uint32_t totalHostProcessingLatency;
+  uint32_t framesWithHostProcessingLatency;
+  uint32_t totalReassemblyTime;
+  uint32_t totalDecodeTime;
+  uint32_t totalPacerTime;
+  uint32_t totalRenderTime;
+  uint32_t lastRtt;
+  uint32_t lastRttVariance;
+  float totalFps;
+  float receivedFps;
+  float decodedFps;
+  float renderedFps;
+  float receivedBitrate;
+  uint32_t measurementStartTimestamp;
+} VIDEO_STATS, *PVIDEO_STATS;
+
 enum class LoadResult {
   Success, CertErr, PrivateKeyErr
 };
@@ -66,7 +91,7 @@ class MoonlightInstance {
   MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
     std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
     bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-    std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings);
+    std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings, bool performanceStats);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -126,6 +151,9 @@ class MoonlightInstance {
   static int StartupVidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags);
   static void VidDecCleanup(void);
   static int VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit);
+  static void AddVideoStats(VIDEO_STATS& src, VIDEO_STATS& dst);
+  static void FormatVideoStats(VIDEO_STATS& stats, char* output, int length);
+  void TogglePerformanceStats();
 
   static int AudDecInit(int audioConfiguration, POPUS_MULTISTREAM_CONFIGURATION opusConfig, void* context, int arFlags);
   static void AudDecCleanup(void);
@@ -203,6 +231,7 @@ class MoonlightInstance {
   bool m_HdrModeEnabled;
   bool m_FullRangeEnabled;
   bool m_DisableWarningsEnabled;
+  bool m_PerformanceStatsEnabled;
 
   STREAM_CONFIGURATION m_StreamConfig;
   bool m_Running;
@@ -258,9 +287,10 @@ void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryRe
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool playHostAudio, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings);
+  std::string audioConfig, bool audioSync, std::string videoCodec, bool hdrMode, bool fullRange, bool disableWarnings, bool performanceStats);
 MessageResult stopStream();
 
+void toggleStats();
 void stun(int callbackId);
 void pair(int callbackId, std::string serverMajorVersion, std::string address, std::string randomNumber);
 void wakeOnLan(int callbackId, std::string macAddress);

@@ -52,6 +52,7 @@ function attachListeners() {
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#fullRangeSwitch').on('click', saveFullRange);
   $('#disableWarningsSwitch').on('click', saveDisableWarnings);
+  $('#performanceStatsSwitch').on('click', savePerformanceStats);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartAppDialog);
@@ -277,6 +278,7 @@ function showHostsMode() {
   $('#restoreDefaultsBtn').hide();
   $('#quitRunningAppBtn').hide();
   $('#connection-warnings').css('display', 'none');
+  $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1113,6 +1115,7 @@ function showSettingsMode() {
   $('#supportBtn').hide();
   $('#quitRunningAppBtn').hide();
   $('#connection-warnings').css('display', 'none');
+  $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
 
@@ -1763,6 +1766,7 @@ function showAppsMode() {
   $('#supportBtn').hide();
   $('#restoreDefaultsBtn').hide();
   $('#connection-warnings').css('display', 'none');
+  $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
   $('#loadingSpinner').css('display', 'none');
@@ -2013,9 +2017,13 @@ function fullscreenWasmModule() {
 function handleOnScreenOverlays() {
   // Find the existing toggle switch elements
   const disableWarningsSwitch = document.getElementById('disableWarningsSwitch');
+  const performanceStatsSwitch = document.getElementById('performanceStatsSwitch');
 
   // Check if the disable warnings switch is checked, then hide or show the connection warning messages
   disableWarningsSwitch.checked ? $('#connection-warnings').css('display', 'none') : $('#connection-warnings').css('display', 'inline-block');
+
+  // Check if the performance stats switch is checked, then show or hide the performance statistics information
+  performanceStatsSwitch.checked ? $('#performance-stats').css('display', 'inline-block') : $('#performance-stats').css('display', 'none');
 }
 
 // Start the given appID. If another app is running, offer to quit it. Otherwise, if the given app is already running, just resume it.
@@ -2102,6 +2110,7 @@ function startGame(host, appID) {
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const disableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const performanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
       '\n Host address: ' + host.address + 
@@ -2120,10 +2129,11 @@ function startGame(host, appID) {
       '\n Video codec: ' + videoCodec + 
       '\n Video HDR mode: ' + hdrMode + 
       '\n Full color range: ' + fullRange + 
-      '\n Disable connection warnings: ' + disableWarnings);
+      '\n Disable connection warnings: ' + disableWarnings + 
+      '\n Performance statistics: ' + performanceStats);
 
       // Hide on-screen overlays until the streaming session begins
-      $('#connection-warnings').css('background', 'transparent').text('');
+      $('#connection-warnings, #performance-stats').css('background', 'transparent').text('');
 
       // Shows a loading message to launch the application and start stream mode
       $('#loadingSpinnerMessage').text('Starting ' + appToStart.title + '...');
@@ -2162,7 +2172,7 @@ function startGame(host, appID) {
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
             framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings
+            audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings, performanceStats
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -2215,7 +2225,7 @@ function startGame(host, appID) {
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
           framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings
+          audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings, performanceStats
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2757,6 +2767,14 @@ function saveDisableWarnings() {
   }, 100);
 }
 
+function savePerformanceStats() {
+  setTimeout(() => {
+    const chosenPerformanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, savePerformanceStats]', 'color: green;', 'Saving performance stats state: ' + chosenPerformanceStats);
+    storeData('performanceStats', chosenPerformanceStats, null);
+  }, 100);
+}
+
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2831,6 +2849,10 @@ function restoreDefaultsSettingsValues() {
   const defaultDisableWarnings = false;
   document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
   storeData('disableWarnings', defaultDisableWarnings, null);
+
+  const defaultPerformanceStats = false;
+  document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
+  storeData('performanceStats', defaultPerformanceStats, null);
 }
 
 function initSamsungKeys() {
@@ -3122,6 +3144,17 @@ function loadUserDataCb() {
       document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#disableWarningsBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored performanceStats preferences.');
+  getData('performanceStats', function(previousValue) {
+    if (previousValue.performanceStats == null) {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.performanceStats == false) {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.on();
     }
   });
 }

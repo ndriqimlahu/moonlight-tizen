@@ -317,6 +317,16 @@
                 </label>
               </div>
             </div>
+            <div class="setting-option">
+              <label>Performance statistics</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="performanceStatsMenu">
+                <label id="performanceStatsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="performanceStatsSwitch">
+                  <input type="checkbox" id="performanceStatsSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Display real-time stream performance information while streaming</span>
+                </label>
+              </div>
+            </div>
           </div>
           <div id="aboutSettings" class="settings-options">
             <div class="setting-option">
@@ -377,6 +387,7 @@
       </div>
     </main>
     <div id="connection-warnings"></div>
+    <div id="performance-stats"></div>
   </div>
   <script defer src="static/js/jquery-2.2.0.min.js"></script>
   <script defer src="static/js/material.min.js"></script>
@@ -564,6 +575,10 @@
           <li class="navGuideDialogControls">
             <span class="navGuideRemoteText">RED</span> / <span class="navGuideKeyboardText">F1</span> / <span class="navGuideKeyboardText">CTRL + ALT + SHIFT + Q</span> / <span class="navGuideGamepadText">SELECT + START + LB + RB</span>
             — Stop the streaming session.
+          </li>
+          <li class="navGuideDialogControls">
+            <span class="navGuideRemoteText">YELLOW</span> / <span class="navGuideKeyboardText">F3</span> / <span class="navGuideKeyboardText">CTRL + ALT + SHIFT + S</span> / <span class="navGuideGamepadText">SELECT + LB + RB + X</span>
+            — Toggle the performance statistics overlay.
           </li>
         </ul>
       </div>

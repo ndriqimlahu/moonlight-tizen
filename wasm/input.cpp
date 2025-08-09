@@ -92,6 +92,10 @@ EM_BOOL MoonlightInstance::HandleKeyDown(const EmscriptenKeyboardEvent &event) {
       // Terminate the connection
       stopStream();
       return EM_TRUE;
+    } else if (keyCode == 0x53) { // S key
+      // Toggle performance stats overlay
+      toggleStats();
+      return EM_TRUE;
     } else {
       // Wait until these keys come up to unlock the mouse
       m_WaitingForAllModifiersUp = true;
