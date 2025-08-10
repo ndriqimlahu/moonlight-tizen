@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.8.0
+
+### Added
+- Introduced a new 'Performance statistics' setting that displays performance information while streaming
+- Implemented functionality to toggle the performance stats switch and save changes
+- Added on-screen overlay for performance statistics shown only during streaming sessions
+- Added functionality to aggregate metrics and present detailed statistics in a formatted output
+- Added accurate tracking, calculation, and measurement logic for video performance statistics
+- Handled performance stats updates and displayed metrics derived from stream performance
+- Implemented shortcut functionality to toggle performance stats via remote control, keyboard, and gamepad
+
 ## v1.7.1
 
 ### Added
