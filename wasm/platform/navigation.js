@@ -721,6 +721,8 @@ const Views = {
           // Trigger change event so MDL updates the UI and other listeners fire
           var event = new Event('change', { bubbles: true });
           input.dispatchEvent(event);
+          // Notify the user if the toggle button changes state
+          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
         }
       }
       // Finally, trigger the current element’s click handler
@@ -892,6 +894,8 @@ const Views = {
           // Trigger change event so MDL updates the UI and other listeners fire
           var event = new Event('change', { bubbles: true });
           input.dispatchEvent(event);
+          // Notify the user if the toggle button changes state
+          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
         }
       }
       // Finally, trigger the current element’s click handler
@@ -952,6 +956,8 @@ const Views = {
           // Trigger change event so MDL updates the UI and other listeners fire
           var event = new Event('change', { bubbles: true });
           input.dispatchEvent(event);
+          // Notify the user if the toggle button changes state
+          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
         }
       }
       // Finally, trigger the current element’s click handler
@@ -1010,6 +1016,8 @@ const Views = {
           // Trigger change event so MDL updates the UI and other listeners fire
           var event = new Event('change', { bubbles: true });
           input.dispatchEvent(event);
+          // Notify the user if the toggle button changes state
+          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
         }
       }
       // Finally, trigger the current element’s click handler
@@ -1112,6 +1120,8 @@ const Views = {
           // Trigger change event so MDL updates the UI and other listeners fire
           var event = new Event('change', { bubbles: true });
           input.dispatchEvent(event);
+          // Notify the user if the toggle button changes state
+          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
         }
       }
       // Finally, trigger the current element’s click handler
@@ -1213,6 +1223,8 @@ const Views = {
           // Trigger change event so MDL updates the UI and other listeners fire
           var event = new Event('change', { bubbles: true });
           input.dispatchEvent(event);
+          // Notify the user if the toggle button changes state
+          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
         }
       }
       // Finally, trigger the current element’s click handler
