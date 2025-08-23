@@ -712,21 +712,7 @@ const Views = {
     right: function() {},
     select: function() {
       // NOTE: Select logic on Basic Settings category
-      var current = this.view.current();
-      // Check if the current element is an MDL switch container
-      if (current.classList.contains('mdl-switch')) {
-        var input = current.querySelector('input[type="checkbox"]');
-        if (input) {
-          input.checked = !input.checked;
-          // Trigger change event so MDL updates the UI and other listeners fire
-          var event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-          // Notify the user if the toggle button changes state
-          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
-        }
-      }
-      // Finally, trigger the current element’s click handler
-      current.click();
+      document.getElementById(this.view.current()).click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -885,21 +871,7 @@ const Views = {
     right: function() {},
     select: function() {
       // NOTE: Select logic on Host Settings category
-      var current = this.view.current();
-      // Check if the current element is an MDL switch container
-      if (current.classList.contains('mdl-switch')) {
-        var input = current.querySelector('input[type="checkbox"]');
-        if (input) {
-          input.checked = !input.checked;
-          // Trigger change event so MDL updates the UI and other listeners fire
-          var event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-          // Notify the user if the toggle button changes state
-          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
-        }
-      }
-      // Finally, trigger the current element’s click handler
-      current.click();
+      document.getElementById(this.view.current()).click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -947,21 +919,7 @@ const Views = {
     right: function() {},
     select: function() {
       // NOTE: Select logic on Input Settings category
-      var current = this.view.current();
-      // Check if the current element is an MDL switch container
-      if (current.classList.contains('mdl-switch')) {
-        var input = current.querySelector('input[type="checkbox"]');
-        if (input) {
-          input.checked = !input.checked;
-          // Trigger change event so MDL updates the UI and other listeners fire
-          var event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-          // Notify the user if the toggle button changes state
-          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
-        }
-      }
-      // Finally, trigger the current element’s click handler
-      current.click();
+      document.getElementById(this.view.current()).click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1007,21 +965,7 @@ const Views = {
     right: function() {},
     select: function() {
       // NOTE: Select logic on Audio Settings category
-      var current = this.view.current();
-      // Check if the current element is an MDL switch container
-      if (current.classList.contains('mdl-switch')) {
-        var input = current.querySelector('input[type="checkbox"]');
-        if (input) {
-          input.checked = !input.checked;
-          // Trigger change event so MDL updates the UI and other listeners fire
-          var event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-          // Notify the user if the toggle button changes state
-          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
-        }
-      }
-      // Finally, trigger the current element’s click handler
-      current.click();
+      document.getElementById(this.view.current()).click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1111,21 +1055,7 @@ const Views = {
     right: function() {},
     select: function() {
       // NOTE: Select logic on Video Settings category
-      var current = this.view.current();
-      // Check if the current element is an MDL switch container
-      if (current.classList.contains('mdl-switch')) {
-        var input = current.querySelector('input[type="checkbox"]');
-        if (input) {
-          input.checked = !input.checked;
-          // Trigger change event so MDL updates the UI and other listeners fire
-          var event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-          // Notify the user if the toggle button changes state
-          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
-        }
-      }
-      // Finally, trigger the current element’s click handler
-      current.click();
+      document.getElementById(this.view.current()).click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1214,21 +1144,7 @@ const Views = {
     right: function() {},
     select: function() {
       // NOTE: Select logic on About Settings category
-      var current = this.view.current();
-      // Check if the current element is an MDL switch container
-      if (current.classList.contains('mdl-switch')) {
-        var input = current.querySelector('input[type="checkbox"]');
-        if (input) {
-          input.checked = !input.checked;
-          // Trigger change event so MDL updates the UI and other listeners fire
-          var event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-          // Notify the user if the toggle button changes state
-          snackbarLog('Setting ' + (input.checked ? 'enabled' : 'disabled'));
-        }
-      }
-      // Finally, trigger the current element’s click handler
-      current.click();
+      document.getElementById(this.view.current()).click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
