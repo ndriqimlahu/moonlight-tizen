@@ -1,4 +1,5 @@
 const hoveredClassName = 'hovered';
+let currentPlatformVer = parseFloat(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version")); // Retrieve platform version
 
 function markElement(element) {
   if (element) {
@@ -711,8 +712,14 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // NOTE: Select logic on Basic Settings category
-      document.getElementById(this.view.current()).click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer >= 8.0) {
+        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
+        document.getElementById(this.view.current()).click();
+      } else {
+        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
+        this.view.current().click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -870,8 +877,14 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // NOTE: Select logic on Host Settings category
-      document.getElementById(this.view.current()).click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer >= 8.0) {
+        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
+        document.getElementById(this.view.current()).click();
+      } else {
+        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
+        this.view.current().click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -918,8 +931,14 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // NOTE: Select logic on Input Settings category
-      document.getElementById(this.view.current()).click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer >= 8.0) {
+        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
+        document.getElementById(this.view.current()).click();
+      } else {
+        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
+        this.view.current().click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -964,8 +983,14 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // NOTE: Select logic on Audio Settings category
-      document.getElementById(this.view.current()).click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer >= 8.0) {
+        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
+        document.getElementById(this.view.current()).click();
+      } else {
+        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
+        this.view.current().click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1054,8 +1079,14 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // NOTE: Select logic on Video Settings category
-      document.getElementById(this.view.current()).click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer >= 8.0) {
+        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
+        document.getElementById(this.view.current()).click();
+      } else {
+        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
+        this.view.current().click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1143,8 +1174,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // NOTE: Select logic on About Settings category
-      document.getElementById(this.view.current()).click();
+      this.view.current().click();
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
