@@ -16,6 +16,7 @@
 #include "samsung/wasm/operation_result.h"
 
 #define INITIAL_DECODE_BUFFER_LEN 128 * 1024
+#define MAX_SPS_EXTRA_SIZE 32
 
 using std::chrono_literals::operator""s;
 using std::chrono_literals::operator""ms;
@@ -323,6 +324,12 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
 
   // Build one packet from multiple data chunks
   totalLength = decodeUnit->fullLength;
+
+  // Check if the frame type from the decoding unit is IDR frame
+  if (decodeUnit->frameType == FRAME_TYPE_IDR) {
+    // Add some extra space in case we need to do an SPS fixup
+    totalLength += MAX_SPS_EXTRA_SIZE;
+  }
 
   // Ensure the decode buffer is large enough to hold the full packet
   if (totalLength > s_DecodeBuffer.size()) {
