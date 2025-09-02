@@ -15,7 +15,7 @@
 #include "samsung/html/html_media_element_listener.h"
 #include "samsung/wasm/operation_result.h"
 
-#define INITIAL_DECODE_BUFFER_LEN 128 * 1024
+#define INITIAL_DECODE_BUFFER_LEN 1024 * 1024
 #define MAX_SPS_EXTRA_SIZE 32
 
 using std::chrono_literals::operator""s;
