@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.8.1
+
+### Added
+- Added extra buffer space for IDR frames to accommodate potential SPS fixup
+
+### Changed
+- Expanded initial decode buffer size from 128 KB to 1 MB to improve playback stability
+- Reduced the level profiles of all video formats to ensure better device compatibility
+- Refined on-screen overlays for better alignment to screen edges and improved readability
+
+### Fixed
+- Fixed an issue where server polling continued in the background during an active stream session
+
 ## v1.8.0
 
 ### Added
