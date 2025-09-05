@@ -217,6 +217,12 @@ NvHTTP.prototype = {
       return;
     }
 
+    // Check if a stream session is already in progress
+    if (isInGame === true) {
+      // Do not initiate any server polls while a streaming session is already in progress
+      return;
+    }
+
     this.selectServerAddress(function(successfulAddress) {
       // Successfully determined server address. Update base URL
       this.address = successfulAddress;
