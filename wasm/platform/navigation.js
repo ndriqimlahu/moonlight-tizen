@@ -712,15 +712,22 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      const currentItem = this.view.current();
-      // Check if the current item contains a checkbox input
-      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
-      if (toggleInput) {
-        // Click the input to toggle
-        toggleInput.click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer === 6.0) {
+        // For Tizen 6.0, directly invoke the click event on the current element reference
+        this.view.current().click();
       } else {
-        // Click the element
-        currentItem.click();
+        // For other Tizen OS versions, obtain the element by its ID and invoke its click for proper functionality
+        const currentItem = document.getElementById(this.view.current());
+        // Check if the current item contains a checkbox input
+        const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+        if (toggleInput) {
+          // Click the input to toggle
+          toggleInput.click();
+        } else {
+          // Click the element
+          currentItem.click();
+        }
       }
     },
     accept: function() {
@@ -879,15 +886,22 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      const currentItem = this.view.current();
-      // Check if the current item contains a checkbox input
-      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
-      if (toggleInput) {
-        // Click the input to toggle
-        toggleInput.click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer === 6.0) {
+        // For Tizen 6.0, directly invoke the click event on the current element reference
+        this.view.current().click();
       } else {
-        // Click the element
-        currentItem.click();
+        // For other Tizen OS versions, obtain the element by its ID and invoke its click for proper functionality
+        const currentItem = document.getElementById(this.view.current());
+        // Check if the current item contains a checkbox input
+        const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+        if (toggleInput) {
+          // Click the input to toggle
+          toggleInput.click();
+        } else {
+          // Click the element
+          currentItem.click();
+        }
       }
     },
     accept: function() {
@@ -935,15 +949,22 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      const currentItem = this.view.current();
-      // Check if the current item contains a checkbox input
-      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
-      if (toggleInput) {
-        // Click the input to toggle
-        toggleInput.click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer === 6.0) {
+        // For Tizen 6.0, directly invoke the click event on the current element reference
+        this.view.current().click();
       } else {
-        // Click the element
-        currentItem.click();
+        // For other Tizen OS versions, obtain the element by its ID and invoke its click for proper functionality
+        const currentItem = document.getElementById(this.view.current());
+        // Check if the current item contains a checkbox input
+        const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+        if (toggleInput) {
+          // Click the input to toggle
+          toggleInput.click();
+        } else {
+          // Click the element
+          currentItem.click();
+        }
       }
     },
     accept: function() {
@@ -989,15 +1010,22 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      const currentItem = this.view.current();
-      // Check if the current item contains a checkbox input
-      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
-      if (toggleInput) {
-        // Click the input to toggle
-        toggleInput.click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer === 6.0) {
+        // For Tizen 6.0, directly invoke the click event on the current element reference
+        this.view.current().click();
       } else {
-        // Click the element
-        currentItem.click();
+        // For other Tizen OS versions, obtain the element by its ID and invoke its click for proper functionality
+        const currentItem = document.getElementById(this.view.current());
+        // Check if the current item contains a checkbox input
+        const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+        if (toggleInput) {
+          // Click the input to toggle
+          toggleInput.click();
+        } else {
+          // Click the element
+          currentItem.click();
+        }
       }
     },
     accept: function() {
@@ -1087,15 +1115,22 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      const currentItem = this.view.current();
-      // Check if the current item contains a checkbox input
-      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
-      if (toggleInput) {
-        // Click the input to toggle
-        toggleInput.click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer === 6.0) {
+        // For Tizen 6.0, directly invoke the click event on the current element reference
+        this.view.current().click();
       } else {
-        // Click the element
-        currentItem.click();
+        // For other Tizen OS versions, obtain the element by its ID and invoke its click for proper functionality
+        const currentItem = document.getElementById(this.view.current());
+        // Check if the current item contains a checkbox input
+        const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+        if (toggleInput) {
+          // Click the input to toggle
+          toggleInput.click();
+        } else {
+          // Click the element
+          currentItem.click();
+        }
       }
     },
     accept: function() {
@@ -1184,15 +1219,22 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      const currentItem = this.view.current();
-      // Check if the current item contains a checkbox input
-      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
-      if (toggleInput) {
-        // Click the input to toggle
-        toggleInput.click();
+      // Determine the appropriate click handling method depending on the Tizen platform version
+      if (currentPlatformVer === 6.0) {
+        // For Tizen 6.0, directly invoke the click event on the current element reference
+        this.view.current().click();
       } else {
-        // Click the element
-        currentItem.click();
+        // For other Tizen OS versions, obtain the element by its ID and invoke its click for proper functionality
+        const currentItem = document.getElementById(this.view.current());
+        // Check if the current item contains a checkbox input
+        const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+        if (toggleInput) {
+          // Click the input to toggle
+          toggleInput.click();
+        } else {
+          // Click the element
+          currentItem.click();
+        }
       }
     },
     accept: function() {
