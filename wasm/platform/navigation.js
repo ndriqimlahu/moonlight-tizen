@@ -712,14 +712,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // Determine the appropriate click handling method depending on the Tizen platform version
-      if (currentPlatformVer >= 8.0) {
-        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
-        document.getElementById(this.view.current()).click();
-      } else {
-        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
-        this.view.current().click();
-      }
+      document.getElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -877,14 +870,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // Determine the appropriate click handling method depending on the Tizen platform version
-      if (currentPlatformVer >= 8.0) {
-        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
-        document.getElementById(this.view.current()).click();
-      } else {
-        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
-        this.view.current().click();
-      }
+      document.getElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -931,14 +917,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // Determine the appropriate click handling method depending on the Tizen platform version
-      if (currentPlatformVer >= 8.0) {
-        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
-        document.getElementById(this.view.current()).click();
-      } else {
-        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
-        this.view.current().click();
-      }
+      document.getElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -983,14 +962,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // Determine the appropriate click handling method depending on the Tizen platform version
-      if (currentPlatformVer >= 8.0) {
-        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
-        document.getElementById(this.view.current()).click();
-      } else {
-        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
-        this.view.current().click();
-      }
+      document.getElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1079,14 +1051,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      // Determine the appropriate click handling method depending on the Tizen platform version
-      if (currentPlatformVer >= 8.0) {
-        // For newer Tizen OS versions (8.0 and above), obtain the element by its ID and invoke its click for proper functionality
-        document.getElementById(this.view.current()).click();
-      } else {
-        // For older Tizen OS versions (5.5 to 7.0), directly invoke the click event on the current element reference
-        this.view.current().click();
-      }
+      document.getElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1174,7 +1139,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      document.getElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
