@@ -712,7 +712,16 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      document.getElementById(this.view.current());
+      const currentItem = this.view.current();
+      // Check if the current item contains a checkbox input
+      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+      if (toggleInput) {
+        // Click the input to toggle
+        toggleInput.click();
+      } else {
+        // Click the element
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -870,7 +879,16 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      document.getElementById(this.view.current());
+      const currentItem = this.view.current();
+      // Check if the current item contains a checkbox input
+      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+      if (toggleInput) {
+        // Click the input to toggle
+        toggleInput.click();
+      } else {
+        // Click the element
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -917,7 +935,16 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      document.getElementById(this.view.current());
+      const currentItem = this.view.current();
+      // Check if the current item contains a checkbox input
+      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+      if (toggleInput) {
+        // Click the input to toggle
+        toggleInput.click();
+      } else {
+        // Click the element
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -962,7 +989,16 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      document.getElementById(this.view.current());
+      const currentItem = this.view.current();
+      // Check if the current item contains a checkbox input
+      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+      if (toggleInput) {
+        // Click the input to toggle
+        toggleInput.click();
+      } else {
+        // Click the element
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1051,7 +1087,16 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      document.getElementById(this.view.current());
+      const currentItem = this.view.current();
+      // Check if the current item contains a checkbox input
+      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+      if (toggleInput) {
+        // Click the input to toggle
+        toggleInput.click();
+      } else {
+        // Click the element
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1139,7 +1184,16 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      document.getElementById(this.view.current());
+      const currentItem = this.view.current();
+      // Check if the current item contains a checkbox input
+      const toggleInput = currentItem.querySelector('input[type="checkbox"]');
+      if (toggleInput) {
+        // Click the input to toggle
+        toggleInput.click();
+      } else {
+        // Click the element
+        currentItem.click();
+      }
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
