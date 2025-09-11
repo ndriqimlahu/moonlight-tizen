@@ -208,7 +208,6 @@ body {
     display: none;
     align-items: center;
     justify-content: center;
-    overflow: hidden !important;
 }
 .mdl-dialog {
     color: #fff;
