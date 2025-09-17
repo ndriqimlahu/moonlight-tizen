@@ -176,7 +176,7 @@ void MoonlightInstance::ReportMouseMovement() {
   if (m_AccumulatedTicks != 0) {
     // We can have fractional ticks here, so multiply by WHEEL_DELTA
     // to get actual scroll distance and use the high-res variant.
-    LiSendHighResScrollEvent(m_AccumulatedTicks * 120);
+    LiSendHighResScrollEvent(m_AccumulatedTicks);
     m_AccumulatedTicks = 0;
   }
 }
