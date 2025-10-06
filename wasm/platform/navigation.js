@@ -850,6 +850,48 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  InterfaceSettings: {
+    view: new ListView(() => []),
+    up: function() {
+      this.view.prevOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    down: function() {
+      this.view.nextOption();
+      document.getElementById(this.view.current()).focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      // Remove focus from the current element before changing the view
+      document.getElementById(this.view.current()).blur();
+      // Reset the current settings view before navigating to the next settings view
+      resetSettingsView();
+      // Navigate to the Settings view
+      Navigation.change(Views.Settings);
+      // Set focus on the category item in Settings view when transitioning from InterfaceSettings view
+      const navItem = document.getElementById(Views.Settings.view.current());
+      if (navItem) {
+        navItem.focus();
+      }
+    },
+    press: function() {},
+    switch: function() {
+      document.getElementById(this.view.current()).focus();
+    },
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   HostSettings: {
     view: new ListView(() => [
       'ipAddressFieldModeBtn',

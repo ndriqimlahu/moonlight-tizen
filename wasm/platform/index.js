@@ -1211,6 +1211,9 @@ function handleSettingsView(category) {
     case 'basicSettings': // Navigate to the BasicSettings view
       navigateSettingsView(Views.BasicSettings);
       break;
+    case 'interfaceSettings': // Navigate to the InterfaceSettings view
+      navigateSettingsView(Views.InterfaceSettings);
+      break;
     case 'hostSettings': // Navigate to the HostSettings view
       navigateSettingsView(Views.HostSettings);
       break;

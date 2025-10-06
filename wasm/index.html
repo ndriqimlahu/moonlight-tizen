@@ -65,6 +65,10 @@
               <i class="settings-category-icons material-icons">tune</i>
               <label>Basic Settings</label>
             </div>
+            <div class="settings-category" data-category="interfaceSettings" onclick="handleSettingsView('interfaceSettings')">
+              <i class="settings-category-icons material-icons">dashboard_customize</i>
+              <label>UI Settings</label>
+            </div>
             <div class="settings-category" data-category="hostSettings" onclick="handleSettingsView('hostSettings')">
               <i class="settings-category-icons material-icons">desktop_windows</i>
               <label>Host Settings</label>
@@ -145,6 +149,8 @@
                 </label>
               </div>
             </div>
+          </div>
+          <div id="interfaceSettings" class="settings-options">
           </div>
           <div id="hostSettings" class="settings-options">
             <div class="setting-option">
