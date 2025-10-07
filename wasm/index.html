@@ -151,8 +151,6 @@
             </div>
           </div>
           <div id="interfaceSettings" class="settings-options">
-          </div>
-          <div id="hostSettings" class="settings-options">
             <div class="setting-option">
               <label>IP address field mode</label>
               <span class="mdl-list__item-text-body">
@@ -165,6 +163,28 @@
                 </label>
               </div>
             </div>
+            <div class="setting-option">
+              <label>Connection warnings</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="connectionWarningsMenu">
+                <label id="disableWarningsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="disableWarningsSwitch">
+                  <input type="checkbox" id="disableWarningsSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Disable on-screen connection warning messages while streaming</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Performance statistics</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="performanceStatsMenu">
+                <label id="performanceStatsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="performanceStatsSwitch">
+                  <input type="checkbox" id="performanceStatsSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Display real-time stream performance information while streaming</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div id="hostSettings" class="settings-options">
             <div class="setting-option">
               <label>Sort the list of apps</label>
               <span class="mdl-list__item-text-body"></span>
@@ -182,16 +202,6 @@
                 <label id="optimizeGamesBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="optimizeGamesSwitch">
                   <input type="checkbox" id="optimizeGamesSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow the host to modify game settings for optimal streaming</span>
-                </label>
-              </div>
-            </div>
-            <div class="setting-option">
-              <label>Play audio on PC</label>
-              <span class="mdl-list__item-text-body"></span>
-              <div id="playHostAudioMenu">
-                <label id="playHostAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="playHostAudioSwitch">
-                  <input type="checkbox" id="playHostAudioSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow playing audio from the computer and this device</span>
                 </label>
               </div>
             </div>
@@ -273,6 +283,16 @@
                 </label>
               </div>
             </div>
+            <div class="setting-option">
+              <label>Play audio on PC</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="playHostAudioMenu">
+                <label id="playHostAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="playHostAudioSwitch">
+                  <input type="checkbox" id="playHostAudioSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Allow playing audio from the computer and this device</span>
+                </label>
+              </div>
+            </div>
           </div>
           <div id="videoSettings" class="settings-options">
             <div class="setting-option">
@@ -310,26 +330,6 @@
                 <label id="fullRangeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="fullRangeSwitch">
                   <input type="checkbox" id="fullRangeSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow full color range for more detail in dark and bright areas of content</span>
-                </label>
-              </div>
-            </div>
-            <div class="setting-option">
-              <label>Connection warnings</label>
-              <span class="mdl-list__item-text-body"></span>
-              <div id="connectionWarningsMenu">
-                <label id="disableWarningsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="disableWarningsSwitch">
-                  <input type="checkbox" id="disableWarningsSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Disable on-screen connection warning messages while streaming</span>
-                </label>
-              </div>
-            </div>
-            <div class="setting-option">
-              <label>Performance statistics</label>
-              <span class="mdl-list__item-text-body"></span>
-              <div id="performanceStatsMenu">
-                <label id="performanceStatsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="performanceStatsSwitch">
-                  <input type="checkbox" id="performanceStatsSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Display real-time stream performance information while streaming</span>
                 </label>
               </div>
             </div>

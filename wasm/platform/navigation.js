@@ -851,7 +851,11 @@ const Views = {
     },
   },
   InterfaceSettings: {
-    view: new ListView(() => []),
+    view: new ListView(() => [
+      'ipAddressFieldModeBtn',
+      'disableWarningsBtn',
+      'performanceStatsBtn'
+    ]),
     up: function() {
       this.view.prevOption();
       document.getElementById(this.view.current()).focus();
@@ -894,10 +898,8 @@ const Views = {
   },
   HostSettings: {
     view: new ListView(() => [
-      'ipAddressFieldModeBtn',
       'sortAppsListBtn',
       'optimizeGamesBtn',
-      'playHostAudioBtn',
       'removeAllHostsBtn'
     ]),
     up: function() {
@@ -990,7 +992,8 @@ const Views = {
   AudioSettings: {
     view: new ListView(() => [
       'selectAudio',
-      'audioSyncBtn'
+      'audioSyncBtn',
+      'playHostAudioBtn'
     ]),
     up: function() {
       this.view.prevOption();
@@ -1077,9 +1080,7 @@ const Views = {
     view: new ListView(() => [
       'selectCodec',
       'hdrModeBtn',
-      'fullRangeBtn',
-      'disableWarningsBtn',
-      'performanceStatsBtn'
+      'fullRangeBtn'
     ]),
     up: function() {
       this.view.prevOption();
