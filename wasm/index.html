@@ -164,6 +164,18 @@
               </div>
             </div>
             <div class="setting-option">
+              <label>Unlock all frame rates</label>
+              <span class="mdl-list__item-text-body">
+                - Higher FPS can reduce latency on high-end devices, but may cause lag or instability on unsupported devices.
+              </span>
+              <div id="unlockAllFpsMenu">
+                <label id="unlockAllFpsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="unlockAllFpsSwitch">
+                  <input type="checkbox" id="unlockAllFpsSwitch" class="mdl-switch__input" onchange="handleUnlockAllFps()">
+                  <span class="mdl-switch__label">Unlock all possible frame rate options for this device</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
               <label>Connection warnings</label>
               <span class="mdl-list__item-text-body"></span>
               <div id="connectionWarningsMenu">

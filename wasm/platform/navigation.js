@@ -853,6 +853,7 @@ const Views = {
   InterfaceSettings: {
     view: new ListView(() => [
       'ipAddressFieldModeBtn',
+      'unlockAllFpsBtn',
       'disableWarningsBtn',
       'performanceStatsBtn'
     ]),
