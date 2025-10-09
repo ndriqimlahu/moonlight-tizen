@@ -2519,6 +2519,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('5');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('6');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('8');
     }
   } else if (res === '1280:720') { // 720p
     if (frameRate === '30') { // 30 FPS
@@ -2529,6 +2531,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('12');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('15');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('18');
     }
   } else if (res === '1920:1080') { // 1080p
     if (frameRate === '30') { // 30 FPS
@@ -2539,6 +2543,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('25');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('30');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('35');
     }
   } else if (res === '2560:1440') { // 1440p
     if (frameRate === '30') { // 30 FPS
@@ -2549,6 +2555,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('50');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('60');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('70');
     }
   } else if (res === '3840:2160') { // 2160p
     if (frameRate === '30') { // 30 FPS
@@ -2559,6 +2567,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('100');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('120');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('140');
     }
   } else {
     // Unrecognized option! In case someone screws with the JS to add custom resolutions.
@@ -2599,23 +2609,24 @@ function handleUnlockAllFps() {
 
   // Check if the Unlock all FPS switch is checked
   if ($('#unlockAllFpsSwitch').prop('checked')) {
-    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Adding higher framerate options: 90, 120 FPS');
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Adding higher framerate options: 90, 120, 144 FPS');
     // Check if any of the higher FPS options are absent to avoid duplicates
-    if (!$('.videoFramerateMenu').find('li[data-value="90"], li[data-value="120"]').length) {
-      // Insert all higher FPS options in correct order (90, 120)
+    if (!$('.videoFramerateMenu').find('li[data-value="90"], li[data-value="120"], li[data-value="144"]').length) {
+      // Insert all higher FPS options in correct order (90, 120, 144)
       addFramerate.after(`
         <li class="mdl-menu__item" data-value="90">90 FPS</li>
         <li class="mdl-menu__item" data-value="120">120 FPS</li>
+        <li class="mdl-menu__item" data-value="144">144 FPS</li>
       `);
       // Attach click listeners only to the newly added FPS options
-      $('.videoFramerateMenu li[data-value="90"], li[data-value="120"]').on('click', saveFramerate);
+      $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').on('click', saveFramerate);
     }
   } else {
-    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Removing higher framerate options: 90, 120 FPS');
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Removing higher framerate options: 90, 120, 144 FPS');
     // If unchecked, remove the higher FPS options from the selection menu
-    $('.videoFramerateMenu li[data-value="90"], li[data-value="120"]').remove();
+    $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').remove();
     // After removal, if a higher FPS option remains selected, then reset it to the default option
-    if (['90', '120'].includes(String(currentFps))) {
+    if (['90', '120', '144'].includes(String(currentFps))) {
       $('#selectFramerate').text('60 FPS').data('value', '60');
       console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Resetting framerate value to 60 FPS');
       storeData('frameRate', '60', null);
