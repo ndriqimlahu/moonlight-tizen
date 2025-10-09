@@ -12,17 +12,17 @@ Check out the [Moonlight Wiki](https://github.com/ndriqimlahu/moonlight-tizen/wi
 
 ## Prerequisites
 
-To get started, ensure that your client, host, and network meet the recommended requirements described below, which are essential to use the **Moonlight** app.
+To get started, ensure that your setup meet the recommended requirements described below, which are essential to use the Moonlight app.
 
-- Client Requirements — You must have a Samsung TV with Tizen OS starting from model year `2020 (Tizen 5.5) or later`.
+- Client Requirements — You must have a Samsung TV with Tizen OS starting from model year **2020 (Tizen 5.5) or later**.
 
 - Host Requirements — You must have a powerful PC with a GPU capable of hardware decoding that meets the [system requirements](https://docs.lizardbyte.dev/projects/sunshine/latest/index.html#%EF%B8%8F-system-requirements) to ensure optimal streaming performance.
 
-- Network Requirements — You need a mid-range or high-end wireless router with a good wireless connection to your client using `5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax)` and a good wired connection to your host using the `CAT5e ethernet or better` which is strongly recommended.
+- Network Requirements — You need a mid-range or high-end wireless router with a good wireless connection to your client using **5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax)** and a good wired connection to your host using the **CAT5e ethernet or better** which is strongly recommended.
 
 ## Installation
 
-Follow the instructions below based on the Tizen OS version of your Samsung TV to successfully download and install the **Moonlight** app.
+Follow the instructions below based on the Tizen OS version of your Samsung TV to successfully download and install the Moonlight app.
 
 ### Newer Samsung TVs — Tizen 8.0 or Higher
 
@@ -41,16 +41,22 @@ See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/C
 
 ## Contributing
 
-Contributions are welcome! Fork the repo, create pull requests, or open issues. If you find the project useful, consider giving it a star!
+Contributions are welcome! You can fork the repo, create pull requests, or open issues.
+
+If you find this project useful, here are ways you can support it:
+⭐ Star the repo to show your appreciation and support the project.
+🐛 Report bugs or suggest new features to help improve the project.
+💬 Participate in discussions to share ideas, tips, or improvements.
+🧪 Test pre-release builds and give early feedback to the developer.
 
 ## License
 
 This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/LICENSE) file for more information.
 
 ## Acknowledgements
-- Thanks to [Moonlight Streaming Core Library](https://github.com/moonlight-stream/moonlight-common-c) and [Moonlight Game Streaming Project](https://github.com/moonlight-stream/moonlight-chrome) for implementing the core GameStream client code and developing Moonlight for Chrome OS.
-- Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for porting the entire codebase from Chrome OS (NaCl) and adapting the Moonlight implementation for Tizen OS (WASM).
+- Thanks to [Moonlight Core Library](https://github.com/moonlight-stream/moonlight-common-c) and [Moonlight ChromeOS](https://github.com/moonlight-stream/moonlight-chrome) for the core implementation of the NVIDIA GameStream protocol and the development of Moonlight for Chrome OS.
+- Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for creating a port version based on Chrome OS (NaCl) and adapting the Moonlight implementation for Tizen OS (WASM).
 - Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) and [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating a method for building the application and adapting the Dockerfile including the supporting files.
-- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files, adding a shortcut combo to stop the streaming session, allowing audio volume changes, and improving the Dockerfile for better compatibility.
+- Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files, adding a shortcut combo to stop the streaming session, allowing audio volume changes, and improving the Dockerfile for better build compatibility.
 - Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for implementing features such as video codec selection, mouse emulation, Wake-on-LAN, new IP address field mode, improved Docker publishing workflow, and several improvements.
 - Thanks to [toypoodlegaming](https://github.com/toypoodlegaming/moonlight-chrome-tizen) for improving video codec selection logic and implementing features such as audio configuration and performance statistics.
