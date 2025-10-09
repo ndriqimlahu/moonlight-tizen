@@ -121,8 +121,6 @@
               <ul class="videoFramerateMenu mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="selectFramerate">
                 <li class="mdl-menu__item" data-value="30">30 FPS</li>
                 <li class="mdl-menu__item" data-value="60">60 FPS</li>
-                <li class="mdl-menu__item" data-value="90">90 FPS</li>
-                <li class="mdl-menu__item" data-value="120">120 FPS</li>
               </ul>
             </div>
             <div class="setting-option">
@@ -160,6 +158,18 @@
                 <label id="ipAddressFieldModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="ipAddressFieldModeSwitch">
                   <input type="checkbox" id="ipAddressFieldModeSwitch" class="mdl-switch__input" onchange="handleIpAddressFieldMode()">
                   <span class="mdl-switch__label">Change the IP address input text field to numeric input mode</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Unlock all frame rates</label>
+              <span class="mdl-list__item-text-body">
+                - Higher FPS can reduce latency on high-end devices, but may cause lag or instability on unsupported devices.
+              </span>
+              <div id="unlockAllFpsMenu">
+                <label id="unlockAllFpsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="unlockAllFpsSwitch">
+                  <input type="checkbox" id="unlockAllFpsSwitch" class="mdl-switch__input" onchange="handleUnlockAllFps()">
+                  <span class="mdl-switch__label">Unlock all possible frame rate options for this device</span>
                 </label>
               </div>
             </div>

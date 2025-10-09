@@ -38,6 +38,7 @@ function attachListeners() {
   $('#bitrateSlider').on('input', saveBitrate);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
+  $('#unlockAllFpsSwitch').on('click', saveUnlockAllFps);
   $('#disableWarningsSwitch').on('click', saveDisableWarnings);
   $('#performanceStatsSwitch').on('click', savePerformanceStats);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
@@ -2518,6 +2519,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('5');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('6');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('8');
     }
   } else if (res === '1280:720') { // 720p
     if (frameRate === '30') { // 30 FPS
@@ -2528,6 +2531,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('12');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('15');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('18');
     }
   } else if (res === '1920:1080') { // 1080p
     if (frameRate === '30') { // 30 FPS
@@ -2538,6 +2543,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('25');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('30');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('35');
     }
   } else if (res === '2560:1440') { // 1440p
     if (frameRate === '30') { // 30 FPS
@@ -2548,6 +2555,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('50');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('60');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('70');
     }
   } else if (res === '3840:2160') { // 2160p
     if (frameRate === '30') { // 30 FPS
@@ -2558,6 +2567,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('100');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('120');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('140');
     }
   } else {
     // Unrecognized option! In case someone screws with the JS to add custom resolutions.
@@ -2582,6 +2593,47 @@ function saveIpAddressFieldMode() {
     console.log('%c[index.js, saveIpAddressFieldMode]', 'color: green;', 'Saving IP address field mode state: ' + chosenIpAddressFieldMode);
     storeData('ipAddressFieldMode', chosenIpAddressFieldMode, null);
   }, 100);
+}
+
+function saveUnlockAllFps() {
+  setTimeout(() => {
+    const chosenUnlockAllFps = $('#unlockAllFpsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveUnlockAllFps]', 'color: green;', 'Saving unlock all FPS state: ' + chosenUnlockAllFps);
+    storeData('unlockAllFps', chosenUnlockAllFps, null);
+  }, 100);
+}
+
+function handleUnlockAllFps() {
+  var currentFps = $('#selectFramerate').data('value');
+  const addFramerate = $('.videoFramerateMenu').find('li[data-value="60"]');
+
+  // Check if the Unlock all FPS switch is checked
+  if ($('#unlockAllFpsSwitch').prop('checked')) {
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Adding higher framerate options: 90, 120, 144 FPS');
+    // Check if any of the higher FPS options are absent to avoid duplicates
+    if (!$('.videoFramerateMenu').find('li[data-value="90"], li[data-value="120"], li[data-value="144"]').length) {
+      // Insert all higher FPS options in correct order (90, 120, 144)
+      addFramerate.after(`
+        <li class="mdl-menu__item" data-value="90">90 FPS</li>
+        <li class="mdl-menu__item" data-value="120">120 FPS</li>
+        <li class="mdl-menu__item" data-value="144">144 FPS</li>
+      `);
+      // Attach click listeners only to the newly added FPS options
+      $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').on('click', saveFramerate);
+    }
+  } else {
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Removing higher framerate options: 90, 120, 144 FPS');
+    // If unchecked, remove the higher FPS options from the selection menu
+    $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').remove();
+    // After removal, if a higher FPS option remains selected, then reset it to the default option
+    if (['90', '120', '144'].includes(String(currentFps))) {
+      $('#selectFramerate').text('60 FPS').data('value', '60');
+      console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Resetting framerate value to 60 FPS');
+      storeData('frameRate', '60', null);
+      // Update the bitrate value based on the selected frame rate
+      setBitratePresetValue();
+    }
+  }
 }
 
 function saveDisableWarnings() {
@@ -2803,6 +2855,10 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
   storeData('ipAddressFieldMode', defaultIpAddressFieldMode, null);
 
+  const defaultUnlockAllFps = false;
+  document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off();
+  storeData('unlockAllFps', defaultUnlockAllFps, null);
+
   const defaultDisableWarnings = false;
   document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
   storeData('disableWarnings', defaultDisableWarnings, null);
@@ -2962,6 +3018,19 @@ function loadUserDataCb() {
         }
       });
     }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored unlockAllFps preferences.');
+  getData('unlockAllFps', function(previousValue) {
+    if (previousValue.unlockAllFps == null) {
+      document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.unlockAllFps == false) {
+      document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#unlockAllFpsBtn').MaterialSwitch.on();
+    }
+    // Handle the Unlocked FPS visibility based on switch state
+    handleUnlockAllFps();
   });
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored frameRate preferences.');
