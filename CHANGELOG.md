@@ -123,7 +123,7 @@ All notable changes to this project will be documented in this file.
 ## v1.4.0
 
 ### Added
-- Introduced a new 'Audio Settings' category which will contain audio settings
+- Added a new 'Audio Settings' category which will contain audio settings
 - Added 'HDR mode' parameter to launch and resume requests to auto-toggle HDR on host PC
 
 ### Changed
@@ -327,7 +327,7 @@ All notable changes to this project will be documented in this file.
 ## v1.2.7
 
 ### Added
-- Introduced a new 'Input Settings' category which will be used to hold input settings
+- Added a new 'Input Settings' category which will be used to hold input settings
 - Introduced a new 'Rumble feedback' setting that allows changing the state of the rumble feature for the gamepad
 - Introduced a new 'Mouse emulation' setting that allows changing the state of the mouse feature for the gamepad
 
@@ -566,7 +566,7 @@ All notable changes to this project will be documented in this file.
 ## v1.1.7
 
 ### Added
-- Introduced a new 'About' category that contains a 'System Info' button as a placeholder
+- Added a new 'About' category that contains a 'System Info' button as a placeholder
 - Added three new 'Tizen' privileges that grant access to app and system information
 - Implemented functionality to load system information in the 'System Info' button
 - Implemented all navigation views for full interaction within the 'Settings' container
