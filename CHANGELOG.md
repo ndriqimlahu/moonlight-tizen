@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.0
+
+### Added
+- Added a new 'UI Settings' category for interface customization options
+- Introduced a new 'Unlock all frame rates' setting to enable higher FPS options
+- Implemented handling for unlocking all FPS options based on toggle switch state
+- Expanded the 'Unlock all frame rates' setting with a new '144 FPS' option
+
+### Changed
+- Rearranged settings by moving options into more appropriate categories
+- Adjusted high-resolution scroll event scaling factor for smoother wheel input
+
 ## v1.8.1
 
 ### Added
