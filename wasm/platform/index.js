@@ -38,9 +38,11 @@ function attachListeners() {
   $('#bitrateSlider').on('input', saveBitrate);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
+  $('#unlockAllFpsSwitch').on('click', saveUnlockAllFps);
+  $('#disableWarningsSwitch').on('click', saveDisableWarnings);
+  $('#performanceStatsSwitch').on('click', savePerformanceStats);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
-  $('#playHostAudioSwitch').on('click', savePlayHostAudio);
   $('#removeAllHostsBtn').on('click', deleteAllHostsDialog);
   $('#rumbleFeedbackSwitch').on('click', saveRumbleFeedback);
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
@@ -48,11 +50,10 @@ function attachListeners() {
   $('#flipXYfaceButtonsSwitch').on('click', saveFlipXYfaceButtons);
   $('.audioConfigMenu li').on('click', saveAudioConfiguration);
   $('#audioSyncSwitch').on('click', saveAudioSync);
+  $('#playHostAudioSwitch').on('click', savePlayHostAudio);
   $('.videoCodecMenu li').on('click', saveVideoCodec);
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#fullRangeSwitch').on('click', saveFullRange);
-  $('#disableWarningsSwitch').on('click', saveDisableWarnings);
-  $('#performanceStatsSwitch').on('click', savePerformanceStats);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartAppDialog);
@@ -1211,6 +1212,9 @@ function handleSettingsView(category) {
     case 'basicSettings': // Navigate to the BasicSettings view
       navigateSettingsView(Views.BasicSettings);
       break;
+    case 'interfaceSettings': // Navigate to the InterfaceSettings view
+      navigateSettingsView(Views.InterfaceSettings);
+      break;
     case 'hostSettings': // Navigate to the HostSettings view
       navigateSettingsView(Views.HostSettings);
       break;
@@ -2098,19 +2102,19 @@ function startGame(host, appID) {
       var rikeyid = generateRemoteInputKeyId();
       var gamepadMask = getConnectedGamepadMask();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const disableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const performanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const playHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var audioConfig = $('#selectAudio').data('value').toString();
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const playHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
       var videoCodec = $('#selectCodec').data('value').toString();
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const disableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const performanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
       '\n Host address: ' + host.address + 
@@ -2118,19 +2122,19 @@ function startGame(host, appID) {
       '\n Video frame rate: ' + frameRate + ' FPS' + 
       '\n Video bitrate: ' + bitrate + ' Kbps' + 
       '\n Video frame pacing: ' + framePacing + 
+      '\n Disable connection warnings: ' + disableWarnings + 
+      '\n Performance statistics: ' + performanceStats + 
       '\n Optimize game settings: ' + optimizeGames + 
-      '\n Play host audio: ' + playHostAudio + 
       '\n Rumble feedback: ' + rumbleFeedback + 
       '\n Mouse emulation: ' + mouseEmulation + 
       '\n Flip A/B face buttons: ' + flipABfaceButtons + 
       '\n Flip X/Y face buttons: ' + flipXYfaceButtons + 
       '\n Audio configuration: ' + audioConfig + 
       '\n Audio synchronization: ' + audioSync + 
+      '\n Play host audio: ' + playHostAudio + 
       '\n Video codec: ' + videoCodec + 
       '\n Video HDR mode: ' + hdrMode + 
-      '\n Full color range: ' + fullRange + 
-      '\n Disable connection warnings: ' + disableWarnings + 
-      '\n Performance statistics: ' + performanceStats);
+      '\n Full color range: ' + fullRange);
 
       // Hide on-screen overlays until the streaming session begins
       $('#connection-warnings, #performance-stats').css('background', 'transparent').text('');
@@ -2171,8 +2175,9 @@ function startGame(host, appID) {
           sendMessage('startRequest', [
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
-            framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings, performanceStats
+            framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation,
+            flipABfaceButtons, flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode,
+            fullRange
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -2224,8 +2229,9 @@ function startGame(host, appID) {
         sendMessage('startRequest', [
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
-          framePacing, optimizeGames, playHostAudio, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          audioConfig, audioSync, videoCodec, hdrMode, fullRange, disableWarnings, performanceStats
+          framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation,
+          flipABfaceButtons, flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode,
+          fullRange
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2513,6 +2519,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('5');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('6');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('8');
     }
   } else if (res === '1280:720') { // 720p
     if (frameRate === '30') { // 30 FPS
@@ -2523,6 +2531,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('12');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('15');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('18');
     }
   } else if (res === '1920:1080') { // 1080p
     if (frameRate === '30') { // 30 FPS
@@ -2533,6 +2543,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('25');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('30');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('35');
     }
   } else if (res === '2560:1440') { // 1440p
     if (frameRate === '30') { // 30 FPS
@@ -2543,6 +2555,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('50');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('60');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('70');
     }
   } else if (res === '3840:2160') { // 2160p
     if (frameRate === '30') { // 30 FPS
@@ -2553,6 +2567,8 @@ function setBitratePresetValue() {
       $('#bitrateSlider')[0].MaterialSlider.change('100');
     } else if (frameRate === '120') { // 120 FPS
       $('#bitrateSlider')[0].MaterialSlider.change('120');
+    } else if (frameRate === '144') { // 144 FPS
+      $('#bitrateSlider')[0].MaterialSlider.change('140');
     }
   } else {
     // Unrecognized option! In case someone screws with the JS to add custom resolutions.
@@ -2579,6 +2595,63 @@ function saveIpAddressFieldMode() {
   }, 100);
 }
 
+function saveUnlockAllFps() {
+  setTimeout(() => {
+    const chosenUnlockAllFps = $('#unlockAllFpsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveUnlockAllFps]', 'color: green;', 'Saving unlock all FPS state: ' + chosenUnlockAllFps);
+    storeData('unlockAllFps', chosenUnlockAllFps, null);
+  }, 100);
+}
+
+function handleUnlockAllFps() {
+  var currentFps = $('#selectFramerate').data('value');
+  const addFramerate = $('.videoFramerateMenu').find('li[data-value="60"]');
+
+  // Check if the Unlock all FPS switch is checked
+  if ($('#unlockAllFpsSwitch').prop('checked')) {
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Adding higher framerate options: 90, 120, 144 FPS');
+    // Check if any of the higher FPS options are absent to avoid duplicates
+    if (!$('.videoFramerateMenu').find('li[data-value="90"], li[data-value="120"], li[data-value="144"]').length) {
+      // Insert all higher FPS options in correct order (90, 120, 144)
+      addFramerate.after(`
+        <li class="mdl-menu__item" data-value="90">90 FPS</li>
+        <li class="mdl-menu__item" data-value="120">120 FPS</li>
+        <li class="mdl-menu__item" data-value="144">144 FPS</li>
+      `);
+      // Attach click listeners only to the newly added FPS options
+      $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').on('click', saveFramerate);
+    }
+  } else {
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Removing higher framerate options: 90, 120, 144 FPS');
+    // If unchecked, remove the higher FPS options from the selection menu
+    $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').remove();
+    // After removal, if a higher FPS option remains selected, then reset it to the default option
+    if (['90', '120', '144'].includes(String(currentFps))) {
+      $('#selectFramerate').text('60 FPS').data('value', '60');
+      console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Resetting framerate value to 60 FPS');
+      storeData('frameRate', '60', null);
+      // Update the bitrate value based on the selected frame rate
+      setBitratePresetValue();
+    }
+  }
+}
+
+function saveDisableWarnings() {
+  setTimeout(() => {
+    const chosenDisableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveDisableWarnings]', 'color: green;', 'Saving disable warnings state: ' + chosenDisableWarnings);
+    storeData('disableWarnings', chosenDisableWarnings, null);
+  }, 100);
+}
+
+function savePerformanceStats() {
+  setTimeout(() => {
+    const chosenPerformanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, savePerformanceStats]', 'color: green;', 'Saving performance stats state: ' + chosenPerformanceStats);
+    storeData('performanceStats', chosenPerformanceStats, null);
+  }, 100);
+}
+
 function saveSortAppsList() {
   setTimeout(() => {
     const chosenSortAppsList = $('#sortAppsListSwitch').parent().hasClass('is-checked');
@@ -2592,14 +2665,6 @@ function saveOptimizeGames() {
     const chosenOptimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveOptimizeGames]', 'color: green;', 'Saving optimize games state: ' + chosenOptimizeGames);
     storeData('optimizeGames', chosenOptimizeGames, null);
-  }, 100);
-}
-
-function savePlayHostAudio() {
-  setTimeout(() => {
-    const chosenPlayHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, savePlayHostAudio]', 'color: green;', 'Saving play host audio state: ' + chosenPlayHostAudio);
-    storeData('playHostAudio', chosenPlayHostAudio, null);
   }, 100);
 }
 
@@ -2665,6 +2730,14 @@ function saveAudioSync() {
     const chosenAudioSync = $('#audioSyncSwitch').parent().hasClass('is-checked');
     console.log('%c[index.js, saveAudioSync]', 'color: green;', 'Saving audio sync state: ' + chosenAudioSync);
     storeData('audioSync', chosenAudioSync, null);
+  }, 100);
+}
+
+function savePlayHostAudio() {
+  setTimeout(() => {
+    const chosenPlayHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, savePlayHostAudio]', 'color: green;', 'Saving play host audio state: ' + chosenPlayHostAudio);
+    storeData('playHostAudio', chosenPlayHostAudio, null);
   }, 100);
 }
 
@@ -2759,22 +2832,6 @@ function saveFullRange() {
   }, 100);
 }
 
-function saveDisableWarnings() {
-  setTimeout(() => {
-    const chosenDisableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, saveDisableWarnings]', 'color: green;', 'Saving disable warnings state: ' + chosenDisableWarnings);
-    storeData('disableWarnings', chosenDisableWarnings, null);
-  }, 100);
-}
-
-function savePerformanceStats() {
-  setTimeout(() => {
-    const chosenPerformanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, savePerformanceStats]', 'color: green;', 'Saving performance stats state: ' + chosenPerformanceStats);
-    storeData('performanceStats', chosenPerformanceStats, null);
-  }, 100);
-}
-
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2798,6 +2855,18 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
   storeData('ipAddressFieldMode', defaultIpAddressFieldMode, null);
 
+  const defaultUnlockAllFps = false;
+  document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off();
+  storeData('unlockAllFps', defaultUnlockAllFps, null);
+
+  const defaultDisableWarnings = false;
+  document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
+  storeData('disableWarnings', defaultDisableWarnings, null);
+
+  const defaultPerformanceStats = false;
+  document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
+  storeData('performanceStats', defaultPerformanceStats, null);
+
   const defaultSortAppsList = false;
   document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
   storeData('sortAppsList', defaultSortAppsList, null);
@@ -2805,10 +2874,6 @@ function restoreDefaultsSettingsValues() {
   const defaultOptimizeGames = false;
   document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
   storeData('optimizeGames', defaultOptimizeGames, null);
-
-  const defaultPlayHostAudio = false;
-  document.querySelector('#playHostAudioBtn').MaterialSwitch.off();
-  storeData('playHostAudio', defaultPlayHostAudio, null);
 
   const defaultRumbleFeedback = false;
   document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
@@ -2834,6 +2899,10 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#audioSyncBtn').MaterialSwitch.off();
   storeData('audioSync', defaultAudioSync, null);
 
+  const defaultPlayHostAudio = false;
+  document.querySelector('#playHostAudioBtn').MaterialSwitch.off();
+  storeData('playHostAudio', defaultPlayHostAudio, null);
+
   const defaultVideoCodec = 'H264';
   $('#selectCodec').text('H.264').data('value', defaultVideoCodec);
   storeData('videoCodec', defaultVideoCodec, null);
@@ -2845,14 +2914,6 @@ function restoreDefaultsSettingsValues() {
   const defaultFullRange = false;
   document.querySelector('#fullRangeBtn').MaterialSwitch.off();
   storeData('fullRange', defaultFullRange, null);
-
-  const defaultDisableWarnings = false;
-  document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
-  storeData('disableWarnings', defaultDisableWarnings, null);
-
-  const defaultPerformanceStats = false;
-  document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
-  storeData('performanceStats', defaultPerformanceStats, null);
 }
 
 function initSamsungKeys() {
@@ -2959,6 +3020,19 @@ function loadUserDataCb() {
     }
   });
 
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored unlockAllFps preferences.');
+  getData('unlockAllFps', function(previousValue) {
+    if (previousValue.unlockAllFps == null) {
+      document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.unlockAllFps == false) {
+      document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#unlockAllFpsBtn').MaterialSwitch.on();
+    }
+    // Handle the Unlocked FPS visibility based on switch state
+    handleUnlockAllFps();
+  });
+
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored frameRate preferences.');
   getData('frameRate', function(previousValue) {
     if (previousValue.frameRate != null) {
@@ -3002,6 +3076,28 @@ function loadUserDataCb() {
     handleIpAddressFieldMode();
   });
 
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored disableWarnings preferences.');
+  getData('disableWarnings', function(previousValue) {
+    if (previousValue.disableWarnings == null) {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.disableWarnings == false) {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored performanceStats preferences.');
+  getData('performanceStats', function(previousValue) {
+    if (previousValue.performanceStats == null) {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.performanceStats == false) {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.on();
+    }
+  });
+
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored sortAppsList preferences.');
   getData('sortAppsList', function(previousValue) {
     if (previousValue.sortAppsList == null) {
@@ -3021,17 +3117,6 @@ function loadUserDataCb() {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.on();
-    }
-  });
-
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored playHostAudio preferences.');
-  getData('playHostAudio', function(previousValue) {
-    if (previousValue.playHostAudio == null) {
-      document.querySelector('#playHostAudioBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.playHostAudio == false) {
-      document.querySelector('#playHostAudioBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#playHostAudioBtn').MaterialSwitch.on();
     }
   });
 
@@ -3102,6 +3187,17 @@ function loadUserDataCb() {
     }
   });
 
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored playHostAudio preferences.');
+  getData('playHostAudio', function(previousValue) {
+    if (previousValue.playHostAudio == null) {
+      document.querySelector('#playHostAudioBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.playHostAudio == false) {
+      document.querySelector('#playHostAudioBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#playHostAudioBtn').MaterialSwitch.on();
+    }
+  });
+
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored videoCodec preferences.');
   getData('videoCodec', function(previousValue) {
     if (previousValue.videoCodec != null) {
@@ -3133,28 +3229,6 @@ function loadUserDataCb() {
       document.querySelector('#fullRangeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#fullRangeBtn').MaterialSwitch.on();
-    }
-  });
-
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored disableWarnings preferences.');
-  getData('disableWarnings', function(previousValue) {
-    if (previousValue.disableWarnings == null) {
-      document.querySelector('#disableWarningsBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.disableWarnings == false) {
-      document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#disableWarningsBtn').MaterialSwitch.on();
-    }
-  });
-
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored performanceStats preferences.');
-  getData('performanceStats', function(previousValue) {
-    if (previousValue.performanceStats == null) {
-      document.querySelector('#performanceStatsBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.performanceStats == false) {
-      document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#performanceStatsBtn').MaterialSwitch.on();
     }
   });
 }
