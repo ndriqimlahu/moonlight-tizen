@@ -886,7 +886,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
