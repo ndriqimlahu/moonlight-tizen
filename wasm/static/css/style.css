@@ -845,6 +845,32 @@ body {
     left: 30px;
     right: 0;
 }
+.badge {
+    display: inline-block;
+    border-radius: 12px;
+    margin-left: 10px;
+    padding: 2px 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+.badge-new {
+    color: #76FF7A;
+    background-color: #404354;
+    border: 1px solid #76FA20;
+}
+.badge-preview {
+  color: #E0C3FC;
+  background-color: #404354;
+  border: 1px solid #B388FF;
+}
+.badge-experimental {
+    color: #FFC046;
+    background-color: #404354;
+    border: 1px solid #FFA620;
+}
 #selectResolution, #selectFramerate, #selectBitrate, #removeAllHostsBtn,
 #selectAudio, #selectCodec, #navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
     font-size: 1.45rem;
