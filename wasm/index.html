@@ -139,7 +139,9 @@
             </div>
             <div class="setting-option">
               <label>Video frame pacing</label>
-              <span class="mdl-list__item-text-body"></span>
+              <span class="mdl-list__item-text-body">
+                - This can help reduce micro-stutter by delaying frames that arrive too early while streaming.
+              </span>
               <div id="videoFramePacingMenu">
                 <label id="framePacingBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="framePacingSwitch">
                   <input type="checkbox" id="framePacingSwitch" class="mdl-switch__input">
@@ -197,17 +199,21 @@
           <div id="hostSettings" class="settings-options">
             <div class="setting-option">
               <label>Sort the list of apps</label>
-              <span class="mdl-list__item-text-body"></span>
+              <span class="mdl-list__item-text-body">
+                - Sorts the list of host apps from ascending order (A to Z) to descending order (Z to A) based on their titles.
+              </span>
               <div id="sortAppsListMenu">
                 <label id="sortAppsListBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="sortAppsListSwitch">
                   <input type="checkbox" id="sortAppsListSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Allow sorting the list of apps in descending order (Z to A)</span>
+                  <span class="mdl-switch__label">Allow sorting the list of apps and games in descending order</span>
                 </label>
               </div>
             </div>
             <div class="setting-option">
               <label>Optimize game settings</label>
-              <span class="mdl-list__item-text-body"></span>
+              <span class="mdl-list__item-text-body">
+                - Adjusts the host resolution to match the client resolution when the display device is configured on Sunshine.
+              </span>
               <div id="optimizeGamesMenu">
                 <label id="optimizeGamesBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="optimizeGamesSwitch">
                   <input type="checkbox" id="optimizeGamesSwitch" class="mdl-switch__input">
@@ -272,7 +278,7 @@
             <div class="setting-option">
               <label>Audio configuration<span class="badge badge-experimental">Experimental</span></label>
               <span class="mdl-list__item-text-body">
-                - Choose 5.1 or 7.1 surround sound for home-theater systems, or select Stereo for general compatibility.
+                - Choose 5.1 or 7.1 surround sound for home-theater systems or use Stereo for general audio compatibility.
               </span>
               <div id="audioConfigMenu">
                 <button type="button" id="selectAudio" class="mdl-button mdl-js-button mdl-js-ripple-effect" data-value="Stereo">Stereo</button>
@@ -285,7 +291,9 @@
             </div>
             <div class="setting-option">
               <label>Audio synchronization</label>
-              <span class="mdl-list__item-text-body"></span>
+              <span class="mdl-list__item-text-body">
+                - This can help reduce delays by keeping audio in sync for a consistent sound while streaming.
+              </span>
               <div id="audioSyncMenu">
                 <label id="audioSyncBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="audioSyncSwitch">
                   <input type="checkbox" id="audioSyncSwitch" class="mdl-switch__input">
@@ -294,7 +302,7 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Play audio on PC</label>
+              <label>Play audio on host</label>
               <span class="mdl-list__item-text-body"></span>
               <div id="playHostAudioMenu">
                 <label id="playHostAudioBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="playHostAudioSwitch">
