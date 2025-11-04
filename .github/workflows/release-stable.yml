@@ -1,16 +1,12 @@
-# This GitHub Actions workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub release.
-name: Build Docker image and publish GitHub release
-
-# Configures this workflow to run every time a change is pushed to the branch called `master`.
+# This workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub release.
+name: Release (Stable)
+# Configure this workflow to be triggered manually from the GitHub Actions tab for the `master` branch.
 on:
-  push:
-    branches: ['master']
-
+  workflow_dispatch:
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
   build-and-push-image:
@@ -91,7 +87,7 @@ jobs:
           docker stop temp_container && docker rm temp_container
       # Creates a new GitHub release using the extracted version and includes a detailed description.
       - name: Create GitHub release
-        id: create_release
+        id: create_stable_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -100,14 +96,14 @@ jobs:
           release_name: v${{ env.VERSION }}
           body: |
             # Moonlight Tizen v${{ env.VERSION }}
-            
+
             - Ensure your Samsung TV is running Tizen OS version 5.5 or higher.
             - Choose the recommended [installation method](https://github.com/ndriqimlahu/moonlight-tizen#installation) based on your Tizen OS version.
             - Follow the detailed instructions from the installation guide to successfully install the **Moonlight** app on your TV.
-            
+
             ## What's Changed:
-            
-            - Add the changes you made to this version (e.g., commit messages).
+
+            - Add all the changes you made to this version using bullet points.
 
             ## Project Contributors:
 
@@ -122,7 +118,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_stable_release.outputs.upload_url }}
           asset_path: ./Moonlight.wgt
           asset_name: Moonlight.wgt
           asset_content_type: application/octet-stream
