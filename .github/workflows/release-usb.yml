@@ -1,16 +1,13 @@
-# This GitHub Actions workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub pre-release.
-name: Build Docker image and publish GitHub pre-release
-
-# Configures this workflow to run every month on the 15th at 12:00 PM.
+# This workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub pre-release.
+name: Release (USB)
+# Configure this workflow to be triggered automatically on the 15th of each month at 12:00 PM for generating USB package releases.
 on:
   schedule:
     - cron: '0 12 15 * *'
-
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
   build-and-push-image:
@@ -60,7 +57,7 @@ jobs:
       packages: read
       issues: write
       actions: write
-    # This job depends on the completion of the build-and-push-image job. It checks out the repository, extracts version info, deletes any existing GitHub pre-releases and their corresponding tags to avoid duplicates, extracts build artifacts from the Docker image, and creates a new GitHub pre-release with the extracted files.
+    # This job depends on the completion of the build-and-push-image job. It checks out the repository, extracts version info, deletes any existing GitHub pre-releases with tag suffix '-usb' to avoid duplicates, extracts build artifacts from the Docker image, and creates a new GitHub pre-release with the extracted files.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -77,34 +74,43 @@ jobs:
         run: |
           VERSION=$(grep -oP 'version="\K[0-9]+\.[0-9]+\.[0-9]+' res/config.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # Sets the full Docker image tag using the GitHub Container Registry with the username, repository name, and using the 'nightly' tag.
+      # Sets the full Docker image tag using the GitHub container registry, repository, and reference tag name.
       - name: Set up image tag
-        run: echo "IMAGE_TAG=ghcr.io/ndriqimlahu/moonlight-tizen:nightly" >> $GITHUB_ENV
-      # Deletes any existing GitHub pre-releases and their corresponding tags to avoid duplicates.
-      - name: Check for existing GitHub pre-releases and delete them with tags
-        id: delete_old_prerelease
+        run: echo "IMAGE_TAG=ghcr.io/${{ github.repository }}:${{ github.ref_name }}" >> $GITHUB_ENV
+      # Deletes any existing GitHub pre-releases with the '-usb' tag suffix to avoid duplicates.
+      - name: Check and delete any existing GitHub pre-releases with the '-usb' tag suffix
+        id: delete_usb_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            echo "Checking for existing pre-releases with tag suffix '-usb'..."
-            releases=$(curl -sSL \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/releases")
-            echo "$releases" | jq -c '.[] | select(.prerelease==true and (.tag_name | endswith("-usb")))' | while read -r release; do
+          echo "Checking for existing pre-releases with the '-usb' tag suffix..."
+          releases=$(curl -sSL \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases")
+          usb_releases=$(echo "$releases" | jq -c '.[] | select(.prerelease==true and (.tag_name | endswith("-usb")))')
+          if [ -z "$usb_releases" ]; then
+            echo "No pre-releases with the '-usb' tag suffix were found."
+          else
+            echo "Found one or more pre-releases with the '-usb' tag suffix."
+            echo "Starting cleanup..."
+            echo "$usb_releases" | while read -r release; do
               release_id=$(echo "$release" | jq -r '.id')
+              release_name=$(echo "$release" | jq -r '.name')
               tag_name=$(echo "$release" | jq -r '.tag_name')
-              echo "Deleting pre-release ID: $release_id (tag: $tag_name)..."
+              echo "Deleting pre-release: $release_name (ID: $release_id)"
               curl -sSL -X DELETE \
                 -H "Authorization: token $GITHUB_TOKEN" \
                 -H "Accept: application/vnd.github.v3+json" \
                 "https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
-              echo "Deleting tag: $tag_name..."
+              echo "Deleting tag reference: $tag_name"
               curl -sSL -X DELETE \
                 -H "Authorization: token $GITHUB_TOKEN" \
                 -H "Accept: application/vnd.github.v3+json" \
                 "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${tag_name}"
             done
+            echo "Cleanup completed."
+          fi
       # Runs the Docker container in detached mode to extract the build artifact.
       - name: Run Docker container
         run: |
@@ -119,7 +125,7 @@ jobs:
           docker stop temp_container && docker rm temp_container
       # Creates a new GitHub pre-release using the extracted version and includes a detailed description.
       - name: Create GitHub pre-release
-        id: create_prerelease
+        id: create_usb_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,21 +134,23 @@ jobs:
           release_name: "v${{ env.VERSION }}-usb"
           body: |
             # Moonlight Tizen USB v${{ env.VERSION }}
-            
+
             - Ensure your Samsung TV is running Tizen OS version 5.5 or higher.
-            - Follow the detailed instructions from the [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-usb-drive) to successfully install the Moonlight app on your TV using the USB drive.
-            
-            > [!WARNING]
-            > This installation method is only valid for 30 days due to Samsung certificate restrictions. After that, the application will stop working because the certificate will have expired. To continue using the app, reinstall it using the newly released USB package or switch to one of the recommended permanent installation methods, such as **Tizen Studio** or the **Docker image**.
+            - Choose the recommended [installation method](https://github.com/ndriqimlahu/moonlight-tizen#installation) based on your Tizen OS version.
+            - Follow the detailed instructions from the installation guide to successfully install the **Moonlight** app on your TV.
+
+            > [!NOTE]
+            > This installation method only works for **30 days** due to Samsung certificate restrictions.
+            > After this period, you will need to reinstall the latest USB package to continue using the app.
           draft: false
           prerelease: true
-      # Uploads the MoonlightUSB.zip file as a pre-release asset in the newly created GitHub pre-release.
+      # Uploads the MoonlightUSB.zip file as a release asset in the newly created GitHub pre-release.
       - name: Upload the package file to GitHub pre-release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
+          upload_url: ${{ steps.create_usb_release.outputs.upload_url }}
           asset_path: ./MoonlightUSB.zip
           asset_name: MoonlightUSB.zip
           asset_content_type: application/octet-stream
