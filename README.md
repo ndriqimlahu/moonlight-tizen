@@ -1,7 +1,7 @@
 # Moonlight Tizen
 
-[![Project Status](https://img.shields.io/badge/project-actively_maintained-brightgreen?style=for-the-badge&logo=github)](#)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/build-and-release.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/build-and-release.yml)
+[![Project Activity](https://img.shields.io/github/last-commit/ndriqimlahu/moonlight-tizen/master?style=for-the-badge&logo=github)](#)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ndriqimlahu/moonlight-tizen/release-stable.yml?branch=master&style=for-the-badge&logo=docker)](https://github.com/ndriqimlahu/moonlight-tizen/actions/workflows/release-stable.yml)
 [![Release Version](https://img.shields.io/github/v/release/ndriqimlahu/moonlight-tizen?style=for-the-badge&logo=github)](https://github.com/ndriqimlahu/moonlight-tizen/releases/latest)
 
 Moonlight Tizen is a port of [Moonlight ChromeOS](https://github.com/moonlight-stream/moonlight-chrome), which is an open source client for NVIDIA GameStream and [Sunshine](https://app.lizardbyte.dev/Sunshine/).
@@ -20,6 +20,8 @@ To get started, ensure that your setup meet the recommended requirements describ
 
 - Network Requirements — You need a mid-range or high-end wireless router with a good wireless connection to your client using **5 GHz WiFi 5 (802.11ac) or WiFi 6 (802.11ax)** and a good wired connection to your host using the **CAT5e ethernet or better** which is strongly recommended.
 
+- Input Requirements — It is highly recommended that you use a **compatible gamepad** connected to your client or host device for the best game streaming experience, as using a mouse and keyboard may cause some interference issues with Tizen OS during the streaming session.
+
 ## Installation
 
 Follow the instructions below based on the Tizen OS version of your Samsung TV to successfully download and install the Moonlight app.
@@ -35,6 +37,12 @@ Follow the instructions below based on the Tizen OS version of your Samsung TV t
 - Follow the provided [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-docker-image) to install the app on your TV using the Docker image.
 - Once the installation is complete, open the **Moonlight** app on your TV.
 
+### Any Samsung TVs — Tizen 5.5 or Higher
+
+- Download the `MoonlightUSB.zip` file from the [latest version](https://github.com/ndriqimlahu/moonlight-tizen/releases?q=-usb&expanded=false) of the USB package.
+- Follow the provided [installation guide](https://github.com/ndriqimlahu/moonlight-tizen/wiki/Installation-Guide#installation-using-usb-drive) to install the app on your TV using the USB drive.
+- Once the installation is complete, open the **Moonlight** app on your TV.
+
 ## Changelogs
 
 See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/CHANGELOG.md) file for more information about the changes for each version of this project.
@@ -44,18 +52,18 @@ See the [CHANGELOG](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/C
 Contributions are welcome! You can fork the repo, create pull requests, or open issues.
 
 If you find this project useful, here are ways you can support it:
-⭐ Star the repo to show your appreciation and support the project.
-🐛 Report bugs or suggest new features to help improve the project.
-💬 Participate in discussions to share ideas, tips, or improvements.
-🧪 Test pre-release builds and give early feedback to the developer.
+- ⭐ Star the repo to show your appreciation and support the project.
+- 🐛 Report bugs or suggest new features to help improve the project.
+- 💬 Participate in discussions to share ideas, tips, or improvements.
+- 🧪 Test pre-release builds and give early feedback to the developer.
 
 ## License
 
 This project is licensed under the `GNU General Public License v3.0`. See the [LICENSE](https://github.com/ndriqimlahu/moonlight-tizen/blob/master/LICENSE) file for more information.
 
 ## Acknowledgements
-- Thanks to [Moonlight Core Library](https://github.com/moonlight-stream/moonlight-common-c) and [Moonlight ChromeOS](https://github.com/moonlight-stream/moonlight-chrome) for the core implementation of the NVIDIA GameStream protocol and the development of Moonlight for Chrome OS.
-- Thanks to [SamsungDForum](https://github.com/SamsungDForum/moonlight-chrome) for creating a port version based on Chrome OS (NaCl) and adapting the Moonlight implementation for Tizen OS (WASM).
+- Thanks to [Moonlight Game Streaming Project](https://github.com/moonlight-stream) for the core implementation of the NVIDIA GameStream protocol and the development of Moonlight for Chrome OS.
+- Thanks to [Samsung Developers Forum](https://github.com/SamsungDForum/moonlight-chrome) for creating a port version based on Chrome OS (NaCl) and adapting the Moonlight implementation for Tizen OS (WASM).
 - Thanks to [babagreensheep](https://github.com/babagreensheep/jellyfin-tizen-docker) and [pablojrl123](https://github.com/pablojrl123/moonlight-tizen-docker) for creating a method for building the application and adapting the Dockerfile including the supporting files.
 - Thanks to [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) for updating the core files, adding a shortcut combo to stop the streaming session, allowing audio volume changes, and improving the Dockerfile for better build compatibility.
 - Thanks to [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) for implementing features such as video codec selection, mouse emulation, Wake-on-LAN, new IP address field mode, improved Docker publishing workflow, and several improvements.
