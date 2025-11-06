@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.1
+
+### Added
+- Added badges to settings options to indicate new, preview, or experimental features
+
+### Changed
+- Refined multiple settings descriptions to provide clearer context and usability
+- Updated the workflow file for stable releases and changed to manual trigger for the master branch
+- Improved the workflow process for USB releases, updated the release notes, and made minor fixes
+
 ## v1.9.0
 
 ### Added
