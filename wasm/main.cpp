@@ -51,7 +51,7 @@ MoonlightInstance::MoonlightInstance()
     m_VideoSessionId(0),
     m_MediaElement("wasm_module"),
     m_Source(
-      samsung::wasm::ElementaryMediaStreamSource::LatencyMode::kUltraLow,
+      samsung::wasm::ElementaryMediaStreamSource::LatencyMode::kLow,
       samsung::wasm::ElementaryMediaStreamSource::RenderingMode::kMediaElement),
     m_SourceListener(this),
     m_AudioTrackListener(this),
