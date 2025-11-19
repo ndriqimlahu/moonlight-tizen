@@ -1,0 +1,175 @@
+# This workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub pre-release.
+name: Release (Development)
+# Configure this workflow to be triggered manually from the GitHub Actions tab for development-related branches.
+on:
+  workflow_dispatch:
+# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+      issues: write
+      actions: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      short_sha: ${{ github.sha }}
+    # This job checks out the code, logs into GitHub Container Registry, builds the Docker image with metadata, pushes it to the registry, and triggers the next workflow via repository dispatch.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Uses the `docker/login-action` action to log in to the Container registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
+      # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
+      # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  run-and-upload-release:
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: write
+      packages: read
+      issues: write
+      actions: write
+    # This job depends on the completion of the build-and-push-image job. It checks out the repository, generates a timestamp, deletes any existing GitHub pre-releases from the same branch to avoid duplicates, extracts build artifacts from the Docker image, and creates a new GitHub pre-release with the extracted files.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Uses the `docker/login-action` action to log in to the Container registry using the account and password that will run the container.
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Generates a timestamp number from the current date and time for use in tagging and pre-release.
+      - name: Generate timestamp number
+        id: set_timestamp
+        run: |
+          TIMESTAMP=$(TZ="CET" date +"%Y.%m%d.%H%M")
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+      # Extracts the branch name from the Git reference, replacing any slashes with dashes for compatibility in tagging and pre-release naming.
+      - name: Extract branch name
+        id: set_branch
+        run: |
+          BRANCH=${GITHUB_REF_NAME//\//-}
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+      # Sets the full Docker image tag using the output from the 'build-and-push-image' job.
+      - name: Set up image tag
+        run: echo "IMAGE_TAG=${{ needs.build-and-push-image.outputs.image_tag }}" >> $GITHUB_ENV
+      # Deletes any existing GitHub pre-releases from the same branch to avoid duplicates.
+      - name: Check and delete any existing GitHub pre-releases from the same branch
+        id: delete_development_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for existing pre-releases from branch: $BRANCH..."
+          releases=$(curl -sSL \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases")
+          dev_releases=$(echo "$releases" | jq -c ".[] | select(.prerelease==true and (.tag_name | contains(\"$BRANCH\")))")
+          if [ -z "$dev_releases" ]; then
+            echo "No pre-releases found for branch: $BRANCH."
+          else
+            echo "Found one or more pre-releases for branch: $BRANCH."
+            echo "Starting cleanup..."
+            echo "$dev_releases" | while read -r release; do
+              release_id=$(echo "$release" | jq -r '.id')
+              release_name=$(echo "$release" | jq -r '.name')
+              tag_name=$(echo "$release" | jq -r '.tag_name')
+              echo "Deleting pre-release: $release_name (ID: $release_id)"
+              curl -sSL -X DELETE \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
+              echo "Deleting tag reference: $tag_name"
+              curl -sSL -X DELETE \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${tag_name}"
+            done
+            echo "Cleanup completed."
+          fi
+      # Runs the Docker container in detached mode to extract the build artifact.
+      - name: Run Docker container
+        run: |
+          docker run -d --name temp_container $IMAGE_TAG
+      # Copies the built Moonlight.wgt and MoonlightUSB.zip files from the Docker container.
+      - name: Copy artifacts from Docker container
+        run: |
+          docker cp temp_container:/home/moonlight/Moonlight.wgt . && docker cp temp_container:/home/moonlight/MoonlightUSB.zip .
+      # Stops and removes the temporary Docker container to clean up resources.
+      - name: Stop and remove Docker container
+        run: |
+          docker stop temp_container && docker rm temp_container
+      # Creates a new GitHub pre-release using the extracted version and includes a detailed description.
+      - name: Create GitHub pre-release
+        id: create_development_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.TIMESTAMP }}-${{ env.BRANCH }}
+          release_name: "v${{ env.TIMESTAMP }}-${{ env.BRANCH }}"
+          body: |
+            # Moonlight Tizen v${{ env.TIMESTAMP }}
+
+            - Ensure your Samsung TV is running Tizen OS version 5.5 or higher.
+            - Choose the recommended [installation method](https://github.com/ndriqimlahu/moonlight-tizen#installation) based on your Tizen OS version.
+            - Follow the detailed instructions from the installation guide to successfully install the **Moonlight** app on your TV.
+
+            ## What's Changed:
+
+            - Add all the changes you made to this version using bullet points.
+
+            > [!WARNING]
+            > This is a **pre-release** version intended for development and testing purposes.
+            > It may include experimental features and bug fixes, but could be less stable than official releases.
+          draft: false
+          prerelease: true
+      # Uploads the Moonlight.wgt file as a release asset in the newly created GitHub pre-release.
+      - name: Upload the widget file to GitHub pre-release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_development_release.outputs.upload_url }}
+          asset_path: ./Moonlight.wgt
+          asset_name: Moonlight.wgt
+          asset_content_type: application/octet-stream
+      # Uploads the MoonlightUSB.zip file as a release asset in the newly created GitHub pre-release.
+      - name: Upload the package file to GitHub pre-release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_development_release.outputs.upload_url }}
+          asset_path: ./MoonlightUSB.zip
+          asset_name: MoonlightUSB.zip
+          asset_content_type: application/octet-stream
