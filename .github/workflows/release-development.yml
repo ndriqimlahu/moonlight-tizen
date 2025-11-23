@@ -69,13 +69,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       # Generates a timestamp number from the current date and time for use in tagging and pre-release.
       - name: Generate timestamp number
-        id: set_timestamp
         run: |
           TIMESTAMP=$(TZ="CET" date +"%Y.%m%d.%H%M")
           echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
       # Extracts the branch name from the Git reference, replacing any slashes with dashes for compatibility in tagging and pre-release naming.
       - name: Extract branch name
-        id: set_branch
         run: |
           BRANCH=${GITHUB_REF_NAME//\//-}
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
@@ -84,20 +82,19 @@ jobs:
         run: echo "IMAGE_TAG=${{ needs.build-and-push-image.outputs.image_tag }}" >> $GITHUB_ENV
       # Deletes any existing GitHub pre-releases from the same branch to avoid duplicates.
       - name: Check and delete any existing GitHub pre-releases from the same branch
-        id: delete_development_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Checking for existing pre-releases from branch: $BRANCH..."
+          echo "Checking for existing pre-releases from branch: $BRANCH"
           releases=$(curl -sSL \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/releases")
           dev_releases=$(echo "$releases" | jq -c ".[] | select(.prerelease==true and (.tag_name | contains(\"$BRANCH\")))")
           if [ -z "$dev_releases" ]; then
-            echo "No pre-releases found for branch: $BRANCH."
+            echo "No pre-releases found for branch: $BRANCH"
           else
-            echo "Found one or more pre-releases for branch: $BRANCH."
+            echo "Found one or more pre-releases for branch: $BRANCH"
             echo "Starting cleanup..."
             echo "$dev_releases" | while read -r release; do
               release_id=$(echo "$release" | jq -r '.id')
@@ -130,7 +127,7 @@ jobs:
           docker stop temp_container && docker rm temp_container
       # Creates a new GitHub pre-release using the extracted version and includes a detailed description.
       - name: Create GitHub pre-release
-        id: create_development_release
+        id: create_prerelease
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -159,7 +156,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_development_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
           asset_path: ./Moonlight.wgt
           asset_name: Moonlight.wgt
           asset_content_type: application/octet-stream
@@ -169,7 +166,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_development_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
           asset_path: ./MoonlightUSB.zip
           asset_name: MoonlightUSB.zip
           asset_content_type: application/octet-stream
