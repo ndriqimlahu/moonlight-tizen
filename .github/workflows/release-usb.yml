@@ -1,6 +1,6 @@
 # This workflow builds a Docker image from the repository, pushes it to GitHub Container Registry, and then triggers a second job to extract an artifact and create a GitHub pre-release.
 name: Release (USB)
-# Configure this workflow to be triggered automatically on the 15th of each month at 12:00 PM for generating USB package releases.
+# Configure this workflow to be triggered automatically on the 15th of each month at 12:00 PM UTC for generating USB package releases.
 on:
   schedule:
     - cron: '0 12 15 * *'
@@ -70,7 +70,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       # Extracts the version number from the config.xml file to use in tagging and pre-release.
       - name: Extract version number
-        id: get_version
         run: |
           VERSION=$(grep -oP 'version="\K[0-9]+\.[0-9]+\.[0-9]+' res/config.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -79,7 +78,6 @@ jobs:
         run: echo "IMAGE_TAG=ghcr.io/${{ github.repository }}:${{ github.ref_name }}" >> $GITHUB_ENV
       # Deletes any existing GitHub pre-releases with the '-usb' tag suffix to avoid duplicates.
       - name: Check and delete any existing GitHub pre-releases with the '-usb' tag suffix
-        id: delete_usb_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -125,7 +123,7 @@ jobs:
           docker stop temp_container && docker rm temp_container
       # Creates a new GitHub pre-release using the extracted version and includes a detailed description.
       - name: Create GitHub pre-release
-        id: create_usb_release
+        id: create_prerelease
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -150,7 +148,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_usb_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
           asset_path: ./MoonlightUSB.zip
           asset_name: MoonlightUSB.zip
           asset_content_type: application/octet-stream
