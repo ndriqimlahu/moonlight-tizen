@@ -371,7 +371,7 @@ const Views = {
         if (currentItem.startsWith('ipAddressField') && currentItem !== 'continueAddHost' || currentItem !== 'cancelAddHost') {
           // Remove focus from any currently focused item element
           document.getElementById(currentItem).blur();
-          document.getElementById(this.view.prev());
+          this.view.prev();
         } else {
           document.getElementById(this.view.prev()).focus();
         }
@@ -386,7 +386,7 @@ const Views = {
         if (currentItem.startsWith('ipAddressField') && currentItem !== 'ipAddressField4') {
           // Remove focus from any currently focused item element
           document.getElementById(currentItem).blur();
-          document.getElementById(this.view.next());
+          this.view.next();
         } else {
           document.getElementById(this.view.next()).focus();
         }

@@ -297,16 +297,12 @@ body {
     margin: 15px 0 15px 0;
 }
 .select-option-field {
-    position: relative;
-    display: inline-block;
     width: 105%;
-    max-width: max-content;
-    margin: 0;
     padding: 20px 0;
     font-size: 1rem;
-    box-sizing: border-box;
 }
 .select-option-field-floating-label .mdl-textfield__label {
+    position: relative;
     color: #00A3C6;
     font-size: 1.65rem;
     font-weight: 200;
