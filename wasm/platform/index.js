@@ -298,6 +298,9 @@ function showHostsMode() {
 
 // Show the Hosts grid
 function showHosts() {
+  // Stop navigation before showing the loading screen
+  Navigation.stop();
+
   // Hide the main header and content before showing a loading screen
   $('#main-header').children().hide();
   $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
@@ -1134,6 +1137,9 @@ function showSettingsMode() {
 
 // Show the Settings list
 function showSettings() {
+  // Stop navigation before showing the loading screen
+  Navigation.stop();
+
   // Hide the main header and content before showing a loading screen
   $('#main-header').children().hide();
   $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
@@ -1801,6 +1807,9 @@ function showApps(host) {
   } else {
     console.log('%c[index.js, showApps]', 'color: green;', 'Current host object: \n', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
   }
+
+  // Stop navigation before showing the loading screen
+  Navigation.stop();
 
   // Hide the main header before showing a loading screen
   $('#main-header').children().hide();
