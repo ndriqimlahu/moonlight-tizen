@@ -85,26 +85,34 @@ function attachListeners() {
       if (type === 'button') {
         // Handle button mapping
         const buttonMapping = {
-          0: () => Navigation.accept(),
-          1: () => Navigation.back(),
-          8: () => Navigation.press(),
-          9: () => Navigation.switch(),
+          0: () => delayedNavigation(() => Navigation.accept()),
+          1: () => delayedNavigation(() => Navigation.back()),
+          8: () => delayedNavigation(() => Navigation.press()),
+          9: () => delayedNavigation(() => Navigation.switch()),
+        };
+        // Handle D-Pad mapping
+        const dPadMapping = {
           12: () => Navigation.up(),
           13: () => Navigation.down(),
           14: () => Navigation.left(),
           15: () => Navigation.right(),
         };
-        // Handle button press
+        // Handle button presses
         if (pressed) {
           if (buttonMapping[index]) {
             buttonMapping[index]();
-            // Set repeat action and timeout to the mapped button
-            repeatAction = buttonMapping[index];
+            // Clear repeat action and timeout for non-navigation buttons
+            repeatAction = null;
+            clearTimeout(repeatTimeout);
+          } else if (dPadMapping[index]) {
+            dPadMapping[index]();
+            // Set repeat action and timeout to the mapped D-Pad button
+            repeatAction = dPadMapping[index];
             lastInvokeTime = Date.now();
             repeatTimeout = setTimeout(() => requestAnimationFrame(repeatActionHandler), REPEAT_DELAY);
           }
         } else {
-          // Clear repeat action and timeout if button is released
+          // Clear repeat action and timeout when button is released
           repeatAction = null;
           clearTimeout(repeatTimeout);
         }
@@ -116,16 +124,16 @@ function attachListeners() {
           1: (value) => value < -ACTION_THRESHOLD ? (delayedNavigation(() => Navigation.up()), () => Navigation.up()) : 
             value > ACTION_THRESHOLD ? (delayedNavigation(() => Navigation.down()), () => Navigation.down()) : null,
         };
-        // Handle axis value
+        // Handle axis movement
         if (axisMapping[index]) {
           const axisValue = axisMapping[index](value);
           if (axisValue && Math.abs(value) > ACTION_THRESHOLD) {
-            // Set repeat action and timeout to the mapped axis
+            // Set repeat action and timeout to the mapped axis direction
             repeatAction = axisValue;
             lastInvokeTime = Date.now();
             repeatTimeout = setTimeout(() => requestAnimationFrame(repeatActionHandler), REPEAT_DELAY);
           } else {
-            // Clear repeat action and timeout if axis is released
+            // Clear repeat action and timeout when axis is neutral
             repeatAction = null;
             clearTimeout(repeatTimeout);
           }
