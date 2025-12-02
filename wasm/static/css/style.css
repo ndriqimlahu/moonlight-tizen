@@ -297,13 +297,14 @@ body {
     margin: 15px 0 15px 0;
 }
 .select-option-field {
-    width: 105%;
+    position: relative;
+    width: 102%;
     padding: 20px 0;
     font-size: 1rem;
 }
 .select-option-field-floating-label .mdl-textfield__label {
-    position: relative;
     color: #00A3C6;
+    width: 100%;
     font-size: 1.65rem;
     font-weight: 200;
     letter-spacing: 0.5px;
