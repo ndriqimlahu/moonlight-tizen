@@ -1975,12 +1975,14 @@ function quitAppDialog() {
       $('#continueQuitApp').off('click');
       $('#continueQuitApp').on('click', function() {
         console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
-        stopGame(api);
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
-        setTimeout(() => Navigation.switch(), 3800);
+        stopGame(api, function() {
+          // After stopping the game, set focus back to the 'Quit Running App' button
+          setTimeout(() => Navigation.switch(), 3000);
+        });
       });
     });
   }
