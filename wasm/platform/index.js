@@ -325,6 +325,8 @@ function restoreUiAfterWasmLoad() {
   // Navigate to the Hosts view
   Navigation.push(Views.Hosts);
   showHostsMode();
+  // Set focus to current item and/or scroll to the current host row
+  setTimeout(() => Navigation.switch(), 100);
 
   // Find mDNS host discovered using ServiceFinder (network service discovery)
   // findNvService(function(finder, opt_error) {
