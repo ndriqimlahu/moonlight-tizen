@@ -1906,7 +1906,7 @@ function showApps(host) {
           $('#game-grid').append(gameContainer);
 
           // Apply style to the game container to indicate whether the game is active or not
-          stylizeBoxArt(host, app.id);
+          setTimeout(() => stylizeBoxArt(host, app.id), 100);
         }
         // Load box art
         var boxArtPlaceholderImg = new Image();
