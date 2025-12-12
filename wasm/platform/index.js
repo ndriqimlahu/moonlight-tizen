@@ -1684,7 +1684,7 @@ function exitAppDialog() {
     exitAppDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    Navigation.switch();
+    Navigation.change(Views.Hosts);
   });
 
   // Exit the application if the Exit button is pressed
