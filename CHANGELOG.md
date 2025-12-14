@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.2
+
+### Added
+- Added workflow for building and publishing development releases with associated files
+
+### Changed
+- Reverted HEVC and AV1 codec profiles to previous level to allow higher stream settings
+
+### Fixed
+- Fixed issue where the 'Add Host' container wasn't focused after splash screen loaded
+- Fixed issue with 'Quit Running App' button not focused properly after stopping the game
+- Fixed issue where cancelling 'Exit Moonlight' dialog added double focus to host containers
+- Fixed issue with the running game card not correctly reflecting the active game session
+
 ## v1.9.1
 
 ### Added
