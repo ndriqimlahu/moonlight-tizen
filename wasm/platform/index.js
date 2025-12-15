@@ -2977,6 +2977,8 @@ function loadSystemInfo() {
     console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'App Name: ' + (appName.name ? appName.name : 'Unknown') + ' Game Streaming');
     var appVer = tizen.application.getAppInfo();
     console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'App Version: ' + (appVer.version ? appVer.version : 'Unknown'));
+    var buildName = 'fix-toggle-settings';
+    console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'Build Name: ' + buildName);
     var platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version");
     console.log('%c[index.js, loadSystemInfo]', 'color: green;', 'Platform Version: Tizen ' + (platformVer ? platformVer : 'Unknown'));
     var tvModelName = webapis.productinfo.getModel();
@@ -2994,6 +2996,7 @@ function loadSystemInfo() {
     systemInfoPlaceholder.innerText =
       'App Name: ' + (appName.name ? appName.name : 'Unknown') + ' Game Streaming' + '\n' +
       'App Version: ' + (appVer.version ? appVer.version : 'Unknown') + '\n' +
+      'Build Name: ' + buildName + '\n' +
       'Platform Version: Tizen ' + (platformVer ? platformVer : 'Unknown') + '\n' +
       'TV Model Name: ' + (tvModelName ? tvModelName : 'Unknown') + '\n' +
       'TV Model Full Name: ' + (tvModelFullName ? tvModelFullName : 'Unknown') + '\n' +
