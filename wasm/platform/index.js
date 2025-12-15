@@ -325,6 +325,8 @@ function restoreUiAfterWasmLoad() {
   // Navigate to the Hosts view
   Navigation.push(Views.Hosts);
   showHostsMode();
+  // Set focus to current item and/or scroll to the current host row
+  setTimeout(() => Navigation.switch(), 100);
 
   // Find mDNS host discovered using ServiceFinder (network service discovery)
   // findNvService(function(finder, opt_error) {
@@ -1682,7 +1684,7 @@ function exitAppDialog() {
     exitAppDialog.close();
     isDialogOpen = false;
     Navigation.pop();
-    Navigation.switch();
+    Navigation.change(Views.Hosts);
   });
 
   // Exit the application if the Exit button is pressed
@@ -1904,7 +1906,7 @@ function showApps(host) {
           $('#game-grid').append(gameContainer);
 
           // Apply style to the game container to indicate whether the game is active or not
-          stylizeBoxArt(host, app.id);
+          setTimeout(() => stylizeBoxArt(host, app.id), 100);
         }
         // Load box art
         var boxArtPlaceholderImg = new Image();
@@ -1973,12 +1975,14 @@ function quitAppDialog() {
       $('#continueQuitApp').off('click');
       $('#continueQuitApp').on('click', function() {
         console.log('%c[index.js, quitAppDialog]', 'color: green;', 'Quitting game, closing app dialog, and returning.');
-        stopGame(api);
         quitAppOverlay.style.display = 'none';
         quitAppDialog.close();
         isDialogOpen = false;
         Navigation.pop();
-        setTimeout(() => Navigation.switch(), 3800);
+        stopGame(api, function() {
+          // After stopping the game, set focus back to the 'Quit Running App' button
+          setTimeout(() => Navigation.switch(), 3000);
+        });
       });
     });
   }

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.2
+
+### Added
+- Added workflow for building and publishing development releases with associated files
+
+### Changed
+- Reverted HEVC and AV1 codec profiles to previous level to allow higher stream settings
+
+### Fixed
+- Fixed issue where the 'Add Host' container wasn't focused after splash screen loaded
+- Fixed issue with 'Quit Running App' button not focused properly after stopping the game
+- Fixed issue where cancelling 'Exit Moonlight' dialog added double focus to host containers
+- Fixed issue with the running game card not correctly reflecting the active game session
+
 ## v1.9.1
 
 ### Added
@@ -82,7 +96,7 @@ All notable changes to this project will be documented in this file.
 - Updated 'Restart Moonlight' dialog to display appropriate message based on the restart request
 
 ### Fixed
-- Fixed image tag setup in GitHub Actions scheduled workflow to use the correct Docker image tag
+- Fixed image tag setup in scheduled workflow to use the correct Docker image tag
 - Fixed navigation view issues caused by pressing the RED key outside stream session
 - Fixed mouse wheel scroll direction issue caused by previously disabled floating menu
 
@@ -102,11 +116,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added issue templates for bug report and feature request with selection options
-- Added GitHub Actions workflow for scheduled release USB method with associated file
+- Added workflow for scheduled release USB method with associated file
 
 ### Changed
 - Improved pull request template with structured sections and helpful instructions
-- Improved GitHub Actions workflow for automated release publishing with associated file
+- Improved workflow for automated release publishing with associated file
 
 ### Removed
 - Removed the 'Buy Me a Coffee' funding platform due to regional restrictions
@@ -557,7 +571,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added bitrate presets for '120 FPS' frame rate option
-- Added GitHub Actions for automated Docker image publishing
+- Added workflow for automated Docker image publishing
 
 ### Changed
 - Optimized Dockerfile using multi-stage build to reduce Docker image size
