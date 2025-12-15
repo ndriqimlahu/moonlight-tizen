@@ -729,7 +729,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -886,7 +886,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -932,7 +932,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -979,7 +979,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1025,7 +1025,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1112,7 +1112,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1200,7 +1200,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElementById(this.view.current());
+      clickElement(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
