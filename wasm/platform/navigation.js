@@ -45,8 +45,10 @@ function clickElement(element) {
     return;
   }
   element.addEventListener('mouseover', function() {
-    // Simulate a mouse click
-    element.click();
+    // Dispatch the mouse event to the element
+    element.dispatchEvent(new MouseEvent('click', {
+      bubbles: true, cancelable: true, view: window
+    }));
   });
   // Mark listener as attached
   element.hoverClickAttached = true;
@@ -729,7 +731,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -886,7 +888,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -932,7 +934,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -979,7 +981,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1025,7 +1027,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1112,7 +1114,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
@@ -1200,7 +1202,7 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      clickElement(this.view.current());
+      clickElementById(this.view.current());
     },
     accept: function() {
       document.getElementById(this.view.current()).click();
