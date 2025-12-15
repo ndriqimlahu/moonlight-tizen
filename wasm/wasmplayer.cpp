@@ -195,25 +195,25 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
       5.1 (avc1.640033); */
       ClLogMessage("Video codec profile selected: H.264 High Level Profile 4.2\n");
     } else if (videoFormat & VIDEO_FORMAT_H265) {
-      mimetype = "video/mp4; codecs=\"hev1.1.6.L93.B0\""; // Video Codec: HEVC Main Level Profile 3.1
+      mimetype = "video/mp4; codecs=\"hev1.1.6.L153.B0\""; // Video Codec: HEVC Main Level Profile 5.1
       /* NOTE: Depending on the capabilities of the TV, it may support higher-level codec profiles, such as:
-      4.0 (hev1.1.6.L120.B0); 4.1 (hev1.1.6.L123.B0); 5.0 (hev1.1.6.L150.B0); 5.1 (hev1.1.6.L153.B0); 5.2 (hev1.1.6.L156.B0); */
-      ClLogMessage("Video codec profile selected: HEVC Main Level Profile 3.1\n");
+      5.2 (hev1.1.6.L156.B0); */
+      ClLogMessage("Video codec profile selected: HEVC Main Level Profile 5.1\n");
     } else if (videoFormat & VIDEO_FORMAT_H265_MAIN10) {
-      mimetype = "video/mp4; codecs=\"hev1.2.6.L93.B0\""; // Video Codec: HEVC Main10 Level Profile 3.1
+      mimetype = "video/mp4; codecs=\"hev1.2.4.L153.B0\""; // Video Codec: HEVC Main10 Level Profile 5.1
       /* NOTE: Depending on the capabilities of the TV, it may support higher-level codec profiles, such as:
-      4.0 (hev1.2.6.L120.B0); 4.1 (hev1.2.6.L123.B0); 5.0 (hev1.2.6.L150.B0); 5.1 (hev1.2.6.L153.B0); 5.2 (hev1.2.6.L156.B0); */
-      ClLogMessage("Video codec profile selected: HEVC Main10 Level Profile 3.1\n");
+      5.2 (hev1.2.4.L156.B0); */
+      ClLogMessage("Video codec profile selected: HEVC Main10 Level Profile 5.1\n");
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN8) {
-      mimetype = "video/mp4; codecs=\"av01.0.12M.08\""; // Video Codec: AV1 Main Level Profile 4.1
+      mimetype = "video/mp4; codecs=\"av01.0.13M.08\""; // Video Codec: AV1 Main Level Profile 5.1
       /* NOTE: Depending on the capabilities of the TV, it may support higher-level codec profiles, such as:
-      5.1 (av01.0.13M.08); 5.2 (av01.0.14M.08); */
-      ClLogMessage("Video codec profile selected: AV1 Main Level Profile 4.1\n");
+      5.2 (av01.0.14M.08); */
+      ClLogMessage("Video codec profile selected: AV1 Main Level Profile 5.1\n");
     } else if (videoFormat & VIDEO_FORMAT_AV1_MAIN10) {
-      mimetype = "video/mp4; codecs=\"av01.0.12M.10\""; // Video Codec: AV1 Main10 Level Profile 4.1
+      mimetype = "video/mp4; codecs=\"av01.0.13M.10\""; // Video Codec: AV1 Main10 Level Profile 5.1
       /* NOTE: Depending on the capabilities of the TV, it may support higher-level codec profiles, such as:
-      5.1 (av01.0.13M.10); 5.2 (av01.0.14M.10); */
-      ClLogMessage("Video codec profile selected: AV1 Main10 Level Profile 4.1\n");
+      5.2 (av01.0.14M.10); */
+      ClLogMessage("Video codec profile selected: AV1 Main10 Level Profile 5.1\n");
     } else {
       ClLogMessage("Failed to select video codec profile (videoFormat=0x%x)\n", videoFormat);
       return -1;
