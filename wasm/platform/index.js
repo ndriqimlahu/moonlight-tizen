@@ -2855,8 +2855,8 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#framePacingBtn').MaterialSwitch.off();
   storeData('framePacing', defaultFramePacing, null);
 
-  const defaultIpAddressFieldMode = false;
-  document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
+  const defaultIpAddressFieldMode = true;
+  document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.on();
   storeData('ipAddressFieldMode', defaultIpAddressFieldMode, null);
 
   const defaultUnlockAllFps = false;
@@ -3073,7 +3073,7 @@ function loadUserDataCb() {
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored ipAddressFieldMode preferences.');
   getData('ipAddressFieldMode', function(previousValue) {
     if (previousValue.ipAddressFieldMode == null) {
-      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off(); // Set the default state
+      document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.on(); // Set the default state
     } else if (previousValue.ipAddressFieldMode == false) {
       document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.off();
     } else {
