@@ -1,7 +1,7 @@
 /* =============================
    Global Styles
 ============================= */
-body {
+html, body {
     color: #fff;
     background-color: #282C38;
     font-family: 'Roboto', sans-serif;
@@ -9,6 +9,7 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    overflow-x: hidden;
 }
 .mdl-grid {
     width: 100%;
