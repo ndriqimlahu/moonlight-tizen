@@ -3315,8 +3315,8 @@ window.addEventListener('gamepadconnected', function(e) {
   const connectedGamepad = e.gamepad;
   const gamepadIndex = connectedGamepad.index;
   const rumbleFeedbackSwitch = document.getElementById('rumbleFeedbackSwitch');
-  console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Gamepad connected:\n' + JSON.stringify(connectedGamepad), connectedGamepad);
-  snackbarLog('Gamepad ' + gamepadIndex + ' has been connected.');
+  console.log('%c[index.js, gamepadconnected]', 'color: green;', 'Connected gamepad:\n' + JSON.stringify(connectedGamepad), connectedGamepad);
+  snackbarLog('Gamepad connected');
   // Check if the rumble feedback switch is checked
   if (rumbleFeedbackSwitch.checked) {
     // Check if the connected gamepad has a vibrationActuator associated with it
@@ -3329,7 +3329,7 @@ window.addEventListener('gamepadconnected', function(e) {
         strongMagnitude: 0.5,
       });
     } else {
-      console.warn('%c[index.js, gamepadconnected]', 'color: green;', 'Warning: Connected gamepad ' + gamepadIndex + ' does not support the rumble feature!');
+      console.info('%c[index.js, gamepadconnected]', 'color: green;', 'Connected gamepad ' + gamepadIndex + ' does not support rumble.');
     }
   }
 });
@@ -3338,7 +3338,7 @@ window.addEventListener('gamepadconnected', function(e) {
 window.addEventListener('gamepaddisconnected', function(e) {
   const disconnectedGamepad = e.gamepad;
   const gamepadIndex = disconnectedGamepad.index;
-  console.log('%c[index.js, gamepaddisconnected]', 'color: green;', 'Gamepad disconnected:\n' + JSON.stringify(disconnectedGamepad), disconnectedGamepad);
-  snackbarLog('Gamepad ' + gamepadIndex + ' has been disconnected.');
-  console.warn('%c[index.js, gamepaddisconnected]', 'color: green;', 'Warning: Lost connection to gamepad ' + gamepadIndex + '. Please reconnect your gamepad!');
+  console.log('%c[index.js, gamepaddisconnected]', 'color: green;', 'Disconnected gamepad:\n' + JSON.stringify(disconnectedGamepad), disconnectedGamepad);
+  snackbarLog('Gamepad disconnected');
+  console.info('%c[index.js, gamepaddisconnected]', 'color: green;', 'Lost connection to gamepad ' + gamepadIndex + '. Please reconnect your gamepad!');
 });

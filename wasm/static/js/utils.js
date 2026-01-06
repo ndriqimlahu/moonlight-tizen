@@ -45,29 +45,36 @@ function getConnectedGamepadMask() {
   var mask = 0;
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
 
+  // Iterate through the gamepads and build the bitmask
   for (var i = 0; i < gamepads.length; i++) {
     var gamepad = gamepads[i];
+    // Check if gamepad is valid
     if (gamepad) {
-      // See logic in gamepad.cpp
-      // These must stay in sync!
+      // See logic in `gamepad.cpp`, these must stay in sync!
 
+      // Check if the gamepad is connected
       if (!gamepad.connected) {
-        // Not connected
+        // Not connected, skip it
+        console.warn('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Warning: Gamepad at index ' + i + ' is not connected, skipping it!');
         continue;
       }
 
+      // Check if the gamepad has a non-zero timestamp
       if (gamepad.timestamp == 0) {
         // On some platforms, Tizen returns "connected" gamepads that really 
         // aren't, so timestamp stays at zero. To work around this, we'll only
         // count gamepads that have a non-zero timestamp in our controller index.
-        continue;
+        console.warn('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Warning: Gamepad at index ' + i + ' has zero timestamp, skipping it!');
+        continue; // Not valid, skip it
       }
 
+      // Set the corresponding bit in the mask
       mask |= 1 << count++;
     }
   }
 
-  console.log('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Detected: ' + count + ' gamepads.');
+  console.log('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Detected: ' + count + ' ' + (count === 1 ? 'gamepad' : 'gamepads'));
+  // Return the constructed bitmask
   return mask;
 }
 

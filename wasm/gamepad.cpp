@@ -50,14 +50,17 @@ enum GamepadAxis {
   RightY = 3,
 };
 
-// Function to create a mask for active gamepads
+// Function to get the active gamepad mask
 static short GetActiveGamepadMask(int numGamepads) {
   short result = 0;
-  
+
+  // Iterate through the number of gamepads
   for (int i = 0; i < numGamepads; ++i) {
+    // Set the corresponding bits in the mask
     result |= (1 << i);
   }
-  
+
+  // Return the active gamepad mask
   return result;
 }
 
@@ -130,7 +133,8 @@ static short GetButtonFlags(const EmscriptenGamepadEvent& gamepad) {
   }
 
   short result = 0;
-  
+
+  // Iterate through the buttons and set the corresponding flags
   for (int i = 0; i < gamepad.numButtons && i < buttonMasksSize; ++i) {
     if (gamepad.digitalButton[i] == EM_TRUE) {
       result |= buttonMasks[i];
@@ -150,14 +154,16 @@ void MoonlightInstance::HandleGamepadInputState(bool rumbleFeedback, bool mouseE
 
 // Function to poll gamepad input
 void MoonlightInstance::PollGamepads() {
+  // Check if sampling gamepad data is successful
   if (emscripten_sample_gamepad_data() != EMSCRIPTEN_RESULT_SUCCESS) {
-    std::cerr << "Sample gamepad data failed!\n";
+    ClLogMessage("Failed to sample gamepad data!\n");
     return;
   }
 
   const auto numGamepads = emscripten_get_num_gamepads();
+  // Check if getting the number of gamepads is supported
   if (numGamepads == EMSCRIPTEN_RESULT_NOT_SUPPORTED) {
-    std::cerr << "Get num gamepads failed!\n";
+    ClLogMessage("Failed to get number of gamepads!\n");
     return;
   }
 
@@ -171,36 +177,39 @@ void MoonlightInstance::PollGamepads() {
   for (int gamepadID = 0; gamepadID < numGamepads; ++gamepadID) {
     emscripten_sample_gamepad_data();
     EmscriptenGamepadEvent gamepad;
-    // See logic in getConnectedGamepadMask() (utils.js)
-    // These must stay in sync!
+    // See logic in `utils.js`, these must stay in sync!
 
     const auto result = emscripten_get_gamepad_status(gamepadID, &gamepad);
-    if (result != EMSCRIPTEN_RESULT_SUCCESS || !gamepad.connected) {
-      // Not connected
+    // Check if getting the gamepad status is successful
+    if (result != EMSCRIPTEN_RESULT_SUCCESS) {
+      // No gamepad status, skip it
       continue;
     }
 
+    // Check if the gamepad is connected
+    if (!gamepad.connected) {
+      // Not connected, skip it
+      ClLogMessage("Gamepad %d is not connected, skipping!\n", gamepadID);
+      continue;
+    }
+
+    // Check if the gamepad has a non-zero timestamp
     if (gamepad.timestamp == 0) {
       // On some platforms, Tizen returns "connected" gamepads that really 
       // aren't, so timestamp stays at zero. To work around this, we'll only
       // count gamepads that have a non-zero timestamp in our controller index.
-      continue;
+      ClLogMessage("Gamepad %d has zero timestamp, skipping!\n", gamepadID);
+      continue; // Not valid, skip it
     }
 
-    // Process input for active gamepad
+    // Get the button flags, trigger, and analog values from the gamepad
     const auto buttonFlags = GetButtonFlags(gamepad);
-    const auto leftTrigger = gamepad.analogButton[GamepadButton::LeftTrigger]
-      * std::numeric_limits<unsigned char>::max();
-    const auto rightTrigger = gamepad.analogButton[GamepadButton::RightTrigger]
-      * std::numeric_limits<unsigned char>::max();
-    const auto leftStickX = gamepad.axis[GamepadAxis::LeftX]
-      * std::numeric_limits<short>::max();
-    const auto leftStickY = -gamepad.axis[GamepadAxis::LeftY]
-      * std::numeric_limits<short>::max();
-    const auto rightStickX = gamepad.axis[GamepadAxis::RightX]
-      * std::numeric_limits<short>::max();
-    const auto rightStickY = -gamepad.axis[GamepadAxis::RightY]
-      * std::numeric_limits<short>::max();
+    const auto leftTrigger = gamepad.analogButton[GamepadButton::LeftTrigger] * std::numeric_limits<unsigned char>::max();
+    const auto rightTrigger = gamepad.analogButton[GamepadButton::RightTrigger] * std::numeric_limits<unsigned char>::max();
+    const auto leftStickX = gamepad.axis[GamepadAxis::LeftX] * std::numeric_limits<short>::max();
+    const auto leftStickY = -gamepad.axis[GamepadAxis::LeftY] * std::numeric_limits<short>::max();
+    const auto rightStickX = gamepad.axis[GamepadAxis::RightX] * std::numeric_limits<short>::max();
+    const auto rightStickY = -gamepad.axis[GamepadAxis::RightY] * std::numeric_limits<short>::max();
 
     // Check if the current button flags match the defined button combination on the gamepad
     if (buttonFlags == STOP_STREAM_BUTTONS) {
@@ -298,9 +307,7 @@ void MoonlightInstance::PollGamepads() {
       }
     } else {
       // If mouse emulation is inactive, then send gamepad input to the desired handler (acts as a gamepad)
-      LiSendMultiControllerEvent(
-        gamepadID, activeGamepadMask, buttonFlags, leftTrigger,
-        rightTrigger, leftStickX, leftStickY, rightStickX, rightStickY);
+      LiSendMultiControllerEvent(gamepadID, activeGamepadMask, buttonFlags, leftTrigger, rightTrigger, leftStickX, leftStickY, rightStickX, rightStickY);
     }
   }
 }
