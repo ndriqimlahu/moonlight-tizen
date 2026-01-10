@@ -1433,6 +1433,36 @@ const Views = {
       unmark(this.view.current());
     },
   },
+  WarningDialog: {
+    view: new ListView(() => [
+      'closeWarning'
+    ]),
+    up: function() {
+      document.getElementById('closeWarning').blur();
+    },
+    down: function() {
+      document.getElementById('closeWarning').focus();
+    },
+    left: function() {},
+    right: function() {},
+    select: function() {
+      this.view.current().click();
+    },
+    accept: function() {
+      document.getElementById(this.view.current()).click();
+    },
+    back: function() {
+      document.getElementById('closeWarning').click();
+    },
+    press: function() {},
+    switch: function() {},
+    enter: function() {
+      mark(this.view.current());
+    },
+    leave: function() {
+      unmark(this.view.current());
+    },
+  },
   RestartMoonlightDialog: {
     view: new ListView(() => [
       'continueRestartApp',

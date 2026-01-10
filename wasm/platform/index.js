@@ -1575,6 +1575,34 @@ function restoreDefaultsDialog() {
   });
 }
 
+// Show the Warning dialog
+function warningDialog(title, message) {
+  // Find the existing overlay and dialog elements
+  var warningDialogOverlay = document.querySelector('#warningDialogOverlay');
+  var warningDialog = document.querySelector('#warningDialog');
+
+  // Change the dialog title and text element with a custom warning message
+  document.getElementById('warningDialogTitle').innerHTML = title;
+  document.getElementById('warningDialogText').innerHTML = message;
+
+  // Show the dialog and push the view
+  warningDialogOverlay.style.display = 'flex';
+  warningDialog.showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.WarningDialog);
+
+  // Cancel the operation if the Close button is pressed
+  $('#closeWarning').off('click');
+  $('#closeWarning').on('click', function() {
+    console.log('%c[index.js, warningDialog]', 'color: green;', 'Closing app dialog and returning.');
+    warningDialogOverlay.style.display = 'none';
+    warningDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
+  });
+}
+
 // Restart the application
 function restartApplication() {
   var restartApplication = window.location;
