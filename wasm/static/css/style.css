@@ -880,8 +880,8 @@ body {
 #selectResolution, #selectFramerate, #selectBitrate, #framePacingBtn, #ipAddressFieldModeBtn,
 #unlockAllFpsBtn, #disableWarningsBtn, #performanceStatsBtn, #sortAppsListBtn, #optimizeGamesBtn,
 #removeAllHostsBtn, #rumbleFeedbackBtn, #mouseEmulationBtn, #flipABfaceButtonsBtn, #flipXYfaceButtonsBtn,
-#selectAudio, #audioSyncBtn, #playHostAudioBtn, #selectCodec, #hdrModeBtn, #fullRangeBtn, #navigationGuideBtn,
-#checkUpdatesBtn, #restartAppBtn {
+#selectAudio, #audioSyncBtn, #playHostAudioBtn, #selectCodec, #hdrModeBtn, #fullRangeBtn, #gameModeBtn,
+#navigationGuideBtn, #checkUpdatesBtn, #restartAppBtn {
     color: #ececec;
     background-color: #404354;
     width: 100%;
@@ -996,8 +996,8 @@ body {
 #rumbleFeedbackBtn:focus, #mouseEmulationBtn:hover, #mouseEmulationBtn:focus, #flipABfaceButtonsBtn:hover, #flipABfaceButtonsBtn:focus,
 #flipXYfaceButtonsBtn:hover, #flipXYfaceButtonsBtn:focus, #selectAudio:hover, #selectAudio:focus, #audioSyncBtn:hover, #audioSyncBtn:focus,
 #playHostAudioBtn:hover, #playHostAudioBtn:focus, #selectCodec:hover, #selectCodec:focus, #hdrModeBtn:hover, #hdrModeBtn:focus, #fullRangeBtn:hover,
-#fullRangeBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #navigationGuideBtn:hover, #navigationGuideBtn:focus, #checkUpdatesBtn:hover,
-#checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
+#fullRangeBtn:focus, #gameModeBtn:hover, #gameModeBtn:focus, #systemInfoBtn:hover, #systemInfoBtn:focus, #navigationGuideBtn:hover,
+#navigationGuideBtn:focus, #checkUpdatesBtn:hover, #checkUpdatesBtn:focus, #restartAppBtn:hover, #restartAppBtn:focus {
     background-color: #404354;
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
