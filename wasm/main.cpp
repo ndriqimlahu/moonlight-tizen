@@ -27,6 +27,9 @@
 // Requests the Wasm module to open the specified URL
 #define MSG_OPENURL "openUrl"
 
+using EmssLatencyMode = samsung::wasm::ElementaryMediaStreamSource::LatencyMode;
+using EmssRenderingMode = samsung::wasm::ElementaryMediaStreamSource::RenderingMode;
+
 MoonlightInstance* g_Instance;
 
 MoonlightInstance::MoonlightInstance()
@@ -50,16 +53,13 @@ MoonlightInstance::MoonlightInstance()
     m_AudioSessionId(0),
     m_VideoSessionId(0),
     m_MediaElement("wasm_module"),
-    m_Source(
-      samsung::wasm::ElementaryMediaStreamSource::LatencyMode::kUltraLow,
-      samsung::wasm::ElementaryMediaStreamSource::RenderingMode::kMediaElement),
+    m_Source(nullptr),
     m_SourceListener(this),
     m_AudioTrackListener(this),
     m_VideoTrackListener(this),
     m_AudioTrack(),
     m_VideoTrack() {
       m_Dispatcher.start();
-      m_Source.SetListener(&m_SourceListener);
     }
 
 MoonlightInstance::~MoonlightInstance() { 
