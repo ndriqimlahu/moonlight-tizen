@@ -4,6 +4,7 @@ var activePolls = {}; // Hosts currently being polled. An associated array of po
 var pairingCert; // Loads the generated certificate
 var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clients to allow them to quit each other's games
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
+var isPlatformVer = parseFloat(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version")); // Retrieve the Tizen platform version
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
 var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
@@ -54,6 +55,7 @@ function attachListeners() {
   $('.videoCodecMenu li').on('click', saveVideoCodec);
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#fullRangeSwitch').on('click', saveFullRange);
+  $('#gameModeSwitch').on('click', saveGameMode);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartAppDialog);
@@ -2864,6 +2866,30 @@ function saveFullRange() {
   }, 100);
 }
 
+function saveGameMode() {
+  setTimeout(() => {
+    const chosenGameMode = $('#gameModeSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveGameMode]', 'color: green;', 'Saving game mode state: ' + chosenGameMode);
+    storeData('gameMode', chosenGameMode, null);
+
+    // Warning for Tizen 9.0 platform when enabling game mode
+    if (isPlatformVer === 9.0 && chosenGameMode) {
+      // Show the Warning dialog and push the view
+      setTimeout(() => {
+        // Show a warning message when enabling game mode on Tizen 9.0 platform
+        warningDialog('Compatibility Warning',
+          'Game Mode (Ultra Low Latency) is not compatible with Tizen ' + isPlatformVer + ' due to platform changes introduced by Samsung. Enabling this option may result in video freezing on the first rendered frame, black screens, unstable performance, and other streaming issues.<br><br>' +
+          'If you want to benefit from Game Mode, you must apply the required Game Mode metadata during app installation and keep this setting disabled (Low Latency) in Moonlight to avoid these issues.<br><br>' +
+          'For more details about this issue and the metadata workaround, please refer to the <b>Known Issues &amp; Limitations</b> page on the Wiki.'
+        );
+      }, 250);
+    } else if (isPlatformVer < 9.0 && !chosenGameMode) { // Warning other Tizen versions when disabling game mode
+      // Show a warning message when disabling game mode
+      snackbarLogLong('Warning: Disabling game mode may increase latency and affect your game streaming performance!');
+    }
+  }, 100);
+}
+
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2946,6 +2972,19 @@ function restoreDefaultsSettingsValues() {
   const defaultFullRange = false;
   document.querySelector('#fullRangeBtn').MaterialSwitch.off();
   storeData('fullRange', defaultFullRange, null);
+
+  // Reset default Game Mode based on Tizen platform version
+  if (isPlatformVer === 9.0) {
+    // Disable for Tizen 9.0 to avoid compatibility issues
+    const incompatibleGameMode = false;
+    document.querySelector('#gameModeBtn').MaterialSwitch.off();
+    storeData('gameMode', incompatibleGameMode, null);
+  } else {
+    // Enable for other Tizen platform versions
+    const defaultGameMode = true;
+    document.querySelector('#gameModeBtn').MaterialSwitch.on();
+    storeData('gameMode', defaultGameMode, null);
+  }
 }
 
 function initSamsungKeys() {
@@ -3261,6 +3300,21 @@ function loadUserDataCb() {
       document.querySelector('#fullRangeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#fullRangeBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored gameMode preferences.');
+  getData('gameMode', function(previousValue) {
+    if (previousValue.gameMode == null) {
+      if (isPlatformVer === 9.0) {
+        document.querySelector('#gameModeBtn').MaterialSwitch.off(); // Disable for Tizen 9.0 to avoid compatibility issues
+      } else {
+        document.querySelector('#gameModeBtn').MaterialSwitch.on(); // Set the default state
+      }
+    } else if (previousValue.gameMode == false) {
+      document.querySelector('#gameModeBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#gameModeBtn').MaterialSwitch.on();
     }
   });
 }
