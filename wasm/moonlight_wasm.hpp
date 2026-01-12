@@ -92,7 +92,7 @@ class MoonlightInstance {
     std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
     bool framePacing, bool disableWarnings, bool performanceStats, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation,
     bool flipABfaceButtons, bool flipXYfaceButtons, std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec,
-    bool hdrMode, bool fullRange);
+    bool hdrMode, bool fullRange, bool gameMode);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -233,6 +233,7 @@ class MoonlightInstance {
   bool m_PlayHostAudioEnabled;
   bool m_HdrModeEnabled;
   bool m_FullRangeEnabled;
+  bool m_GameModeEnabled;
 
   STREAM_CONFIGURATION m_StreamConfig;
   bool m_Running;
@@ -289,7 +290,7 @@ MessageResult startStream(std::string host, std::string width, std::string heigh
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool disableWarnings, bool performanceStats, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation,
   bool flipABfaceButtons, bool flipXYfaceButtons, std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec,
-  bool hdrMode, bool fullRange);
+  bool hdrMode, bool fullRange, bool gameMode);
 MessageResult stopStream();
 
 void toggleStats();

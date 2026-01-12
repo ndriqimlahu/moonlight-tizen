@@ -2149,6 +2149,7 @@ function startGame(host, appID) {
       var videoCodec = $('#selectCodec').data('value').toString();
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const gameMode = $('#gameModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
       '\n Host address: ' + host.address + 
@@ -2168,7 +2169,8 @@ function startGame(host, appID) {
       '\n Play host audio: ' + playHostAudio + 
       '\n Video codec: ' + videoCodec + 
       '\n Video HDR mode: ' + hdrMode + 
-      '\n Full color range: ' + fullRange);
+      '\n Full color range: ' + fullRange + 
+      '\n Game Mode: ' + gameMode);
 
       // Hide on-screen overlays until the streaming session begins
       $('#connection-warnings, #performance-stats').css('background', 'transparent').text('');
@@ -2211,7 +2213,7 @@ function startGame(host, appID) {
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
             framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation,
             flipABfaceButtons, flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode,
-            fullRange
+            fullRange, gameMode
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -2265,7 +2267,7 @@ function startGame(host, appID) {
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
           framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation,
           flipABfaceButtons, flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode,
-          fullRange
+          fullRange, gameMode
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
