@@ -143,7 +143,8 @@ bool MoonlightInstance::InitializeRenderingSurface(int width, int height) {
 }
 
 int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height, int redrawRate, void* context, int drFlags) {
-  g_Instance->m_MediaElement.SetSrc(&g_Instance->m_Source);
+  // Bind the media source to the media element
+  g_Instance->m_MediaElement.SetSrc(g_Instance->m_Source.get());
   ClLogMessage("Waiting to close\n");
 
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
@@ -171,7 +172,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
         break;
     }
 
-    auto add_track_result = g_Instance->m_Source.AddTrack(
+    auto add_track_result = g_Instance->m_Source->AddTrack(
       samsung::wasm::ElementaryAudioTrackConfig {
         "audio/webm; codecs=\"pcm\"", // Audio Codec: Pulse Code Modulation (PCM) Profile
         {}, // Extradata: Empty
@@ -220,7 +221,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
     }
 
     ClLogMessage("Using mimeType %s\n", mimetype);
-    auto add_track_result = g_Instance->m_Source.AddTrack(
+    auto add_track_result = g_Instance->m_Source->AddTrack(
       samsung::wasm::ElementaryVideoTrackConfig {
         mimetype, // MIME-type: Selected Video Format
         {}, // Extradata: Empty
@@ -238,7 +239,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   }
 
   ClLogMessage("Inb4 source open\n");
-  g_Instance->m_Source.Open([](EmssOperationResult){});
+  g_Instance->m_Source->Open([](EmssOperationResult){});
   g_Instance->WaitFor(&g_Instance->m_EmssStateChanged, [] {
     return g_Instance->m_EmssReadyState == EmssReadyState::kOpenPending;
   });
@@ -306,9 +307,14 @@ int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int r
   // Reset global video statistics for new decoding session
   memset(&m_GlobalVideoStats, 0, sizeof(m_GlobalVideoStats));
 
-  // Ensure that StartupVidDecSetup is called only once regardless of how many times VidDecSetup is invoked
-  static std::once_flag once_flag;
-  std::call_once(once_flag, &MoonlightInstance::StartupVidDecSetup, videoFormat, width, height, redrawRate, context, drFlags);
+  // Ensure that StartupVidDecSetup is called every time when VidDecSetup is invoked to reinitialize the media pipeline
+  int initVidDec = StartupVidDecSetup(videoFormat, width, height, redrawRate, context, drFlags);
+
+  // Check and handle errors from video decoding configuration and propagating failures
+  if (initVidDec != 0) {
+    ClLogMessage("Initialization of video decoding configuration failed: %d\n", initVidDec);
+    return initVidDec;
+  }
 
   return DR_OK;
 }
