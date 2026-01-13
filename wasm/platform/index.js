@@ -1216,9 +1216,6 @@ function handleSettingsView(category) {
     case 'basicSettings': // Navigate to the BasicSettings view
       navigateSettingsView(Views.BasicSettings);
       break;
-    case 'interfaceSettings': // Navigate to the InterfaceSettings view
-      navigateSettingsView(Views.InterfaceSettings);
-      break;
     case 'hostSettings': // Navigate to the HostSettings view
       navigateSettingsView(Views.HostSettings);
       break;
@@ -1230,6 +1227,9 @@ function handleSettingsView(category) {
       break;
     case 'videoSettings': // Navigate to the VideoSettings view
       navigateSettingsView(Views.VideoSettings);
+      break;
+    case 'advancedSettings': // Navigate to the AdvancedSettings view
+      navigateSettingsView(Views.AdvancedSettings);
       break;
     case 'aboutSettings': // Navigate to the AboutSettings view
       navigateSettingsView(Views.AboutSettings);
