@@ -852,6 +852,7 @@ const Views = {
   },
   HostSettings: {
     view: new ListView(() => [
+      'ipAddressFieldModeBtn',
       'sortAppsListBtn',
       'optimizeGamesBtn',
       'removeAllHostsBtn'
@@ -1120,7 +1121,6 @@ const Views = {
   },
   AdvancedSettings: {
     view: new ListView(() => [
-      'ipAddressFieldModeBtn',
       'unlockAllFpsBtn',
       'disableWarningsBtn',
       'performanceStatsBtn'

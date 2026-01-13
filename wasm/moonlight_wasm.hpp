@@ -90,9 +90,9 @@ class MoonlightInstance {
 
   MessageResult StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
     std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
-    bool framePacing, bool disableWarnings, bool performanceStats, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation,
-    bool flipABfaceButtons, bool flipXYfaceButtons, std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec,
-    bool hdrMode, bool fullRange, bool gameMode);
+    bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+    std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode,
+    bool disableWarnings, bool performanceStats);
   MessageResult StopStream();
 
   void STUN(int callbackId);
@@ -221,8 +221,6 @@ class MoonlightInstance {
   int m_ServerCodecModeSupport;
 
   bool m_FramePacingEnabled;
-  bool m_DisableWarningsEnabled;
-  bool m_PerformanceStatsEnabled;
   bool m_OptimizeGamesEnabled;
   bool m_RumbleFeedbackEnabled;
   bool m_MouseEmulationEnabled;
@@ -234,6 +232,8 @@ class MoonlightInstance {
   bool m_HdrModeEnabled;
   bool m_FullRangeEnabled;
   bool m_GameModeEnabled;
+  bool m_DisableWarningsEnabled;
+  bool m_PerformanceStatsEnabled;
 
   STREAM_CONFIGURATION m_StreamConfig;
   bool m_Running;
@@ -288,9 +288,9 @@ void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryRe
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
-  bool framePacing, bool disableWarnings, bool performanceStats, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec,
-  bool hdrMode, bool fullRange, bool gameMode);
+  bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+  std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode,
+  bool disableWarnings, bool performanceStats);
 MessageResult stopStream();
 
 void toggleStats();
