@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.10.0
+
+### Added
+- Introduced a new 'Game mode' setting that allows changing the game mode state
+- Added a new 'Warning' dialog and corresponding view to display warning messages
+- Implemented functionality for the game mode switch with proper handling across Tizen versions
+- Handled video latency modes based on toggle switch state during stream start request
+
+### Changed
+- Refactored media source pipelines and reinitialized video decoding configuration at stream startup
+- Renamed 'UI Settings' category to 'Advanced Settings' and adjusted its order
+- Reorganized settings by relocating options into better structured categories
+- Reordered Tizen privileges, settings, and metadata entries in the app configuration
+
 ## v1.9.2
 
 ### Added
