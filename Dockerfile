@@ -10,10 +10,10 @@ RUN apt-get update && apt-get install -y \
 	python2 \
 	unzip \
 	wget \
-	nodejs \
-	npm \
-	zip \
-	default-jre \
+	# nodejs \
+	# npm \
+	# zip \
+	# default-jre \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Some of the Samsung Tizen scripts refer to `python`, but Ubuntu only provides `/usr/bin/python2`
@@ -86,24 +86,10 @@ RUN mv build/widget/Moonlight.wgt .
 # Clone and install the `wgt-to-usb` tool inside the workspace directory
 # RUN git clone https://github.com/fingerartur/wgt-to-usb.git
 # RUN cd /home/moonlight/wgt-to-usb/ && npm install wgt-to-usb
-RUN git clone https://github.com/fingerartur/wgt-to-usb.git /home/moonlight/wgt-to-usb && \
-cd /home/moonlight/wgt-to-usb && npm install || true
 
 # Converting the WGT application package file to a USB package installer
 # RUN npm exec wgt-to-usb /home/moonlight/Moonlight.wgt
 # RUN cd /home/moonlight/ && zip -r MoonlightUSB.zip ./userwidget
-RUN set -eux;
-test -f /home/moonlight/Moonlight.wgt || (echo "ERROR: /home/moonlight/Moonlight.wgt missing" && ls -la /home/moonlight && false);
-if npm --prefix /home/moonlight/wgt-to-usb exec --silent -- wgt-to-usb /home/moonlight/Moonlight.wgt; then
-echo "wgt-to-usb succeeded";
-else
-echo "wgt-to-usb failed — falling back to unzip the WGT";
-mkdir -p /home/moonlight/userwidget;
-unzip -q /home/moonlight/Moonlight.wgt -d /home/moonlight/userwidget;
-fi;
-echo "userwidget contents:"; ls -la /home/moonlight/userwidget
-
-RUN cd /home/moonlight && zip -r MoonlightUSB.zip ./userwidget
 
 # Optional: Remove unnecessary files and folders
 RUN rm -rf \
@@ -119,9 +105,9 @@ RUN rm -rf \
 	.emscripten_ports \
 	.emscripten_sanity \
 	.package-manager \
-	.wget-hsts \
-	/home/moonlight/.npm \
-	/home/moonlight/wgt-to-usb
+	.wget-hsts
+	# /home/moonlight/.npm \
+	# /home/moonlight/wgt-to-usb
 
 # Use a multi-stage build to reclaim space from deleted files
 FROM ubuntu:22.04
