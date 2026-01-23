@@ -4,6 +4,7 @@ var activePolls = {}; // Hosts currently being polled. An associated array of po
 var pairingCert; // Loads the generated certificate
 var myUniqueid = '0123456789ABCDEF'; // Use the same UID as other Moonlight clients to allow them to quit each other's games
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
+var isPlatformVer = parseFloat(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version")); // Retrieve the Tizen platform version
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
 var isClickPrevented = false; // Flag indicating whether the click event should be prevented, initial value is false
@@ -38,9 +39,6 @@ function attachListeners() {
   $('#bitrateSlider').on('input', saveBitrate);
   $('#framePacingSwitch').on('click', saveFramePacing);
   $('#ipAddressFieldModeSwitch').on('click', saveIpAddressFieldMode);
-  $('#unlockAllFpsSwitch').on('click', saveUnlockAllFps);
-  $('#disableWarningsSwitch').on('click', saveDisableWarnings);
-  $('#performanceStatsSwitch').on('click', savePerformanceStats);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
   $('#removeAllHostsBtn').on('click', deleteAllHostsDialog);
@@ -54,6 +52,10 @@ function attachListeners() {
   $('.videoCodecMenu li').on('click', saveVideoCodec);
   $('#hdrModeSwitch').on('click', saveHdrMode);
   $('#fullRangeSwitch').on('click', saveFullRange);
+  $('#gameModeSwitch').on('click', saveGameMode);
+  $('#unlockAllFpsSwitch').on('click', saveUnlockAllFps);
+  $('#disableWarningsSwitch').on('click', saveDisableWarnings);
+  $('#performanceStatsSwitch').on('click', savePerformanceStats);
   $('#navigationGuideBtn').on('click', navigationGuideDialog);
   $('#checkUpdatesBtn').on('click', checkForAppUpdates);
   $('#restartAppBtn').on('click', restartAppDialog);
@@ -1214,9 +1216,6 @@ function handleSettingsView(category) {
     case 'basicSettings': // Navigate to the BasicSettings view
       navigateSettingsView(Views.BasicSettings);
       break;
-    case 'interfaceSettings': // Navigate to the InterfaceSettings view
-      navigateSettingsView(Views.InterfaceSettings);
-      break;
     case 'hostSettings': // Navigate to the HostSettings view
       navigateSettingsView(Views.HostSettings);
       break;
@@ -1228,6 +1227,9 @@ function handleSettingsView(category) {
       break;
     case 'videoSettings': // Navigate to the VideoSettings view
       navigateSettingsView(Views.VideoSettings);
+      break;
+    case 'advancedSettings': // Navigate to the AdvancedSettings view
+      navigateSettingsView(Views.AdvancedSettings);
       break;
     case 'aboutSettings': // Navigate to the AboutSettings view
       navigateSettingsView(Views.AboutSettings);
@@ -1264,7 +1266,7 @@ function navigationGuideDialog() {
 // Fetch the latest version and release notes from GitHub API
 function fetchLatestRelease() {
   // GitHub API endpoint to get the latest released version
-  const repoOwner = 'ndriqimlahu';
+  const repoOwner = 'brightcraft';
   const repoName = 'moonlight-tizen';
   const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`;
 
@@ -1572,6 +1574,34 @@ function restoreDefaultsDialog() {
     Navigation.switch();
     // Show the required Restart Moonlight dialog and push the view
     setTimeout(() => requiredRestartAppDialog(), 2000);
+  });
+}
+
+// Show the Warning dialog
+function warningDialog(title, message) {
+  // Find the existing overlay and dialog elements
+  var warningDialogOverlay = document.querySelector('#warningDialogOverlay');
+  var warningDialog = document.querySelector('#warningDialog');
+
+  // Change the dialog title and text element with a custom warning message
+  document.getElementById('warningDialogTitle').innerHTML = title;
+  document.getElementById('warningDialogText').innerHTML = message;
+
+  // Show the dialog and push the view
+  warningDialogOverlay.style.display = 'flex';
+  warningDialog.showModal();
+  isDialogOpen = true;
+  Navigation.push(Views.WarningDialog);
+
+  // Cancel the operation if the Close button is pressed
+  $('#closeWarning').off('click');
+  $('#closeWarning').on('click', function() {
+    console.log('%c[index.js, warningDialog]', 'color: green;', 'Closing app dialog and returning.');
+    warningDialogOverlay.style.display = 'none';
+    warningDialog.close();
+    isDialogOpen = false;
+    Navigation.pop();
+    Navigation.switch();
   });
 }
 
@@ -2106,8 +2136,6 @@ function startGame(host, appID) {
       var rikeyid = generateRemoteInputKeyId();
       var gamepadMask = getConnectedGamepadMask();
       const framePacing = $('#framePacingSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const disableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const performanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const optimizeGames = $('#optimizeGamesSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const rumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -2119,6 +2147,9 @@ function startGame(host, appID) {
       var videoCodec = $('#selectCodec').data('value').toString();
       const hdrMode = $('#hdrModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const fullRange = $('#fullRangeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const gameMode = $('#gameModeSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const disableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked') ? 1 : 0;
+      const performanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked') ? 1 : 0;
 
       console.log('%c[index.js, startGame]', 'color: green;', 'startRequest:' + 
       '\n Host address: ' + host.address + 
@@ -2126,8 +2157,6 @@ function startGame(host, appID) {
       '\n Video frame rate: ' + frameRate + ' FPS' + 
       '\n Video bitrate: ' + bitrate + ' Kbps' + 
       '\n Video frame pacing: ' + framePacing + 
-      '\n Disable connection warnings: ' + disableWarnings + 
-      '\n Performance statistics: ' + performanceStats + 
       '\n Optimize game settings: ' + optimizeGames + 
       '\n Rumble feedback: ' + rumbleFeedback + 
       '\n Mouse emulation: ' + mouseEmulation + 
@@ -2138,7 +2167,10 @@ function startGame(host, appID) {
       '\n Play host audio: ' + playHostAudio + 
       '\n Video codec: ' + videoCodec + 
       '\n Video HDR mode: ' + hdrMode + 
-      '\n Full color range: ' + fullRange);
+      '\n Full color range: ' + fullRange + 
+      '\n Game Mode: ' + gameMode + 
+      '\n Disable connection warnings: ' + disableWarnings + 
+      '\n Performance statistics: ' + performanceStats);
 
       // Hide on-screen overlays until the streaming session begins
       $('#connection-warnings, #performance-stats').css('background', 'transparent').text('');
@@ -2179,9 +2211,9 @@ function startGame(host, appID) {
           sendMessage('startRequest', [
             host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
-            framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation,
-            flipABfaceButtons, flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode,
-            fullRange
+            framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+            audioConfig, audioSync, playHostAudio, videoCodec, hdrMode, fullRange, gameMode, disableWarnings,
+            performanceStats
           ]);
         }, function(failedResumeApp) {
           console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to resume app with id: ' + appID + '\n Returned error was: ' + failedResumeApp + '!');
@@ -2233,9 +2265,9 @@ function startGame(host, appID) {
         sendMessage('startRequest', [
           host.address, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
-          framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation,
-          flipABfaceButtons, flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode,
-          fullRange
+          framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
+          audioConfig, audioSync, playHostAudio, videoCodec, hdrMode, fullRange, gameMode, disableWarnings,
+          performanceStats
         ]);
       }, function(failedLaunchApp) {
         console.error('%c[index.js, startGame]', 'color: green;', 'Error: Failed to launch app with id: ' + appID + '\n Returned error was: ' + failedLaunchApp + '!');
@@ -2599,63 +2631,6 @@ function saveIpAddressFieldMode() {
   }, 100);
 }
 
-function saveUnlockAllFps() {
-  setTimeout(() => {
-    const chosenUnlockAllFps = $('#unlockAllFpsSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, saveUnlockAllFps]', 'color: green;', 'Saving unlock all FPS state: ' + chosenUnlockAllFps);
-    storeData('unlockAllFps', chosenUnlockAllFps, null);
-  }, 100);
-}
-
-function handleUnlockAllFps() {
-  var currentFps = $('#selectFramerate').data('value');
-  const addFramerate = $('.videoFramerateMenu').find('li[data-value="60"]');
-
-  // Check if the Unlock all FPS switch is checked
-  if ($('#unlockAllFpsSwitch').prop('checked')) {
-    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Adding higher framerate options: 90, 120, 144 FPS');
-    // Check if any of the higher FPS options are absent to avoid duplicates
-    if (!$('.videoFramerateMenu').find('li[data-value="90"], li[data-value="120"], li[data-value="144"]').length) {
-      // Insert all higher FPS options in correct order (90, 120, 144)
-      addFramerate.after(`
-        <li class="mdl-menu__item" data-value="90">90 FPS</li>
-        <li class="mdl-menu__item" data-value="120">120 FPS</li>
-        <li class="mdl-menu__item" data-value="144">144 FPS</li>
-      `);
-      // Attach click listeners only to the newly added FPS options
-      $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').on('click', saveFramerate);
-    }
-  } else {
-    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Removing higher framerate options: 90, 120, 144 FPS');
-    // If unchecked, remove the higher FPS options from the selection menu
-    $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').remove();
-    // After removal, if a higher FPS option remains selected, then reset it to the default option
-    if (['90', '120', '144'].includes(String(currentFps))) {
-      $('#selectFramerate').text('60 FPS').data('value', '60');
-      console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Resetting framerate value to 60 FPS');
-      storeData('frameRate', '60', null);
-      // Update the bitrate value based on the selected frame rate
-      setBitratePresetValue();
-    }
-  }
-}
-
-function saveDisableWarnings() {
-  setTimeout(() => {
-    const chosenDisableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, saveDisableWarnings]', 'color: green;', 'Saving disable warnings state: ' + chosenDisableWarnings);
-    storeData('disableWarnings', chosenDisableWarnings, null);
-  }, 100);
-}
-
-function savePerformanceStats() {
-  setTimeout(() => {
-    const chosenPerformanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked');
-    console.log('%c[index.js, savePerformanceStats]', 'color: green;', 'Saving performance stats state: ' + chosenPerformanceStats);
-    storeData('performanceStats', chosenPerformanceStats, null);
-  }, 100);
-}
-
 function saveSortAppsList() {
   setTimeout(() => {
     const chosenSortAppsList = $('#sortAppsListSwitch').parent().hasClass('is-checked');
@@ -2836,6 +2811,87 @@ function saveFullRange() {
   }, 100);
 }
 
+function saveGameMode() {
+  setTimeout(() => {
+    const chosenGameMode = $('#gameModeSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveGameMode]', 'color: green;', 'Saving game mode state: ' + chosenGameMode);
+    storeData('gameMode', chosenGameMode, null);
+
+    // Warning for Tizen 9.0 platform when enabling game mode
+    if (isPlatformVer === 9.0 && chosenGameMode) {
+      // Show the Warning dialog and push the view
+      setTimeout(() => {
+        // Show a warning message when enabling game mode on Tizen 9.0 platform
+        warningDialog('Compatibility Warning',
+          'Game Mode (Ultra Low Latency) is not compatible with Tizen ' + isPlatformVer + ' due to platform changes introduced by Samsung. Enabling this option may result in video freezing on the first rendered frame, black screens, unstable performance, and other streaming issues.<br><br>' +
+          'If you want to benefit from Game Mode, you must apply the required Game Mode metadata during app installation and keep this setting disabled (Low Latency) in Moonlight to avoid these issues.<br><br>' +
+          'For more details about this issue and the metadata workaround, please refer to the <b>Known Issues &amp; Limitations</b> page on the Wiki.'
+        );
+      }, 250);
+    } else if (isPlatformVer < 9.0 && !chosenGameMode) { // Warning other Tizen versions when disabling game mode
+      // Show a warning message when disabling game mode
+      snackbarLogLong('Warning: Disabling game mode may increase latency and affect your game streaming performance!');
+    }
+  }, 100);
+}
+
+function saveUnlockAllFps() {
+  setTimeout(() => {
+    const chosenUnlockAllFps = $('#unlockAllFpsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveUnlockAllFps]', 'color: green;', 'Saving unlock all FPS state: ' + chosenUnlockAllFps);
+    storeData('unlockAllFps', chosenUnlockAllFps, null);
+  }, 100);
+}
+
+function handleUnlockAllFps() {
+  var currentFps = $('#selectFramerate').data('value');
+  const addFramerate = $('.videoFramerateMenu').find('li[data-value="60"]');
+
+  // Check if the Unlock all FPS switch is checked
+  if ($('#unlockAllFpsSwitch').prop('checked')) {
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Adding higher framerate options: 90, 120, 144 FPS');
+    // Check if any of the higher FPS options are absent to avoid duplicates
+    if (!$('.videoFramerateMenu').find('li[data-value="90"], li[data-value="120"], li[data-value="144"]').length) {
+      // Insert all higher FPS options in correct order (90, 120, 144)
+      addFramerate.after(`
+        <li class="mdl-menu__item" data-value="90">90 FPS</li>
+        <li class="mdl-menu__item" data-value="120">120 FPS</li>
+        <li class="mdl-menu__item" data-value="144">144 FPS</li>
+      `);
+      // Attach click listeners only to the newly added FPS options
+      $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').on('click', saveFramerate);
+    }
+  } else {
+    console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Removing higher framerate options: 90, 120, 144 FPS');
+    // If unchecked, remove the higher FPS options from the selection menu
+    $('.videoFramerateMenu li[data-value="90"], li[data-value="120"], li[data-value="144"]').remove();
+    // After removal, if a higher FPS option remains selected, then reset it to the default option
+    if (['90', '120', '144'].includes(String(currentFps))) {
+      $('#selectFramerate').text('60 FPS').data('value', '60');
+      console.log('%c[index.js, handleUnlockAllFps]', 'color: green;', 'Resetting framerate value to 60 FPS');
+      storeData('frameRate', '60', null);
+      // Update the bitrate value based on the selected frame rate
+      setBitratePresetValue();
+    }
+  }
+}
+
+function saveDisableWarnings() {
+  setTimeout(() => {
+    const chosenDisableWarnings = $('#disableWarningsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveDisableWarnings]', 'color: green;', 'Saving disable warnings state: ' + chosenDisableWarnings);
+    storeData('disableWarnings', chosenDisableWarnings, null);
+  }, 100);
+}
+
+function savePerformanceStats() {
+  setTimeout(() => {
+    const chosenPerformanceStats = $('#performanceStatsSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, savePerformanceStats]', 'color: green;', 'Saving performance stats state: ' + chosenPerformanceStats);
+    storeData('performanceStats', chosenPerformanceStats, null);
+  }, 100);
+}
+
 // Reset all settings to their default state and save the value data
 function restoreDefaultsSettingsValues() {
   const defaultResolution = '1280:720';
@@ -2858,18 +2914,6 @@ function restoreDefaultsSettingsValues() {
   const defaultIpAddressFieldMode = true;
   document.querySelector('#ipAddressFieldModeBtn').MaterialSwitch.on();
   storeData('ipAddressFieldMode', defaultIpAddressFieldMode, null);
-
-  const defaultUnlockAllFps = false;
-  document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off();
-  storeData('unlockAllFps', defaultUnlockAllFps, null);
-
-  const defaultDisableWarnings = false;
-  document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
-  storeData('disableWarnings', defaultDisableWarnings, null);
-
-  const defaultPerformanceStats = false;
-  document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
-  storeData('performanceStats', defaultPerformanceStats, null);
 
   const defaultSortAppsList = false;
   document.querySelector('#sortAppsListBtn').MaterialSwitch.off();
@@ -2918,6 +2962,31 @@ function restoreDefaultsSettingsValues() {
   const defaultFullRange = false;
   document.querySelector('#fullRangeBtn').MaterialSwitch.off();
   storeData('fullRange', defaultFullRange, null);
+
+  // Reset default Game Mode based on Tizen platform version
+  if (isPlatformVer === 9.0) {
+    // Disable for Tizen 9.0 to avoid compatibility issues
+    const incompatibleGameMode = false;
+    document.querySelector('#gameModeBtn').MaterialSwitch.off();
+    storeData('gameMode', incompatibleGameMode, null);
+  } else {
+    // Enable for other Tizen platform versions
+    const defaultGameMode = true;
+    document.querySelector('#gameModeBtn').MaterialSwitch.on();
+    storeData('gameMode', defaultGameMode, null);
+  }
+
+  const defaultUnlockAllFps = false;
+  document.querySelector('#unlockAllFpsBtn').MaterialSwitch.off();
+  storeData('unlockAllFps', defaultUnlockAllFps, null);
+
+  const defaultDisableWarnings = false;
+  document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
+  storeData('disableWarnings', defaultDisableWarnings, null);
+
+  const defaultPerformanceStats = false;
+  document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
+  storeData('performanceStats', defaultPerformanceStats, null);
 }
 
 function initSamsungKeys() {
@@ -3083,28 +3152,6 @@ function loadUserDataCb() {
     handleIpAddressFieldMode();
   });
 
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored disableWarnings preferences.');
-  getData('disableWarnings', function(previousValue) {
-    if (previousValue.disableWarnings == null) {
-      document.querySelector('#disableWarningsBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.disableWarnings == false) {
-      document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#disableWarningsBtn').MaterialSwitch.on();
-    }
-  });
-
-  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored performanceStats preferences.');
-  getData('performanceStats', function(previousValue) {
-    if (previousValue.performanceStats == null) {
-      document.querySelector('#performanceStatsBtn').MaterialSwitch.off(); // Set the default state
-    } else if (previousValue.performanceStats == false) {
-      document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
-    } else {
-      document.querySelector('#performanceStatsBtn').MaterialSwitch.on();
-    }
-  });
-
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored sortAppsList preferences.');
   getData('sortAppsList', function(previousValue) {
     if (previousValue.sortAppsList == null) {
@@ -3236,6 +3283,43 @@ function loadUserDataCb() {
       document.querySelector('#fullRangeBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#fullRangeBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored gameMode preferences.');
+  getData('gameMode', function(previousValue) {
+    if (previousValue.gameMode == null) {
+      if (isPlatformVer === 9.0) {
+        document.querySelector('#gameModeBtn').MaterialSwitch.off(); // Disable for Tizen 9.0 to avoid compatibility issues
+      } else {
+        document.querySelector('#gameModeBtn').MaterialSwitch.on(); // Set the default state
+      }
+    } else if (previousValue.gameMode == false) {
+      document.querySelector('#gameModeBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#gameModeBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored disableWarnings preferences.');
+  getData('disableWarnings', function(previousValue) {
+    if (previousValue.disableWarnings == null) {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.disableWarnings == false) {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#disableWarningsBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored performanceStats preferences.');
+  getData('performanceStats', function(previousValue) {
+    if (previousValue.performanceStats == null) {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.off(); // Set the default state
+    } else if (previousValue.performanceStats == false) {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.off();
+    } else {
+      document.querySelector('#performanceStatsBtn').MaterialSwitch.on();
     }
   });
 }

@@ -97,7 +97,7 @@ jobs:
             # Moonlight Tizen v${{ env.VERSION }}
 
             - Ensure your Samsung TV is running Tizen OS version 5.5 or higher.
-            - Choose the recommended [installation method](https://github.com/ndriqimlahu/moonlight-tizen#installation) based on your Tizen OS version.
+            - Choose the recommended [installation method](https://github.com/brightcraft/moonlight-tizen#installation) based on your Tizen OS version.
             - Follow the detailed instructions from the installation guide to successfully install the **Moonlight** app on your TV.
 
             ## What's Changed:

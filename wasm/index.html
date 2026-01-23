@@ -65,10 +65,6 @@
               <i class="settings-category-icons material-icons">tune</i>
               <label>Basic Settings</label>
             </div>
-            <div class="settings-category" data-category="interfaceSettings" onclick="handleSettingsView('interfaceSettings')">
-              <i class="settings-category-icons material-icons">dashboard_customize</i>
-              <label>UI Settings</label>
-            </div>
             <div class="settings-category" data-category="hostSettings" onclick="handleSettingsView('hostSettings')">
               <i class="settings-category-icons material-icons">desktop_windows</i>
               <label>Host Settings</label>
@@ -84,6 +80,10 @@
             <div class="settings-category" data-category="videoSettings" onclick="handleSettingsView('videoSettings')">
               <i class="settings-category-icons material-icons">video_settings</i>
               <label>Video Settings</label>
+            </div>
+            <div class="settings-category" data-category="advancedSettings" onclick="handleSettingsView('advancedSettings')">
+              <i class="settings-category-icons material-icons">layers</i>
+              <label>Advanced Settings</label>
             </div>
             <div class="settings-category" data-category="aboutSettings" onclick="handleSettingsView('aboutSettings')">
               <i class="settings-category-icons material-icons">info</i>
@@ -150,7 +150,7 @@
               </div>
             </div>
           </div>
-          <div id="interfaceSettings" class="settings-options">
+          <div id="hostSettings" class="settings-options">
             <div class="setting-option">
               <label>IP address field mode</label>
               <span class="mdl-list__item-text-body">
@@ -163,40 +163,6 @@
                 </label>
               </div>
             </div>
-            <div class="setting-option">
-              <label>Unlock all frame rates<span class="badge badge-experimental">Experimental</span></label>
-              <span class="mdl-list__item-text-body">
-                - Higher FPS can reduce latency on high-end devices, but may cause lag or instability on unsupported devices.
-              </span>
-              <div id="unlockAllFpsMenu">
-                <label id="unlockAllFpsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="unlockAllFpsSwitch">
-                  <input type="checkbox" id="unlockAllFpsSwitch" class="mdl-switch__input" onchange="handleUnlockAllFps()">
-                  <span class="mdl-switch__label">Unlock all possible frame rate options for this device</span>
-                </label>
-              </div>
-            </div>
-            <div class="setting-option">
-              <label>Connection warnings</label>
-              <span class="mdl-list__item-text-body"></span>
-              <div id="connectionWarningsMenu">
-                <label id="disableWarningsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="disableWarningsSwitch">
-                  <input type="checkbox" id="disableWarningsSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Disable on-screen connection warning messages while streaming</span>
-                </label>
-              </div>
-            </div>
-            <div class="setting-option">
-              <label>Performance statistics</label>
-              <span class="mdl-list__item-text-body"></span>
-              <div id="performanceStatsMenu">
-                <label id="performanceStatsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="performanceStatsSwitch">
-                  <input type="checkbox" id="performanceStatsSwitch" class="mdl-switch__input">
-                  <span class="mdl-switch__label">Display real-time stream performance information while streaming</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <div id="hostSettings" class="settings-options">
             <div class="setting-option">
               <label>Sort the list of apps</label>
               <span class="mdl-list__item-text-body">
@@ -340,7 +306,7 @@
               </div>
             </div>
             <div class="setting-option">
-              <label>Color range<span class="badge badge-experimental">Experimental</span></label>
+              <label>Color range</label>
               <span class="mdl-list__item-text-body">
                 - This will cause loss of detail in light and dark areas if your device doesn't properly display full range video content.
               </span>
@@ -348,6 +314,52 @@
                 <label id="fullRangeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="fullRangeSwitch">
                   <input type="checkbox" id="fullRangeSwitch" class="mdl-switch__input">
                   <span class="mdl-switch__label">Allow full color range for more detail in dark and bright areas of content</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Game mode</label>
+              <span class="mdl-list__item-text-body">
+                - Enable for ultra low latency with game mode or disable for low latency with post-processing video enhancements.
+              </span>
+              <div id="gameModeMenu">
+                <label id="gameModeBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="gameModeSwitch">
+                  <input type="checkbox" id="gameModeSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Allow game mode for optimal latency and performance while streaming</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div id="advancedSettings" class="settings-options">
+            <div class="setting-option">
+              <label>Unlock all frame rates<span class="badge badge-experimental">Experimental</span></label>
+              <span class="mdl-list__item-text-body">
+                - Higher FPS can reduce latency on high-end devices, but may cause lag or instability on unsupported devices.
+              </span>
+              <div id="unlockAllFpsMenu">
+                <label id="unlockAllFpsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="unlockAllFpsSwitch">
+                  <input type="checkbox" id="unlockAllFpsSwitch" class="mdl-switch__input" onchange="handleUnlockAllFps()">
+                  <span class="mdl-switch__label">Unlock all possible frame rate options for this device</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Connection warnings</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="connectionWarningsMenu">
+                <label id="disableWarningsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="disableWarningsSwitch">
+                  <input type="checkbox" id="disableWarningsSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Disable on-screen connection warning messages while streaming</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <label>Performance statistics</label>
+              <span class="mdl-list__item-text-body"></span>
+              <div id="performanceStatsMenu">
+                <label id="performanceStatsBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="performanceStatsSwitch">
+                  <input type="checkbox" id="performanceStatsSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label">Display real-time stream performance information while streaming</span>
                 </label>
               </div>
             </div>
@@ -608,6 +620,19 @@
       </div>
       <div class="mdl-dialog__actions">
         <button type="button" id="closeNavGuide" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
+      </div>
+    </dialog>
+  </div>
+  <div id="warningDialogOverlay" class="dialog-overlay">
+    <dialog id="warningDialog" class="mdl-dialog">
+      <h3 id="warningDialogTitle" class="mdl-dialog__title">Warning</h3>
+      <div class="mdl-dialog__content">
+        <p id="warningDialogText">
+          This is a warning message, proceed with caution!
+        </p>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" id="closeWarning" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Close</button>
       </div>
     </dialog>
   </div>
