@@ -61,10 +61,9 @@ function markElementById(id) {
 }
 
 function mark(value) {
-  if (typeof value === 'string') {
-    markElementById(value);
-  } else if (typeof value === 'object') {
-    markElement(value);
+  const el = resolveElement(value);
+  if (el) {
+    markElement(el);
   }
 }
 
@@ -80,10 +79,9 @@ function unmarkElementById(id) {
 }
 
 function unmark(value) {
-  if (typeof value === 'string') {
-    unmarkElementById(value);
-  } else if (typeof value === 'object') {
-    unmarkElement(value);
+  const el = resolveElement(value);
+  if (el) {
+    unmarkElement(el);
   }
 }
 
