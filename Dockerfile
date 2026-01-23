@@ -86,8 +86,8 @@ RUN mv build/widget/Moonlight.wgt .
 # Clone and install the `wgt-to-usb` tool inside the workspace directory
 # RUN git clone https://github.com/fingerartur/wgt-to-usb.git
 # RUN cd /home/moonlight/wgt-to-usb/ && npm install wgt-to-usb
-RUN git clone https://github.com/fingerartur/wgt-to-usb.git /home/moonlight/wgt-to-usb
-&& cd /home/moonlight/wgt-to-usb && npm install || true
+RUN git clone https://github.com/fingerartur/wgt-to-usb.git /home/moonlight/wgt-to-usb && \
+cd /home/moonlight/wgt-to-usb && npm install || true
 
 # Converting the WGT application package file to a USB package installer
 # RUN npm exec wgt-to-usb /home/moonlight/Moonlight.wgt
