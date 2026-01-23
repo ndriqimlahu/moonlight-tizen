@@ -1,5 +1,53 @@
 const hoveredClassName = 'hovered';
-let currentPlatformVer = parseFloat(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version")); // Retrieve platform version
+
+function isHTMLElement(el) {
+  return (typeof HTMLElement !== 'undefined') && el instanceof HTMLElement;
+}
+
+function resolveElement(target) {
+  if (!target) return null;
+  if (isHTMLElement(target)) return target;
+  if (typeof target === 'string') return document.getElementById(target);
+  if (target && target[0] && target[0].nodeType === 1) return target[0];
+  if (target && target.nodeType === 1) return target;
+  if (target && target.element && isHTMLElement(target.element)) return target.element;
+  if (target && target.el && isHTMLElement(target.el)) return target.el;
+  if (target && typeof target.id === 'string') return document.getElementById(target.id);
+  return null;
+}
+
+function resolveClickable(target) {
+  const el = resolveElement(target);
+  if (!el) return null;
+  // In MDL menus, click the menu item itself so the menu closes properly
+  const menuItem = el.closest ? el.closest('.mdl-menu__item') : null;
+  if (menuItem && typeof menuItem.click === 'function') {
+    return menuItem;
+  }
+  if (el.tagName === 'SELECT') return el; // allow native picker to open via click, no child search
+  // If we clicked an icon inside a button, find the button wrapper first
+  const mdlBtn = el.closest ? el.closest('.mdl-button') : null;
+  if (mdlBtn) {
+    el = mdlBtn;
+  }
+  if (el.querySelector) {
+    const child = el.querySelector('input[type="checkbox"], .mdl-switch__input, [role="switch"], button, [aria-pressed]');
+    if (child && typeof child.click === 'function') {
+      return child;
+    }
+  }
+  if (typeof el.click === 'function') {
+    return el;
+  }
+  return null;
+}
+
+function clickTarget(target) {
+  const el = resolveClickable(target);
+  if (el) {
+    el.click();
+  }
+}
 
 function markElement(element) {
   if (element) {
@@ -610,10 +658,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     back: function() {
       document.getElementById('goBackBtn').click();
@@ -712,10 +760,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
@@ -869,10 +917,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
@@ -916,10 +964,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
@@ -962,10 +1010,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
@@ -1050,10 +1098,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
@@ -1137,10 +1185,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
@@ -1184,10 +1232,10 @@ const Views = {
     left: function() {},
     right: function() {},
     select: function() {
-      this.view.current().click();
+      clickTarget(this.view.current());
     },
     accept: function() {
-      document.getElementById(this.view.current()).click();
+      clickTarget(this.view.current());
     },
     back: function() {
       // Remove focus from the current element before changing the view
