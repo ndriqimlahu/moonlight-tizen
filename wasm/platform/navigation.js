@@ -1008,15 +1008,11 @@ const Views = {
     select: function() {
       this.view.current().click();
       document.getElementById('selectAudio').focus();
-      // Show the required Restart Moonlight dialog and push the view
-      setTimeout(() => requiredRestartAppDialog(), 800);
     },
     accept: function() {
       this.view.current().click();
       Navigation.pop();
       document.getElementById('selectAudio').focus();
-      // Show the required Restart Moonlight dialog and push the view
-      setTimeout(() => requiredRestartAppDialog(), 800);
     },
     back: function() {
       document.getElementById('selectAudio').click();
@@ -1096,15 +1092,11 @@ const Views = {
     select: function() {
       this.view.current().click();
       document.getElementById('selectCodec').focus();
-      // Show the required Restart Moonlight dialog and push the view
-      setTimeout(() => requiredRestartAppDialog(), 800);
     },
     accept: function() {
       this.view.current().click();
       Navigation.pop();
       document.getElementById('selectCodec').focus();
-      // Show the required Restart Moonlight dialog and push the view
-      setTimeout(() => requiredRestartAppDialog(), 800);
     },
     back: function() {
       document.getElementById('selectCodec').click();
