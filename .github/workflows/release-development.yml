@@ -118,9 +118,13 @@ jobs:
         run: |
           docker run -d --name temp_container $IMAGE_TAG
       # Copies the built Moonlight.wgt and MoonlightUSB.zip files from the Docker container.
+      # - name: Copy artifacts from Docker container
+      #   run: |
+      #     docker cp temp_container:/home/moonlight/Moonlight.wgt . && docker cp temp_container:/home/moonlight/MoonlightUSB.zip .
+      # Copies the built Moonlight.wgt file from the Docker container.
       - name: Copy artifacts from Docker container
         run: |
-          docker cp temp_container:/home/moonlight/Moonlight.wgt . && docker cp temp_container:/home/moonlight/MoonlightUSB.zip .
+          docker cp temp_container:/home/moonlight/Moonlight.wgt .
       # Stops and removes the temporary Docker container to clean up resources.
       - name: Stop and remove Docker container
         run: |
@@ -161,12 +165,12 @@ jobs:
           asset_name: Moonlight.wgt
           asset_content_type: application/octet-stream
       # Uploads the MoonlightUSB.zip file as a release asset in the newly created GitHub pre-release.
-      - name: Upload the package file to GitHub pre-release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: ./MoonlightUSB.zip
-          asset_name: MoonlightUSB.zip
-          asset_content_type: application/octet-stream
+      # - name: Upload the package file to GitHub pre-release
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
+      #     asset_path: ./MoonlightUSB.zip
+      #     asset_name: MoonlightUSB.zip
+      #     asset_content_type: application/octet-stream

@@ -12,9 +12,9 @@ RUN apt-get update && apt-get install -y \
 	python2 \
 	unzip \
 	wget \
-	nodejs \
-	npm \
-	zip \
+	# nodejs \
+	# npm \
+	# zip \
 	default-jre \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -80,10 +80,10 @@ RUN echo \
 RUN mv build/widget/Moonlight.wgt .
 
 # Create USB installation package from the WGT file using `wgt-to-usb`
-RUN git clone https://github.com/fingerartur/wgt-to-usb.git
-RUN cd /home/moonlight/wgt-to-usb/ && npm install
-RUN npm exec wgt-to-usb /home/moonlight/Moonlight.wgt
-RUN cd /home/moonlight/ && zip -r MoonlightUSB.zip ./userwidget
+# RUN git clone https://github.com/fingerartur/wgt-to-usb.git
+# RUN cd /home/moonlight/wgt-to-usb/ && npm install
+# RUN npm exec wgt-to-usb /home/moonlight/Moonlight.wgt
+# RUN cd /home/moonlight/ && zip -r MoonlightUSB.zip ./userwidget
 
 # Clean up unnecessary files to reduce image size
 RUN rm -rf \
@@ -101,8 +101,8 @@ RUN rm -rf \
 	.emscripten_cache.lock \
 	.emscripten_ports \
 	.emscripten_sanity \
-	.npm \
-	wgt-to-usb \
+	# .npm \
+	# wgt-to-usb \
 	.wget-hsts
 
 # Use a multi-stage build to reclaim space from deleted files
