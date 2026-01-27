@@ -2823,9 +2823,8 @@ function saveGameMode() {
       setTimeout(() => {
         // Show a warning message when enabling game mode on Tizen 9.0 platform
         warningDialog('Compatibility Warning',
-          'Game Mode (Ultra Low Latency) is not compatible with Tizen ' + isPlatformVer + ' due to platform changes introduced by Samsung. Enabling this option may result in video freezing on the first rendered frame, black screens, unstable performance, and other streaming issues.<br><br>' +
-          'If you want to benefit from Game Mode, you must apply the required Game Mode metadata during app installation and keep this setting disabled (Low Latency) in Moonlight to avoid these issues.<br><br>' +
-          'For more details about this issue and the metadata workaround, please refer to the <b>Known Issues &amp; Limitations</b> page on the Wiki.'
+          'Game Mode (Ultra Low Latency) is not compatible with Tizen ' + isPlatformVer + ' due to platform changes introduced by Samsung. Enabling this option may result in video freezing on the first rendered frame, black screen, unstable performance, and other streaming issues.<br><br>' +
+          'For more information about this incompatibility, including available workarounds and potential limitations, please refer to the <b>Known Issues &amp; Limitations</b> page on the Wiki.'
         );
       }, 250);
     } else if (isPlatformVer < 9.0 && !chosenGameMode) { // Warning other Tizen versions when disabling game mode
