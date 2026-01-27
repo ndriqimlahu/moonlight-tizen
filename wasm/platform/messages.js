@@ -6,8 +6,8 @@ const SyncFunctions = {
   // cert, privateKey, myUniqueid
   'httpInit': (...args) => Module.httpInit(...args),
   /* host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
-  framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons,
-  flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode, fullRange */
+  framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioConfig,
+  audioSync, playHostAudio, videoCodec, hdrMode, fullRange, gameMode, disableWarnings, performanceStats */
   'startRequest': (...args) => Module.startStream(...args),
   // no parameters
   'stopRequest': (...args) => Module.stopStream(...args),

@@ -27,6 +27,9 @@
 // Requests the Wasm module to open the specified URL
 #define MSG_OPENURL "openUrl"
 
+using EmssLatencyMode = samsung::wasm::ElementaryMediaStreamSource::LatencyMode;
+using EmssRenderingMode = samsung::wasm::ElementaryMediaStreamSource::RenderingMode;
+
 MoonlightInstance* g_Instance;
 
 MoonlightInstance::MoonlightInstance()
@@ -50,16 +53,13 @@ MoonlightInstance::MoonlightInstance()
     m_AudioSessionId(0),
     m_VideoSessionId(0),
     m_MediaElement("wasm_module"),
-    m_Source(
-      samsung::wasm::ElementaryMediaStreamSource::LatencyMode::kUltraLow,
-      samsung::wasm::ElementaryMediaStreamSource::RenderingMode::kMediaElement),
+    m_Source(nullptr),
     m_SourceListener(this),
     m_AudioTrackListener(this),
     m_VideoTrackListener(this),
     m_AudioTrack(),
     m_VideoTrack() {
       m_Dispatcher.start();
-      m_Source.SetListener(&m_SourceListener);
     }
 
 MoonlightInstance::~MoonlightInstance() { 
@@ -210,9 +210,9 @@ static void HexStringToBytes(const char* str, char* output) {
 
 MessageResult MoonlightInstance::StartStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
-  bool framePacing, bool disableWarnings, bool performanceStats, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec,
-  bool hdrMode, bool fullRange) {
+  bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+  std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode,
+  bool disableWarnings, bool performanceStats) {
   PostToJs("Setting the Host address to: " + host);
   PostToJs("Setting the Video resolution to: " + width + "x" + height);
   PostToJs("Setting the Video frame rate to: " + fps + " FPS");
@@ -224,8 +224,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the RTSP session URL to: " + rtspurl);
   PostToJs("Setting the Server codec mode support to: " + std::to_string(serverCodecModeSupport));
   PostToJs("Setting the Video frame pacing to: " + std::to_string(framePacing));
-  PostToJs("Setting the Disable connection warnings to: " + std::to_string(disableWarnings));
-  PostToJs("Setting the Performance statistics to: " + std::to_string(performanceStats));
   PostToJs("Setting the Optimize game settings to: " + std::to_string(optimizeGames));
   PostToJs("Setting the Rumble feedback to: " + std::to_string(rumbleFeedback));
   PostToJs("Setting the Mouse emulation to: " + std::to_string(mouseEmulation));
@@ -237,6 +235,9 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   PostToJs("Setting the Video codec to: " + videoCodec);
   PostToJs("Setting the Video HDR mode to: " + std::to_string(hdrMode));
   PostToJs("Setting the Full color range to: " + std::to_string(fullRange));
+  PostToJs("Setting the Game mode to: " + std::to_string(gameMode));
+  PostToJs("Setting the Disable connection warnings to: " + std::to_string(disableWarnings));
+  PostToJs("Setting the Performance statistics to: " + std::to_string(performanceStats));
 
   // Populate the stream configuration
   LiInitializeStreamConfiguration(&m_StreamConfig);
@@ -317,6 +318,17 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   // Manage gamepad input states based on selected settings
   HandleGamepadInputState(rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons);
 
+  // Apply the desired latency mode ​based on the toggle switch state
+  EmssLatencyMode selectedLatencyMode = gameMode ? EmssLatencyMode::kUltraLow : EmssLatencyMode::kLow;
+  PostToJs(gameMode ? "Selecting the latency mode to: LATENCY_MODE_ULTRA_LOW" : "Selecting the latency mode to: LATENCY_MODE_LOW");
+  // Create the media source with the selected latency and rendering modes
+  m_Source = std::make_unique<samsung::wasm::ElementaryMediaStreamSource>(
+    selectedLatencyMode,
+    EmssRenderingMode::kMediaElement
+  );
+  // Set the source listener to the media source
+  m_Source->SetListener(&m_SourceListener);
+
   // Store the parameters from the start message
   m_Host = host;
   m_AppVersion = appversion;
@@ -324,8 +336,6 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_RtspUrl = rtspurl;
   m_ServerCodecModeSupport = serverCodecModeSupport;
   m_FramePacingEnabled = framePacing;
-  m_DisableWarningsEnabled = disableWarnings;
-  m_PerformanceStatsEnabled = performanceStats;
   m_OptimizeGamesEnabled = optimizeGames;
   m_RumbleFeedbackEnabled = rumbleFeedback;
   m_MouseEmulationEnabled = mouseEmulation;
@@ -335,6 +345,9 @@ MessageResult MoonlightInstance::StartStream(std::string host, std::string width
   m_PlayHostAudioEnabled = playHostAudio;
   m_HdrModeEnabled = hdrMode;
   m_FullRangeEnabled = fullRange;
+  m_GameModeEnabled = gameMode;
+  m_DisableWarningsEnabled = disableWarnings;
+  m_PerformanceStatsEnabled = performanceStats;
 
   // Initialize the rendering surface before starting the connection
   if (InitializeRenderingSurface(m_StreamConfig.width, m_StreamConfig.height)) {
@@ -474,13 +487,13 @@ int main(int argc, char** argv) {
 
 MessageResult startStream(std::string host, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
-  bool framePacing, bool disableWarnings, bool performanceStats, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation,
-  bool flipABfaceButtons, bool flipXYfaceButtons, std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec,
-  bool hdrMode, bool fullRange) {
+  bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
+  std::string audioConfig, bool audioSync, bool playHostAudio, std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode,
+  bool disableWarnings, bool performanceStats) {
   PostToJs("Starting the streaming session...");
   return g_Instance->StartStream(host, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
-  framePacing, disableWarnings, performanceStats, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons,
-  flipXYfaceButtons, audioConfig, audioSync, playHostAudio, videoCodec, hdrMode, fullRange);
+  framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioConfig,
+  audioSync, playHostAudio, videoCodec, hdrMode, fullRange, gameMode, disableWarnings, performanceStats);
 }
 
 MessageResult stopStream() {

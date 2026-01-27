@@ -1,0 +1,39 @@
+# Stale (https://github.com/actions/stale)
+
+# This workflow automatically marks inactive issues as stale and closes them after a set period.
+name: Bot (Stale)
+# The `schedule` event type is required for this Action to work properly.
+on:
+  schedule:
+    # Schedule to run once daily at midnight UTC.
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+# By specifying the access of one of the scopes, all of those that are not specified are set to 'none'.
+permissions:
+  issues: write
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'brightcraft/moonlight-tizen' }}
+    steps:
+      - name: Mark and close stale issue
+        uses: actions/stale@v10.1.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # The number of days old an issue can be before marking it stale. Set to -1 to never mark issues as stale automatically.
+          days-before-stale: 90
+          # The number of days to wait to close an issue after it being marked stale. Set to -1 to never close stale issues.
+          days-before-close: 7
+          # The label to apply when an issue is stale.
+          stale-issue-label: stale
+          # The labels that mean an issue is exempt from being marked stale. Separate multiple labels with commas (eg. "label1,label2").
+          exempt-issue-labels: documentation,investigating,keep alive
+          # The message to post on the issue when tagging it. If none provided, will not mark issues stale.
+          stale-issue-message: >
+            This issue has been automatically marked as stale because there has been no recent activity.
+            It will be closed if no further activity occurs, so please comment on the issue if you would like to keep it open.
+          # The message to post on the issue when closing it. If none provided, will not comment when closing an issue.
+          close-issue-message: >
+            This issue has been automatically closed as there has been no recent activity.
+            If you are still experiencing a similar issue, please open a new one with additional information.
