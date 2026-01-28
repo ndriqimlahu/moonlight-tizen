@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.10.1
+
+### Changed
+- Configured workflow to mark inactive issues as stale and close them after a certain period of time
+- Updated 'Compatibility Warning' dialog to simplify message for affected Tizen platform
+- Updated 'h264bitstream' library to fix a potential memory leak and improving stability
+- Improved Dockerfile by refining multi-stage build and cleanup to reduce image size
+- Disabled USB package creation due to the USB Demo packaging tool being discontinued by Samsung
+
+### Removed
+- Eliminated the need to restart Moonlight after selecting a video codec or audio configuration
+
 ## v1.10.0
 
 ### Added
