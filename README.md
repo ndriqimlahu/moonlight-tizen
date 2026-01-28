@@ -16,7 +16,7 @@ This project originally started as a **WASM port** for Tizen TV created by the [
 
 Although it remained only a proof-of-concept at that stage, the work was later taken much further by [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen), who expanded and transformed it into a **fully installable** Tizen application, simplifying the complex build and compilation process for users. However, the application became outdated, lacking new features and still containing several long-standing bugs that affected usability.
 
-In **September 2023**, I started development on a [fork repository](https://web.archive.org/web/20231101171228/https://github.com/ndriqimlahu/moonlight-chrome-tizen), where I made significant changes, including a **brand-new app logo** and **extensive improvements** focused on delivering a modern, reliable, and user-friendly experience. When the [upstream repository](https://github.com/KyroFrCode/moonlight-chrome-tizen) became inactive and was eventually abandoned, I migrated all my work to this new dedicated repository as a fresh and **standalone continuation**, offering a cleaner structure, easier maintenance, and greater flexibility for future development. For more details on why this repository decided to be independent and not remain as a fork, see [this FAQ entry](https://github.com/brightcraft/moonlight-tizen/wiki/Frequently-Asked-Questions#why-isnt-this-repository-a-fork-like-the-others).
+In **September 2023**, I started development on a [fork repository](https://web.archive.org/web/20231101171228/https://github.com/ndriqimlahu/moonlight-chrome-tizen), where I made significant changes, including a **brand-new app logo** and **extensive improvements** focused on delivering a modern, reliable, and user-friendly experience. When the [upstream repository](https://github.com/KyroFrCode/moonlight-chrome-tizen) became inactive and was eventually abandoned, I migrated all my work to this new dedicated repository as a fresh and **standalone continuation**, offering a cleaner structure, easier maintenance, and greater flexibility for future development.
 
 Since then, [this repository](https://github.com/brightcraft/moonlight-tizen) has been actively maintained with frequent updates. Over time, I have refactored the codebase, updated core libraries, fixed bugs, polished the UI/UX, and introduced many new features and improvements. Thanks to more than two years of dedicated work, this has become the **most enhanced and feature-rich Moonlight client** available for Samsung Tizen TVs.
 
@@ -45,12 +45,6 @@ Follow the instructions below based on the Tizen OS version of your Samsung TV t
 ### Older Samsung TVs — Tizen 5.5 to 7.0
 
 - Follow the provided [installation guide](https://github.com/brightcraft/moonlight-tizen/wiki/Installation-Guide#installation-using-docker-image) to install the app on your TV using the Docker image.
-- Once the installation is complete, open the **Moonlight** app on your TV.
-
-### Any Samsung TVs — Tizen 5.5 or Higher
-
-- Download the `MoonlightUSB.zip` file from the [latest version](https://github.com/brightcraft/moonlight-tizen/releases?q=-usb&expanded=false) of the USB package.
-- Follow the provided [installation guide](https://github.com/brightcraft/moonlight-tizen/wiki/Installation-Guide#installation-using-usb-drive) to install the app on your TV using the USB drive.
 - Once the installation is complete, open the **Moonlight** app on your TV.
 
 ## Changelogs
