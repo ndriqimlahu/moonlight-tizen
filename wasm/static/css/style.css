@@ -213,7 +213,7 @@ body {
     color: #fff;
     background-color: #333846;
     width: 30%;
-    height: auto;
+    height: fit-content;
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 0 12px 6px rgba(0, 163, 198, 1);
@@ -222,7 +222,7 @@ body {
     color: #fff;
     background-color: #333846;
     width: 90%;
-    height: auto;
+    height: fit-content;
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 0 12px 6px rgba(0, 163, 198, 1);
