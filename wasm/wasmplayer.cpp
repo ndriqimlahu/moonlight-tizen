@@ -330,6 +330,9 @@ int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int r
   // Reset last frame number to prevent massive integer underflow on subsequent streams
   m_LastFrameNumber = 0;
 
+  // Reset the received byte count so the bitrate doesn't include data from a previous stream
+  total_bytes = 0;
+
   // Ensure that StartupVidDecSetup is called every time when VidDecSetup is invoked to reinitialize the media pipeline
   int initVidDec = StartupVidDecSetup(videoFormat, width, height, redrawRate, context, drFlags);
 
@@ -456,17 +459,17 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
     m_LastFrameNumber = decodeUnit->frameNumber;
   }
 
-  // Calculate the current bitrate in bits per second and then convert the bitrate to megabits per second
-  float bitrateMbps = (total_bytes * 8.0) / 1000000.0f;
+  // Get the current time in milliseconds to check whether the stats window has elapsed
+  uint32_t nowMs = LiGetMillis();
 
   // Flip performance stats window roughly every second
-  if (m_ActiveWndVideoStats.measurementStartTimestamp + 1000 < LiGetMillis()) {
+  if (m_ActiveWndVideoStats.measurementStartTimestamp + 1000 < nowMs) {
     // Update performance stats overlay if it's enabled
     if (g_Instance->m_PerformanceStatsEnabled == true) {
       // Create a container to hold aggregated stats for display
       VIDEO_STATS lastTwoWndStats = {};
-      // Set the bitrate field in the temporary stats for display purposes
-      lastTwoWndStats.receivedBitrate = bitrateMbps;
+      // Calculate the bitrate in megabits per second from the bytes received over the actual length of this window
+      lastTwoWndStats.receivedBitrate = (total_bytes * 8.0f) / ((nowMs - m_ActiveWndVideoStats.measurementStartTimestamp) * 1000.0f);
       // Add last window and current window to the aggregated stats
       AddVideoStats(m_LastWndVideoStats, lastTwoWndStats);
       AddVideoStats(m_ActiveWndVideoStats, lastTwoWndStats);
@@ -476,9 +479,10 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
       PostToJs(std::string("StatMsg: ") + s_StatString.data());
       // Clear the stats string buffer for the next use
       std::fill(s_StatString.begin(), s_StatString.end(), 0);
-      // Reset byte count for the next measurement interval
-      total_bytes = 0;
     }
+    // Reset byte count for the next measurement interval, even while the overlay is hidden,
+    // so that enabling the overlay mid-stream doesn't report every byte since the stream started
+    total_bytes = 0;
     // Accumulate active window stats into global stats for overall tracking
     AddVideoStats(m_ActiveWndVideoStats, m_GlobalVideoStats);
     // Move current active stats to last window stats and reset active window stats for new interval
@@ -554,7 +558,6 @@ void MoonlightInstance::AddVideoStats(VIDEO_STATS& src, VIDEO_STATS& dst) {
   dst.renderedFrames += src.renderedFrames;
   dst.totalFrames += src.totalFrames;
   dst.networkDroppedFrames += src.networkDroppedFrames;
-  dst.pacerDroppedFrames += src.pacerDroppedFrames;
   dst.totalReassemblyTime += src.totalReassemblyTime;
   dst.totalDecodeTime += src.totalDecodeTime;
   dst.totalPacerTime += src.totalPacerTime;
@@ -711,13 +714,11 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
     ret = snprintf(
       &output[offset], length - offset,
       "Frames dropped by your network connection: %.2f%%\n"
-      "Frames dropped due to network jitter: %.2f%%\n"
       "Average network latency: %s\n"
       "Average decoding time: %.2f ms\n"
       "Average frame queue delay: %.2f ms\n"
       "Average rendering time: %.2f ms\n",
       (float)stats.networkDroppedFrames / stats.totalFrames * 100,
-      (float)stats.pacerDroppedFrames / stats.decodedFrames * 100,
       rttString,
       (float)stats.totalDecodeTime / stats.decodedFrames,
       (float)stats.totalPacerTime / stats.renderedFrames,

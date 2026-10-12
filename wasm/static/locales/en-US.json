@@ -342,7 +342,6 @@
   "Incoming bitrate from network:": "Incoming bitrate from network:",
   "Host processing latency min/max/average:": "Host processing latency min/max/average:",
   "Frames dropped by your network connection:": "Frames dropped by your network connection:",
-  "Frames dropped due to network jitter:": "Frames dropped due to network jitter:",
   "Average network latency:": "Average network latency:",
   "variance:": "variance:",
   "N/A": "N/A",

@@ -98,7 +98,6 @@ function replaceKnownStatsLabels(text) {
     .replace(/Incoming bitrate from network:/g, t('Incoming bitrate from network:'))
     .replace(/Host processing latency min\/max\/average:/g, t('Host processing latency min/max/average:'))
     .replace(/Frames dropped by your network connection:/g, t('Frames dropped by your network connection:'))
-    .replace(/Frames dropped due to network jitter:/g, t('Frames dropped due to network jitter:'))
     .replace(/Average network latency:/g, t('Average network latency:'))
     .replace(/\bvariance:/g, t('variance:'))
     .replace(/\bN\/A\b/g, t('N/A'))
