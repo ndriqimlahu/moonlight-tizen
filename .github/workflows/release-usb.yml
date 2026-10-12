@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+# Defines two jobs. The first builds and pushes the Docker image, while the second extracts the artifact and creates a GitHub pre-release.
 jobs:
   build-and-push-image:
     if: github.ref == 'refs/heads/master'
