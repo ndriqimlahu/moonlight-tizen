@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+# Defines two jobs. The first builds and pushes the Docker image, while the second extracts the artifact and creates a GitHub pre-release.
 jobs:
   build-and-push-image:
     if: github.ref == 'refs/heads/master'
@@ -76,9 +76,9 @@ jobs:
         run: |
           VERSION=$(grep -oP 'version="\K[0-9]+\.[0-9]+\.[0-9]+' res/config.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # Sets the full Docker image tag using the GitHub container registry, repository, and reference tag name.
+      # Sets the full Docker image tag using the GitHub container registry, repository (lowercased, as Docker requires), and reference tag name.
       - name: Set up image tag
-        run: echo "IMAGE_TAG=ghcr.io/${{ github.repository }}:${{ github.ref_name }}" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=ghcr.io/${GITHUB_REPOSITORY,,}:${{ github.ref_name }}" >> $GITHUB_ENV
       # Deletes any existing GitHub pre-releases with the '-usb' tag suffix to avoid duplicates.
       - name: Check and delete any existing GitHub pre-releases with the '-usb' tag suffix
         env:

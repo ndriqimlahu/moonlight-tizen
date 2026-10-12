@@ -7,7 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+# Defines two jobs. The first builds and pushes the Docker images, while the second extracts the artifacts and creates a GitHub release.
 jobs:
   build-and-push-image:
     if: github.ref == 'refs/heads/master'
@@ -30,6 +30,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # Converts the image name to lowercase, because Docker rejects image tags with uppercase letters, which `github.repository` contains when the repository owner's name does.
+      - name: Convert image name to lowercase
+        run: echo "IMAGE_NAME_LOWER=${IMAGE_NAME,,}" >> $GITHUB_ENV
       # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -38,7 +41,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
-      # It uses the `build-args` parameter to define the build argument `FORCE_GAME_MODE` as false into the Docker build process, which builds the Standard variant without metadata injection at packaging time.
+      # It uses the `build-args` parameter to define the `BUILD_TYPE` as "release" and injects the repository owner and name into the Docker build process. The `FORCE_GAME_MODE` argument is set to false, which builds the Standard variant without metadata injection at packaging time.
       # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
       - name: Build and push Docker image (Standard variant)
         uses: docker/build-push-action@v7
@@ -54,8 +57,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
-      # It uses the `build-args` parameter to define the build argument `FORCE_GAME_MODE` as true into the Docker build process, which builds the ForceGM variant in the same tree with one metadata line injected at packaging time.
-      # It uses the `tags` parameter to tag the image with the output from the "REGISTRY" and "IMAGE_NAME" variables, and `labels` parameter to label the image with the output from the "meta" step.
+      # It uses the `build-args` parameter to define the `BUILD_TYPE` as "release" and injects the repository owner and name into the Docker build process. The `FORCE_GAME_MODE` argument is set to true, which builds the ForceGM variant in the same tree with one metadata line injected at packaging time.
+      # It uses the `tags` parameter to tag the image with the `REGISTRY` and lowercase `IMAGE_NAME`, and the `labels` parameter to label the image with the output from the "meta" step.
       - name: Build and push Docker image (ForceGM variant)
         uses: docker/build-push-action@v7
         with:
@@ -66,7 +69,7 @@ jobs:
             REPO_OWNER=${{ github.repository_owner }}
             REPO_NAME=${{ github.event.repository.name }}
             FORCE_GAME_MODE=true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:forcegm
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:forcegm
           labels: ${{ steps.meta.outputs.labels }}
   run-and-upload-release:
     if: github.ref == 'refs/heads/master'
@@ -93,11 +96,12 @@ jobs:
         run: |
           VERSION=$(grep -oP 'version="\K[0-9]+\.[0-9]+\.[0-9]+' res/config.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # Sets the full Docker image tags using the output from the 'build-and-push-image' job.
+      # Sets up the image tags for the Standard and ForceGM variants, storing them in environment variables for use in subsequent steps.
+      # The Standard variant tag is obtained from the output of the build-and-push-image job, while the ForceGM variant tag is constructed using the registry and image name (converted to lowercase), with the ":forcegm" suffix.
       - name: Set up image tags
         run: |
           echo "IMAGE_TAG=${{ needs.build-and-push-image.outputs.image_tag }}" >> $GITHUB_ENV
-          echo "IMAGE_TAG_FORCEGM=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:forcegm" >> $GITHUB_ENV
+          echo "IMAGE_TAG_FORCEGM=${{ env.REGISTRY }}/${IMAGE_NAME,,}:forcegm" >> $GITHUB_ENV
       # Runs the Docker containers in detached mode to extract the build artifacts.
       - name: Run Docker containers
         run: |
