@@ -177,6 +177,10 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
         g_Instance->m_AudioTrack = std::move(*add_track_result);
         g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
       }
+      else {
+        ClLogMessage("Failed to create AC-3 audio track; aborting negotiated AC-3 session\\n");
+        return -1;
+      }
     }
     else {
       samsung::wasm::ChannelLayout channelLayout; // Selected PCM channel layout
