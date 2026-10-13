@@ -66,8 +66,64 @@ const UPDATE_TIMESTAMP = 'lastUpdateCheck'; // Use the update check timestamp ke
 const UPDATE_VERSION = 'latestUpdateVersion'; // // Use the update version key to cache the latest version found
 const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // Automatic check for updates interval is set to 24 hours
 
+// Reflect disabled checkbox state on the visible Material Design Lite switch.
+// The checkbox itself is visually hidden, so CSS alone cannot dim the switch row.
+function syncDisabledSwitchAppearance(input) {
+  if (!input || !input.classList || !input.classList.contains('mdl-switch__input')) {
+    return;
+  }
+
+  let switchElement = input.parentElement;
+  while (switchElement && !switchElement.classList.contains('mdl-switch')) {
+    switchElement = switchElement.parentElement;
+  }
+
+  if (switchElement) {
+    switchElement.classList.toggle('ui-disabled', input.disabled);
+  }
+}
+
+function initializeDisabledSwitchAppearance() {
+  document.querySelectorAll('.mdl-switch__input').forEach(syncDisabledSwitchAppearance);
+
+  if (typeof MutationObserver !== 'function' || !document.body) {
+    return;
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'disabled') {
+        syncDisabledSwitchAppearance(mutation.target);
+        return;
+      }
+
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType !== 1) {
+            return;
+          }
+          if (node.matches && node.matches('.mdl-switch__input')) {
+            syncDisabledSwitchAppearance(node);
+          }
+          if (node.querySelectorAll) {
+            node.querySelectorAll('.mdl-switch__input').forEach(syncDisabledSwitchAppearance);
+          }
+        });
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['disabled'],
+    childList: true
+  });
+}
+
 // Called by the common.js module
 function attachListeners() {
+  initializeDisabledSwitchAppearance();
   changeUiModeForWasmLoad();
 
   // Register loadSystemInfo to run when language is initialized, and every time it changes
