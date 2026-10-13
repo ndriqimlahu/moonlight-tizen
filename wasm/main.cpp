@@ -228,16 +228,11 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
     MoonlightInstance::s_ArCallbacks.capabilities |= CAPABILITY_SUPPORTS_ARBITRARY_AUDIO_DURATION;
     PostToJs("Selecting the audio renderer capabilities to: CAPABILITY_DIRECT_SUBMIT | CAPABILITY_SUPPORTS_ARBITRARY_AUDIO_DURATION");
   } else { // EMSS, or disabled audio output
-    // EMSS normally receives 5 ms Opus frames, but it can also pass compressed AC-3
-    // frames to the Tizen WASM Player. Do not advertise this capability for disabled audio.
-    if (me->m_AudioBackend == AudioBackend::Emss &&
-        CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(me->m_StreamConfig.audioConfiguration) == 6) {
-      // Sunshine's optional AC-3 encoder always emits 5.1, so do not accept it when the
-      // user has explicitly selected stereo or 7.1 output.
+    // EMSS can submit compressed AC-3/E-AC-3 packets directly to Tizen's native player.
+    // Advertise support for any chosen layout; the negotiated codec determines the track.
+    if (me->m_AudioBackend == AudioBackend::Emss) {
       MoonlightInstance::s_ArCallbacks.capabilities |= CAPABILITY_SUPPORTS_AC3_PASSTHROUGH;
-      PostToJs("Advertising optional AC-3 passthrough support via EMSS (5.1)");
-    } else if (me->m_AudioBackend == AudioBackend::Emss) {
-      PostToJs("AC-3 passthrough requires 5.1 audio configuration; continuing with Opus");
+      PostToJs("Advertising optional AC-3/E-AC-3 passthrough support via EMSS");
     }
     PostToJs("Selecting the audio renderer capabilities to: CAPABILITY_DIRECT_SUBMIT");
   }

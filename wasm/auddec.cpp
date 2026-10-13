@@ -31,7 +31,7 @@ static constexpr size_t kAudioSlotElements = kAudioSlotStride * MAX_CHANNEL_COUN
 
 // Jitter buffer target used by the Web Audio backend when the user has not selected one
 static constexpr int kDefaultAudioJitterMs = 100;
-static constexpr TimeStamp kAc3FrameDuration = 32ms;
+static constexpr TimeStamp kDolbyFrameDuration = 32ms;
 
 static std::vector<opus_int16> s_DecodeBuffer;
 
@@ -284,19 +284,20 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
     return;
   }
 
-  // Sunshine's AC-3 payload is already compressed Dolby Digital. Send it directly to the
-  // Tizen AC-3 track, never through the Opus decoder or the Web Audio PCM scheduler.
-  if (LiIsAc3AudioNegotiated()) {
+  // Negotiated AC-3/E-AC-3 frames are compressed Dolby audio. Submit them directly to the
+  // native track, never through the Opus decoder or the Web Audio PCM scheduler.
+  if (LiIsAc3AudioNegotiated() || LiIsEac3AudioNegotiated()) {
     if (s_AudioBackend != AudioBackend::Emss || !g_Instance->m_AudioStarted) {
       return;
     }
 
-    s_frameDuration = kAc3FrameDuration;
+    const char* codecName = LiIsEac3AudioNegotiated() ? "E-AC-3" : "AC-3";
+    s_frameDuration = kDolbyFrameDuration;
 
     // Advance the elementary-stream timeline for every packet slot, including a lost or
     // dropped packet. Otherwise the next valid AC-3 frame would reuse the previous PTS.
     const TimeStamp packetPts = s_pktPts;
-    s_pktPts += kAc3FrameDuration;
+    s_pktPts += kDolbyFrameDuration;
 
     // AudioStream reports unrecovered packet loss with a NULL/zero-length sample. The
     // timeline still advances above, but there is no compressed frame to submit to Tizen.
@@ -312,15 +313,15 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
     auto now = std::chrono::steady_clock::now();
     TimeStamp ntp = now - s_firstAppend;
     if (s_AudioSyncEnabled && ntp + kAudioBufferMargin < s_estimatedAudioEnd) {
-      ClLogMessage("Dropping AC-3 packet to avoid audio overflow: PTS=%.03f NTP=%.03f\n",
-        packetPts.count(), ntp.count());
+      ClLogMessage("Dropping %s packet to avoid audio overflow: PTS=%.03f NTP=%.03f\n",
+        codecName, packetPts.count(), ntp.count());
       return;
     }
 
     samsung::wasm::ElementaryMediaPacket pkt {
       packetPts, // presentation timestamp
       packetPts, // decoding timestamp
-      kAc3FrameDuration, // 32 ms per AC-3 frame at 48 kHz
+      kDolbyFrameDuration, // 32 ms per AC-3 frame at 48 kHz
       true, // keyframe flag required by the API
       static_cast<size_t>(sampleLength), // compressed bitstream size
       reinterpret_cast<unsigned char*>(sampleData), // compressed AC-3 payload, not PCM
@@ -328,11 +329,11 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
       g_Instance->m_AudioSessionId.load() // session identifier
     };
     if (!g_Instance->m_AudioTrack.AppendPacket(pkt)) {
-      ClLogMessage("Append AC-3 audio packet failed\n");
+      ClLogMessage("Append %s audio packet failed\n", codecName);
       return;
     }
 
-    s_estimatedAudioEnd = std::max(s_estimatedAudioEnd, ntp) + kAc3FrameDuration;
+    s_estimatedAudioEnd = std::max(s_estimatedAudioEnd, ntp) + kDolbyFrameDuration;
     return;
   }
 

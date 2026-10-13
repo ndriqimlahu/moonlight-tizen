@@ -40,6 +40,7 @@ var isHostOpening = false; // Prevents concurrent hostChosen executions, initial
 var isHostsLoaded = false; // Indicates if IndexedDB has finished loading hosts
 var isStartupHttpReady = false;
 var isStartupHostsLoaded = false;
+var startupHostsSnackbarVisible = false;
 var isStartupLocaleReady = false;
 var isStartupUiRestored = false;
 var isSubnetScanFinished = false; // Indicates if the initial subnet scan has completed
@@ -350,9 +351,9 @@ function maybeRestoreUiAfterStartup() {
   // Show the prepared interface first, then keep the loading notice visible while
   // the configured host list finishes loading/populating in the background.
   releaseNativeLaunchScreen(function() {
-    if (!isStartupHostsLoaded || Object.keys(hosts).length > 0) {
-      snackbarLogLong('Loading configured hosts...');
-    }
+    // The host list may finish loading beneath the native splash; avoid showing
+    // a stale loading message after the hosts are already visible.
+    if (!isStartupHostsLoaded) showStartupHostsSnackbar();
   });
 }
 
@@ -541,6 +542,7 @@ function stopPollingHosts() {
 }
 
 function snackbarLog(...args) {
+  dismissStartupHostsSnackbar();
   const translatedMessage = t(...args);
   console.log('%c[index.js, snackbarLog]', 'color: green;', ...args);
   var data = {
@@ -551,6 +553,7 @@ function snackbarLog(...args) {
 }
 
 function snackbarLogLong(...args) {
+  dismissStartupHostsSnackbar();
   const translatedMessage = t(...args);
   console.log('%c[index.js, snackbarLogLong]', 'color: green;', ...args);
   var data = {
@@ -558,6 +561,30 @@ function snackbarLogLong(...args) {
     timeout: 5000
   };
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
+}
+
+function showStartupHostsSnackbar() {
+  const snackbarElement = document.querySelector('#snackbar');
+  if (!snackbarElement || !snackbarElement.MaterialSnackbar) {
+    snackbarLogLong('Loading configured hosts...');
+    startupHostsSnackbarVisible = true;
+    return;
+  }
+  snackbarElement.MaterialSnackbar.showSnackbar({
+    message: t('Loading configured hosts...'),
+    timeout: 5000
+  });
+  startupHostsSnackbarVisible = true;
+}
+
+function dismissStartupHostsSnackbar() {
+  if (!startupHostsSnackbarVisible) return;
+  const snackbarElement = document.querySelector('#snackbar');
+  if (snackbarElement && snackbarElement.MaterialSnackbar &&
+      typeof snackbarElement.MaterialSnackbar.cleanup_ === 'function') {
+    snackbarElement.MaterialSnackbar.cleanup_();
+  }
+  startupHostsSnackbarVisible = false;
 }
 
 // Handle layout elements when displaying the Hosts view
@@ -3025,7 +3052,7 @@ function startGame(host, appID) {
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const ac3AudioMode = $('#ac3AudioModeSwitch').parent().hasClass('is-checked');
       var audioBackend = ac3AudioMode ? 'EMSS' : $('#selectAudioBackend').data('value').toString();
-      var audioConfig = ac3AudioMode ? '51Surround' : $('#selectAudio').data('value').toString();
+      var audioConfig = $('#selectAudio').data('value').toString();
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioJitter = parseInt($('#jitterSlider').val());
       const playHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -3700,19 +3727,24 @@ function setAudioSelectorValue(buttonSelector, menuSelector, value) {
   $(buttonSelector).text(label).attr('data-value', value).data('value', value);
 }
 
-// AC-3 passthrough is available only through EMSS with a 5.1 channel layout.
-// The existing preferences are saved separately so disabling this mode restores them.
+// Optical passthrough requires EMSS, but the channel layout remains the user's choice.
+// Keep existing IDs and stored keys for preference compatibility.
 function updateAc3AudioModeUI(enabled) {
   if (enabled) {
     setAudioSelectorValue('#selectAudioBackend', '.audioBackendMenu', 'EMSS');
-    setAudioSelectorValue('#selectAudio', '.audioConfigMenu', '51Surround');
   }
 
-  $('#selectAudioBackend, #selectAudio')
+  $('#selectAudioBackend')
     .prop('disabled', enabled)
     .toggleClass('mdl-button--disabled', enabled)
     .attr('aria-disabled', enabled ? 'true' : 'false')
     .attr('tabindex', enabled ? '-1' : '0');
+
+  $('#selectAudio')
+    .prop('disabled', false)
+    .removeClass('mdl-button--disabled')
+    .attr('aria-disabled', 'false')
+    .attr('tabindex', '0');
 
   updateAudioBackendSettings();
 }
@@ -3725,12 +3757,8 @@ function saveAc3AudioMode() {
 
     if (chosenAc3Mode) {
       const previousAudioBackend = String($('#selectAudioBackend').data('value') || 'EMSS');
-      const previousAudioConfig = String($('#selectAudio').data('value') || 'Stereo');
-
       storeData('audioBackendBeforeAc3', previousAudioBackend, null);
-      storeData('audioConfigBeforeAc3', previousAudioConfig, null);
       storeData('audioBackend', 'EMSS', null);
-      storeData('audioConfig', '51Surround', null);
       updateAc3AudioModeUI(true);
     } else {
       updateAc3AudioModeUI(false);
@@ -3738,14 +3766,9 @@ function saveAc3AudioMode() {
       getData('audioBackendBeforeAc3', function(previousValue) {
         const restoredBackend = previousValue.audioBackendBeforeAc3 || 'EMSS';
         storeData('audioBackend', restoredBackend, null);
+        storeData('audioBackendBeforeAc3', null, null);
         setAudioSelectorValue('#selectAudioBackend', '.audioBackendMenu', restoredBackend);
         updateAudioBackendSettings();
-      });
-
-      getData('audioConfigBeforeAc3', function(previousValue) {
-        const restoredConfig = previousValue.audioConfigBeforeAc3 || 'Stereo';
-        storeData('audioConfig', restoredConfig, null);
-        setAudioSelectorValue('#selectAudio', '.audioConfigMenu', restoredConfig);
       });
     }
   }, 100);
@@ -4589,6 +4612,7 @@ function loadHTTPCertsCb() {
 
         // The stored host list is already rendered. Show it while network checks run.
         isStartupHostsLoaded = true;
+        dismissStartupHostsSnackbar();
         maybeRestoreUiAfterStartup();
 
         initialHostChecks.then(() => {

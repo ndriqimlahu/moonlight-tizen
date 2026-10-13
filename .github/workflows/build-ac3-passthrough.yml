@@ -46,7 +46,20 @@ jobs:
                   "Spanish locale keys differ from en-US.json. "
                   f"Missing={missing!r}; extra={extra!r}"
               )
-          print(f"Spanish locale key set matches en-US.json ({len(en)} keys).")
+          required = {
+              "Optical audio output",
+              "Enable optical output",
+              "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path."
+          }
+          for locale_name, locale in (("en-US", en), ("es-ES", es)):
+              missing_required = sorted(required - set(locale))
+              if missing_required:
+                  raise SystemExit(f"{locale_name} is missing optical-output strings: {missing_required!r}")
+          pt = json.loads(Path("wasm/static/locales/pt-BR.json").read_text(encoding="utf-8"))
+          missing_pt = sorted(required - set(pt))
+          if missing_pt:
+              raise SystemExit(f"pt-BR is missing optical-output strings: {missing_pt!r}")
+          print(f"Spanish locale key set matches en-US.json ({len(en)} keys); optical-output strings exist in all locales.")
           PY
 
       - name: Build experimental client

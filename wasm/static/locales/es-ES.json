@@ -369,8 +369,8 @@
   "Game Mode (Ultra Low Latency) is not supported on Tizen %1$s due to platform limitations and lack of support from the WASM player.": "El modo de juego (latencia ultrabaja) no es compatible con Tizen %1$s por las limitaciones de la plataforma y la falta de soporte del reproductor WASM.",
   "Attempting to enable this option will have no effect, as the decoder will force a fallback to standard Low Latency mode to maintain streaming stability.<br><br>": "Activar esta opción no tendrá efecto: el decodificador volverá al modo de baja latencia estándar para mantener la estabilidad de la retransmisión.<br><br>",
   "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.": "Como no se puede activar el modo de juego, la latencia de retransmisión puede ser algo mayor. Para reducirla, abre los ajustes de imagen del televisor y desactiva el procesamiento posterior, como <b>Claridad de imagen</b>, <b>Mejora del contraste</b> y otras mejoras de vídeo.",
-  "AC-3 audio mode": "Modo de audio AC-3",
-  "- When enabled, uses AC-3 5.1 passthrough if supported by the host and forces EMSS and 5.1 audio output.": "- Al activarlo, utiliza passthrough AC-3 5.1 si el equipo anfitrión lo admite y fuerza EMSS y la salida de audio 5.1.",
-  "Enable AC-3 audio mode": "Activar el modo de audio AC-3",
-  "Loading configured hosts...": "Cargando los equipos configurados…"
+  "Loading configured hosts...": "Cargando los equipos configurados…",
+  "Optical audio output": "Salida de audio óptica",
+  "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path.": "- Al activarla, Moonlight intentará negociar con Sunshine el formato AC-3 o E-AC-3 configurado, en lugar de usar Opus. Si no se puede negociar, recurrirá a Opus. La selección de canales seguirá disponible; AC-3 admite estéreo y 5.1, mientras que E-AC-3 puede admitir 7.1 si el anfitrión y la ruta de reproducción lo permiten.",
+  "Enable optical output": "Activar salida óptica"
 }

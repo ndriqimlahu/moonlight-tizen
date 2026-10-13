@@ -15,11 +15,18 @@ static bool useEnet;
 static char* controlStreamId;
 static bool encryptedRtspEnabled;
 static bool Ac3AudioOffered;
+static bool Eac3AudioOffered;
 static bool Ac3AudioAcceptSent;
+static bool Eac3AudioAcceptSent;
 static bool Ac3AudioNegotiated;
+static bool Eac3AudioNegotiated;
 
 bool LiIsAc3AudioNegotiated(void) {
     return Ac3AudioNegotiated;
+}
+
+bool LiIsEac3AudioNegotiated(void) {
+    return Eac3AudioNegotiated;
 }
 
 static PPLT_CRYPTO_CONTEXT encryptionCtx;
@@ -653,23 +660,31 @@ static bool sendVideoAnnounce(PRTSP_MESSAGE response, int* error) {
         }
         request.flags |= FLAG_ALLOCATED_PAYLOAD;
 
-        // Announce acceptance only if the host offered AC-3 and the chosen backend can consume
-        // compressed AC-3 frames. Legacy hosts ignore this SDP extension.
-        if (Ac3AudioOffered &&
+        // Accept the exact optional Dolby format offered by Sunshine. Prefer E-AC-3
+        // when present; legacy hosts do not advertise either extension and continue with Opus.
+        if ((Eac3AudioOffered || Ac3AudioOffered) &&
                 (AudioCallbacks.capabilities & CAPABILITY_SUPPORTS_AC3_PASSTHROUGH) != 0) {
-            static const char ac3AcceptAttribute[] = "a=x-ss-audio-codec-accept:AC3\r\n";
-            size_t acceptLength = sizeof(ac3AcceptAttribute) - 1;
+            const char* acceptAttribute = Eac3AudioOffered
+                ? "a=x-ss-audio-codec-accept:EAC3\r\n"
+                : "a=x-ss-audio-codec-accept:AC3\r\n";
+            size_t acceptLength = strlen(acceptAttribute);
             char* expandedPayload = realloc(request.payload, (size_t)payloadLength + acceptLength + 1);
             if (expandedPayload != NULL) {
                 request.payload = expandedPayload;
-                memcpy(request.payload + payloadLength, ac3AcceptAttribute, acceptLength);
+                memcpy(request.payload + payloadLength, acceptAttribute, acceptLength);
                 payloadLength += (int)acceptLength;
                 request.payload[payloadLength] = '\0';
-                Ac3AudioAcceptSent = true;
-                Limelog("Accepting optional AC-3 passthrough in RTSP ANNOUNCE\n");
+                if (Eac3AudioOffered) {
+                    Eac3AudioAcceptSent = true;
+                    Limelog("Accepting optional E-AC-3 passthrough in RTSP ANNOUNCE\n");
+                }
+                else {
+                    Ac3AudioAcceptSent = true;
+                    Limelog("Accepting optional AC-3 passthrough in RTSP ANNOUNCE\n");
+                }
             }
             else {
-                Limelog("Could not add AC-3 acceptance to RTSP ANNOUNCE; using Opus\n");
+                Limelog("Could not add Dolby audio acceptance to RTSP ANNOUNCE; using Opus\n");
             }
         }
 
@@ -958,8 +973,11 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
     currentSeqNumber = 1;
     hasSessionId = false;
     Ac3AudioOffered = false;
+    Eac3AudioOffered = false;
     Ac3AudioAcceptSent = false;
+    Eac3AudioAcceptSent = false;
     Ac3AudioNegotiated = false;
+    Eac3AudioNegotiated = false;
     controlStreamId = APP_VERSION_AT_LEAST(7, 1, 431) ? "streamid=control/13/0" : "streamid=control/1/0";
     AudioEncryptionEnabled = false;
     encryptedRtspEnabled = serverInfo->rtspSessionUrl && strstr(serverInfo->rtspSessionUrl, "rtspenc://");
@@ -1091,13 +1109,16 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
             goto Exit;
         }
         
-        // AC-3 is an optional Sunshine extension. Accept it only when the active renderer
-        // explicitly declared support for passing compressed AC-3 to the platform audio path.
+        // AC-3 and E-AC-3 are optional Sunshine extensions. Accept them only when the
+        // active renderer declares support for compressed Dolby packets.
         Ac3AudioOffered = response.payload != NULL &&
             strstr(response.payload, "a=x-ss-audio-codec-offer:AC3") != NULL;
-        if (Ac3AudioOffered &&
+        Eac3AudioOffered = response.payload != NULL &&
+            strstr(response.payload, "a=x-ss-audio-codec-offer:EAC3") != NULL;
+        if ((Ac3AudioOffered || Eac3AudioOffered) &&
                 (AudioCallbacks.capabilities & CAPABILITY_SUPPORTS_AC3_PASSTHROUGH) != 0) {
-            Limelog("Sunshine offered optional AC-3 passthrough\n");
+            Limelog("Sunshine offered optional %s passthrough\n",
+                Eac3AudioOffered ? "E-AC-3" : "AC-3");
         }
 
         if ((StreamConfig.supportedVideoFormats & VIDEO_FORMAT_MASK_AV1) && strstr(response.payload, "AV1/90000")) {
@@ -1351,20 +1372,21 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
             goto Exit;
         }
 
-        // The codec is active only when the server explicitly confirms the selection.
-        // A missing header (as on legacy hosts) leaves the existing Opus path unchanged.
+        // The codec is active only when the server explicitly confirms the exact selection.
+        // A missing or mismatched header leaves the existing Opus path unchanged.
         char* selectedAudioCodec = getOptionContent(response.options, "X-SS-Audio-Codec");
         Ac3AudioNegotiated = Ac3AudioAcceptSent && selectedAudioCodec != NULL &&
             strcmp(selectedAudioCodec, "AC3") == 0;
-        if (Ac3AudioNegotiated) {
-            // Sunshine sends one 32 ms AC-3 frame per RTP audio packet. Update this before
-            // startAudioStream() so its FEC queue, packet-loss recovery, and resync timing
-            // use the negotiated AC-3 cadence instead of the normal 5 ms Opus cadence.
+        Eac3AudioNegotiated = Eac3AudioAcceptSent && selectedAudioCodec != NULL &&
+            strcmp(selectedAudioCodec, "EAC3") == 0;
+        if (Ac3AudioNegotiated || Eac3AudioNegotiated) {
+            // 1536 samples at 48 kHz yields one 32 ms Dolby frame per RTP audio packet.
             AudioPacketDuration = 32;
-            Limelog("RTSP negotiated AC-3 audio passthrough (32 ms packets)\n");
+            Limelog("RTSP negotiated %s passthrough (32 ms packets)\n",
+                Eac3AudioNegotiated ? "E-AC-3" : "AC-3");
         }
-        else if (Ac3AudioAcceptSent) {
-            Limelog("Host did not select AC-3; continuing with Opus\n");
+        else if (Ac3AudioAcceptSent || Eac3AudioAcceptSent) {
+            Limelog("Host did not select the requested Dolby codec; continuing with Opus\n");
         }
 
         freeMessage(&response);

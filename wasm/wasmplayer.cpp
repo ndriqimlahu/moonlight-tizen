@@ -158,18 +158,53 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   }
   ClLogMessage("Closed\n");
 
-  // Web Audio renders decoded PCM in platform/audio.js. AC-3 passthrough uses the EMSS
-  // track, which can accept compressed AC-3 elementary packets from the network.
+  // Web Audio renders decoded PCM in platform/audio.js. EMSS can submit the negotiated
+  // AC-3/E-AC-3 bitstream directly to Tizen's native audio renderer.
   if (g_Instance->m_AudioBackend == AudioBackend::Emss) {
-    if (LiIsAc3AudioNegotiated()) {
-      ClLogMessage("Configuring the EMSS audio track for AC-3 passthrough\n");
+    if (LiIsAc3AudioNegotiated() || LiIsEac3AudioNegotiated()) {
+      const bool isEac3 = LiIsEac3AudioNegotiated();
+      auto effectiveAudioConfig = g_Instance->m_AudioConfig;
+      auto channelCount = CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(effectiveAudioConfig);
+
+      // AC-3 cannot carry 7.1. If it is negotiated while 7.1 is selected, configure
+      // an effective 5.1 track for this stream without overwriting the saved preference.
+      if (!isEac3 && channelCount == 8) {
+        effectiveAudioConfig = AUDIO_CONFIGURATION_51_SURROUND;
+        g_Instance->m_AudioConfig = effectiveAudioConfig;
+        channelCount = 6;
+        ClLogMessage("AC-3 negotiated with 7.1 selected; falling back to 5.1 for this stream\n");
+      }
+
+      samsung::wasm::ChannelLayout channelLayout;
+      switch (channelCount) {
+        case 2:
+          channelLayout = samsung::wasm::ChannelLayout::kStereo;
+          break;
+        case 6:
+          channelLayout = samsung::wasm::ChannelLayout::k5_1Back;
+          break;
+        case 8:
+          channelLayout = samsung::wasm::ChannelLayout::k7_1;
+          break;
+        default:
+          ClLogMessage("Unsupported channel layout for negotiated Dolby audio: %d\n", channelCount);
+          return -1;
+      }
+
+      const char* mimeType = isEac3 ? "audio/mp4; codecs=\"ec-3\"" : "audio/mp4; codecs=\"ac-3\"";
+      const auto sampleFormat = isEac3
+        ? samsung::wasm::SampleFormat::kEac3
+        : samsung::wasm::SampleFormat::kAc3;
+      ClLogMessage("Configuring the EMSS track for %s passthrough (%d channels)\n",
+        isEac3 ? "E-AC-3" : "AC-3", channelCount);
+
       auto add_track_result = g_Instance->m_Source->AddTrack(
         samsung::wasm::ElementaryAudioTrackConfig {
-          "audio/mp4; codecs=\"ac-3\"", // AC-3 elementary bitstream
+          mimeType, // Compressed Dolby elementary bitstream
           {}, // Extradata: Empty
           samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
-          samsung::wasm::SampleFormat::kAc3, // Compressed AC-3 bitstream
-          samsung::wasm::ChannelLayout::k5_1Back, // Sunshine AC-3 uses 5.1 back-channel layout
+          sampleFormat, // AC-3/E-AC-3 compressed bitstream
+          channelLayout,
           kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
         }
       );
@@ -178,7 +213,8 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
         g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
       }
       else {
-        ClLogMessage("Failed to create AC-3 audio track; aborting negotiated AC-3 session\n");
+        ClLogMessage("Failed to create %s audio track; aborting negotiated Dolby session\n",
+          isEac3 ? "E-AC-3" : "AC-3");
         return -1;
       }
     }

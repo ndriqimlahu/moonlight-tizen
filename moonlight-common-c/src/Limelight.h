@@ -263,7 +263,7 @@ typedef struct _DECODE_UNIT {
 #define CAPABILITY_SUPPORTS_ARBITRARY_AUDIO_DURATION 0x10
 
 // If set in the audio renderer capabilities field, the client can accept optional Sunshine
-// AC-3 passthrough and submit compressed AC-3 frames directly to its renderer.
+// AC-3 or E-AC-3 passthrough and submit compressed Dolby frames directly to its renderer.
 #define CAPABILITY_SUPPORTS_AC3_PASSTHROUGH 0x80
 
 // This flag opts the renderer into a pull-based model rather than the default push-based
@@ -546,6 +546,9 @@ int LiStartConnection(PSERVER_INFORMATION serverInfo, PSTREAM_CONFIGURATION stre
 
 // Returns true only when the current RTSP session explicitly negotiated AC-3 with the host.
 bool LiIsAc3AudioNegotiated(void);
+
+// Returns true only when the current RTSP session explicitly negotiated E-AC-3 with the host.
+bool LiIsEac3AudioNegotiated(void);
 
 // This function stops streaming. This function is not thread-safe.
 void LiStopConnection(void);

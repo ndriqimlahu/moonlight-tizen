@@ -369,8 +369,8 @@
   "Game Mode (Ultra Low Latency) is not supported on Tizen %1$s due to platform limitations and lack of support from the WASM player.": "Game Mode (Ultra Low Latency) is not supported on Tizen %1$s due to platform limitations and lack of support from the WASM player.",
   "Attempting to enable this option will have no effect, as the decoder will force a fallback to standard Low Latency mode to maintain streaming stability.<br><br>": "Attempting to enable this option will have no effect, as the decoder will force a fallback to standard Low Latency mode to maintain streaming stability.<br><br>",
   "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.": "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.",
-  "AC-3 audio mode": "AC-3 audio mode",
-  "- When enabled, uses AC-3 5.1 passthrough if supported by the host and forces EMSS and 5.1 audio output.": "- When enabled, uses AC-3 5.1 passthrough if supported by the host and forces EMSS and 5.1 audio output.",
-  "Enable AC-3 audio mode": "Enable AC-3 audio mode",
-  "Loading configured hosts...": "Loading configured hosts..."
+  "Loading configured hosts...": "Loading configured hosts...",
+  "Optical audio output": "Optical audio output",
+  "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path.": "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path.",
+  "Enable optical output": "Enable optical output"
 }
