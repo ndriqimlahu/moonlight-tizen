@@ -287,12 +287,23 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
   // Sunshine's AC-3 payload is already compressed Dolby Digital. Send it directly to the
   // Tizen AC-3 track, never through the Opus decoder or the Web Audio PCM scheduler.
   if (LiIsAc3AudioNegotiated()) {
-    if (s_AudioBackend != AudioBackend::Emss || !g_Instance->m_AudioStarted ||
-        sampleData == nullptr || sampleLength <= 0) {
+    if (s_AudioBackend != AudioBackend::Emss || !g_Instance->m_AudioStarted) {
       return;
     }
 
     s_frameDuration = kAc3FrameDuration;
+
+    // Advance the elementary-stream timeline for every packet slot, including a lost or
+    // dropped packet. Otherwise the next valid AC-3 frame would reuse the previous PTS.
+    const TimeStamp packetPts = s_pktPts;
+    s_pktPts += kAc3FrameDuration;
+
+    // AudioStream reports unrecovered packet loss with a NULL/zero-length sample. The
+    // timeline still advances above, but there is no compressed frame to submit to Tizen.
+    if (sampleData == nullptr || sampleLength <= 0) {
+      return;
+    }
+
     if (!s_hasFirstFrame) {
       s_firstAppend = std::chrono::steady_clock::now();
       s_hasFirstFrame = true;
@@ -302,13 +313,13 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
     TimeStamp ntp = now - s_firstAppend;
     if (s_AudioSyncEnabled && ntp + kAudioBufferMargin < s_estimatedAudioEnd) {
       ClLogMessage("Dropping AC-3 packet to avoid audio overflow: PTS=%.03f NTP=%.03f\n",
-        s_pktPts.count(), ntp.count());
+        packetPts.count(), ntp.count());
       return;
     }
 
     samsung::wasm::ElementaryMediaPacket pkt {
-      s_pktPts, // presentation timestamp
-      s_pktPts, // decoding timestamp
+      packetPts, // presentation timestamp
+      packetPts, // decoding timestamp
       kAc3FrameDuration, // 32 ms per AC-3 frame at 48 kHz
       true, // keyframe flag required by the API
       static_cast<size_t>(sampleLength), // compressed bitstream size
@@ -321,7 +332,6 @@ void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLe
       return;
     }
 
-    s_pktPts += kAc3FrameDuration;
     s_estimatedAudioEnd = std::max(s_estimatedAudioEnd, ntp) + kAc3FrameDuration;
     return;
   }

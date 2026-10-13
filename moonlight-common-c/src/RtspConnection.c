@@ -1357,7 +1357,11 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
         Ac3AudioNegotiated = Ac3AudioAcceptSent && selectedAudioCodec != NULL &&
             strcmp(selectedAudioCodec, "AC3") == 0;
         if (Ac3AudioNegotiated) {
-            Limelog("RTSP negotiated AC-3 audio passthrough\n");
+            // Sunshine sends one 32 ms AC-3 frame per RTP audio packet. Update this before
+            // startAudioStream() so its FEC queue, packet-loss recovery, and resync timing
+            // use the negotiated AC-3 cadence instead of the normal 5 ms Opus cadence.
+            AudioPacketDuration = 32;
+            Limelog("RTSP negotiated AC-3 audio passthrough (32 ms packets)\n");
         }
         else if (Ac3AudioAcceptSent) {
             Limelog("Host did not select AC-3; continuing with Opus\n");
