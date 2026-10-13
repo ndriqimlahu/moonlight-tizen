@@ -730,7 +730,7 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
 
     ret = snprintf(
       &output[offset], length - offset,
-      "Audio stream: %s (%s, %d channels)\\n",
+      "Audio stream: %s (%s, %d channels)\n",
       audioCodecString, audioLayoutString, audioChannels
     );
     // Abort if string formatting failed or buffer overflowed
