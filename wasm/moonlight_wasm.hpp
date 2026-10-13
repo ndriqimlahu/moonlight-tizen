@@ -74,6 +74,7 @@ typedef struct _VIDEO_STATS {
   float decodedFps;
   float renderedFps;
   float receivedBitrate;
+  float receivedAudioBitrateKbps;
   uint32_t measurementStartTimestamp;
 } VIDEO_STATS, *PVIDEO_STATS;
 
@@ -239,6 +240,7 @@ class MoonlightInstance {
   AudioBackend m_AudioBackend;
   bool m_OpticalOutputEnabled {false};
   int m_AudioConfig;
+  std::atomic<uint64_t> m_AudioBytesReceived {0};
   bool m_AudioSyncEnabled;
   int m_AudioJitterMs;
   bool m_PlayHostAudioEnabled;

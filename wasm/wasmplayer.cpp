@@ -389,8 +389,9 @@ int MoonlightInstance::VidDecSetup(int videoFormat, int width, int height, int r
   // Reset last frame number to prevent massive integer underflow on subsequent streams
   m_LastFrameNumber = 0;
 
-  // Reset the received byte count so the bitrate doesn't include data from a previous stream
+  // Reset received video and audio byte counts for the new stream.
   total_bytes = 0;
+  g_Instance->m_AudioBytesReceived.store(0, std::memory_order_relaxed);
 
   // Ensure that StartupVidDecSetup is called every time when VidDecSetup is invoked to reinitialize the media pipeline
   int initVidDec = StartupVidDecSetup(videoFormat, width, height, redrawRate, context, drFlags);
@@ -523,6 +524,14 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
 
   // Flip performance stats window roughly every second
   if (m_ActiveWndVideoStats.measurementStartTimestamp + 1000 < nowMs) {
+    const uint32_t statsIntervalMs = nowMs - m_ActiveWndVideoStats.measurementStartTimestamp;
+    const uint64_t audioBytesReceived = g_Instance != nullptr
+      ? g_Instance->m_AudioBytesReceived.exchange(0, std::memory_order_relaxed)
+      : 0;
+    const float audioBitrateKbps = statsIntervalMs > 0
+      ? (static_cast<float>(audioBytesReceived) * 8.0f) / statsIntervalMs
+      : 0.0f;
+
     // Update performance stats overlay if it's enabled
     if (g_Instance->m_PerformanceStatsEnabled == true) {
       // Create a container to hold aggregated stats for display
@@ -532,6 +541,7 @@ int MoonlightInstance::VidDecSubmitDecodeUnit(PDECODE_UNIT decodeUnit) {
       // Add last window and current window to the aggregated stats
       AddVideoStats(m_LastWndVideoStats, lastTwoWndStats);
       AddVideoStats(m_ActiveWndVideoStats, lastTwoWndStats);
+      lastTwoWndStats.receivedAudioBitrateKbps = audioBitrateKbps;
       // Convert the aggregated stats to a display string
       FormatVideoStats(lastTwoWndStats, s_StatString.data(), s_StatString.length());
       // Send the formatted stats string to the JS frontend for overlay display
@@ -704,16 +714,17 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
 
   // Report the audio codec negotiated for this session, not merely the user's preference.
   // If neither Dolby codec was negotiated, the GameStream audio codec is Opus.
+  const char* audioCodecString = "OPUS";
+  int audioChannels = 0;
+  const char* audioLayoutString = "Unknown layout";
   if (g_Instance != nullptr) {
-    const char* audioCodecString = "OPUS";
     if (LiIsEac3AudioNegotiated()) {
       audioCodecString = "E-AC-3";
     } else if (LiIsAc3AudioNegotiated()) {
       audioCodecString = "AC-3";
     }
 
-    const int audioChannels = CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(g_Instance->m_AudioConfig);
-    const char* audioLayoutString;
+    audioChannels = CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(g_Instance->m_AudioConfig);
     switch (audioChannels) {
       case 2:
         audioLayoutString = "Stereo";
@@ -728,18 +739,6 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
         audioLayoutString = "Unknown layout";
         break;
     }
-
-    ret = snprintf(
-      &output[offset], length - offset,
-      "Audio stream: %s (%s, %d channels)\n",
-      audioCodecString, audioLayoutString, audioChannels
-    );
-    // Abort if string formatting failed or buffer overflowed
-    if (ret < 0 || ret >= length - offset) {
-      assert(false);
-      return;
-    }
-    offset += ret;
   }
 
   // If there is a meaningful received frame rate, print basic stream info
@@ -752,6 +751,20 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
         s_Width, s_Height, stats.totalFps, codecString
       );
       // Abort if string formatting failed or buffer overflowed
+      if (ret < 0 || ret >= length - offset) {
+        assert(false);
+        return;
+      }
+      offset += ret;
+    }
+
+    // Display measured audio payload bitrate directly below the video stream header.
+    if (g_Instance != nullptr) {
+      ret = snprintf(
+        &output[offset], length - offset,
+        "Audio stream: %s (%s, %d channels, %.0f kbps)\n",
+        audioCodecString, audioLayoutString, audioChannels, stats.receivedAudioBitrateKbps
+      );
       if (ret < 0 || ret >= length - offset) {
         assert(false);
         return;

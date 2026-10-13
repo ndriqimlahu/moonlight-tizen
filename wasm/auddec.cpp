@@ -279,6 +279,11 @@ void MoonlightInstance::AudDecCleanup(void) {
 }
 
 void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLength) {
+  // Count compressed payload bytes for a measured incoming audio bitrate in the stats overlay.
+  if (g_Instance != nullptr && sampleLength > 0) {
+    g_Instance->m_AudioBytesReceived.fetch_add(static_cast<uint64_t>(sampleLength), std::memory_order_relaxed);
+  }
+
   // Discard the audio packet without decoding it when the audio output is disabled
   if (s_AudioBackend == AudioBackend::Disabled) {
     return;
