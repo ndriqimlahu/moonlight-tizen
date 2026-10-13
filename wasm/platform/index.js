@@ -286,15 +286,16 @@ function attachListeners() {
 }
 
 function changeUiModeForWasmLoad() {
+  // Startup is covered by Tizen's native launch screen. Do not show the old
+  // full-screen in-app spinner at this stage.
   $('#main-header').hide();
   $('#main-header').children().hide();
-  $('#main-content').children().not('#listener, #wasmSpinner').hide();
-  $('#wasmSpinner').css('display', 'inline-block');
-  $('#wasmSpinnerLogo').show();
-  $('#wasmSpinnerMessage').text(t('Loading configured hosts...'));
+  $('#main-content').children().hide();
+  $('#wasmSpinner, #loadingSpinner').hide();
+  $('#wasmSpinnerMessage, #loadingSpinnerMessage').empty();
 }
 
-function releaseNativeLaunchScreen() {
+function releaseNativeLaunchScreen(onReleased) {
   var release = function() {
     try {
       if (window.screen && typeof window.screen.show === 'function') {
@@ -303,17 +304,22 @@ function releaseNativeLaunchScreen() {
     } catch (error) {
       console.warn('%c[index.js, releaseNativeLaunchScreen]', 'color: gray;', 'Could not release the native TV splash screen:', error);
     }
+
+    if (typeof onReleased === 'function') {
+      onReleased();
+    }
   };
 
-  // Let the localized loading screen be painted before dismissing Tizen's native splash.
+  // Keep the native splash up until the localized UI has been restored and painted.
+  // The delay also avoids a transition frame exposing an empty or partially updated page.
   if (typeof window.requestAnimationFrame === 'function') {
     window.requestAnimationFrame(function() {
       window.requestAnimationFrame(function() {
-        window.setTimeout(release, 300);
+        window.setTimeout(release, 800);
       });
     });
   } else {
-    window.setTimeout(release, 300);
+    window.setTimeout(release, 800);
   }
 }
 
@@ -325,12 +331,13 @@ function maybeRestoreUiAfterStartup() {
   isStartupUiRestored = true;
   restoreUiAfterWasmLoad();
 
-  // Replace the native splash with the real host list, while host connectivity checks
-  // continue in the background. Keep the status message unobtrusive at the bottom.
-  if (Object.keys(hosts).length > 0) {
-    snackbarLog('Loading configured hosts...');
-  }
-  releaseNativeLaunchScreen();
+  // Replace the native splash with the prepared UI. Show the bottom notification only
+  // after Tizen reveals the web view so the notification timeout is not spent underneath it.
+  releaseNativeLaunchScreen(function() {
+    if (Object.keys(hosts).length > 0) {
+      snackbarLog('Loading configured hosts...');
+    }
+  });
 }
 
 function moduleDidLoad() {

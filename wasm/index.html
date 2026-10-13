@@ -12,13 +12,13 @@
   <link rel="stylesheet" href="static/css/material.min.css">
   <link rel="stylesheet" href="static/css/style.css">
   <style>
-    /* Prevent the default empty UI from flashing before startup logic runs. */
-    html.app-starting #main-header,
-    html.app-starting #main-content > *:not(#listener):not(#wasmSpinner) {
-      display: none !important;
+    /* Keep the web UI completely invisible until localization, HTTP setup, and UI restoration finish. */
+    html.app-starting,
+    html.app-starting body {
+      background-color: #000 !important;
     }
-    html.app-starting #wasmSpinner {
-      display: inline-block !important;
+    html.app-starting .mdl-layout {
+      visibility: hidden !important;
     }
   </style>
   <script type="text/javascript" src="platform.js"></script>
