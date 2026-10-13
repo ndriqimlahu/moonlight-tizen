@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Render Moonlight's animated native Samsung TV splash screen.
+"""Render Moonlight's native Samsung TV splash: animation plus static hold.
 
-Eight sectors fade in sequentially, starting 300 ms apart. Once they are all
-visible, the logo settles from 15% oversized using a brief bounce while the
-gray disc and app name fade in. The final frame is also the static fallback.
+Eight sectors fade in sequentially. The logo then makes a clear, controlled
+bounce while the gray disc and app name fade in; the final frame is held for
+six additional seconds so the completed logo remains readable on the TV.
 """
 import argparse
 import subprocess
@@ -14,13 +14,15 @@ FPS = 30
 SECTOR_INTERVAL_FRAMES = 9  # 300 ms at 30 fps
 SECTOR_FADE_FRAMES = 9      # 300 ms fade-in for each sector
 SECTOR_PHASE_FRAMES = 8 * SECTOR_INTERVAL_FRAMES
-SETTLE_FRAMES = 27          # 900 ms for the bounce and accompanying fade
-TOTAL_FRAMES = SECTOR_PHASE_FRAMES + SETTLE_FRAMES
+SETTLE_FRAMES = 36          # 1.2 s for the bounce and accompanying fade
+ANIMATED_FRAME_COUNT = SECTOR_PHASE_FRAMES + SETTLE_FRAMES
+STATIC_HOLD_FRAMES = 6 * FPS
+TOTAL_FRAMES = ANIMATED_FRAME_COUNT + STATIC_HOLD_FRAMES
 
 FINAL_LOGO_SCALE = 0.78
 OVERSIZED_LOGO_SCALE = FINAL_LOGO_SCALE * 1.15
-BOUNCE_LOW_SCALE = FINAL_LOGO_SCALE * 0.965
-BOUNCE_HIGH_SCALE = FINAL_LOGO_SCALE * 1.025
+BOUNCE_LOW_SCALE = FINAL_LOGO_SCALE * 0.93
+BOUNCE_HIGH_SCALE = FINAL_LOGO_SCALE * 1.06
 LOGO_CENTER_X = 639.84
 LOGO_CENTER_Y = 274.84
 
@@ -42,12 +44,12 @@ def interpolate(start, end, progress):
 
 
 def settling_scale(progress):
-    """A controlled bounce: overshoot smaller, rebound slightly, then settle."""
-    if progress <= 0.50:
-        return interpolate(OVERSIZED_LOGO_SCALE, BOUNCE_LOW_SCALE, progress / 0.50)
-    if progress <= 0.78:
-        return interpolate(BOUNCE_LOW_SCALE, BOUNCE_HIGH_SCALE, (progress - 0.50) / 0.28)
-    return interpolate(BOUNCE_HIGH_SCALE, FINAL_LOGO_SCALE, (progress - 0.78) / 0.22)
+    """Bounce clearly below the final size, rebound above it, then settle."""
+    if progress <= 0.42:
+        return interpolate(OVERSIZED_LOGO_SCALE, BOUNCE_LOW_SCALE, progress / 0.42)
+    if progress <= 0.72:
+        return interpolate(BOUNCE_LOW_SCALE, BOUNCE_HIGH_SCALE, (progress - 0.42) / 0.30)
+    return interpolate(BOUNCE_HIGH_SCALE, FINAL_LOGO_SCALE, (progress - 0.72) / 0.28)
 
 
 def configure_frame(root, frame_number):
@@ -106,7 +108,7 @@ def main():
     # The fallback image is the fully assembled, final-size logo and app name.
     render_svg(args.template, args.static_svg)
 
-    for frame_number in range(TOTAL_FRAMES):
+    for frame_number in range(ANIMATED_FRAME_COUNT):
         frame_svg = args.frames / "frame.svg"
         frame_png = args.frames / f"frame-{frame_number:03d}.png"
         render_svg(args.template, frame_svg, frame_number)
@@ -118,8 +120,18 @@ def main():
             check=True,
         )
 
+    # Repeat the completed frame instead of re-rendering identical PNGs.
+    final_frame = args.frames / f"frame-{ANIMATED_FRAME_COUNT - 1:03d}.png"
+    for frame_number in range(ANIMATED_FRAME_COUNT, TOTAL_FRAMES):
+        (args.frames / f"frame-{frame_number:03d}.png").write_bytes(final_frame.read_bytes())
+
     (args.frames / "frame.svg").unlink(missing_ok=True)
-    print(f"Generated {TOTAL_FRAMES} frames at {FPS} fps ({TOTAL_FRAMES / FPS:.1f} seconds).")
+    print(
+        f"Generated {ANIMATED_FRAME_COUNT} animated frames plus "
+        f"{STATIC_HOLD_FRAMES} static frames: {TOTAL_FRAMES} frames total at "
+        f"{FPS} fps ({ANIMATED_FRAME_COUNT / FPS:.1f} s animation + "
+        f"{STATIC_HOLD_FRAMES / FPS:.1f} s static hold = {TOTAL_FRAMES / FPS:.1f} s)."
+    )
 
 
 if __name__ == "__main__":

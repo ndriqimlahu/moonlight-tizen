@@ -1,8 +1,10 @@
-// Tizen starts playing the native splash before this script is loaded. Use this
-// timestamp as a conservative lower bound so the finished logo remains readable.
-const NATIVE_SPLASH_ANIMATION_DURATION_MS = 3300;
-const NATIVE_SPLASH_FINAL_HOLD_MS = 3000;
+// The native splash video contains a 3.6-second animation followed by a 6-second
+// static frame. Keep a deadline as a lower bound, and also give the restored UI
+// a safety window before dismissing the native screen.
+const NATIVE_SPLASH_ANIMATION_DURATION_MS = 3600;
+const NATIVE_SPLASH_FINAL_HOLD_MS = 6000;
 const NATIVE_SPLASH_MIN_RELEASE_AT = Date.now() + NATIVE_SPLASH_ANIMATION_DURATION_MS + NATIVE_SPLASH_FINAL_HOLD_MS;
+const NATIVE_SPLASH_HOLD_AFTER_UI_READY_MS = 5000;
 
 // Initialize global variables and constants
 var appInfo = tizen.application.getAppInfo(); // Retrieve the application information
@@ -315,11 +317,15 @@ function releaseNativeLaunchScreen(onReleased) {
     }
   };
 
-  // Preserve the existing paint buffer, but do not release the native splash
-  // until the full animation plus a 3-second static reading window has elapsed.
+  // Let the web UI paint before switching away from the native video splash.
+  // The deadline protects the animation's static tail, while the second limit
+  // prevents an almost-immediate release if initialization outlasts that deadline.
   var scheduleReleaseAfterPaint = function() {
     var remainingMinimumTime = Math.max(0, NATIVE_SPLASH_MIN_RELEASE_AT - Date.now());
-    window.setTimeout(release, Math.max(800, remainingMinimumTime));
+    window.setTimeout(
+      release,
+      Math.max(NATIVE_SPLASH_HOLD_AFTER_UI_READY_MS, remainingMinimumTime)
+    );
   };
 
   if (typeof window.requestAnimationFrame === 'function') {
@@ -332,18 +338,20 @@ function releaseNativeLaunchScreen(onReleased) {
 }
 
 function maybeRestoreUiAfterStartup() {
-  if (!isStartupHttpReady || !isStartupHostsLoaded || !isStartupLocaleReady || isStartupUiRestored) {
+  // The stored host list is independent of the initial UI: render the interface as
+  // soon as HTTP setup and localization are ready, and populate hosts asynchronously.
+  if (!isStartupHttpReady || !isStartupLocaleReady || isStartupUiRestored) {
     return;
   }
 
   isStartupUiRestored = true;
   restoreUiAfterWasmLoad();
 
-  // Replace the native splash with the prepared UI. Show the bottom notification only
-  // after Tizen reveals the web view so the notification timeout is not spent underneath it.
+  // Show the prepared interface first, then keep the loading notice visible while
+  // the configured host list finishes loading/populating in the background.
   releaseNativeLaunchScreen(function() {
-    if (Object.keys(hosts).length > 0) {
-      snackbarLog('Loading configured hosts...');
+    if (!isStartupHostsLoaded || Object.keys(hosts).length > 0) {
+      snackbarLogLong('Loading configured hosts...');
     }
   });
 }
