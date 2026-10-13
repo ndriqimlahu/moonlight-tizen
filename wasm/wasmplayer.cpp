@@ -54,7 +54,8 @@ static bool s_FramePacingEnabled = false;
 static uint32_t total_bytes = 0;
 static int m_LastFrameNumber = 0;
 
-static std::string s_StatString = "";
+// Fixed-size writable buffer used by FormatVideoStats().
+static std::string s_StatString(2048, '\0');
 
 static VIDEO_STATS m_ActiveWndVideoStats;
 static VIDEO_STATS m_LastWndVideoStats;
