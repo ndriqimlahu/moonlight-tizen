@@ -1,8 +1,9 @@
-# Build the static image into the short video required by Samsung TV's native splash screen.
+# Generate the native Samsung TV splash artwork and video in a tool-only stage.
 FROM ubuntu:22.04 AS splash
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
-COPY wasm/static/res/launch-screen.png /tmp/launch-screen.png
-RUN ffmpeg -hide_banner -loglevel error -loop 1 -framerate 24 -i /tmp/launch-screen.png -t 2 \
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg librsvg2-bin fonts-dejavu-core && rm -rf /var/lib/apt/lists/*
+COPY res/launch-screen.svg /tmp/launch-screen.svg
+RUN rsvg-convert -w 1280 -h 720 --format png -o /tmp/launch-screen.png /tmp/launch-screen.svg && \
+    ffmpeg -hide_banner -loglevel error -loop 1 -framerate 24 -i /tmp/launch-screen.png -t 2 \
     -vf scale=1280:720 -c:v libx264 -preset veryslow -tune stillimage -crf 22 \
     -pix_fmt yuv420p -profile:v baseline -level 3.1 -an -movflags +faststart \
     -y /tmp/launch-screen.mp4 && \
@@ -101,7 +102,6 @@ COPY --chown=moonlight res/ ./moonlight-tizen/res/
 COPY --chown=moonlight wasm/index.html ./moonlight-tizen/wasm/
 COPY --chown=moonlight wasm/platform/ ./moonlight-tizen/wasm/platform/
 COPY --chown=moonlight wasm/static/ ./moonlight-tizen/wasm/static/
-COPY --chown=moonlight:moonlight --from=splash /tmp/launch-screen.mp4 ./moonlight-tizen/wasm/static/res/launch-screen.mp4
 COPY --chown=moonlight .gi[t]/ ./moonlight-tizen/.git/
 
 # The following steps inject build metadata into the application such as build type, short commit SHA, and repository information by replacing placeholders in the `wasm/platform/index.js` file.
@@ -135,6 +135,8 @@ RUN \
     fi
 
 RUN cmake --install build --prefix build
+COPY --from=splash /tmp/launch-screen.png build/widget/static/res/launch-screen.png
+COPY --from=splash /tmp/launch-screen.mp4 build/widget/static/res/launch-screen.mp4
 RUN cp moonlight-tizen/res/icon.png build/widget/
 
 # Inject Game Mode metadata into the Tizen config.xml file, which is required for building the ForceGM variant later
