@@ -1,3 +1,9 @@
+// Tizen starts playing the native splash before this script is loaded. Use this
+// timestamp as a conservative lower bound so the finished logo remains readable.
+const NATIVE_SPLASH_ANIMATION_DURATION_MS = 3300;
+const NATIVE_SPLASH_FINAL_HOLD_MS = 3000;
+const NATIVE_SPLASH_MIN_RELEASE_AT = Date.now() + NATIVE_SPLASH_ANIMATION_DURATION_MS + NATIVE_SPLASH_FINAL_HOLD_MS;
+
 // Initialize global variables and constants
 var appInfo = tizen.application.getAppInfo(); // Retrieve the application information
 var platformVer = tizen.systeminfo.getCapability("http://tizen.org/feature/platform.version"); // Retrieve the device platform version
@@ -309,16 +315,19 @@ function releaseNativeLaunchScreen(onReleased) {
     }
   };
 
-  // Keep the native splash up until the localized UI has been restored and painted.
-  // The delay also avoids a transition frame exposing an empty or partially updated page.
+  // Preserve the existing paint buffer, but do not release the native splash
+  // until the full animation plus a 3-second static reading window has elapsed.
+  var scheduleReleaseAfterPaint = function() {
+    var remainingMinimumTime = Math.max(0, NATIVE_SPLASH_MIN_RELEASE_AT - Date.now());
+    window.setTimeout(release, Math.max(800, remainingMinimumTime));
+  };
+
   if (typeof window.requestAnimationFrame === 'function') {
     window.requestAnimationFrame(function() {
-      window.requestAnimationFrame(function() {
-        window.setTimeout(release, 800);
-      });
+      window.requestAnimationFrame(scheduleReleaseAfterPaint);
     });
   } else {
-    window.setTimeout(release, 800);
+    scheduleReleaseAfterPaint();
   }
 }
 

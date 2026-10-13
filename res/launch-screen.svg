@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
   <rect width="1280" height="720" fill="#000000"/>
-  <g transform="translate(540 175) scale(0.78)">
+  <g id="logo-group" transform="translate(639.84 274.84) scale(0.78) translate(-128 -128)">
     <circle id="background-circle" cx="128" cy="128" r="128" fill="#565c64" fill-opacity="1"/>
     <path id="sector-0" d="M 124 32 A 96 96 0 0 0 62.95 57.29 L 124 118.34 Z" fill="#ffffff"/>
     <path id="sector-1" d="M 124 32 A 96 96 0 0 0 62.95 57.29 L 124 118.34 Z" transform="rotate(45 128 128)" fill="#ffffff"/>
