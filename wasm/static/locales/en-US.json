@@ -335,6 +335,7 @@
   "input stream establishment": "input stream establishment",
   "Starting": "Starting",
   "Video stream:": "Video stream:",
+  "Audio stream:": "Audio stream:",
   "Codec:": "Codec:",
   "Incoming frame rate from network:": "Incoming frame rate from network:",
   "Decoding frame rate:": "Decoding frame rate:",

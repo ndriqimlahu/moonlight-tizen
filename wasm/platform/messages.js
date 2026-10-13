@@ -91,6 +91,7 @@ function replaceKnownStageLabels(text) {
 function replaceKnownStatsLabels(text) {
   return text
     .replace(/Video stream:/g, t('Video stream:'))
+    .replace(/Audio stream:/g, t('Audio stream:'))
     .replace(/Codec:/g, t('Codec:'))
     .replace(/Incoming frame rate from network:/g, t('Incoming frame rate from network:'))
     .replace(/Decoding frame rate:/g, t('Decoding frame rate:'))

@@ -335,6 +335,7 @@
   "input stream establishment": "estabelecimento do fluxo de entrada",
   "Starting": "Iniciando",
   "Video stream:": "Transmissão de vídeo:",
+  "Audio stream:": "Transmissão de áudio:",
   "Codec:": "Codec:",
   "Incoming frame rate from network:": "Taxa de quadros recebida da rede:",
   "Decoding frame rate:": "Taxa de quadros de decodificação:",

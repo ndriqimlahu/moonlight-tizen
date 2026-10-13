@@ -33,6 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check wasm/platform/index.js
+          node --check wasm/platform/messages.js
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -47,6 +48,7 @@ jobs:
                   f"Missing={missing!r}; extra={extra!r}"
               )
           required = {
+              "Audio stream:",
               "Optical audio output",
               "Enable optical output",
               "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path.",
@@ -63,7 +65,7 @@ jobs:
           missing_pt = sorted(required - set(pt))
           if missing_pt:
               raise SystemExit(f"pt-BR is missing optical-output strings: {missing_pt!r}")
-          print(f"Spanish locale key set matches en-US.json ({len(en)} keys); optical-output strings exist in all locales.")
+          print(f"Spanish locale key set matches en-US.json ({len(en)} keys); stats and optical-output strings exist in all locales.")
           PY
 
       - name: Build experimental client
