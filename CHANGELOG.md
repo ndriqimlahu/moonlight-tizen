@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.18.0
+
+### Added
+- Added automatic selection of the last opened host and app when navigating between views
+- Introduced a new 'Decrypt host audio' setting intended for Wolf and Punktfunk-style hosts
+- Added a 'Disabled' option to the 'Audio backend' setting to disable audio output from the TV
+
+### Changed
+- Improved video frame pacing efficiency by reducing CPU usage when frame pacing is enabled
+
+### Removed
+- Removed the always-zero network jitter frame drop statistic from the performance stats
+
+### Fixed
+- Fixed dialogs stretching to the full screen height instead of sizing to their content
+- Fixed incorrect bitrate calculations in the performance stats when enabled mid-stream
+- Fixed Docker image tagging in release workflows for forks with uppercase repository names
+- Fixed a startup crash when checking for cached app updates with an invalid or missing version
+
 ## v1.17.2
 
 ### Added
