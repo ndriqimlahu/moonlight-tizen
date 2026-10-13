@@ -3710,11 +3710,12 @@ function isAudioOutputDisabled() {
 
 function saveAudioConfiguration() {
   var chosenAudioConfig = $(this).data('value');
-  $('#selectAudio').text($(this).text()).attr('data-value', chosenAudioConfig).data('value', chosenAudioConfig);
+  if ($('#ac3AudioModeSwitch').parent().hasClass('is-checked') && chosenAudioConfig === '71Surround') {
+    chosenAudioConfig = '51Surround';
+  }
+  setAudioSelectorValue('#selectAudio', '.audioConfigMenu', chosenAudioConfig);
   console.log('%c[index.js, saveAudioConfiguration]', 'color: green;', 'Saving audioConfig value: ' + chosenAudioConfig);
   storeData('audioConfig', chosenAudioConfig, null);
-
-  // Trigger warning check after changing audio configuration
   warnAudioConfiguration();
 }
 
@@ -3732,6 +3733,13 @@ function setAudioSelectorValue(buttonSelector, menuSelector, value) {
 function updateAc3AudioModeUI(enabled) {
   if (enabled) {
     setAudioSelectorValue('#selectAudioBackend', '.audioBackendMenu', 'EMSS');
+    $('.audioConfigMenu li[data-optical-incompatible="true"]').hide();
+    if ($('#selectAudio').data('value') === '71Surround') {
+      setAudioSelectorValue('#selectAudio', '.audioConfigMenu', '51Surround');
+      storeData('audioConfig', '51Surround', null);
+    }
+  } else {
+    $('.audioConfigMenu li[data-optical-incompatible="true"]').show();
   }
 
   $('#selectAudioBackend')
