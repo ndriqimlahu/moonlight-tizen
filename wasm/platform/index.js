@@ -114,6 +114,7 @@ function attachListeners() {
   $('#flipXYfaceButtonsSwitch').on('click', saveFlipXYfaceButtons);
   $('.audioBackendMenu li').on('click', saveAudioBackend);
   $('.audioConfigMenu li').on('click', saveAudioConfiguration);
+  $('#ac3AudioModeSwitch').on('click', saveAc3AudioMode);
   $('#audioSyncSwitch').on('click', saveAudioSync);
   $('#jitterSlider').on('input', saveAudioJitter);
   $('#playHostAudioSwitch').on('click', savePlayHostAudio);
@@ -2889,8 +2890,9 @@ function startGame(host, appID) {
       const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      var audioBackend = $('#selectAudioBackend').data('value').toString();
-      var audioConfig = $('#selectAudio').data('value').toString();
+      const ac3AudioMode = $('#ac3AudioModeSwitch').parent().hasClass('is-checked');
+      var audioBackend = ac3AudioMode ? 'EMSS' : $('#selectAudioBackend').data('value').toString();
+      var audioConfig = ac3AudioMode ? '51Surround' : $('#selectAudio').data('value').toString();
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioJitter = parseInt($('#jitterSlider').val());
       const playHostAudio = $('#playHostAudioSwitch').parent().hasClass('is-checked') ? 1 : 0;
@@ -3556,6 +3558,66 @@ function saveAudioConfiguration() {
   warnAudioConfiguration();
 }
 
+// Update a backend/layout selector by its stable value, using the localized menu label.
+function setAudioSelectorValue(buttonSelector, menuSelector, value) {
+  const item = $(menuSelector + ' li').filter(function() {
+    return String($(this).data('value')) === value;
+  }).first();
+  const label = item.length ? item.text() : value;
+  $(buttonSelector).text(label).attr('data-value', value).data('value', value);
+}
+
+// AC-3 passthrough is available only through EMSS with a 5.1 channel layout.
+// The existing preferences are saved separately so disabling this mode restores them.
+function updateAc3AudioModeUI(enabled) {
+  if (enabled) {
+    setAudioSelectorValue('#selectAudioBackend', '.audioBackendMenu', 'EMSS');
+    setAudioSelectorValue('#selectAudio', '.audioConfigMenu', '51Surround');
+  }
+
+  $('#selectAudioBackend, #selectAudio')
+    .prop('disabled', enabled)
+    .toggleClass('mdl-button--disabled', enabled)
+    .attr('aria-disabled', enabled ? 'true' : 'false')
+    .attr('tabindex', enabled ? '-1' : '0');
+
+  updateAudioBackendSettings();
+}
+
+function saveAc3AudioMode() {
+  setTimeout(() => {
+    const chosenAc3Mode = $('#ac3AudioModeSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveAc3AudioMode]', 'color: green;', 'Saving AC-3 audio mode state: ' + chosenAc3Mode);
+    storeData('ac3AudioMode', chosenAc3Mode, null);
+
+    if (chosenAc3Mode) {
+      const previousAudioBackend = String($('#selectAudioBackend').data('value') || 'EMSS');
+      const previousAudioConfig = String($('#selectAudio').data('value') || 'Stereo');
+
+      storeData('audioBackendBeforeAc3', previousAudioBackend, null);
+      storeData('audioConfigBeforeAc3', previousAudioConfig, null);
+      storeData('audioBackend', 'EMSS', null);
+      storeData('audioConfig', '51Surround', null);
+      updateAc3AudioModeUI(true);
+    } else {
+      updateAc3AudioModeUI(false);
+
+      getData('audioBackendBeforeAc3', function(previousValue) {
+        const restoredBackend = previousValue.audioBackendBeforeAc3 || 'EMSS';
+        storeData('audioBackend', restoredBackend, null);
+        setAudioSelectorValue('#selectAudioBackend', '.audioBackendMenu', restoredBackend);
+        updateAudioBackendSettings();
+      });
+
+      getData('audioConfigBeforeAc3', function(previousValue) {
+        const restoredConfig = previousValue.audioConfigBeforeAc3 || 'Stereo';
+        storeData('audioConfig', restoredConfig, null);
+        setAudioSelectorValue('#selectAudio', '.audioConfigMenu', restoredConfig);
+      });
+    }
+  }, 100);
+}
+
 function warnAudioConfiguration() {
   var chosenAudioConfig = $('#selectAudio').data('value');
 
@@ -3851,6 +3913,11 @@ function restoreDefaultsSettingsValues() {
   const defaultFlipXYfaceButtons = false;
   document.querySelector('#flipXYfaceButtonsBtn').MaterialSwitch.off();
   storeData('flipXYfaceButtons', defaultFlipXYfaceButtons, null);
+
+  const defaultAc3AudioMode = false;
+  document.querySelector('#ac3AudioModeBtn').MaterialSwitch.off();
+  storeData('ac3AudioMode', defaultAc3AudioMode, null);
+  updateAc3AudioModeUI(false);
 
   const defaultAudioBackend = 'EMSS';
   $('#selectAudioBackend').text('EMSS').attr('data-value', defaultAudioBackend).data('value', defaultAudioBackend);
@@ -4167,6 +4234,19 @@ function loadUserDataCb() {
         }
       });
     }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored AC-3 audio mode preference.');
+  getData('ac3AudioMode', function(previousValue) {
+    const enabled = previousValue.ac3AudioMode === true ||
+      previousValue.ac3AudioMode === 'true' ||
+      previousValue.ac3AudioMode === 1;
+    if (enabled) {
+      document.querySelector('#ac3AudioModeBtn').MaterialSwitch.on();
+    } else {
+      document.querySelector('#ac3AudioModeBtn').MaterialSwitch.off();
+    }
+    updateAc3AudioModeUI(enabled);
   });
 
   console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored audioSync preferences.');
