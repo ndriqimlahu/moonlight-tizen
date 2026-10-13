@@ -178,7 +178,7 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
         g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
       }
       else {
-        ClLogMessage("Failed to create AC-3 audio track; aborting negotiated AC-3 session\\n");
+        ClLogMessage("Failed to create AC-3 audio track; aborting negotiated AC-3 session\n");
         return -1;
       }
     }
