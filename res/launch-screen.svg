@@ -2,9 +2,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
   <rect width="1280" height="720" fill="#000000"/>
   <g transform="translate(540 175) scale(0.78)">
-    <circle cx="128" cy="128" r="128" fill="rgb(86,92,100)"/>
-    <circle cx="128" cy="128" r="96" fill="#ffffff"/>
-    <path d="M137.66 132H224V124H137.66L198.71 62.95L193.05 57.29L132 118.34V32H124V118.34L62.95 57.29L57.29 62.95L118.34 124H32V132H118.34L57.29 193.05L62.95 198.71L124 137.66V224H132V137.66L193.05 198.71L198.71 193.05L137.66 132Z" fill="rgb(86,92,100)"/>
+    <circle id="background-circle" cx="128" cy="128" r="128" fill="#565c64" fill-opacity="1"/>
+    <path id="sector-0" d="M 126.055 122.685 L 95.009 37.847 A 96 96 0 0 1 160.991 37.847 L 129.945 122.685 A 5.66 5.66 0 0 0 126.055 122.685 Z" fill="#ffffff"/>
+    <path id="sector-1" d="M 130.383 122.866 L 168.419 40.924 A 96 96 0 0 1 215.076 87.581 L 133.134 125.617 A 5.66 5.66 0 0 0 130.383 122.866 Z" fill="#ffffff"/>
+    <path id="sector-2" d="M 133.315 126.055 L 218.153 95.009 A 96 96 0 0 1 218.153 160.991 L 133.315 129.945 A 5.66 5.66 0 0 0 133.315 126.055 Z" fill="#ffffff"/>
+    <path id="sector-3" d="M 133.134 130.383 L 215.076 168.419 A 96 96 0 0 1 168.419 215.076 L 130.383 133.134 A 5.66 5.66 0 0 0 133.134 130.383 Z" fill="#ffffff"/>
+    <path id="sector-4" d="M 129.945 133.315 L 160.991 218.153 A 96 96 0 0 1 95.009 218.153 L 126.055 133.315 A 5.66 5.66 0 0 0 129.945 133.315 Z" fill="#ffffff"/>
+    <path id="sector-5" d="M 125.617 133.134 L 87.581 215.076 A 96 96 0 0 1 40.924 168.419 L 122.866 130.383 A 5.66 5.66 0 0 0 125.617 133.134 Z" fill="#ffffff"/>
+    <path id="sector-6" d="M 122.685 129.945 L 37.847 160.991 A 96 96 0 0 1 37.847 95.009 L 122.685 126.055 A 5.66 5.66 0 0 0 122.685 129.945 Z" fill="#ffffff"/>
+    <path id="sector-7" d="M 122.866 125.617 L 40.924 87.581 A 96 96 0 0 1 87.581 40.924 L 125.617 122.866 A 5.66 5.66 0 0 0 122.866 125.617 Z" fill="#ffffff"/>
   </g>
-  <text x="640" y="485" font-family="DejaVu Sans, sans-serif" font-size="54" fill="#f5f5f5" text-anchor="middle">Moonlight</text>
+  <text id="app-name" x="640" y="485" font-family="DejaVu Sans, sans-serif" font-size="54" fill="#f5f5f5" text-anchor="middle" opacity="1">Moonlight</text>
 </svg>
