@@ -372,7 +372,7 @@
   "Loading configured hosts...": "Carregando hosts configurados…",
   "Optical audio output": "Saída de áudio óptica",
   "Enable optical output": "Ativar saída óptica",
-  "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host instead of default Opus when available. Optical mode uses EMSS and limits channel selection to Stereo or 5.1 because the current host encoder does not support 7.1 for these formats.": "- Quando ativado, Moonlight tenta negociar AC-3 ou E-AC-3 com o Sunshine em vez do Opus. Esse modo usa EMSS e limita a seleção a estéreo ou 5.1, pois o codificador atual do host não oferece suporte a 7.1 nesses formatos.",
+  "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path.": "- Quando ativada, o Moonlight negociará AC-3 ou E-AC-3 com o host quando disponível, em vez de usar Opus por padrão. A configuração dos canais continuará selecionável; o AC-3 suporta até 5.1, enquanto o E-AC-3 pode suportar 7.1 quando houver suporte do host e do caminho de reprodução.",
   "Quit host app on disconnect": "Fechar o aplicativo do host ao desconectar",
   "- When enabled, Moonlight attempts to quit the app running on the host after a normal disconnection. Unexpected connection failures do not trigger this option.": "- Quando ativado, o Moonlight tenta fechar o aplicativo em execução no host após uma desconexão normal. Falhas inesperadas de conexão não acionam esta opção.",
   "Automatically quit the running app on the host": "Fechar automaticamente o aplicativo em execução no host",

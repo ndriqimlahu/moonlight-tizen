@@ -49,6 +49,28 @@ var pairingCert; // Loads the generated certificate
 var myUniqueid;
 var api; // The `api` should only be set if we're in a host-specific screen, on the initial screen it should always be null
 var isInGame = false; // Flag indicating whether the game has started, initial value is false
+
+// Best-effort keyboard capture for the Windows/Meta key. If Tizen's Web Runtime dispatches the
+// event to the app, suppress its local browser default while allowing it to bubble to the WASM
+// canvas handler for forwarding to the host. This cannot override keys consumed by Tizen system UI.
+function preventNativeMetaKeyDefault(event) {
+  if (!isInGame || !event) {
+    return;
+  }
+
+  const keyCode = event.keyCode || event.which;
+  const isMetaKey = event.key === 'Meta' || event.key === 'OS' ||
+    event.code === 'MetaLeft' || event.code === 'MetaRight' ||
+    event.code === 'OSLeft' || event.code === 'OSRight' ||
+    keyCode === 91 || keyCode === 92 || keyCode === 224;
+
+  if (isMetaKey && event.cancelable) {
+    event.preventDefault();
+  }
+}
+
+document.addEventListener('keydown', preventNativeMetaKeyDefault, true);
+document.addEventListener('keyup', preventNativeMetaKeyDefault, true);
 var isDialogOpen = false; // Flag indicating whether the dialog is open, initial value is false
 var isPairingInProgress = false; // Flag indicating whether a pairing process is in progress, initial value is false
 var wasPairingCanceled = false; // Flag indicating whether the current pairing process was canceled by the user, initial value is false
