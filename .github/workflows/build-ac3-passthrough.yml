@@ -1,0 +1,60 @@
+name: Experimental AC-3 Tizen build
+
+on:
+  push:
+    branches:
+      - ac3-audio-passthrough
+    paths:
+      - 'CMakeLists.txt'
+      - 'Dockerfile'
+      - 'moonlight-common-c/**'
+      - 'wasm/**'
+      - '.github/workflows/build-ac3-passthrough.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build signed Tizen WGT
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build experimental client
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          load: true
+          tags: moonlight-tizen-ac3:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_TYPE=development
+            REPO_OWNER=${{ github.repository_owner }}
+            REPO_NAME=${{ github.event.repository.name }}
+            FORCE_GAME_MODE=false
+
+      - name: Extract WGT package
+        shell: bash
+        run: |
+          set -euo pipefail
+          container_id="$(docker create moonlight-tizen-ac3:ci)"
+          trap 'docker rm -f "$container_id" >/dev/null 2>&1 || true' EXIT
+          docker cp "$container_id:/home/moonlight/Moonlight.wgt" "$RUNNER_TEMP/Moonlight-AC3-Experimental.wgt"
+          test -s "$RUNNER_TEMP/Moonlight-AC3-Experimental.wgt"
+
+      - name: Upload experimental WGT
+        uses: actions/upload-artifact@v4
+        with:
+          name: Moonlight-AC3-Experimental
+          path: ${{ runner.temp }}/Moonlight-AC3-Experimental.wgt
+          if-no-files-found: error
+          retention-days: 14
