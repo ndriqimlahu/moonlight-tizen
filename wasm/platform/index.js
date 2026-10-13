@@ -31,7 +31,8 @@ var hosts = {}; // Hosts is an associative array of NvHTTP objects, keyed by ser
 var isHostOpening = false; // Prevents concurrent hostChosen executions, initial value is false
 var isHostsLoaded = false; // Indicates if IndexedDB has finished loading hosts
 var isStartupHttpReady = false;
-var isStartupHostsReady = false;
+var isStartupHostsLoaded = false;
+var isStartupLocaleReady = false;
 var isStartupUiRestored = false;
 var isSubnetScanFinished = false; // Indicates if the initial subnet scan has completed
 var activePolls = {}; // Hosts currently being polled. An associated array of polling IDs, keyed by server UID
@@ -148,9 +149,11 @@ function attachListeners() {
       window.i18n.populateLanguageMenu(saveLanguagePreference);
     }
 
-    // Refresh the message after the TV locale is loaded, then hand off to the in-app loader.
+    // Keep Tizen's native splash visible while the app initializes. The localized loading
+    // message will be shown as a bottom snackbar when the persisted host list is ready.
     $('#wasmSpinnerMessage').text(t('Loading configured hosts...'));
-    releaseNativeLaunchScreen();
+    isStartupLocaleReady = true;
+    maybeRestoreUiAfterStartup();
   });
 
   initIpAddressFields();
@@ -315,12 +318,19 @@ function releaseNativeLaunchScreen() {
 }
 
 function maybeRestoreUiAfterStartup() {
-  if (!isStartupHttpReady || !isStartupHostsReady || isStartupUiRestored) {
+  if (!isStartupHttpReady || !isStartupHostsLoaded || !isStartupLocaleReady || isStartupUiRestored) {
     return;
   }
 
   isStartupUiRestored = true;
   restoreUiAfterWasmLoad();
+
+  // Replace the native splash with the real host list, while host connectivity checks
+  // continue in the background. Keep the status message unobtrusive at the bottom.
+  if (Object.keys(hosts).length > 0) {
+    snackbarLog('Loading configured hosts...');
+  }
+  releaseNativeLaunchScreen();
 }
 
 function moduleDidLoad() {
@@ -528,7 +538,7 @@ function snackbarLogLong(...args) {
 }
 
 // Handle layout elements when displaying the Hosts view
-function showHostsMode() {
+function showHostsMode(skipPollingRestart) {
   console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show Hosts" mode.');
   $('#header-title').html(t('Hosts'));
   $('#header-logo').show();
@@ -554,8 +564,10 @@ function showHostsMode() {
   // Without this, navigating back to the host view multiple times accumulates
   // duplicate polling intervals for each host, which causes race conditions in
   // _pollCompletionCallbacks and prevents the host from recovering to online.
-  stopPollingHosts();
-  startPollingHosts();
+  if (!skipPollingRestart) {
+    stopPollingHosts();
+    startPollingHosts();
+  }
 }
 
 // Show the Hosts grid
@@ -614,7 +626,7 @@ function restoreUiAfterWasmLoad() {
 
   // Navigate to the Hosts view
   Navigation.push(Views.Hosts);
-  showHostsMode();
+  showHostsMode(true);
   // Set focus to current item and/or scroll to the current host row
   setTimeout(() => Navigation.switch(), 100);
 
@@ -4548,12 +4560,15 @@ function loadHTTPCertsCb() {
         // Immediately start polling known hosts so they are ready for Smart Hub or instant clicks.
         // We wait for all known hosts to finish their initial ping before launching the subnet scanner
         // to guarantee that the 254 scanner requests don't choke the network stack and cause known hosts to timeout.
-        startPollingHosts().catch(function(error) {
+        const initialHostChecks = startPollingHosts().catch(function(error) {
           console.error('%c[index.js, loadHTTPCertsCb]', 'color: green;', 'Initial configured-host checks failed:', error);
-        }).then(() => {
-          isStartupHostsReady = true;
-          maybeRestoreUiAfterStartup();
+        });
 
+        // The stored host list is already rendered. Show it while network checks run.
+        isStartupHostsLoaded = true;
+        maybeRestoreUiAfterStartup();
+
+        initialHostChecks.then(() => {
           if (typeof startSubnetScanner === 'function') {
             snackbarLog('Scanning the local network to discover new hosts...');
             // Stop background polling while sweeping the subnet to prevent network exhaustion

@@ -9,13 +9,15 @@ Moonlight Tizen is a port of [Moonlight ChromeOS](https://github.com/moonlight-s
 
 This application allows you to stream your collection of games, programs, or your full desktop from your powerful PC to your Samsung Smart TV.
 
-> [!NOTE]
+> [!IMPORTANT]
 >
 > While I am still actively maintaining the project and doing my best with my **limited time**, I want to let you all know that I am focused on pushing the remaining improvements and new features, including the integration of community contributions. This is also why the project has continued to be **actively updated and receive frequent releases** in recent months.
 >
 > At this stage, the core functionality is now considered **fully implemented**, and the project has reached a **mature and stable state** as it approaches the end of its active development period. Given this progress, **this will most likely be my final year** of actively maintaining and developing it, and I intend to use this time to complete the work that can still be done before this transition takes place.
 >
-> Over the coming months, likely towards the end of the year, I will make a **final announcement** with more details about this transition and what it will mean for the project and its future.
+> To help manage my workload during this period, **new issue submissions are now restricted**, although existing issues remain available for reference. For quick questions, troubleshooting help, and community support, please use the project’s Discord server.
+>
+> As this transition approaches, I will make a **final announcement**, perhaps towards the end of the year, with more details about what this transition will mean for the project and its future.
 
 ---
 
@@ -25,7 +27,7 @@ Before proceeding with the installation, please take a moment to ensure that you
 - **Client:** Samsung Smart TV running Tizen OS version 5.5 or newer (model year 2020 onwards).
 - **Host:** Gaming PC with a GPU capable of hardware encoding that meets the [system requirements](https://docs.lizardbyte.dev/projects/sunshine/latest/index.html#%EF%B8%8F-system-requirements) for optimal streaming performance.
 - **Network:** Mid-range or high-end wireless router with a stable wireless connection (Wi-Fi 5/6) for the TV and a wired gigabit Ethernet connection (CAT5e or better) for the host PC are strongly recommended.
-- **Input:** [Supported gamepad](https://github.com/brightcraft/moonlight-tizen/wiki/Frequently-Asked-Questions#what-gamepad-controllers-are-supported-on-samsung-tv) connected to your TV or directly connected to a nearby PC is highly recommended for the best streaming experience.
+- **Input:** [Supported gamepad](https://github.com/brightcraft/moonlight-tizen/wiki/Frequently-Asked-Questions#which-gamepad-controllers-are-officially-supported-on-samsung-tvs) connected to your TV or directly connected to a nearby PC is highly recommended for the best streaming experience.
 
 ---
 
@@ -41,12 +43,14 @@ Preparing Moonlight for installation is a straightforward process, although the 
 ## 📚 Documentation
 
 For in-depth guides, technical support, and comprehensive documentation, please refer to the [Wiki](https://github.com/brightcraft/moonlight-tizen/wiki) or jump directly to a relevant section below:
+- 🧭 Get started with Moonlight Tizen: [Quick Start Guide](https://github.com/brightcraft/moonlight-tizen/wiki/Quick-Start-Guide)
 - 🚀 Install the app step-by-step: [Installation Guide](https://github.com/brightcraft/moonlight-tizen/wiki/Installation-Guide)
 - 🔄 Update your application version: [Updating Guide](https://github.com/brightcraft/moonlight-tizen/wiki/Updating-Guide)
 - ✨ Explore available app features: [Features Overview](https://github.com/brightcraft/moonlight-tizen/wiki/Features-Overview)
 - ❓ Common questions and tips: [Frequently Asked Questions](https://github.com/brightcraft/moonlight-tizen/wiki/Frequently-Asked-Questions)
 - ⚠️ Review limitations and notes: [Known Issues & Limitations](https://github.com/brightcraft/moonlight-tizen/wiki/Known-Issues-&-Limitations)
-- 🔮 Instructions for building the app: [Development Guide](https://github.com/brightcraft/moonlight-tizen/wiki/Development-Guide)
+- 🔧 Troubleshoot common problems: [Troubleshooting Guide](https://github.com/brightcraft/moonlight-tizen/wiki/Troubleshooting-Guide)
+- 🔮 Build instructions and log collection: [Development Guide](https://github.com/brightcraft/moonlight-tizen/wiki/Development-Guide)
 
 ---
 
@@ -105,8 +109,8 @@ This project is made possible thanks to the people who dedicate their time, know
 
 ### Special thanks to:
 
-- [Moonlight Game Streaming Project](https://github.com/moonlight-stream) — for creating the core Moonlight implementation, adapting the NVIDIA GameStream protocol, and developing the Moonlight Chrome OS client. The project's open-source work made it possible to bring Moonlight streaming support to additional platforms and serves as the foundation for the entire Tizen port.
-- [Samsung Developers Forum](https://github.com/SamsungDForum/moonlight-chrome) — for creating the first Tizen OS (WASM) adaptation based on the Moonlight Chrome OS client. Their work made Moonlight available on Samsung Smart TVs by integrating the client with Tizen's WASM environment, including video and audio playback through Tizen WASM Player, platform-specific adjustments, and the initial groundwork required for running Moonlight on Tizen devices.
+- [Moonlight Game Streaming Project](https://github.com/moonlight-stream) — for creating the core Moonlight implementation, adapting the NVIDIA GameStream protocol, and developing the Moonlight Chrome OS client. The project’s open-source work made it possible to bring Moonlight streaming support to additional platforms and serves as the foundation for the entire Tizen port.
+- [Samsung Developers Forum](https://github.com/SamsungDForum/moonlight-chrome) — for creating the first Tizen OS (WASM) adaptation based on the Moonlight Chrome OS client. Their work made Moonlight available on Samsung Smart TVs by integrating the client with Tizen’s WASM environment, including video and audio playback through Tizen WASM Player, platform-specific adjustments, and the initial groundwork required for running Moonlight on Tizen devices.
 - [KyroFrCode](https://github.com/KyroFrCode/moonlight-chrome-tizen) — for further developing the Tizen implementation by introducing improvements such as a dedicated application build method, 1440p resolution support, a shortcut combo to stop the streaming session, and audio volume control using the remote. This codebase served as the starting point when my repository was still a fork, which I later continued as a standalone repository.
 - [OneLiberty](https://github.com/OneLiberty/moonlight-chrome-tizen) — for expanding the Tizen implementation in their fork with features such as video codec selection, mouse emulation using the gamepad, Wake-on-LAN (WoL), a new IP address input mode, and other improvements. These changes served as a foundation that was later adapted, improved, and integrated into this project.
 - [toypoodlegaming](https://github.com/toypoodlegaming/moonlight-chrome-tizen) — for further expanding the functionality in their fork with features such as 5.1 and 7.1 surround sound configuration, performance statistics, and enhanced bitrate calculation. These changes served as a foundation that was later adapted, improved, and integrated into this project.
