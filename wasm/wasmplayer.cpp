@@ -701,6 +701,46 @@ void MoonlightInstance::FormatVideoStats(VIDEO_STATS& stats, char* output, int l
       break;
   }
 
+  // Report the audio codec negotiated for this session, not merely the user's preference.
+  // If neither Dolby codec was negotiated, the GameStream audio codec is Opus.
+  if (g_Instance != nullptr) {
+    const char* audioCodecString = "OPUS";
+    if (LiIsEac3AudioNegotiated()) {
+      audioCodecString = "E-AC-3";
+    } else if (LiIsAc3AudioNegotiated()) {
+      audioCodecString = "AC-3";
+    }
+
+    const int audioChannels = CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(g_Instance->m_AudioConfig);
+    const char* audioLayoutString;
+    switch (audioChannels) {
+      case 2:
+        audioLayoutString = "Stereo";
+        break;
+      case 6:
+        audioLayoutString = "5.1";
+        break;
+      case 8:
+        audioLayoutString = "7.1";
+        break;
+      default:
+        audioLayoutString = "Unknown layout";
+        break;
+    }
+
+    ret = snprintf(
+      &output[offset], length - offset,
+      "Audio stream: %s (%s, %d channels)\\n",
+      audioCodecString, audioLayoutString, audioChannels
+    );
+    // Abort if string formatting failed or buffer overflowed
+    if (ret < 0 || ret >= length - offset) {
+      assert(false);
+      return;
+    }
+    offset += ret;
+  }
+
   // If there is a meaningful received frame rate, print basic stream info
   if (stats.receivedFps > 0) {
     if (codecString != nullptr) {
