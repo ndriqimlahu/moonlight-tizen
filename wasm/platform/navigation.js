@@ -1190,6 +1190,7 @@ const Views = {
     view: new ListView(() => [
       'sortAppsListBtn',
       'optimizeGamesBtn',
+      'quitAppAfterDisconnectBtn',
       'removeAllHostsBtn'
     ]),
     up: function() {
