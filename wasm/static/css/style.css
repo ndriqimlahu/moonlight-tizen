@@ -1096,6 +1096,34 @@ body {
     box-shadow: 0 0 2px 3px rgba(0, 163, 198, 1);
 }
 /* =============================
+   Common Disabled-State Styling
+   Applies consistently to buttons, menu items, switches, and other controls.
+============================= */
+:disabled,
+[aria-disabled="true"],
+.mdl-button--disabled,
+.mdl-menu__item--disabled,
+.is-disabled,
+.ui-disabled {
+    opacity: 0.52 !important;
+    filter: grayscale(0.55);
+    cursor: not-allowed !important;
+}
+
+/* A disabled switch's visible label is its parent, not the hidden input. */
+.mdl-switch.ui-disabled {
+    opacity: 0.52 !important;
+    filter: grayscale(0.55);
+    cursor: not-allowed !important;
+}
+.mdl-switch.ui-disabled .mdl-switch__label,
+.mdl-switch.ui-disabled .mdl-switch__track,
+.mdl-switch.ui-disabled .mdl-switch__thumb,
+.mdl-switch.ui-disabled .mdl-switch__ripple-container {
+    cursor: not-allowed !important;
+}
+
+/* =============================
    Animations and Keyframes
 ============================= */
 @keyframes fadeInOut {
