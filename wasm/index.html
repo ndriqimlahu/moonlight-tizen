@@ -222,6 +222,20 @@
               </div>
             </div>
             <div class="setting-option">
+              <label data-i18n="Quit host app on disconnect">Quit host app on disconnect</label>
+              <span class="mdl-list__item-text-body" data-i18n="- When enabled, Moonlight attempts to quit the app running on the host after a normal disconnection. Unexpected connection failures do not trigger this option.">
+                - When enabled, Moonlight attempts to quit the app running on the host after a normal disconnection. Unexpected connection failures do not trigger this option.
+              </span>
+              <div id="quitAppAfterDisconnectMenu">
+                <label id="quitAppAfterDisconnectBtn" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="quitAppAfterDisconnectSwitch">
+                  <input type="checkbox" id="quitAppAfterDisconnectSwitch" class="mdl-switch__input">
+                  <span class="mdl-switch__label" data-i18n="Automatically quit the running app on the host">
+                    Automatically quit the running app on the host
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
               <label data-i18n="Remove all hosts">Remove all hosts</label>
               <span class="mdl-list__item-text-body"></span>
               <div id="removeAllHostsMenu">

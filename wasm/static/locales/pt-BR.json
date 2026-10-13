@@ -371,6 +371,10 @@
   "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.": "Como o Modo Jogo não pode ser ativado, você poderá experimentar uma latência ligeiramente maior durante a transmissão. Para reduzir ainda mais a latência, é altamente recomendável abrir o menu Configurações de Imagem da sua TV e desativar recursos de pós-processamento, como <b>Nitidez da Imagem</b>, <b>Aprimoramento de Contraste</b> e outros aprimoramentos de vídeo.",
   "Loading configured hosts...": "Carregando hosts configurados…",
   "Optical audio output": "Saída de áudio óptica",
-  "- Quando ativado, Moonlight tenta negociar AC-3 ou E-AC-3 com o Sunshine em vez do Opus. Esse modo usa EMSS e limita a seleção a estéreo ou 5.1, pois o codificador atual do host não oferece suporte a 7.1 nesses formatos.": "- Quando ativado, Moonlight tenta negociar AC-3 ou E-AC-3 com o host, se disponível, em vez do Opus padrão. Se não houver negociação, o áudio volta para Opus. A configuração de canais continua selecionável; AC-3 suporta até 5.1, enquanto E-AC-3 pode suportar 7.1 se o host e a saída forem compatíveis.",
-  "Enable optical output": "Ativar saída óptica"
+  "Enable optical output": "Ativar saída óptica",
+  "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host instead of default Opus when available. Optical mode uses EMSS and limits channel selection to Stereo or 5.1 because the current host encoder does not support 7.1 for these formats.": "- Quando ativado, Moonlight tenta negociar AC-3 ou E-AC-3 com o Sunshine em vez do Opus. Esse modo usa EMSS e limita a seleção a estéreo ou 5.1, pois o codificador atual do host não oferece suporte a 7.1 nesses formatos.",
+  "Quit host app on disconnect": "Fechar o aplicativo do host ao desconectar",
+  "- When enabled, Moonlight attempts to quit the app running on the host after a normal disconnection. Unexpected connection failures do not trigger this option.": "- Quando ativado, o Moonlight tenta fechar o aplicativo em execução no host após uma desconexão normal. Falhas inesperadas de conexão não acionam esta opção.",
+  "Automatically quit the running app on the host": "Fechar automaticamente o aplicativo em execução no host",
+  "Could not automatically quit the host app.": "Não foi possível fechar automaticamente o aplicativo do host."
 }

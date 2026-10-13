@@ -371,6 +371,10 @@
   "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.": "Como no se puede activar el modo de juego, la latencia de retransmisión puede ser algo mayor. Para reducirla, abre los ajustes de imagen del televisor y desactiva el procesamiento posterior, como <b>Claridad de imagen</b>, <b>Mejora del contraste</b> y otras mejoras de vídeo.",
   "Loading configured hosts...": "Cargando los equipos configurados…",
   "Optical audio output": "Salida de audio óptica",
-  "- Al activarla, Moonlight intentará negociar AC-3 o E-AC-3 con Sunshine en lugar de Opus. Este modo utiliza EMSS y limita la selección a estéreo o 5.1, porque el codificador actual del anfitrión no admite 7.1 con estos formatos.": "- Al activarla, Moonlight intentará negociar con Sunshine el formato AC-3 o E-AC-3 configurado, en lugar de usar Opus. Si no se puede negociar, recurrirá a Opus. La selección de canales seguirá disponible; AC-3 admite estéreo y 5.1, mientras que E-AC-3 puede admitir 7.1 si el anfitrión y la ruta de reproducción lo permiten.",
-  "Enable optical output": "Activar salida óptica"
+  "Enable optical output": "Activar salida óptica",
+  "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host instead of default Opus when available. Optical mode uses EMSS and limits channel selection to Stereo or 5.1 because the current host encoder does not support 7.1 for these formats.": "- Al activarla, Moonlight intentará negociar con Sunshine AC-3 o E-AC-3 en lugar de Opus. Este modo utiliza EMSS y limita la selección a estéreo o 5.1, porque el codificador actual del anfitrión no admite 7.1 con estos formatos.",
+  "Quit host app on disconnect": "Cerrar la aplicación del anfitrión al desconectar",
+  "- When enabled, Moonlight attempts to quit the app running on the host after a normal disconnection. Unexpected connection failures do not trigger this option.": "- Si se activa, Moonlight intentará cerrar la aplicación que se esté ejecutando en el anfitrión al terminar la conexión normalmente. No se cerrará ante fallos inesperados de conexión.",
+  "Automatically quit the running app on the host": "Cerrar automáticamente la aplicación del anfitrión al desconectar",
+  "Could not automatically quit the host app.": "No se pudo cerrar automáticamente la aplicación del anfitrión."
 }

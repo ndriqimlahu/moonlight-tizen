@@ -276,29 +276,44 @@ function handleMessage(msg) {
         snackbarLogLong('Connection terminated');
         break;
     }
-    // Refresh the server info to update the current game and app list
-    api.refreshServerInfo().then(function(ret) {
-      // Return to the app list with new current game
-      showApps(api).then(() => {
-        // Scroll to the current game row
-        Navigation.switch();
-        // Switch to Apps view
-        if (!window.isDialogOpen) {
-          Navigation.change(Views.Apps);
-        }
+    // Mirror Moonlight for Windows: quit the host app after graceful/manual disconnect
+    // only. An unexpected connection failure must not terminate the host application.
+    var shouldQuitHostApp = errorCode === 0 &&
+      $('#quitAppAfterDisconnectSwitch').parent().hasClass('is-checked');
+
+    var refreshHostAndReturnToApps = function() {
+      api.refreshServerInfo().then(function(ret) {
+        showApps(api).then(() => {
+          Navigation.switch();
+          if (!window.isDialogOpen) {
+            Navigation.change(Views.Apps);
+          }
+        });
+      }, function(failedRefreshInfo) {
+        console.error('%c[messages.js, handleMessage]', 'color: gray;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
+        showApps(api).then(() => {
+          Navigation.switch();
+          if (!window.isDialogOpen) {
+            Navigation.change(Views.Apps);
+          }
+        });
       });
-    }, function(failedRefreshInfo) {
-      console.error('%c[messages.js, handleMessage]', 'color: gray;', 'Error: Failed to refresh server info! Returned error was: ' + failedRefreshInfo + '!');
-      // Return to the app list anyway
-      showApps(api).then(() => {
-        // Scroll to the current game row
-        Navigation.switch();
-        // Switch to Apps view
-        if (!window.isDialogOpen) {
-          Navigation.change(Views.Apps);
-        }
+    };
+
+    if (shouldQuitHostApp && api && typeof api.quitApp === 'function') {
+      console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Attempting to quit the host app after graceful disconnection.');
+      api.quitApp().then(function() {
+        console.log('%c[messages.js, handleMessage]', 'color: gray;', 'Host app quit request completed.');
+        refreshHostAndReturnToApps();
+      }, function(failedQuitApp) {
+        console.error('%c[messages.js, handleMessage]', 'color: gray;', 'Failed to quit the host app after disconnection:', failedQuitApp);
+        snackbarLogLong('Could not automatically quit the host app.');
+        refreshHostAndReturnToApps();
       });
-    });
+    } else {
+      refreshHostAndReturnToApps();
+    }
+
   } else if (msg === 'Connection Established') {
     // Prepare the screen for video stream
     $('#loadingSpinner').css('display', 'none');

@@ -181,6 +181,7 @@ function attachListeners() {
   $('#ipAddressTextInput').on('input', updateIpAddressInputValidationState);
   $('#sortAppsListSwitch').on('click', saveSortAppsList);
   $('#optimizeGamesSwitch').on('click', saveOptimizeGames);
+  $('#quitAppAfterDisconnectSwitch').on('click', saveQuitAppAfterDisconnect);
   $('#removeAllHostsBtn').on('click', deleteAllHostsDialog);
   $('#rumbleFeedbackSwitch').on('click', saveRumbleFeedback);
   $('#mouseEmulationSwitch').on('click', saveMouseEmulation);
@@ -3629,6 +3630,14 @@ function saveOptimizeGames() {
   }, 100);
 }
 
+function saveQuitAppAfterDisconnect() {
+  setTimeout(() => {
+    const enabled = $('#quitAppAfterDisconnectSwitch').parent().hasClass('is-checked');
+    console.log('%c[index.js, saveQuitAppAfterDisconnect]', 'color: green;', 'Saving quit host app on disconnect: ' + enabled);
+    storeData('quitAppAfterDisconnect', enabled, null);
+  }, 100);
+}
+
 function saveRumbleFeedback() {
   setTimeout(() => {
     const chosenRumbleFeedback = $('#rumbleFeedbackSwitch').parent().hasClass('is-checked');
@@ -4062,6 +4071,10 @@ function restoreDefaultsSettingsValues() {
   document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
   storeData('optimizeGames', defaultOptimizeGames, null);
 
+  const defaultQuitAppAfterDisconnect = false;
+  document.querySelector('#quitAppAfterDisconnectBtn').MaterialSwitch.off();
+  storeData('quitAppAfterDisconnect', defaultQuitAppAfterDisconnect, null);
+
   const defaultRumbleFeedback = false;
   document.querySelector('#rumbleFeedbackBtn').MaterialSwitch.off();
   storeData('rumbleFeedback', defaultRumbleFeedback, null);
@@ -4327,6 +4340,17 @@ function loadUserDataCb() {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.off();
     } else {
       document.querySelector('#optimizeGamesBtn').MaterialSwitch.on();
+    }
+  });
+
+  console.log('%c[index.js, loadUserDataCb]', 'color: green;', 'Load stored quitAppAfterDisconnect preferences.');
+  getData('quitAppAfterDisconnect', function(previousValue) {
+    if (previousValue.quitAppAfterDisconnect === true ||
+        previousValue.quitAppAfterDisconnect === 'true' ||
+        previousValue.quitAppAfterDisconnect === 1) {
+      document.querySelector('#quitAppAfterDisconnectBtn').MaterialSwitch.on();
+    } else {
+      document.querySelector('#quitAppAfterDisconnectBtn').MaterialSwitch.off();
     }
   });
 

@@ -49,7 +49,11 @@ jobs:
           required = {
               "Optical audio output",
               "Enable optical output",
-              "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host when available instead of default Opus. Channel layout stays selectable; AC-3 supports up to 5.1, while E-AC-3 may support 7.1 when supported by the host and playback path."
+              "- When enabled, Moonlight negotiates AC-3 or E-AC-3 with the host instead of default Opus when available. Optical mode uses EMSS and limits channel selection to Stereo or 5.1 because the current host encoder does not support 7.1 for these formats.",
+              "Quit host app on disconnect",
+              "- When enabled, Moonlight attempts to quit the app running on the host after a normal disconnection. Unexpected connection failures do not trigger this option.",
+              "Automatically quit the running app on the host",
+              "Could not automatically quit the host app."
           }
           for locale_name, locale in (("en-US", en), ("es-ES", es)):
               missing_required = sorted(required - set(locale))
