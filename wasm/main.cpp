@@ -230,7 +230,7 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
   } else { // EMSS, or disabled audio output
     // EMSS can submit compressed AC-3/E-AC-3 packets directly to Tizen's native player.
     // Advertise support for any chosen layout; the negotiated codec determines the track.
-    if (me->m_AudioBackend == AudioBackend::Emss) {
+    if (me->m_AudioBackend == AudioBackend::Emss && me->m_OpticalOutputEnabled) {
       MoonlightInstance::s_ArCallbacks.capabilities |= CAPABILITY_SUPPORTS_AC3_PASSTHROUGH;
       PostToJs("Advertising optional AC-3/E-AC-3 passthrough support via EMSS");
     }
@@ -267,7 +267,7 @@ static void HexStringToBytes(const char* str, char* output) {
 MessageResult MoonlightInstance::StartStream(std::string host, int httpPort, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  std::string audioBackend, std::string audioConfig, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
+  std::string audioBackend, std::string audioConfig, bool opticalOutputEnabled, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
   std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode, bool disableWarnings, bool performanceStats) {
   
   if (m_StopThread != 0) {
@@ -295,6 +295,8 @@ MessageResult MoonlightInstance::StartStream(std::string host, int httpPort, std
   PostToJs("Setting the Flip X/Y face buttons to: " + std::to_string(flipXYfaceButtons));
   PostToJs("Setting the Audio backend to: " + audioBackend);
   PostToJs("Setting the Audio configuration to: " + audioConfig);
+  PostToJs("Optical output enabled: " + std::to_string(opticalOutputEnabled));
+  m_OpticalOutputEnabled = opticalOutputEnabled;
   PostToJs("Setting the Audio synchronization to: " + std::to_string(audioSync));
   PostToJs("Setting the Audio jitter buffer to: " + std::to_string(audioJitterMs) + " ms");
   PostToJs("Setting the Play host audio to: " + std::to_string(playHostAudio));
@@ -638,11 +640,11 @@ int main(int argc, char** argv) {
 MessageResult startStream(std::string host, int httpPort, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  std::string audioBackend, std::string audioConfig, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
+  std::string audioBackend, std::string audioConfig, bool opticalOutputEnabled, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
   std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode, bool disableWarnings, bool performanceStats) {
   PostToJs("Starting the streaming session...");
   return g_Instance->StartStream(host, httpPort, width, height, fps, bitrate, rikey, rikeyid, appversion, gfeversion, rtspurl, serverCodecModeSupport,
-  framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioBackend, audioConfig, audioSync,
+  framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons, audioBackend, audioConfig, opticalOutputEnabled, audioSync,
   audioJitterMs, playHostAudio, decryptHostAudio, videoCodec, hdrMode, fullRange, gameMode, disableWarnings, performanceStats);
 }
 

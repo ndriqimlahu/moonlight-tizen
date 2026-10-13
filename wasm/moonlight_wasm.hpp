@@ -97,7 +97,7 @@ class MoonlightInstance {
   MessageResult StartStream(std::string host, int httpPort, std::string width, std::string height, std::string fps, std::string bitrate,
     std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
     bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-    std::string audioBackend, std::string audioConfig, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
+    std::string audioBackend, std::string audioConfig, bool opticalOutputEnabled, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
     std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode, bool disableWarnings, bool performanceStats);
   MessageResult StopStream();
 
@@ -237,6 +237,7 @@ class MoonlightInstance {
   bool m_FlipABfaceButtonsEnabled;
   bool m_FlipXYfaceButtonsEnabled;
   AudioBackend m_AudioBackend;
+  bool m_OpticalOutputEnabled {false};
   int m_AudioConfig;
   bool m_AudioSyncEnabled;
   int m_AudioJitterMs;
@@ -306,7 +307,7 @@ void openUrl(int callbackId, std::string url, emscripten::val ppk, bool binaryRe
 MessageResult startStream(std::string host, int httpPort, std::string width, std::string height, std::string fps, std::string bitrate,
   std::string rikey, std::string rikeyid, std::string appversion, std::string gfeversion, std::string rtspurl, int serverCodecModeSupport,
   bool framePacing, bool optimizeGames, bool rumbleFeedback, bool mouseEmulation, bool flipABfaceButtons, bool flipXYfaceButtons,
-  std::string audioBackend, std::string audioConfig, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
+  std::string audioBackend, std::string audioConfig, bool opticalOutputEnabled, bool audioSync, int audioJitterMs, bool playHostAudio, bool decryptHostAudio,
   std::string videoCodec, bool hdrMode, bool fullRange, bool gameMode, bool disableWarnings, bool performanceStats);
 MessageResult stopStream();
 

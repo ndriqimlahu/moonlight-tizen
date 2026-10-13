@@ -3050,8 +3050,8 @@ function startGame(host, appID) {
       const mouseEmulation = $('#mouseEmulationSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipABfaceButtons = $('#flipABfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const flipXYfaceButtons = $('#flipXYfaceButtonsSwitch').parent().hasClass('is-checked') ? 1 : 0;
-      const ac3AudioMode = $('#ac3AudioModeSwitch').parent().hasClass('is-checked');
-      var audioBackend = ac3AudioMode ? 'EMSS' : $('#selectAudioBackend').data('value').toString();
+      const opticalOutputEnabled = $('#ac3AudioModeSwitch').parent().hasClass('is-checked');
+      var audioBackend = opticalOutputEnabled ? 'EMSS' : $('#selectAudioBackend').data('value').toString();
       var audioConfig = $('#selectAudio').data('value').toString();
       const audioSync = $('#audioSyncSwitch').parent().hasClass('is-checked') ? 1 : 0;
       const audioJitter = parseInt($('#jitterSlider').val());
@@ -3127,7 +3127,7 @@ function startGame(host, appID) {
             host.address, host.httpPort, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
             host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
             framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-            audioBackend, audioConfig, audioSync, audioJitter, playHostAudio, decryptHostAudio, videoCodec, hdrMode, fullRange,
+            audioBackend, audioConfig, opticalOutputEnabled, audioSync, audioJitter, playHostAudio, decryptHostAudio, videoCodec, hdrMode, fullRange,
             gameMode, disableWarnings, performanceStats
           ]);
         }, function(failedResumeApp) {
@@ -3179,7 +3179,7 @@ function startGame(host, appID) {
           host.address, host.httpPort, streamWidth, streamHeight, frameRate, bitrate.toString(), rikey, rikeyid.toString(),
           host.appVersion, host.gfeVersion, $root.find('sessionUrl0').text().trim(), host.serverCodecModeSupport,
           framePacing, optimizeGames, rumbleFeedback, mouseEmulation, flipABfaceButtons, flipXYfaceButtons,
-          audioBackend, audioConfig, audioSync, audioJitter, playHostAudio, decryptHostAudio, videoCodec, hdrMode, fullRange,
+          audioBackend, audioConfig, opticalOutputEnabled, audioSync, audioJitter, playHostAudio, decryptHostAudio, videoCodec, hdrMode, fullRange,
           gameMode, disableWarnings, performanceStats
         ]);
       }, function(failedLaunchApp) {
