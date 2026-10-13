@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" class="app-starting">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Pragma" content="no-cache">
@@ -11,6 +11,16 @@
   <link rel="stylesheet" href="static/css/material-icons.css">
   <link rel="stylesheet" href="static/css/material.min.css">
   <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    /* Prevent the default empty UI from flashing before startup logic runs. */
+    html.app-starting #main-header,
+    html.app-starting #main-content > *:not(#listener):not(#wasmSpinner) {
+      display: none !important;
+    }
+    html.app-starting #wasmSpinner {
+      display: inline-block !important;
+    }
+  </style>
   <script type="text/javascript" src="platform.js"></script>
 </head>
 <body data-name="moonlight-tizen" data-tools="emscripten" data-configs="Debug Release" data-path="{tc}/{config}">

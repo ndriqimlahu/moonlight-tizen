@@ -30,6 +30,9 @@ var isHdrCapable = webapis.avinfo.isHdrTvSupport(); // Check if the device suppo
 var hosts = {}; // Hosts is an associative array of NvHTTP objects, keyed by server UID
 var isHostOpening = false; // Prevents concurrent hostChosen executions, initial value is false
 var isHostsLoaded = false; // Indicates if IndexedDB has finished loading hosts
+var isStartupHttpReady = false;
+var isStartupHostsReady = false;
+var isStartupUiRestored = false;
 var isSubnetScanFinished = false; // Indicates if the initial subnet scan has completed
 var activePolls = {}; // Hosts currently being polled. An associated array of polling IDs, keyed by server UID
 var pairingCert; // Loads the generated certificate
@@ -144,6 +147,10 @@ function attachListeners() {
     if (window.i18n && typeof window.i18n.populateLanguageMenu === 'function') {
       window.i18n.populateLanguageMenu(saveLanguagePreference);
     }
+
+    // Refresh the message after the TV locale is loaded, then hand off to the in-app loader.
+    $('#wasmSpinnerMessage').text(t('Loading configured hosts...'));
+    releaseNativeLaunchScreen();
   });
 
   initIpAddressFields();
@@ -281,7 +288,39 @@ function changeUiModeForWasmLoad() {
   $('#main-content').children().not('#listener, #wasmSpinner').hide();
   $('#wasmSpinner').css('display', 'inline-block');
   $('#wasmSpinnerLogo').show();
-  $('#wasmSpinnerMessage').text(t('Loading Moonlight...'));
+  $('#wasmSpinnerMessage').text(t('Loading configured hosts...'));
+}
+
+function releaseNativeLaunchScreen() {
+  var release = function() {
+    try {
+      if (window.screen && typeof window.screen.show === 'function') {
+        window.screen.show();
+      }
+    } catch (error) {
+      console.warn('%c[index.js, releaseNativeLaunchScreen]', 'color: gray;', 'Could not release the native TV splash screen:', error);
+    }
+  };
+
+  // Let the localized loading screen be painted before dismissing Tizen's native splash.
+  if (typeof window.requestAnimationFrame === 'function') {
+    window.requestAnimationFrame(function() {
+      window.requestAnimationFrame(function() {
+        window.setTimeout(release, 300);
+      });
+    });
+  } else {
+    window.setTimeout(release, 300);
+  }
+}
+
+function maybeRestoreUiAfterStartup() {
+  if (!isStartupHttpReady || !isStartupHostsReady || isStartupUiRestored) {
+    return;
+  }
+
+  isStartupUiRestored = true;
+  restoreUiAfterWasmLoad();
 }
 
 function moduleDidLoad() {
@@ -562,6 +601,9 @@ function showHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
+  // Release the first-render guard only after HTTP setup and configured-host checks complete.
+  document.documentElement.classList.remove('app-starting');
+
   // Stop navigation before showing the loading screen
   Navigation.stop();
 
@@ -4461,14 +4503,16 @@ function loadHTTPCertsCb() {
           console.error('%c[index.js, loadHTTPCertsCb]', 'color: green;', 'Error: Failed to generate a new certificate! Returned error was: \n', failedCert + '!');
         }).then(function(ret) {
           sendMessage('httpInit', [pairingCert.cert, pairingCert.privateKey, myUniqueid]).then(function(ret) {
-            restoreUiAfterWasmLoad();
+            isStartupHttpReady = true;
+            maybeRestoreUiAfterStartup();
           }, function(failedInit) {
             console.error('%c[index.js, loadHTTPCertsCb]', 'color: green;', 'Error: Failed HTTP initialization! Returned error was: ', failedInit + '!');
           });
         });
       } else {
         sendMessage('httpInit', [pairingCert.cert, pairingCert.privateKey, myUniqueid]).then(function(ret) {
-          restoreUiAfterWasmLoad();
+          isStartupHttpReady = true;
+          maybeRestoreUiAfterStartup();
         }, function(failedInit) {
           console.error('%c[index.js, loadHTTPCertsCb]', 'color: green;', 'Error: Failed HTTP initialization! Returned error was: ', failedInit + '!');
         });
@@ -4504,7 +4548,12 @@ function loadHTTPCertsCb() {
         // Immediately start polling known hosts so they are ready for Smart Hub or instant clicks.
         // We wait for all known hosts to finish their initial ping before launching the subnet scanner
         // to guarantee that the 254 scanner requests don't choke the network stack and cause known hosts to timeout.
-        startPollingHosts().then(() => {
+        startPollingHosts().catch(function(error) {
+          console.error('%c[index.js, loadHTTPCertsCb]', 'color: green;', 'Initial configured-host checks failed:', error);
+        }).then(() => {
+          isStartupHostsReady = true;
+          maybeRestoreUiAfterStartup();
+
           if (typeof startSubnetScanner === 'function') {
             snackbarLog('Scanning the local network to discover new hosts...');
             // Stop background polling while sweeping the subnet to prevent network exhaustion

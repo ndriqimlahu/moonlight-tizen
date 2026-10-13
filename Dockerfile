@@ -1,3 +1,13 @@
+# Build the static image into the short video required by Samsung TV's native splash screen.
+FROM ubuntu:22.04 AS splash
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
+COPY wasm/static/res/launch-screen.png /tmp/launch-screen.png
+RUN ffmpeg -hide_banner -loglevel error -loop 1 -framerate 24 -i /tmp/launch-screen.png -t 2 \
+    -vf scale=1280:720 -c:v libx264 -preset veryslow -tune stillimage -crf 22 \
+    -pix_fmt yuv420p -profile:v baseline -level 3.1 -an -movflags +faststart \
+    -y /tmp/launch-screen.mp4 && \
+    test -s /tmp/launch-screen.mp4 && test "$(stat -c %s /tmp/launch-screen.mp4)" -lt 2097152
+
 FROM ubuntu:22.04 AS sdk
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -91,6 +101,7 @@ COPY --chown=moonlight res/ ./moonlight-tizen/res/
 COPY --chown=moonlight wasm/index.html ./moonlight-tizen/wasm/
 COPY --chown=moonlight wasm/platform/ ./moonlight-tizen/wasm/platform/
 COPY --chown=moonlight wasm/static/ ./moonlight-tizen/wasm/static/
+COPY --chown=moonlight:moonlight --from=splash /tmp/launch-screen.mp4 ./moonlight-tizen/wasm/static/res/launch-screen.mp4
 COPY --chown=moonlight .gi[t]/ ./moonlight-tizen/.git/
 
 # The following steps inject build metadata into the application such as build type, short commit SHA, and repository information by replacing placeholders in the `wasm/platform/index.js` file.

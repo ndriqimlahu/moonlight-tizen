@@ -10,6 +10,9 @@
     <description>Moonlight Game Streaming</description>
     <feature name="http://tizen.org/feature/screen.size.all"/>
     <icon src="icon.png"/>
+    <tizen:video_splash_screen ready_when="custom">
+        <tizen:vss_default video="static/res/launch-screen.mp4" background_image="static/res/launch-screen.png" background_color="#000000" image="static/res/launch-screen.png" image_border="0px stretch"/>
+    </tizen:video_splash_screen>
     <tizen:metadata key="http://samsung.com/tv/metadata/use.voiceguide" value="false"/>
     <tizen:metadata key="http://samsung.com/tv/metadata/floating.navigation" value="false"/>
     <tizen:metadata key="http://samsung.com/tv/metadata/use.preview" value="bg_service"/>

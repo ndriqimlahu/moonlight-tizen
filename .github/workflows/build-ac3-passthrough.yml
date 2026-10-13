@@ -6,6 +6,7 @@ on:
       - ac3-audio-passthrough
     paths:
       - 'CMakeLists.txt'
+      - 'res/**'
       - 'Dockerfile'
       - 'moonlight-common-c/**'
       - 'wasm/**'
@@ -37,7 +38,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            BUILD_TYPE=development
+            BUILD_TYPE=release
             REPO_OWNER=${{ github.repository_owner }}
             REPO_NAME=${{ github.event.repository.name }}
             FORCE_GAME_MODE=false

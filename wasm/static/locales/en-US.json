@@ -371,5 +371,6 @@
   "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.": "Since the Game Mode cannot be enabled, you may experience slightly higher latency while streaming. To further reduce latency, it is highly recommended to open your TV's Picture Settings menu and disable post-processing features such as <b>Picture Clarity</b>, <b>Contrast Enhancer</b>, and other video enhancements.",
   "AC-3 audio mode": "AC-3 audio mode",
   "- When enabled, uses AC-3 5.1 passthrough if supported by the host and forces EMSS and 5.1 audio output.": "- When enabled, uses AC-3 5.1 passthrough if supported by the host and forces EMSS and 5.1 audio output.",
-  "Enable AC-3 audio mode": "Enable AC-3 audio mode"
+  "Enable AC-3 audio mode": "Enable AC-3 audio mode",
+  "Loading configured hosts...": "Loading configured hosts..."
 }
