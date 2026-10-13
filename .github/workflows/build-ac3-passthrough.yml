@@ -28,6 +28,27 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Validate startup JavaScript and Spanish locale
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check wasm/platform/index.js
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          en = json.loads(Path("wasm/static/locales/en-US.json").read_text(encoding="utf-8"))
+          es = json.loads(Path("wasm/static/locales/es-ES.json").read_text(encoding="utf-8"))
+          missing = sorted(set(en) - set(es))
+          extra = sorted(set(es) - set(en))
+          if missing or extra:
+              raise SystemExit(
+                  "Spanish locale keys differ from en-US.json. "
+                  f"Missing={missing!r}; extra={extra!r}"
+              )
+          print(f"Spanish locale key set matches en-US.json ({len(en)} keys).")
+          PY
+
       - name: Build experimental client
         uses: docker/build-push-action@v7
         with:

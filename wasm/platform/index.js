@@ -151,7 +151,6 @@ function attachListeners() {
 
     // Keep Tizen's native splash visible while the app initializes. The localized loading
     // message will be shown as a bottom snackbar when the persisted host list is ready.
-    $('#wasmSpinnerMessage').text(t('Loading configured hosts...'));
     isStartupLocaleReady = true;
     maybeRestoreUiAfterStartup();
   });
@@ -620,7 +619,7 @@ function showHosts() {
 }
 
 function restoreUiAfterWasmLoad() {
-  // Release the first-render guard only after HTTP setup and configured-host checks complete.
+  // Release the first-render guard only after HTTP setup, localization, and the stored host list are ready.
   document.documentElement.classList.remove('app-starting');
 
   // Stop navigation before showing the loading screen
