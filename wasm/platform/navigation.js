@@ -1269,6 +1269,7 @@ const Views = {
   },
   AudioSettings: {
     view: new ListView(() => [
+      'ac3AudioModeBtn',
       'selectAudioBackend',
       isAudioOutputDisabled() ? null : 'selectAudio',
       // At most one of these settings is shown at a time, as each one belongs to a single backend,
