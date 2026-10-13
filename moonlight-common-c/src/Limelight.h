@@ -262,6 +262,10 @@ typedef struct _DECODE_UNIT {
 // buffer size rather than just assuming it will always be 240.
 #define CAPABILITY_SUPPORTS_ARBITRARY_AUDIO_DURATION 0x10
 
+// If set in the audio renderer capabilities field, the client can accept optional Sunshine
+// AC-3 passthrough and submit compressed AC-3 frames directly to its renderer.
+#define CAPABILITY_SUPPORTS_AC3_PASSTHROUGH 0x80
+
 // This flag opts the renderer into a pull-based model rather than the default push-based
 // callback model. The renderer must invoke the new functions (LiWaitForNextVideoFrame(),
 // LiCompleteVideoFrame(), and similar) to receive A/V data. Setting this capability while
@@ -539,6 +543,9 @@ void LiInitializeServerInformation(PSERVER_INFORMATION serverInfo);
 int LiStartConnection(PSERVER_INFORMATION serverInfo, PSTREAM_CONFIGURATION streamConfig, PCONNECTION_LISTENER_CALLBACKS clCallbacks,
     PDECODER_RENDERER_CALLBACKS drCallbacks, PAUDIO_RENDERER_CALLBACKS arCallbacks, void* renderContext, int drFlags,
     void* audioContext, int arFlags);
+
+// Returns true only when the current RTSP session explicitly negotiated AC-3 with the host.
+bool LiIsAc3AudioNegotiated(void);
 
 // This function stops streaming. This function is not thread-safe.
 void LiStopConnection(void);

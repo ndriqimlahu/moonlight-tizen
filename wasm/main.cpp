@@ -228,8 +228,12 @@ void* MoonlightInstance::ConnectionThreadFunc(void* context) {
     MoonlightInstance::s_ArCallbacks.capabilities |= CAPABILITY_SUPPORTS_ARBITRARY_AUDIO_DURATION;
     PostToJs("Selecting the audio renderer capabilities to: CAPABILITY_DIRECT_SUBMIT | CAPABILITY_SUPPORTS_ARBITRARY_AUDIO_DURATION");
   } else { // EMSS, or disabled audio output
-    // The EMSS backend expects the fixed 5 ms frames that are negotiated without that capability,
-    // and the frame duration doesn't matter when the audio output is disabled
+    // EMSS normally receives 5 ms Opus frames, but it can also pass compressed AC-3
+    // frames to the Tizen WASM Player. Do not advertise this capability for disabled audio.
+    if (me->m_AudioBackend == AudioBackend::Emss) {
+      MoonlightInstance::s_ArCallbacks.capabilities |= CAPABILITY_SUPPORTS_AC3_PASSTHROUGH;
+      PostToJs("Advertising optional AC-3 passthrough support via EMSS");
+    }
     PostToJs("Selecting the audio renderer capabilities to: CAPABILITY_DIRECT_SUBMIT");
   }
 

@@ -158,44 +158,62 @@ int MoonlightInstance::StartupVidDecSetup(int videoFormat, int width, int height
   }
   ClLogMessage("Closed\n");
 
-  // The Web Audio backend renders the audio itself in platform/audio.js, so the EMSS audio
-  // track is only added when the EMSS backend is selected
+  // Web Audio renders decoded PCM in platform/audio.js. AC-3 passthrough uses the EMSS
+  // track, which can accept compressed AC-3 elementary packets from the network.
   if (g_Instance->m_AudioBackend == AudioBackend::Emss) {
-    samsung::wasm::ChannelLayout channelLayout; // Selected audio channel layout from audio config
-    switch (CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(g_Instance->m_AudioConfig)) {
-      case 2:
-        channelLayout = samsung::wasm::ChannelLayout::kStereo; // Audio Channel: Stereo
-        ClLogMessage("Selected channel layout for Stereo audio\n");
-        break;
-      case 6:
-        channelLayout = samsung::wasm::ChannelLayout::k5_1; // Audio Channel: 5.1 Surround Sound
-        ClLogMessage("Selected channel layout for 5.1 Surround audio\n");
-        break;
-      case 8:
-        channelLayout = samsung::wasm::ChannelLayout::k7_1; // Audio Channel: 7.1 Surround Sound
-        ClLogMessage("Selected channel layout for 7.1 Surround audio\n");
-        break;
-      default:
-        ClLogMessage("Unable to select channel layout from audio configuration\n");
-        break;
-    }
-
-    auto add_track_result = g_Instance->m_Source->AddTrack(
-      samsung::wasm::ElementaryAudioTrackConfig {
-        "audio/webm; codecs=\"pcm\"", // Audio Codec: Pulse Code Modulation (PCM) Profile
-        {}, // Extradata: Empty
-        samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
-        samsung::wasm::SampleFormat::kS16, // Sample Format: 16-bit signed integer (S16)
-        channelLayout, // Channel Layout: Stereo (2-CH), 5.1 Surround (6-CH), 7.1 Surround (8-CH)
-        kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
+    if (LiIsAc3AudioNegotiated()) {
+      ClLogMessage("Configuring the EMSS audio track for AC-3 passthrough\n");
+      auto add_track_result = g_Instance->m_Source->AddTrack(
+        samsung::wasm::ElementaryAudioTrackConfig {
+          "audio/mp4; codecs=\"ac-3\"", // AC-3 elementary bitstream
+          {}, // Extradata: Empty
+          samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
+          samsung::wasm::SampleFormat::kAc3, // Compressed AC-3 bitstream
+          samsung::wasm::ChannelLayout::k5_1Back, // Sunshine AC-3 uses 5.1 back-channel layout
+          kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
+        }
+      );
+      if (add_track_result) {
+        g_Instance->m_AudioTrack = std::move(*add_track_result);
+        g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
       }
-    );
-    if (add_track_result) {
-      g_Instance->m_AudioTrack = std::move(*add_track_result);
-      g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
+    }
+    else {
+      samsung::wasm::ChannelLayout channelLayout; // Selected PCM channel layout
+      switch (CHANNEL_COUNT_FROM_AUDIO_CONFIGURATION(g_Instance->m_AudioConfig)) {
+        case 2:
+          channelLayout = samsung::wasm::ChannelLayout::kStereo;
+          ClLogMessage("Selected channel layout for Stereo audio\n");
+          break;
+        case 6:
+          channelLayout = samsung::wasm::ChannelLayout::k5_1;
+          ClLogMessage("Selected channel layout for 5.1 Surround audio\n");
+          break;
+        case 8:
+          channelLayout = samsung::wasm::ChannelLayout::k7_1;
+          ClLogMessage("Selected channel layout for 7.1 Surround audio\n");
+          break;
+        default:
+          ClLogMessage("Unable to select channel layout from audio configuration\n");
+          return -1;
+      }
+
+      auto add_track_result = g_Instance->m_Source->AddTrack(
+        samsung::wasm::ElementaryAudioTrackConfig {
+          "audio/webm; codecs=\"pcm\"", // Pulse Code Modulation (PCM)
+          {}, // Extradata: Empty
+          samsung::wasm::DecodingMode::kHardware, // Decoding mode: Hardware
+          samsung::wasm::SampleFormat::kS16, // 16-bit signed PCM
+          channelLayout,
+          kSampleRate, // Sample Rate: 48 kHz (48000 Hz)
+        }
+      );
+      if (add_track_result) {
+        g_Instance->m_AudioTrack = std::move(*add_track_result);
+        g_Instance->m_AudioTrack.SetListener(&g_Instance->m_AudioTrackListener);
+      }
     }
   }
-
   {
     const char *mimetype = "video/mp4"; // MIME-type: Video MP4 Container
     if (videoFormat & VIDEO_FORMAT_H264) {

@@ -31,6 +31,7 @@ static constexpr size_t kAudioSlotElements = kAudioSlotStride * MAX_CHANNEL_COUN
 
 // Jitter buffer target used by the Web Audio backend when the user has not selected one
 static constexpr int kDefaultAudioJitterMs = 100;
+static constexpr TimeStamp kAc3FrameDuration = 32ms;
 
 static std::vector<opus_int16> s_DecodeBuffer;
 
@@ -280,6 +281,48 @@ void MoonlightInstance::AudDecCleanup(void) {
 void MoonlightInstance::AudDecDecodeAndPlaySample(char* sampleData, int sampleLength) {
   // Discard the audio packet without decoding it when the audio output is disabled
   if (s_AudioBackend == AudioBackend::Disabled) {
+    return;
+  }
+
+  // Sunshine's AC-3 payload is already compressed Dolby Digital. Send it directly to the
+  // Tizen AC-3 track, never through the Opus decoder or the Web Audio PCM scheduler.
+  if (LiIsAc3AudioNegotiated()) {
+    if (s_AudioBackend != AudioBackend::Emss || !g_Instance->m_AudioStarted ||
+        sampleData == nullptr || sampleLength <= 0) {
+      return;
+    }
+
+    s_frameDuration = kAc3FrameDuration;
+    if (!s_hasFirstFrame) {
+      s_firstAppend = std::chrono::steady_clock::now();
+      s_hasFirstFrame = true;
+    }
+
+    auto now = std::chrono::steady_clock::now();
+    TimeStamp ntp = now - s_firstAppend;
+    if (s_AudioSyncEnabled && ntp + kAudioBufferMargin < s_estimatedAudioEnd) {
+      ClLogMessage("Dropping AC-3 packet to avoid audio overflow: PTS=%.03f NTP=%.03f\n",
+        s_pktPts.count(), ntp.count());
+      return;
+    }
+
+    samsung::wasm::ElementaryMediaPacket pkt {
+      s_pktPts, // presentation timestamp
+      s_pktPts, // decoding timestamp
+      kAc3FrameDuration, // 32 ms per AC-3 frame at 48 kHz
+      true, // keyframe flag required by the API
+      static_cast<size_t>(sampleLength), // compressed bitstream size
+      reinterpret_cast<unsigned char*>(sampleData), // compressed AC-3 payload, not PCM
+      0, 0, 0, 1, // packet of width, height, framerate numerator and denominator
+      g_Instance->m_AudioSessionId.load() // session identifier
+    };
+    if (!g_Instance->m_AudioTrack.AppendPacket(pkt)) {
+      ClLogMessage("Append AC-3 audio packet failed\n");
+      return;
+    }
+
+    s_pktPts += kAc3FrameDuration;
+    s_estimatedAudioEnd = std::max(s_estimatedAudioEnd, ntp) + kAc3FrameDuration;
     return;
   }
 
