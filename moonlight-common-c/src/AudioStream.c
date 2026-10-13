@@ -23,7 +23,9 @@ static uint64_t firstReceiveTime;
 static uint8_t opusHeaderByte;
 #endif
 
-#define MAX_PACKET_SIZE 1400
+// Supports high-bitrate AC-3/E-AC-3 frames from the experimental Sunshine encoder.
+// A 448 kbit/s AC-3 frame is 1792 bytes at 32 ms, before RTP/AES overhead.
+#define MAX_PACKET_SIZE 2048
 
 typedef struct _QUEUE_AUDIO_PACKET_HEADER {
     LINKED_BLOCKING_QUEUE_ENTRY lentry;
