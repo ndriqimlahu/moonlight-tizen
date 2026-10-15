@@ -30,7 +30,6 @@ This repository is an **independently maintained fork** of [Brightcraft's Moonli
 - **Settings and input refinements:** improves optical-output settings, their disabled-state presentation and remote navigation, with related keyboard/input refinements.
 
 ---
----
 
 ## ⚙️ Prerequisites
 
@@ -44,13 +43,12 @@ Before proceeding with the installation, please take a moment to ensure that you
 
 ## 📦 Installation
 
-Preparing Moonlight for installation is a straightforward process, although the exact steps depend on the Tizen version your TV uses and the installation method you choose.
+Preparing Moonlight for installation is straightforward, although the exact steps depend on your TV's Tizen version and the installation method you choose.
 
 - Find published experimental packages in the [fork's Releases](https://github.com/fidoboy/moonlight-tizen/releases). Branch builds may also be available as artifacts from the [experimental WGT workflow](https://github.com/fidoboy/moonlight-tizen/actions/workflows/build-ac3-passthrough.yml?query=branch%3Aac3-audio-passthrough).
-- Follow the original project's [installation guide](https://github.com/brightcraft/moonlight-tizen/wiki/Installation-Guide) for instructions appropriate to your TV and Tizen version.
-- Choose your preferred [installation method](https://github.com/brightcraft/moonlight-tizen/wiki/Installation-Guide) from the provided guide.
-- Follow the step-by-step instructions to successfully install the application.
-- Once complete, you can launch **Moonlight** and start streaming your games.
+- Follow the original project's [installation guide](https://github.com/brightcraft/moonlight-tizen/wiki/Installation-Guide) to choose a suitable method and install the WGT on your TV.
+- Once installed, launch **Moonlight** and start streaming your games.
+
 
 ---
 
