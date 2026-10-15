@@ -155,9 +155,16 @@ function translateBackendMessage(text) {
  * @return {void}        The Wasm module calls back through the handleMessage method
  */
 var _httpLock = Promise.resolve();
+// The pairing request waiting in the JS queue, if any, so that canceling can keep it from starting
+var _queuedPairing = null;
 
 var sendMessage = function(method, params) {
   if (SyncFunctions[method]) {
+    // Starting a request resets the cancel flag in C++, so a canceled pairing request
+    // that is still waiting in the JS queue must not start afterwards
+    if (method === 'cancelRequest' && _queuedPairing) {
+      _queuedPairing.canceled = true;
+    }
     return new Promise(function(resolve, reject) {
       const ret = SyncFunctions[method](...params);
       if (ret.type === "resolve") {
@@ -212,6 +219,41 @@ var sendMessage = function(method, params) {
           };
 
           AsyncFunctions['openUrl'](id, ...params);
+        });
+      });
+    });
+  } else if (method === 'pair') {
+    // Pairing runs on the same C++ HTTP thread as openUrl and waits until the PIN is entered on the host,
+    // so it must wait in the same JS queue. Otherwise an openUrl request queued behind it would time out
+    // and its cancelRequest would abort the pairing request instead.
+    var pairing = { canceled: false };
+    _queuedPairing = pairing;
+
+    return new Promise(function(resolve, reject) {
+      _httpLock = _httpLock.catch(function() {}).then(function() {
+        if (_queuedPairing === pairing) {
+          _queuedPairing = null;
+        }
+        // Don't start a pairing request that was canceled while it was waiting in the queue
+        if (pairing.canceled) {
+          reject(-1); // GS_FAILED
+          return;
+        }
+
+        return new Promise(function(innerResolve, innerReject) {
+          const id = callbacks_ids++;
+          callbacks[id] = {
+            'resolve': function(msg) {
+              resolve(msg);
+              innerResolve(); // Unlock the JS queue
+            },
+            'reject': function(err) {
+              reject(err);
+              innerResolve(); // Unlock the JS queue
+            }
+          };
+
+          AsyncFunctions['pair'](id, ...params);
         });
       });
     });
