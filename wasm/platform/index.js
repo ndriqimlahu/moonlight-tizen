@@ -398,8 +398,9 @@ function startPollingHosts() {
 
 function endBackgroundPollingOfHost(host) {
   console.log('%c[index.js, endBackgroundPollingOfHost]', 'color: green;', 'Stopping background polling of host ' + host.serverUid, host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
-  // Clear the host's polling interval and remove it from the activePolls object
-  if (activePolls[host.serverUid]) {
+  // Clear the host's polling interval and remove it from the activePolls object, also while the first
+  // refresh is still running and the entry is null, otherwise the polling would start anyway when it finishes
+  if (activePolls.hasOwnProperty(host.serverUid)) {
     window.clearTimeout(activePolls[host.serverUid]);
     delete activePolls[host.serverUid];
   }
@@ -618,7 +619,7 @@ function hostChosen(host, onSuccessCallback) {
     }, function() {
       // Reset the flag to indicate that a host failed due to unsuccessful pairing
       isHostOpening = false;
-      // Start polling the host after pairing flow
+      // Resume background polling after the pairing flow
       startPollingHosts();
     });
   } else {
@@ -911,6 +912,8 @@ function addHostDialog() {
       addHostDialog.close();
       isDialogOpen = false;
       Navigation.pop();
+      // Avoid delay from other polling during pairing
+      stopPollingHosts();
       // Check if we already have record of this host. If so, we'll
       // need the PPK string to ensure our pairing status is accurate.
       if (hosts[_nvhttpHost.serverUid] != null) {
@@ -921,13 +924,20 @@ function addHostDialog() {
         // Use the host in the array directly to ensure the PPK propagates after pairing
         pairingDialog(hosts[_nvhttpHost.serverUid], function() {
           saveHosts();
+          startPollingHosts();
+        }, function() {
+          // Resume background polling after the pairing flow
+          startPollingHosts();
         });
       } else {
         pairingDialog(_nvhttpHost, function() {
-          // Host must be in the grid before starting background polling
+          // Add the host to the grid after successful pairing
           addHostToGrid(_nvhttpHost);
-          beginBackgroundPollingOfHost(_nvhttpHost);
           saveHosts();
+          startPollingHosts();
+        }, function() {
+          // Resume background polling after the pairing flow
+          startPollingHosts();
         });
       }
       // Re-enable the Continue button after successful processing
@@ -1034,6 +1044,8 @@ function pairingDialog(nvhttpHost, onSuccess, onFailure) {
       isPairingInProgress = false;
       if (wasPairingCanceled) {
         console.log('%c[index.js, pairingDialog]', 'color: green;', 'Ignored pairing failure due to cancellation.');
+        // Still let the caller recover, so the host can be selected again and the hosts are polled again
+        onFailure();
         return;
       }
       console.error('%c[index.js, pairingDialog]', 'color: green;', 'Error: Failed API object:\n', nvhttpHost, '\n' + nvhttpHost.toString()); // Logging both object (for console) and toString-ed object (for text logs)
