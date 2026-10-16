@@ -11,24 +11,6 @@ Changes made:
 - [Tizen WASM Player](https://developer.samsung.com/smarttv/develop/extension-libraries/webassembly/tizen-wasm-player/overview.html)
 - [Tizen Sockets Extension](https://developer.samsung.com/smarttv/develop/extension-libraries/webassembly/api-reference/tizen-sockets-extension.html)
 
-## Controller identification
-
-Moonlight reports the family of each connected controller from the browser's
-Gamepad API. Supported identifiers distinguish PlayStation, Xbox and Nintendo
-controllers; unrecognized controllers use the host's default profile. Each
-controller is reported separately, so switching families does not require a
-global Sunshine controller setting.
-
-The host's drivers determine the virtual controller model. For example, a
-DualSense may appear as a PS4 controller when Sunshine uses its ViGEm fallback.
-The browser API does not provide motion, touchpad, battery or RGB data. Rumble
-is reported only when supported by the browser and enabled in Moonlight.
-
-Some hosts retain an allocated virtual controller between stream connections.
-After upgrading from a client that did not report controller identities, end
-the old application session and start a fresh one if the old controller type
-persists. See [controller regression tests](tests/README.md) for offline checks.
-
 ## Checking out required submodules
 Since some of the dependencies used are provided as git submodules, after cloning this repository (if you did not provide the `--recurse-submodules` option while cloning) you need to issue the below command:
 
