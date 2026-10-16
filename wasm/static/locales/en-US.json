@@ -362,6 +362,7 @@
   "Something went wrong on your host PC when starting the stream. Restart your host PC and try again.": "Something went wrong on your host PC when starting the stream. Restart your host PC and try again.",
   "An issue occurred on your host PC while starting the stream. Make sure you don't have any DRM-protected content open on your host PC.": "An issue occurred on your host PC while starting the stream. Make sure you don't have any DRM-protected content open on your host PC.",
   "The host PC reported a fatal video encoding error. Try disabling HDR mode, changing the streaming resolution, or changing your host PC's display resolution.": "The host PC reported a fatal video encoding error. Try disabling HDR mode, changing the streaming resolution, or changing your host PC's display resolution.",
+  "The TV was unable to start the streaming with the selected video settings. Try reducing the resolution or frame rate and consider changing the codec.": "The TV was unable to start the streaming with the selected video settings. Try reducing the resolution or frame rate and consider changing the codec.",
   "Connection terminated": "Connection terminated",
   "Mouse emulation is activated": "Mouse emulation is activated",
   "Mouse emulation is deactivated": "Mouse emulation is deactivated",
