@@ -69,43 +69,55 @@ function cryptoRand(upper_bound) {
   return array[0] % upper_bound;
 }
 
+// This map tracks gamepad IDs for each browser slot to avoid false
+// positives from placeholder gamepads that report as "connected"
+// but have never sent any input (timestamp = 0).
 var _realGamepads = new Map();
+
+// Returns a bitmask representing the connected gamepads in the browser
 function getConnectedGamepadMask() {
   var count = 0;
   var mask = 0;
   var gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
 
+  // Iterate through all possible gamepad slots (0-15) to detect connected gamepads
+  // Maximum number of controllers supported by the Moonlight protocol is 16
   for (var i = 0; i < 16; i++) {
     var gamepad = gamepads[i];
+
+    // Ignore empty or disconnected gamepads and clear any previous tracking for that slot
     if (!gamepad || !gamepad.connected) {
       _realGamepads.delete(i);
       continue;
     }
-    if (gamepad) {
-      // See logic in gamepad.cpp
-      // These must stay in sync!
 
+    // Check if the gamepad slot is occupied
+    if (gamepad) {
+      // See matching logic in "[gamepad.cpp] PollGamepads()" – these must stay in sync!
+
+      // If the gamepad ID changed, treat it as a new one in this slot
       if (_realGamepads.get(i) !== gamepad.id) {
         _realGamepads.delete(i);
       }
 
+      // Remember any pad that has ever reported a non-zero timestamp
       if (gamepad.timestamp !== 0) {
         _realGamepads.set(i, gamepad.id);
       }
 
+      // Tizen often returns "connected" placeholder gamepads whose timestamp stays
+      // at zero. Ignore them until they become real gamepads that report input.
       if (gamepad.timestamp === 0 && !_realGamepads.has(i)) {
-        // On some platforms, Tizen returns "connected" gamepads that really 
-        // aren't, so timestamp stays at zero. To work around this, we'll only
-        // count gamepads that have a non-zero timestamp in our controller index.
         continue;
       }
 
+      // Use the physical browser index so the mask matches C++
       mask |= 1 << i;
       count++;
     }
   }
 
-  console.log('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Detected: ' + count + ' gamepads.');
+  console.log('%c[utils.js, getConnectedGamepadMask]', 'color: gray;', 'Detected: ' + count + ' ' + (count === 1 ? 'gamepad' : 'gamepads'));
   return mask;
 }
 
