@@ -274,7 +274,7 @@ function handleMessage(msg) {
         snackbarLogLong('The host PC reported a fatal video encoding error. Try disabling HDR mode, changing the streaming resolution, or changing your host PC\'s display resolution.');
         break;
       case -200: // ERROR_VIDEO_SETUP_FAILED
-        snackbarLogLong('The TV could not start the stream with the selected settings. Try a lower frame rate or resolution.');
+        snackbarLogLong('The TV was unable to start the streaming with the selected video settings. Try reducing the resolution or frame rate and consider changing the codec.');
         break;
       default:
         snackbarLogLong('Connection terminated');
