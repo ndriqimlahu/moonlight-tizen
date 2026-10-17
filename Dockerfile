@@ -63,6 +63,7 @@ RUN ./emsdk activate latest-fastcomp
 
 # Copy only the backend files required for compiling the application
 WORKDIR /home/moonlight
+RUN mkdir -p moonlight-tizen
 COPY --chown=moonlight CMakeLists.txt ./moonlight-tizen/
 COPY --chown=moonlight h264bitstream ./moonlight-tizen/h264bitstream/
 COPY --chown=moonlight libgamestream ./moonlight-tizen/libgamestream/
