@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.19.0
+
+### Added
+- Added gamepad identification reporting for use with automatic profile selection in Sunshine
+
+### Changed
+- Enabled 'Video frame pacing' and 'Host address field mode' settings as the default
+- Improved gamepad handling when connecting, disconnecting, or replacing a gamepad while streaming
+
+### Removed
+- Removed the obsolete USB release workflow, which was no longer functional and usable
+
+### Fixed
+- Fixed pairing failures caused by concurrent HTTP requests interrupting the pairing process
+- Fixed a bug where release checking could fail if repository placeholders were not configured
+- Fixed host polling during pairing, including pairing failures and host selection after cancellation
+- Fixed commit SHA injection in development builds by ensuring correct directory ownership in Docker
+- Fixed freezes and connection failures when the TV cannot start the video stream with the selected settings
+
 ## v1.18.0
 
 ### Added
