@@ -125,6 +125,14 @@ RUN \
     fi
 
 RUN cmake --install build --prefix build
+
+# Embind reads a std::string that C++ returns to JavaScript by writing a zero into the byte after the buffer and putting the
+# old byte back afterwards. That byte is outside of the buffer and no lock is held, so it can overwrite a change that another
+# thread makes to the heap in between and crash the next free() (see tools/patch-embind-string.js). The patch fails the
+# build when the code it replaces is not found exactly once, so a toolchain update cannot drop it unnoticed.
+COPY --chown=moonlight tools/patch-embind-string.js ./moonlight-tizen/tools/
+RUN /home/moonlight/emscripten-release-bundle/emsdk/node/12.9.1_64bit/bin/node moonlight-tizen/tools/patch-embind-string.js build/widget/moonlight-wasm.js
+
 RUN cp moonlight-tizen/res/icon.png build/widget/
 
 # Inject Game Mode metadata into the Tizen config.xml file, which is required for building the ForceGM variant later
