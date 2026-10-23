@@ -28,39 +28,51 @@ const PATCHED =
   'var stringSegment=UTF8ToString(decodeStartPtr,currentBytePtr-decodeStartPtr);if(str===undefined)str=stringSegment;else{' +
   'str+=String.fromCharCode(0);str+=stringSegment}decodeStartPtr=currentBytePtr+1}}}';
 
+// Counts non-overlapping occurrences of a substring in the source
 function occurrences(source, needle) {
   let count = 0;
   let from = 0;
   for (;;) {
     const at = source.indexOf(needle, from);
-    if (at < 0) return count;
+    // Stop when no further occurrence is found
+    if (at < 0) {
+      return count;
+    }
     count++;
     from = at + needle.length;
   }
 }
 
+// Replaces the original Embind implementation only when the expected code is found exactly once
 function patchEmbindString(source) {
   const found = occurrences(source, ORIGINAL);
+  // Fail rather than silently applying an incomplete or ambiguous patch
   if (found !== 1) {
     throw new Error('the reading of a std::string was found ' + found + ' times, expected exactly once' +
-      (occurrences(source, PATCHED) > 0 ? ' (the file is already patched)' : ''));
+      (occurrences(source, PATCHED) > 0 ? ' (the file may already be patched)' : ''));
   }
-  return source.replace(ORIGINAL, function() { return PATCHED; });
+  // Replace the matched code with the patched implementation
+  return source.replace(ORIGINAL, function() {
+    return PATCHED;
+  });
 }
 
+// Export the patch function and patterns so they can be tested independently
 module.exports = { patchEmbindString, ORIGINAL, PATCHED };
 
+// Run as a command-line script when invoked directly, but allow importing it without modifying files
 if (require.main === module) {
   const file = process.argv[2];
+  // Require the path to the generated JavaScript module as the first argument
   if (!file) {
-    console.error('usage: node patch-embind-string.js <moonlight-wasm.js>');
+    console.error('%c[patch-embind-string.js]', 'color: gray;', 'Usage: node patch-embind-string.js <moonlight-wasm.js>');
     process.exit(2);
   }
   try {
     fs.writeFileSync(file, patchEmbindString(fs.readFileSync(file, 'utf8')));
-    console.log('patched the reading of std::string in ' + file);
+    console.log('%c[patch-embind-string.js]', 'color: gray;', 'Patched the reading of std::string in ' + file);
   } catch (error) {
-    console.error('cannot patch ' + file + ': ' + error.message);
+    console.error('%c[patch-embind-string.js]', 'color: gray;', 'Unable to patch ' + file + ': ' + error.message);
     process.exit(1);
   }
 }
