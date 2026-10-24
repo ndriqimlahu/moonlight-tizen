@@ -227,6 +227,10 @@ body {
     border-radius: 16px;
     box-shadow: 0 0 12px 6px rgba(0, 163, 198, 1);
 }
+/* Hide the mouse pointer around the Stream Menu, which appears when the mouse is released */
+#streamMenuDialogOverlay, #streamMenuDialog::backdrop {
+    cursor: none;
+}
 .mdl-dialog__title {
     margin: 0;
     padding: 24px 24px 14px;
@@ -444,7 +448,7 @@ body {
     padding: 5px 20px 5px 20px;
 }
 #continueAddHost, #cancelAddHost, #cancelPairing, #continueDeleteHost,
-#closeHostMenu, #closeHostDetails, #cancelDeleteHost, #closeAppSupport,
+#closeHostMenu, #closeStreamMenu, #closeHostDetails, #cancelDeleteHost, #closeAppSupport,
 #closeNavGuide, #closeUpdateApp, #continueRestoreDefaults, #cancelRestoreDefaults,
 #continueQuitApp, #cancelQuitApp, #continueWarning, #closeWarning,
 #continueRestartApp, #cancelRestartApp, #continueExitApp, #cancelExitApp, #cancelAutoWol {
@@ -491,7 +495,7 @@ body {
     box-shadow: 0 0 2px 3px rgba(170, 170, 170, 1) !important;
     cursor: not-allowed;
 }
-.host-menu-button, #closeHostMenu, #closeHostDetails,
+.host-menu-button, #closeHostMenu, #closeStreamMenu, #closeHostDetails,
 #closeUpdateApp {
     margin: 10px 15px 20px 0;
     font-size: 1.4rem;
@@ -1074,7 +1078,7 @@ body {
    Interactive Elements
 ============================= */
 #continueAddHost:hover, #continueAddHost:focus, #cancelAddHost:hover, #cancelAddHost:focus, #cancelPairing:hover, #cancelPairing:focus, #cancelAutoWol:hover, #cancelAutoWol:focus,
-#continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeHostMenu:hover, #closeHostMenu:focus,
+#continueDeleteHost:hover, #continueDeleteHost:focus, #cancelDeleteHost:hover, #cancelDeleteHost:focus, #closeHostMenu:hover, #closeHostMenu:focus, #closeStreamMenu:hover, #closeStreamMenu:focus,
 #closeHostDetails:hover, #closeHostDetails:focus, #closeAppSupport:hover, #closeAppSupport:focus, #closeNavGuide:hover, #closeNavGuide:focus,
 #closeUpdateApp:hover, #closeUpdateApp:focus, #continueRestoreDefaults:hover, #continueRestoreDefaults:focus, #cancelRestoreDefaults:hover,
 #cancelRestoreDefaults:focus, #continueQuitApp:hover, #continueQuitApp:focus, #cancelQuitApp:hover, #cancelQuitApp:focus, #closeWarning:hover,

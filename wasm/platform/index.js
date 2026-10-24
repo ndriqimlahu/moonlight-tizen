@@ -3096,6 +3096,182 @@ function sendEscapeKeyToHost() {
   Module.sendKeyboardEvent(0x80 << 8 | 0x1B, 0x04, 0); // Key up
 }
 
+// Send a key combination to the host, pressing the keys in order and releasing them in reverse order
+function sendKeyCombinationToHost(keyCodes) {
+  // Modifier flags of the modifier keys: Left Shift, Left Ctrl, Left Alt and Left Windows
+  const modifierFlags = { 0xA0: 0x01, 0xA2: 0x02, 0xA4: 0x04, 0x5B: 0x08 };
+  var modifiers = 0;
+  keyCodes.forEach(function(keyCode) {
+    modifiers |= modifierFlags[keyCode] || 0;
+    Module.sendKeyboardEvent(0x80 << 8 | keyCode, 0x03, modifiers); // Key down
+  });
+  keyCodes.slice().reverse().forEach(function(keyCode) {
+    modifiers &= ~(modifierFlags[keyCode] || 0);
+    Module.sendKeyboardEvent(0x80 << 8 | keyCode, 0x04, modifiers); // Key up
+  });
+}
+
+// Create a Stream Menu option that sends a key combination to the host
+function sendKeysMenuOption(id, keysLabel, keyCodes) {
+  return {
+    id: id,
+    text: t('Send %1$s', keysLabel),
+    action: function() {
+      sendKeyCombinationToHost(keyCodes);
+    }
+  };
+}
+
+// Define the options of the Stream Menu in display order, add, remove or reorder entries here to change the menu
+function getStreamMenuOptions() {
+  return [
+    sendKeysMenuOption('streamMenuSendWin', 'WIN', [0x5B]),
+    sendKeysMenuOption('streamMenuSendAltTab', 'ALT + TAB', [0xA4, 0x09]),
+    sendKeysMenuOption('streamMenuSendAltF4', 'ALT + F4', [0xA4, 0x73]),
+    sendKeysMenuOption('streamMenuSendF11', 'F11', [0x7A]),
+    {
+      id: 'streamMenuToggleStats',
+      text: t('Toggle performance stats'),
+      action: function() {
+        // Toggle performance stats overlay
+        Module.toggleStats();
+      }
+    },
+    {
+      id: 'streamMenuDisconnect',
+      text: t('Disconnect'),
+      action: function() {
+        // Terminate the connection
+        Module.stopStream();
+      }
+    },
+  ];
+}
+
+// Show the Stream Menu dialog over the streaming session
+function streamMenuDialog() {
+  // Create an overlay for the dialog and append it to the body
+  var streamMenuDialogOverlay = $('<div>', {
+    id: 'streamMenuDialogOverlay',
+    class: 'dialog-overlay'
+  }).appendTo(document.body);
+
+  // Create the dialog element and append it to the overlay
+  var streamMenuDialog = $('<dialog>', {
+    id: 'streamMenuDialog',
+    class: 'mdl-dialog'
+  }).appendTo(streamMenuDialogOverlay);
+
+  // Add the dialog title
+  $('<h3>', {
+    id: 'streamMenuDialogTitle',
+    class: 'mdl-dialog__title',
+    'data-i18n': 'Stream Menu',
+    text: t('Stream Menu')
+  }).appendTo(streamMenuDialog);
+
+  // Create a content section inside the dialog
+  var streamMenuDialogContent = $('<div>', {
+    class: 'mdl-dialog__content'
+  }).appendTo(streamMenuDialog);
+
+  // Loop through each option to create a button in the dialog
+  getStreamMenuOptions().forEach(function(menuOption) {
+    var streamMenuDialogOption = $('<button>', {
+      type: 'button',
+      id: menuOption.id,
+      class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+      text: menuOption.text
+    });
+    // Close the dialog and trigger the action if the Option button is pressed
+    streamMenuDialogOption.click(function() {
+      closeStreamMenuDialog(true);
+      menuOption.action();
+    });
+    // Append the button to the dialog content
+    streamMenuDialogOption.appendTo(streamMenuDialogContent);
+  });
+
+  // Create the actions section inside the dialog
+  var streamMenuDialogActions = $('<div>', {
+    class: 'mdl-dialog__actions'
+  }).appendTo(streamMenuDialog);
+
+  // Create and set up the Close button, and close the dialog if it is pressed
+  $('<button>', {
+    type: 'button',
+    id: 'closeStreamMenu',
+    class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect',
+    'data-i18n': 'Close',
+    text: t('Close')
+  }).click(function() {
+    console.log('%c[index.js, streamMenuDialog]', 'color: green;', 'Closing app dialog and returning.');
+    closeStreamMenuDialog(true);
+  }).appendTo(streamMenuDialogActions);
+
+  // If the dialog element doesn't support the showModal method, register it with dialogPolyfill
+  if (!streamMenuDialog[0].showModal) {
+    dialogPolyfill.registerDialog(streamMenuDialog[0]);
+  }
+
+  // Release the mouse while the dialog is open, otherwise the 'Back' key releases the mouse instead of closing the dialog
+  if (document.pointerLockElement) {
+    document.exitPointerLock();
+  }
+  // Ignore the mouse movement while the dialog is open, since releasing the mouse moves the pointer and removes the focus from the dialog
+  window.addEventListener('mousemove', stopMouseMovePropagation, true);
+
+  // Show the dialog, start on the first option, and enable the navigation while the dialog is open
+  $(streamMenuDialogOverlay).css('display', 'flex');
+  streamMenuDialog[0].showModal();
+  isDialogOpen = true;
+  Views.StreamMenuDialog.view.index = 0;
+  Navigation.start();
+  Navigation.push(Views.StreamMenuDialog);
+  setTimeout(() => Navigation.switch(), 5);
+}
+
+// Close the Stream Menu dialog if it is open, and optionally return the input to the streaming session
+function closeStreamMenuDialog(returnToStream) {
+  var streamMenuDialogOverlay = $('#streamMenuDialogOverlay');
+  if (streamMenuDialogOverlay.length === 0) {
+    return;
+  }
+
+  Navigation.pop();
+  Navigation.stop();
+  window.removeEventListener('mousemove', stopMouseMovePropagation, true);
+  $('#streamMenuDialog')[0].close();
+  streamMenuDialogOverlay.remove();
+  isDialogOpen = false;
+
+  if (returnToStream) {
+    // Move focus back to the streaming session, so the keys are sent to the host again
+    var videoElement = document.getElementById('wasm_module');
+    videoElement.focus();
+    // Simulate mouse to lock the mouse again only if the lock was lost, since a locked mouse would send a click to the host
+    if (document.pointerLockElement !== videoElement) {
+      videoElement.dispatchEvent(new MouseEvent('mousedown', {
+        bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0
+      }));
+    }
+  }
+}
+
+// Stop a mouse movement event before it reaches the navigation and the streaming session
+function stopMouseMovePropagation(e) {
+  e.stopPropagation();
+}
+
+// Open or close the Stream Menu dialog while the video stream is displayed
+function toggleStreamMenuDialog() {
+  if ($('#streamMenuDialogOverlay').length > 0) {
+    closeStreamMenuDialog(true);
+  } else if (!isDialogOpen && document.getElementById('wasm_module').style.display !== 'none') {
+    streamMenuDialog();
+  }
+}
+
 let indexedDB = null;
 const dbVersion = 1.0;
 let db = null;
@@ -3958,6 +4134,7 @@ function initSamsungKeys() {
       //'VolumeUp',      // F10
       'ChannelDown',     // F11
       'ChannelUp',       // F12
+      'MediaPlayPause',
     ],
     onKeydownListener: remoteControllerHandler
   };
@@ -3983,6 +4160,20 @@ function initSpecialKeys() {
         bubbles: true, cancelable: true, view: window, clientX: 0, clientY: 0
       }));
     }
+  });
+
+  // Listen for the 'Play/Pause' key before the streaming session does, so it is never sent to the host
+  ['keydown', 'keyup'].forEach(function(eventType) {
+    window.addEventListener(eventType, function(e) {
+      if (e.keyCode === tvKey.KEY_PLAY_PAUSE && isInGame === true) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Open or close the Stream Menu when the key is pressed
+        if (e.type === 'keydown' && !e.repeat) {
+          toggleStreamMenuDialog();
+        }
+      }
+    }, true);
   });
 }
 
