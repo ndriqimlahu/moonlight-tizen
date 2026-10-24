@@ -421,39 +421,54 @@ class ListView {
   }
 };
 
+// Keep the selected host in the visual center of the horizontal carousel.
+// The direct scrollLeft fallback preserves compatibility with older Tizen browsers.
+function centerHostCarouselCard(target) {
+  const card = resolveElement(target);
+  const grid = document.getElementById('host-grid');
+  if (!card || !grid) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    const targetLeft = Math.max(0, card.offsetLeft - ((grid.clientWidth - card.offsetWidth) / 2));
+    if (typeof grid.scrollTo === 'function') {
+      try {
+        grid.scrollTo({ left: targetLeft, behavior: 'smooth' });
+        return;
+      } catch (e) {
+        // Older Tizen versions do not accept the object form of scrollTo.
+      }
+    }
+    grid.scrollLeft = targetLeft;
+  });
+}
+
 const Views = {
   Hosts: {
     view: new ListView(() => document.getElementById('host-grid').children),
     up: function() {
-      // If there are more rows behind, then go to the previous row
-      if (this.view.prevCardRow(5)) {
-        focusElement(this.view.current());
+      // Hosts form a single horizontal row, so Up always returns to the header controls.
+      const currentItem = resolveElement(this.view.current());
+      if (currentItem && currentItem.id !== 'addHostContainer') {
+        // Navigate to the HostsMenuHighlight view to highlight the host's menu icon
+        Navigation.change(Views.HostsMenuHighlight);
+        focusElement(Views.HostsMenuHighlight.view.current());
       } else {
-        // If there are no more rows, check if the current item is a host
-        const currentItem = resolveElement(this.view.current());
-        if (currentItem && currentItem.id !== 'addHostContainer') {
-          // Navigate to the HostsMenuHighlight view to highlight the host's menu icon
-          Navigation.change(Views.HostsMenuHighlight);
-          focusElement(Views.HostsMenuHighlight.view.current());
-        } else {
-          // Set focus on the first navigation item in HostsNav view when transitioning from Add Host container
-          Navigation.change(Views.HostsNav);
-          focusElement(Views.HostsNav.view.current());
-        }
+        // Set focus on the first navigation item in HostsNav view when transitioning from Add Host container
+        Navigation.change(Views.HostsNav);
+        focusElement(Views.HostsNav.view.current());
       }
     },
-    down: function() {
-      // If there are more rows after, then go to the next row
-      if (this.view.nextCardRow(5)) {
-        focusElement(this.view.current());
-      }
-    },
+    down: function() {},
     left: function() {
-      this.view.prevCard(5);
+      this.view.prev();
+      centerHostCarouselCard(this.view.current());
       focusElement(this.view.current());
     },
     right: function() {
-      this.view.nextCard(5);
+      this.view.next();
+      centerHostCarouselCard(this.view.current());
       focusElement(this.view.current());
     },
     accept: function() {
@@ -488,10 +503,11 @@ const Views = {
       // Check if the current item is the Add Host container
       if (currentItem && currentItem.id === 'addHostContainer') {
         // Set focus on the Add Host container itself
+        centerHostCarouselCard(currentItem);
         focusElement(currentItem);
       } else {
-        // Scroll to the current Host card row to ensure is visible when switching back from another view
-        this.view.currentCardRow(5);
+        // Restore the selected Host at the center when switching back from another view.
+        centerHostCarouselCard(currentItem);
         // If the current item has children, set focus on the first child element (the host card)
         const hostCard = currentItem.children ? currentItem.children[0] : null;
         focusElement(hostCard);
@@ -499,6 +515,7 @@ const Views = {
     },
     enter: function() {
       mark(this.view.current());
+      centerHostCarouselCard(this.view.current());
       // Disable the IP address text input field when entering the Hosts view
       handleIpTextFieldState(false);
     },

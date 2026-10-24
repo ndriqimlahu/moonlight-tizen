@@ -21,8 +21,6 @@
           <i class="navigation-button-icons material-icons">keyboard_arrow_left</i>
         </button>
         <div id="goBackTooltip" class="mdl-tooltip" for="goBackBtn" data-i18n="Back">Back</div>
-        <!-- Header logo and title -->
-        <img src="static/res/ic_moonlight_logo.svg" id="header-logo">
         <span id="header-title" class="mdl-layout-title" data-i18n="Moonlight">Moonlight</span>
         <!-- Add spacer to align navigation to the right -->
         <div class="mdl-layout-spacer"></div>
@@ -48,6 +46,10 @@
       </div>
     </header>
     <main id="main-content" class="mdl-layout__content">
+      <div id="backgroundBrand" class="background-brand" aria-hidden="true">
+        <img src="static/res/ic_moonlight_logo.svg" alt="">
+        <span>Moonlight</span>
+      </div>
       <div id="host-grid">
         <div id="addHostContainer" class="host-add-container mdl-card mdl-shadow--4dp" role="link" tabindex="0" aria-label="Add Host">
           <div id="host-add" class="mdl-card__title mdl-card--expand">

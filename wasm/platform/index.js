@@ -432,11 +432,62 @@ function snackbarLogLong(...args) {
   document.querySelector('#snackbar').MaterialSnackbar.showSnackbar(data);
 }
 
+var backgroundBrandLayoutFrame = null;
+
+// Preserve the Moonlight signature while there is room for it, and remove it
+// when a dense game library enters the logo's safe area.
+function updateBackgroundBrandVisibility() {
+  if (backgroundBrandLayoutFrame !== null) {
+    cancelAnimationFrame(backgroundBrandLayoutFrame);
+  }
+
+  backgroundBrandLayoutFrame = requestAnimationFrame(function() {
+    backgroundBrandLayoutFrame = null;
+    var brand = document.getElementById('backgroundBrand');
+    var mainContent = document.getElementById('main-content');
+    var gameGrid = document.getElementById('game-grid');
+    if (!brand || !mainContent || !gameGrid) {
+      return;
+    }
+
+    var gamesAreVisible = window.getComputedStyle(gameGrid).display !== 'none';
+    var shouldHide = false;
+
+    if (gamesAreVisible) {
+      var brandRect = brand.getBoundingClientRect();
+      var gameCards = gameGrid.querySelectorAll('.game-container');
+      var safeArea = 24;
+
+      for (var i = 0; i < gameCards.length; i++) {
+        var cardRect = gameCards[i].getBoundingClientRect();
+        var entersBrandArea = cardRect.right > brandRect.left - safeArea &&
+          cardRect.left < brandRect.right + safeArea &&
+          cardRect.bottom > brandRect.top - safeArea &&
+          cardRect.top < brandRect.bottom + safeArea;
+        if (entersBrandArea) {
+          shouldHide = true;
+          break;
+        }
+      }
+
+      // A vertically overflowing grid also exceeds the TV-safe composition.
+      if (!shouldHide && mainContent.scrollHeight > mainContent.clientHeight + 1) {
+        shouldHide = true;
+      }
+    }
+
+    if (shouldHide) {
+      brand.classList.add('background-brand-hidden');
+    } else {
+      brand.classList.remove('background-brand-hidden');
+    }
+  });
+}
+
 // Handle layout elements when displaying the Hosts view
 function showHostsMode() {
   console.log('%c[index.js, showHostsMode]', 'color: green;', 'Entering "Show Hosts" mode.');
-  $('#header-title').html(t('Hosts'));
-  $('#header-logo').show();
+  $('#header-title').empty();
   $('#main-header').show();
   $('.nav-menu-parent').show();
   $('#updateAppBtn').show();
@@ -452,6 +503,8 @@ function showHostsMode() {
   $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
+
+  updateBackgroundBrandVisibility();
 
   Navigation.start();
   Navigation.pop();
@@ -484,7 +537,7 @@ function showHosts() {
 
     // Show the main header after the loading screen is complete
     $('#main-header').children().show();
-    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+    $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
     // Navigate to the Hosts view
     showHostsMode();
@@ -1685,7 +1738,6 @@ function appSupportDialog() {
 function showSettingsMode() {
   console.log('%c[index.js, showSettingsMode]', 'color: green;', 'Entering "Show Settings" mode.');
   $('#header-title').html(t('Settings'));
-  $('#header-logo').show();
   $('#main-header').show();
   $('#goBackBtn').show();
   $('#restoreDefaultsBtn').show();
@@ -1701,6 +1753,8 @@ function showSettingsMode() {
   $('#performance-stats').css('display', 'none');
   $('#main-content').removeClass('fullscreen');
   $('#listener').removeClass('fullscreen');
+
+  updateBackgroundBrandVisibility();
 
   stopPollingHosts();
   Navigation.start();
@@ -1731,7 +1785,7 @@ function showSettings() {
 
     // Show the main header after the loading screen is complete
     $('#main-header').children().show();
-    $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+    $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
     // Show the settings list section
     $('#settings-list').removeClass('hide-container');
@@ -2416,7 +2470,6 @@ function sortTitles(list, sortOrder) {
 function showAppsMode() {
   console.log('%c[index.js, showAppsMode]', 'color: green;', 'Entering "Show Apps" mode.');
   $('#header-title').html(t('Apps'));
-  $('#header-logo').show();
   $('#main-header').show();
   $('#goBackBtn').show();
   $('#quitRunningAppBtn').show();
@@ -2435,6 +2488,8 @@ function showAppsMode() {
   $('#loadingSpinner').css('display', 'none');
   $('body').css('backgroundColor', '#282C38');
   $('#wasm_module').css('display', 'none');
+
+  updateBackgroundBrandVisibility();
 
   isInGame = false;
   // We want to eventually poll on the app screen, but we can't now because
@@ -2480,7 +2535,7 @@ function showApps(host) {
 
         // Show the main header after the loading screen is complete
         $('#main-header').children().show();
-        $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+        $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
         // Show the game grid section
         $('#game-grid').show();
@@ -2575,12 +2630,10 @@ function showApps(host) {
             // Append the game text to the game title wrapper
             gameTitle.append(gameText);
 
-            // Handle animation state based on game title text length
+            // Keep short titles static and scroll only titles that are likely to overflow.
             if (app.title.length <= 20) {
-              // For game title text of 20 characters or less, disable scrolling text animation
               gameText.addClass('disable-animation');
             } else {
-              // For game title text longer than 20 characters, enable scrolling text animation
               gameText.removeClass('disable-animation');
             }
 
@@ -2709,7 +2762,7 @@ function showApps(host) {
 
         // Show the main header after the loading screen is complete
         $('#main-header').children().show();
-        $('#main-header').css({'backgroundColor': '#333846', 'boxShadow': '0 0 4px 0 rgba(0, 0, 0, 1)'});
+        $('#main-header').css({'backgroundColor': 'transparent', 'boxShadow': 'none'});
 
         console.error('%c[index.js, showApps]', 'color: green;', 'Error: Failed to get app list from ' + host.hostname + '. Host object: ', host, '\n' + host.toString()); // Logging both object (for console) and toString-ed object (for text logs)
         var errorAppListImg = new Image();
@@ -4770,6 +4823,7 @@ function onWindowLoad() {
 }
 
 window.onload = onWindowLoad;
+window.addEventListener('resize', updateBackgroundBrandVisibility);
 
 // Gamepad connected events
 window.addEventListener('gamepadconnected', function(e) {
